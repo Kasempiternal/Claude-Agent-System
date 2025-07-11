@@ -56,6 +56,12 @@ This repository is a comprehensive collection of multi-agent workflow systems de
 /orchestrated "add dark mode toggle to header"
 ```
 
+**Alternative: EPCT Workflow** (Explore, Plan, Code, Test):
+```bash
+/epct "refactor database connection logic"
+# Follows a four-phase approach: Explore → Plan → Code → Test
+```
+
 ### 2. Decision Matrix
 
 | Criteria | Complete System | Orchestrated |
@@ -85,8 +91,8 @@ Claude-Agent-System/
 │   └── m-orchestrated-dev.md     # Multi-agent orchestration
 ├── orchestrated-only/            # Streamlined workflow
 │   └── m-orchestrated-dev.md     # Single workflow file
-└── commands/                     # Additional workflow patterns
-    └── epct.md                   # Explore, Plan, Code, Test
+└── commands/                     # Alternative workflow patterns
+    └── epct.md                   # Explore, Plan, Code, Test workflow
 ```
 
 ## 🎯 Key Features
@@ -119,6 +125,14 @@ Process complexity matches task complexity:
 - Lightweight workflow for simple tasks
 - Comprehensive system for critical implementations
 - Parallel execution support for efficiency
+
+### 5. **Alternative Workflows**
+The `commands/` directory contains additional workflow patterns:
+- **EPCT (Explore, Plan, Code, Test)**: A four-phase iterative approach ideal for:
+  - Refactoring existing code
+  - Performance optimizations
+  - Debugging complex issues
+  - Research-driven development
 
 ## 🛠️ Example Use Cases
 
