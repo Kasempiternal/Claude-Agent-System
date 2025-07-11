@@ -16,7 +16,6 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
 ### Workflow Files Location
 - **Complete System**: `complete-system/` directory contains all agent documentation
 - **Orchestrated Only**: `orchestrated-only/` directory contains streamlined workflow
-- **Git Workflows**: `create-worktree.md` and `wt-alias-setup.md` for branch management
 
 ## Agent System Commands
 
@@ -35,10 +34,6 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
 /orchestrated "implement simple feature"
 ```
 
-### Git Worktree Management
-```bash
-/create-worktree feature-name  # Creates new worktree and branch
-```
 
 ## Important Files
 
@@ -51,8 +46,6 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
   - `tester-agent.md` - Testing protocols
   - `documenter-agent.md` - Documentation patterns
 - `orchestrated-only/m-orchestrated-dev.md` - Streamlined workflow
-- `create-worktree.md` - Git worktree workflow
-- `wt-alias-setup.md` - Bash alias configuration
 
 ## Development Guidelines
 
@@ -65,7 +58,6 @@ Before starting any task, assess its complexity:
 - Always follow the agent patterns exactly as documented
 - Run appropriate validation for the task complexity
 - Document learnings and patterns discovered
-- Use git worktrees for feature development
 
 ### Workflow Integration
 The agent system is designed to:
