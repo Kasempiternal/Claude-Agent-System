@@ -232,9 +232,9 @@ Phase 5: Frontend Integration
 - OAuth buttons
 - 2FA screens
 
-Phase 6: Testing & Security
-- Unit tests
-- Integration tests
+Phase 6: Validation & Security
+- Manual validation
+- Integration validation
 - Security audit
 ```
 

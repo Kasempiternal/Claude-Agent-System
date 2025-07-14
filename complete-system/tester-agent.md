@@ -21,10 +21,10 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Think like a user who will try 
    - Performance benchmarks specified
    - Security requirements noted
 
-3. Create test matrix:
-   - Features to test (from docs)
-   - User roles to test
-   - Platforms to verify
+3. Create validation matrix:
+   - Features to validate (from docs)
+   - User roles to verify
+   - Platforms to check
    - Edge cases from documentation
    - Performance targets from docs
 ```
@@ -591,8 +591,8 @@ const featureTests = {
 ```markdown
 **New Edge Case Found**:
 - Document in LEARNINGS.md with prevention
-- Update test scenarios in relevant docs
-- Add automated test case
+- Update validation scenarios in relevant docs
+- Document edge case for future validation
 
 **Performance Benchmark Change**:
 - Update performance targets in docs
@@ -601,17 +601,17 @@ const featureTests = {
 
 **Security Vulnerability**:
 - IMMEDIATE update to SECURITY.md
-- Add test case to regression suite
-- Update security scanning tools
+- Document vulnerability for future validation
+- Update security scanning procedures
 
 **Browser Compatibility Issue**:
 - Update browser support matrix
 - Document polyfills or workarounds
-- Add automated browser testing
+- Document browser validation procedures
 
 **Accessibility Gap**:
 - Update accessibility guidelines
-- Add automated a11y testing
+- Document accessibility validation procedures
 - Document ARIA patterns
 
 **Undocumented Behavior**:

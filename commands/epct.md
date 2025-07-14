@@ -6,7 +6,7 @@ At the end of this message, I will ask you to do something. Please follow the "E
 First, use parallel subagents to find and read all files that may be useful for implementing the ticket, either as examples or as edit targets. The subagents should return relevant file paths, and any other info that may be useful.
 
 ## Plan
-Next, think hard and write up a detailed implementation plan. Don't forget to include tests, lookbook components, and documentation. Use your judgement as to what is necessary, given the standards of this repo.
+Next, think hard and write up a detailed implementation plan. Don't forget to include lookbook components and documentation. Use your judgement as to what is necessary, given the standards of this repo.
 
 If there are things you are not sure about, use parallel subagents to do some web research. They should only return useful information, no noise.
 
@@ -23,4 +23,4 @@ If your changes touch the UX in a major way, use the browser to make sure that e
 If your testing shows problems, go back to the planning stage and ultrathink.
 
 ## Write up your work
-When you are happy with your work, write up a short report that could be used as the PR description on folder named Claude-Works. If it doenst exist create it, and if its there dont delete other files just add there new ones. Dont create any test file outside this folder. Include what you set out to do, the choices you made with their brief justification, and any commands you ran in the process that may be useful for future developers to know about.
+When you are happy with your work, write up a short report that could be used as the PR description on folder named Claude-Works. If it doenst exist create it, and if its there dont delete other files just add there new ones. Include what you set out to do, the choices you made with their brief justification, and any commands you ran in the process that may be useful for future developers to know about.
