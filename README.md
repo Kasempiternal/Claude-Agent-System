@@ -1,6 +1,8 @@
-# Claude Agent System
+# Claude Agent System 🤖
 
 A comprehensive multi-agent workflow system for AI-assisted development with Claude Code. Features intelligent context management, automatic workflow selection, and phase-based execution for complex tasks.
+
+> A curated collection and customization of innovative Claude AI workflows, patterns, and methodologies discovered on the Claude AI Reddit community. This repository represents the best practices and creative solutions developed by the community for working effectively with Claude.
 
 ## 🚀 Quick Setup (One Command)
 
@@ -36,6 +38,23 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 - **Orchestrated**: 3-agent workflow for simple tasks
 - **Phase-Based**: For very complex or large-context tasks
 
+### 5. **Agent Specialization**
+Each agent has a specific role and responsibility, ensuring focused expertise:
+- **PLANNER**: Root cause analysis and solution architecture
+- **EXECUTER**: Clean code implementation
+- **VERIFIER**: Quality and compliance checking
+- **TESTER**: Functional validation
+- **DOCUMENTER**: Knowledge capture
+- **UPDATER**: Version control management
+
+### 6. **Quality Gates**
+Built-in checkpoints prevent common issues:
+- Type safety verification
+- Error handling validation
+- Accessibility compliance
+- Performance optimization
+- Security best practices
+
 ## 🎯 Usage
 
 After setup, just use:
@@ -62,6 +81,52 @@ The system automatically:
 /systemcc "refactor all API endpoints to new pattern"
 ```
 
+### Manual Workflow Selection
+
+**For Complex Tasks** (multi-file changes, architecture decisions, critical features):
+```bash
+/planner "implement OAuth authentication system"
+/executer
+/verifier
+/tester
+/documenter
+/updater
+```
+
+**For Simple Tasks** (bug fixes, minor features, single-file changes):
+```bash
+/orchestrated "add dark mode toggle to header"
+```
+
+**Alternative: EPCT Workflow** (Explore, Plan, Code, Test):
+```bash
+/epct "refactor database connection logic"
+# Follows a four-phase approach: Explore → Plan → Code → Test
+```
+
+## 🏗️ System Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    Task Complexity Analysis                  │
+└────────────────┬───────────────────┬────────────────────────┘
+                 │                   │
+        Complex Tasks           Simple Tasks
+                 │                   │
+                 ▼                   ▼
+┌─────────────────────────┐ ┌──────────────────────┐
+│   Complete System       │ │  Orchestrated Only   │
+│   (6 Agents)           │ │   (3 Agents)         │
+├─────────────────────────┤ ├──────────────────────┤
+│ 1. PLANNER             │ │ • Agent O (Orchestr) │
+│ 2. EXECUTER            │ │ • Agent D (Dev)      │
+│ 3. VERIFIER            │ │ • Agent R (Review)   │
+│ 4. TESTER              │ └──────────────────────┘
+│ 5. DOCUMENTER          │
+│ 6. UPDATER             │
+└─────────────────────────┘
+```
+
 ## 📁 What Gets Installed
 
 ```
@@ -81,6 +146,7 @@ your-project/
 - `/taskit` - Force phase-based execution
 - `/orchestrated` - Force simple workflow
 - `/planner` → `/executer` → `/verifier` → `/tester` → `/documenter` → `/updater` - Complete system
+- `/epct` - Explore, Plan, Code, Test workflow
 - `/help` - Show all commands
 
 ## 🧠 How It Works
@@ -102,20 +168,73 @@ ELIF complexity_score > 5 → Complete System
 ELSE → Orchestrated
 ```
 
+### Decision Matrix
+
+| Criteria | Complete System | Orchestrated |
+|----------|----------------|--------------|
+| Files affected | Multiple | Single |
+| Architecture changes | Yes | No |
+| Risk level | High | Low |
+| Time estimate | >30 min | <30 min |
+| Testing needs | Comprehensive | Basic |
+| Documentation | Extensive | Minimal |
+
+## 🛠️ Example Use Cases
+
+### Complex Task Example: E-commerce Checkout System
+```bash
+/planner "Design and implement a secure checkout flow with payment processing"
+# Creates detailed WORK.md with phases for:
+# - Payment gateway integration
+# - Security implementation
+# - User flow design
+# - Error handling
+# - Testing strategy
+
+/executer  # Implements based on Phase 1
+/verifier  # Ensures PCI compliance, security standards
+/tester    # Tests all payment scenarios
+/documenter # Captures payment patterns for reuse
+/updater   # Commits with detailed change log
+```
+
+### Simple Task Example: Add Loading Spinner
+```bash
+/orchestrated "Add loading spinner to data fetch operations"
+# Orchestrated workflow handles:
+# - Component creation
+# - Integration
+# - Basic testing
+# - Commit
+```
+
 ## 📚 Documentation
 
 - [Setup Guide](SETUP.md) - Detailed setup instructions
 - [Command Examples](commands/examples.md) - Real-world usage examples
 - [Phase-Based Workflow](phase-based-workflow/README.md) - Deep dive into phases
 - [System Overview](README-AGENT-SYSTEM.md) - Complete system documentation
+- **Complete System Guide**: See `complete-system/claude-agents-workflow.md` for detailed agent descriptions
+- **Setup Instructions**: Check `claude-code-setup-guide.md` for configuring Claude Code
+- **Workflow Selection**: Read `README-AGENT-SYSTEM.md` for detailed decision criteria
 
-## 🤝 Contributing
+## 🌍 Community and Contributing
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+This repository is a living collection of community wisdom from r/ClaudeAI. We welcome contributions that enhance these workflows or add new patterns.
+
+### How to Contribute
+1. Test your workflow patterns thoroughly
+2. Document with clear examples
+3. Follow existing formatting conventions
+4. Submit via pull request with detailed description
+5. Fork the repository
+6. Create your feature branch (`git checkout -b feature/amazing-feature`)
+7. Commit your changes (`git commit -m 'Add amazing feature'`)
+8. Push to the branch (`git push origin feature/amazing-feature`)
+9. Open a Pull Request
+
+### Credits
+Special thanks to the r/ClaudeAI Reddit community for developing and sharing these innovative approaches to working with Claude AI. This collection represents the collective intelligence of developers pushing the boundaries of AI-assisted development.
 
 ## 📄 License
 
@@ -126,6 +245,7 @@ This project is open source and available under the [MIT License](LICENSE).
 - Inspired by best practices in AI-assisted development
 - Built for the Claude Code community
 - Special thanks to all contributors
+- Special thanks to the r/ClaudeAI Reddit community for developing and sharing these innovative approaches
 
 ## 🔗 Links
 
@@ -133,6 +253,14 @@ This project is open source and available under the [MIT License](LICENSE).
 - [Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues)
 - [Discussions](https://github.com/Kasempiternal/Claude-Agent-System/discussions)
 
+## 🔄 Updates and Maintenance
+
+This repository is actively maintained and updated with new patterns as they emerge from the community. Check back regularly for new workflows and improvements.
+
 ---
+
+**Remember**: The goal is not just to code faster, but to code better. These workflows ensure quality, maintainability, and knowledge preservation while optimizing for the appropriate level of process overhead.
+
+*"Fix it right the first time"* - The guiding principle of the Claude Agent System
 
 **Made with ❤️ for better AI-assisted development**

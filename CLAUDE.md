@@ -1,9 +1,7 @@
 # CLAUDE.md - Claude Agent System
-
 This file provides project-specific guidance to Claude Code when working in this repository.
 
 ## Project Overview
-
 This is the Claude Agent System repository - a comprehensive multi-agent workflow system for structured development. 
 
 ## How to Use This System
@@ -51,13 +49,7 @@ Decomposes complex tasks into focused phases, reducing context usage by 60-80%.
 /orchestrated "implement simple feature"
 ```
 
-### Git Worktree Management
-```bash
-/create-worktree feature-name  # Creates new worktree and branch
-```
-
 ## Important Files
-
 - `README-AGENT-SYSTEM.md` - Main guide for choosing workflow complexity
 - `complete-system/` - Full six-agent workflow documentation
   - `claude-agents-workflow.md` - System overview
@@ -88,7 +80,6 @@ Before starting any task, assess its complexity:
 - Always follow the agent patterns exactly as documented
 - Run appropriate validation for the task complexity
 - Document learnings and patterns discovered
-- Use git worktrees for feature development
 
 ### Workflow Integration
 The agent system is designed to:
