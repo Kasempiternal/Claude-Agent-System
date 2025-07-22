@@ -154,6 +154,7 @@ This command integrates seamlessly with:
 - Existing agent workflows
 - Git worktree management
 - Project documentation standards
+- `ClaudeFiles/` directory structure for organized output
 
 ## Benefits
 

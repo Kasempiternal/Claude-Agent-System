@@ -1,5 +1,8 @@
 # /taskit - Phase-Based Task Execution System
 
+## IMPORTANT: File Organization
+**ALL phase-based workflow files MUST be created in the `ClaudeFiles/workflows/phase-based/` directory as defined in `CLAUDE-FILES-ORGANIZATION.md`. This is MANDATORY.**
+
 ## Overview
 
 The `/taskit` command implements a phase-based development approach that breaks complex tasks into focused phases, optimizing context usage and improving quality by allowing deep focus on each phase independently.
@@ -34,14 +37,14 @@ Instead of attempting to complete an entire complex task in one go (which can ov
 When invoked with `/taskit "your complex task"`, the system:
 - Analyzes the task requirements
 - Breaks it into 3-7 logical phases
-- Creates a `TASK-PLAN.md` file with detailed phase descriptions
+- Creates a `ClaudeFiles/workflows/phase-based/TASK-PLAN.md` file with detailed phase descriptions
 - Estimates complexity and time for each phase
 
 ### 2. Phase Execution
 For each phase:
 - Loads only relevant context for that phase
 - Executes with full focus on phase objectives
-- Documents outcomes and learnings
+- Documents outcomes and learnings in ClaudeFiles/workflows/phase-based/
 - Prepares handoff for next phase
 
 ### 3. Context Optimization
@@ -86,11 +89,13 @@ Phase 5: Integration & Testing
 
 ### Files Created
 
-1. **TASK-PLAN.md** - Master plan with all phases
-2. **phase-1-outcome.md** - Results from Phase 1
-3. **phase-2-outcome.md** - Results from Phase 2
+All phase-based workflow files are created in `ClaudeFiles/workflows/phase-based/`:
+
+1. **ClaudeFiles/workflows/phase-based/TASK-PLAN.md** - Master plan with all phases
+2. **ClaudeFiles/workflows/phase-based/phase-1-outcome.md** - Results from Phase 1
+3. **ClaudeFiles/workflows/phase-based/phase-2-outcome.md** - Results from Phase 2
 4. **...continuing for each phase**
-5. **TASK-SUMMARY.md** - Final summary and handoff
+5. **ClaudeFiles/workflows/phase-based/TASK-SUMMARY.md** - Final summary and handoff
 
 ### Phase Plan Template
 
@@ -154,7 +159,7 @@ Critical information for Phase [X+1]:
 def execute_taskit(task_description):
     # 1. Analyze and Plan
     phases = analyze_task_complexity(task_description)
-    create_task_plan(phases)
+    create_task_plan(phases)  # Creates in ClaudeFiles/workflows/phase-based/
     
     # 2. Execute Each Phase
     for phase in phases:
@@ -164,13 +169,13 @@ def execute_taskit(task_description):
         # Focused execution
         results = execute_phase(phase, context)
         
-        # Document outcomes
+        # Document outcomes in ClaudeFiles/workflows/phase-based/
         save_phase_outcome(phase, results)
         
         # Prepare handoff
         handoff = prepare_handoff(results)
         
-    # 3. Final Summary
+    # 3. Final Summary in ClaudeFiles/workflows/phase-based/
     create_task_summary(all_phase_outcomes)
 ```
 

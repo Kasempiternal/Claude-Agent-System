@@ -1,5 +1,8 @@
 # Multi-Agent Development Workflow: Orchestrated Dev-Review Cycles
 
+## IMPORTANT: File Organization
+**ALL workflow reports, summaries, and logs MUST be created in the `ClaudeFiles/workflows/` directory structure as defined in `CLAUDE-FILES-ORGANIZATION.md`. This is MANDATORY.**
+
 **Target:** $ARGUMENTS (Default: previous discussion results or current requirements)
 
 **Scope:** Deploy three specialized agents for coordinated development and review cycles in current directory
@@ -84,7 +87,8 @@
    - **Verify project builds successfully (if applicable)**
    - **If build fails: coordinate fix with Agent D and retry**
    - Validate final implementation state
-   - Generate completion report with cycle summary
+   - Generate completion report with cycle summary in ClaudeFiles/workflows/summaries/
+   - Save all logs to ClaudeFiles/workflows/logs/
    - Ensure all changes are committed and workspace is clean
 
 ## Workspace Management
@@ -138,6 +142,8 @@ Agent R → Agent O:
 ## Output Format
 
 ### Cycle Summary Report
+**File Location**: `ClaudeFiles/workflows/summaries/cycle-[timestamp].json`
+
 ```json
 {
   "working_directory": "string - current directory path",
@@ -159,6 +165,8 @@ Agent R → Agent O:
 ```
 
 ### Agent Interaction Log
+**File Location**: `ClaudeFiles/workflows/logs/[timestamp]-interaction.log`
+
 - Timestamped communication between agents
 - Decision rationale and feedback history
 - Code change tracking and review evolution
