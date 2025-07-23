@@ -72,10 +72,28 @@ cp -r "$TEMP_DIR/complete-system/"* "$CLAUDE_DIR/complete-system/" 2>/dev/null |
 cp -r "$TEMP_DIR/orchestrated-only/"* "$CLAUDE_DIR/orchestrated-only/" 2>/dev/null || true
 cp -r "$TEMP_DIR/phase-based-workflow/"* "$CLAUDE_DIR/phase-based-workflow/" 2>/dev/null || true
 
+# Copy Agent OS files if they exist
+if [ -d "$TEMP_DIR/.agent-os" ]; then
+    cp -r "$TEMP_DIR/.agent-os" "$CLAUDE_DIR/" 2>/dev/null || true
+    print_status "Agent OS files installed"
+fi
+
 # Copy important documentation files
 cp "$TEMP_DIR/README-AGENT-SYSTEM.md" "$CLAUDE_DIR/" 2>/dev/null || true
+cp "$TEMP_DIR/CLAUDE-FILES-ORGANIZATION.md" "$CLAUDE_DIR/" 2>/dev/null || true
+cp "$TEMP_DIR/setup-claudefiles.sh" "$CLAUDE_DIR/" 2>/dev/null || true
 
 print_status "Command files installed"
+
+# Run ClaudeFiles setup
+print_info "Setting up ClaudeFiles directory structure..."
+if [ -f "$CLAUDE_DIR/setup-claudefiles.sh" ]; then
+    chmod +x "$CLAUDE_DIR/setup-claudefiles.sh"
+    cd "$PROJECT_ROOT" && bash "$CLAUDE_DIR/setup-claudefiles.sh" > /dev/null 2>&1
+    print_status "ClaudeFiles directory structure created"
+else
+    print_info "ClaudeFiles setup script not found - manual setup may be required"
+fi
 
 # Create or update CLAUDE.md
 CLAUDE_MD_PATH="$PROJECT_ROOT/CLAUDE.md"
@@ -107,6 +125,12 @@ The system automatically selects the best approach:
 - **Complex tasks** → Uses complete 6-agent system
 - **Simple tasks** → Uses streamlined 3-agent workflow
 
+## File Organization
+
+This project uses the ClaudeFiles directory structure for all AI-generated content.
+All non-code files created by Claude agents will be organized in `ClaudeFiles/`.
+See `.claude/CLAUDE-FILES-ORGANIZATION.md` for details.
+
 ## Project-Specific Notes
 
 Add your project-specific guidelines below:
@@ -135,19 +159,37 @@ else
     echo -e "${NC}"
 fi
 
-# Add .claude to .gitignore if it doesn't exist
+# Add .claude and ClaudeFiles to .gitignore if they don't exist
 GITIGNORE_PATH="$PROJECT_ROOT/.gitignore"
 if [ -f "$GITIGNORE_PATH" ]; then
+    ADDED_ITEMS=false
+    
     if ! grep -q "^\.claude/$" "$GITIGNORE_PATH"; then
-        echo "" >> "$GITIGNORE_PATH"
-        echo "# Claude Agent System" >> "$GITIGNORE_PATH"
+        if [ "$ADDED_ITEMS" = false ]; then
+            echo "" >> "$GITIGNORE_PATH"
+            echo "# Claude Agent System" >> "$GITIGNORE_PATH"
+            ADDED_ITEMS=true
+        fi
         echo ".claude/" >> "$GITIGNORE_PATH"
         print_status "Added .claude to .gitignore"
     else
         print_info ".claude already in .gitignore"
     fi
+    
+    if ! grep -q "^ClaudeFiles/$" "$GITIGNORE_PATH"; then
+        if [ "$ADDED_ITEMS" = false ]; then
+            echo "" >> "$GITIGNORE_PATH"
+            echo "# Claude Agent System" >> "$GITIGNORE_PATH"
+        fi
+        echo "ClaudeFiles/" >> "$GITIGNORE_PATH"
+        echo "!ClaudeFiles/documentation/learnings/" >> "$GITIGNORE_PATH"
+        echo "!ClaudeFiles/documentation/project/" >> "$GITIGNORE_PATH"
+        print_status "Added ClaudeFiles to .gitignore"
+    else
+        print_info "ClaudeFiles already in .gitignore"
+    fi
 else
-    print_info "No .gitignore file found - consider adding .claude/ to version control exclusions"
+    print_info "No .gitignore file found - consider adding .claude/ and ClaudeFiles/ to version control exclusions"
 fi
 
 # Create a quick reference file
@@ -177,6 +219,12 @@ The system will automatically:
 /systemcc "refactor all API endpoints to use new pattern"
 ```
 
+## Auto-Adaptation
+
+- `/analyzecc` - Analyze project and adapt to your tech stack
+  - Auto-detects Python/AI, JavaScript/React, Ruby/Rails, etc.
+  - Updates all commands to match your project
+
 ## Manual Commands (Power Users)
 
 - `/taskit` - Force phase-based execution
@@ -187,6 +235,16 @@ The system will automatically:
 ## Context Management
 
 The system automatically detects when context is getting large and switches to phase-based execution to maintain quality.
+
+## File Organization
+
+All Claude-generated files are organized in the `ClaudeFiles/` directory:
+- `ClaudeFiles/documentation/` - All documentation
+- `ClaudeFiles/tests/` - Test results and bug reports
+- `ClaudeFiles/workflows/` - Workflow files and summaries
+- `ClaudeFiles/temp/` - Temporary working files
+
+See `.claude/CLAUDE-FILES-ORGANIZATION.md` for complete details.
 
 Happy coding! 🚀
 EOF
@@ -208,5 +266,6 @@ echo -e "${BLUE}Files created:${NC}"
 echo "  - $CLAUDE_DIR/ (command system)"
 echo "  - $CLAUDE_MD_PATH (project configuration)"
 echo "  - $CLAUDE_DIR/QUICK_START.md (quick reference)"
+echo "  - ClaudeFiles/ (organized output directory)"
 echo ""
 echo -e "${YELLOW}Tip:${NC} The system will automatically manage context and choose the best workflow for you!"

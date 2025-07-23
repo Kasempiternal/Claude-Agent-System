@@ -51,6 +51,16 @@ For complex tasks requiring thorough validation:
 
 ### 🔍 Other Commands
 
+#### `/analyzecc` - Auto-Adapt to Your Stack
+Analyzes your project and adapts the agent system to your tech stack.
+- Detects language, frameworks, and tools
+- Updates agent commands to match your stack
+- Perfect for Python AI/ML, React, Rails, etc.
+
+```bash
+/analyzecc
+```
+
 #### `/epct` - Explore, Plan, Code, Test
 For tasks requiring research and exploration.
 
@@ -90,9 +100,20 @@ See `/help examples` or check `commands/examples.md` for detailed scenarios.
 3. **Context getting large?** systemcc will detect and handle it
 4. **Power user?** Use specific commands directly
 
+## File Organization
+
+All Claude-generated files are automatically organized in the `ClaudeFiles/` directory:
+- `ClaudeFiles/documentation/` - Learnings, project docs, features
+- `ClaudeFiles/tests/` - Test results, bug reports, performance metrics
+- `ClaudeFiles/workflows/` - Task plans, phase outcomes, summaries
+- `ClaudeFiles/temp/` - Working files like WORK.md
+
+See `CLAUDE-FILES-ORGANIZATION.md` for complete details.
+
 ## Learn More
 
 - `commands/README.md` - Command overview
 - `commands/examples.md` - Detailed examples
 - `phase-based-workflow/README.md` - Phase-based methodology
 - `README-AGENT-SYSTEM.md` - Complete system guide
+- `CLAUDE-FILES-ORGANIZATION.md` - File organization system
