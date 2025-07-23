@@ -6,16 +6,19 @@
 
 ## All Available Commands
 
-### 🎯 Primary Commands
+### 🎯 Master Router
 
-#### `/systemcc` - Universal Entry Point (RECOMMENDED)
-Analyzes your task and automatically selects the optimal workflow.
-- Detects large contexts and routes to phase-based approach
-- Chooses between complete-system, orchestrated, or taskit
-- No manual decision needed
+#### `/systemcc` - Unified System Entry Point (RECOMMENDED)
+Intelligent router with Lyra AI optimization that selects the best workflow:
+- **Agent OS** - Project initialization and standards
+- **AI Dev Tasks** - PRD-based feature development
+- **Phase-Based** - Large context management
+- **Complete System** - 6-agent validation workflow
+- **Orchestrated** - Quick 3-agent execution
 
 ```bash
-/systemcc "implement user authentication"
+/systemcc "implement user authentication"  # Auto-selects workflow
+/systemcc --workflow=agetos "setup project"  # Force specific workflow
 ```
 
 #### `/taskit` - Phase-Based Execution
@@ -28,7 +31,31 @@ Breaks complex tasks into focused phases for optimal context management.
 /taskit "refactor entire payment system"
 ```
 
-### 🔧 Workflow Commands
+### 🚀 Specialized Workflows
+
+#### `/agetos` - Agent OS Project Standards
+Comprehensive project initialization and standardization.
+- Setup coding standards and conventions
+- Configure development tools and workflows
+- Establish team practices
+
+```bash
+/agetos init  # Full project setup
+/agetos analyze  # Analyze current state
+```
+
+#### `/aidevtasks` - PRD-Based Development
+Structured feature development with requirements.
+- Create Product Requirement Documents
+- Generate hierarchical task lists
+- Implement with approval checkpoints
+
+```bash
+/aidevtasks "build notification system"
+/aidevtasks create-prd "user dashboard"
+```
+
+### 🔧 Core Workflows
 
 #### `/orchestrated` - Streamlined 3-Agent Workflow
 Quick execution for simple tasks.
@@ -49,7 +76,17 @@ For complex tasks requiring thorough validation:
 5. `/documenter` - Documentation
 6. `/updater` - Version control
 
-### 🔍 Other Commands
+### 🛠️ Direct Agent Access
+
+For power users who want specific agents:
+- `/planner` - Start complete system workflow
+- `/executer` - Continue after planner
+- `/verifier` - Run quality checks
+- `/tester` - Execute tests
+- `/documenter` - Update documentation
+- `/updater` - Handle version control
+
+### 🔍 Utility Commands
 
 #### `/analyzecc` - Auto-Adapt to Your Stack
 Analyzes your project and adapts the agent system to your tech stack.
@@ -72,13 +109,17 @@ Creates new branch in separate worktree.
 ```
 Don't know which to use?
     ↓
-Use /systemcc - it decides for you!
+Use /systemcc - it intelligently routes for you!
 
-Manual selection:
-- Very complex (1hr+) → /taskit
-- Complex → /planner (complete system)
-- Simple → /orchestrated
-- Need research → /epct
+Automatic routing:
+- Project setup → Agent OS (/agetos)
+- Feature building → AI Dev Tasks (/aidevtasks) 
+- Large context → Phase-based (/taskit)
+- Complex validation → Complete system
+- Quick fixes → Orchestrated
+
+Manual override:
+/systemcc --workflow=[agetos|aidevtasks|taskit|complete|orchestrated]
 ```
 
 ## Context Management
@@ -93,12 +134,28 @@ Manual selection:
 
 See `/help examples` or check `commands/examples.md` for detailed scenarios.
 
+## 🎯 Key Features
+
+### Universal Lyra Optimization
+ALL commands now use AI prompt enhancement:
+- Transforms vague requests into detailed specs
+- Ensures complete code delivery
+- Optimizes for each workflow type
+
+### Intelligent Routing
+`/systemcc` analyzes:
+- Task complexity and type
+- Current context size
+- Project characteristics
+- Best workflow selection
+
 ## Tips
 
-1. **Always start with `/systemcc`** unless you have specific needs
-2. **Large codebase?** Let systemcc route to taskit automatically
-3. **Context getting large?** systemcc will detect and handle it
-4. **Power user?** Use specific commands directly
+1. **Always start with `/systemcc`** for intelligent routing
+2. **Building features?** Let it route to AI Dev Tasks
+3. **New project?** It'll suggest Agent OS
+4. **Large context?** Automatic phase-based execution
+5. **Know what you want?** Use direct commands
 
 ## File Organization
 

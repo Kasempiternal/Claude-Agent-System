@@ -21,13 +21,24 @@ Just describe what you want to build - the system handles the rest:
 ```bash
 /systemcc "implement user authentication with JWT"
 ```
+**NEW**: Now with Lyra AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
+
+### 🪄 Specialized Workflows Now Integrated
+
+**Agent OS** - Professional project setup:
+```bash
+/agetos init  # Complete project initialization
+```
+
+**AI Dev Tasks** - Build features with PRDs:
+```bash
+/aidevtasks "build notification system"  # Structured development
+```
 
 ### 🔍 Auto-Adaptation: `/analyzecc`
-Automatically detects and adapts to your tech stack:
+Detects and adapts to your tech stack:
 ```bash
-/analyzecc
-# Detects Python/AI, JavaScript/React, Ruby/Rails, etc.
-# Updates all commands to match your project
+/analyzecc  # Auto-configures for your language/framework
 ```
 
 ### 📊 Intelligent Workflow Selection

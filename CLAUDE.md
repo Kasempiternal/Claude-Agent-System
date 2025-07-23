@@ -6,27 +6,49 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
 
 ## How to Use This System
 
-### Quick Start
-1. **NEW - Recommended**: Use `/systemcc "your task"` for automatic workflow selection
-2. **For very complex tasks**: Use `/taskit "your task"` for phase-based execution
-3. **Manual selection**:
-   - **For complex tasks**: Use the complete-system workflow (`/planner`, `/executer`, etc.)
-   - **For simple tasks**: Use the orchestrated workflow (`/orchestrated`)
+### Quick Start - Unified System
+1. **ALWAYS START WITH**: `/systemcc "your task"` - Intelligent routing with Lyra AI optimization
+2. **Direct Access** (when you know what you need):
+   - `/agetos` - Project initialization and standards
+   - `/aidevtasks` - PRD-based feature development
+   - `/taskit` - Phase-based execution for large contexts
+   - `/orchestrated` - Quick 3-agent workflow
+   - `/planner` - Start complete 6-agent system
 
-### Workflow Files Location
-- **Complete System**: `complete-system/` directory contains all agent documentation
-- **Orchestrated Only**: `orchestrated-only/` directory contains streamlined workflow
-- **Phase-Based Workflow**: `phase-based-workflow/` directory contains task decomposition system
-- **Commands**: `commands/` directory contains all command implementations
-- **Git Workflows**: `create-worktree.md` and `wt-alias-setup.md` for branch management
+### Unified System Structure
+- **Middleware**: `middleware/` - Universal Lyra AI optimization
+- **Workflows**: `workflows/` - All workflow implementations
+  - `agent-os/` - Project initialization framework
+  - `ai-dev-tasks/` - PRD-based development
+  - `complete-system/` - Six-agent validation workflow
+  - `orchestrated-only/` - Streamlined three-agent workflow
+  - `phase-based-workflow/` - Context-optimized execution
+- **Commands**: `commands/` - All command entry points
+- **Git Workflows**: `create-worktree.md` and `wt-alias-setup.md`
 
-## Agent System Commands
+## Unified System Commands
 
-### NEW: Unified System Command
+### NEW: Agent OS Integration
 ```bash
-/systemcc "describe your task"  # Auto-selects appropriate workflow
+/agetos init                    # Initialize project with best practices
+/agetos analyze                 # Analyze current project state
+/agetos standards               # Apply coding standards
 ```
-Automatically analyzes task complexity and chooses between complete-system or orchestrated workflow.
+
+### NEW: AI Dev Tasks Integration  
+```bash
+/aidevtasks "build feature"     # Start with PRD creation
+/aidevtasks create-prd          # Create Product Requirements
+/aidevtasks generate-tasks      # Generate task hierarchy
+/aidevtasks process-tasks       # Execute with checkpoints
+```
+
+### Master Router with Universal AI Optimization
+```bash
+/systemcc "describe your task"  # Intelligent routing to any workflow
+/systemcc --workflow=agetos "setup standards"  # Force specific workflow
+```
+**ALL commands now use Lyra AI optimization** - Every prompt is enhanced before execution, ensuring complete specifications and optimal results.
 
 ### NEW: Phase-Based Task Execution
 ```bash
@@ -50,25 +72,26 @@ Decomposes complex tasks into focused phases, reducing context usage by 60-80%.
 ```
 
 ## Important Files
-- `CLAUDE-FILES-ORGANIZATION.md` - **MANDATORY file organization for all Claude-generated files**
-- `README-AGENT-SYSTEM.md` - Main guide for choosing workflow complexity
-- `complete-system/` - Full six-agent workflow documentation
-  - `claude-agents-workflow.md` - System overview
-  - `planner-agent.md` - Strategic planning
-  - `executer-agent.md` - Implementation
-  - `verifier-agent.md` - Quality assurance
-  - `tester-agent.md` - Testing protocols
-  - `documenter-agent.md` - Documentation patterns
-- `orchestrated-only/m-orchestrated-dev.md` - Streamlined workflow
-- `phase-based-workflow/` - Phase-based task execution
-  - `README.md` - Comprehensive guide to phase-based development
-  - `taskit.md` - Technical implementation details
-- `commands/` - Command implementations
-  - `systemcc.md` - Unified system command
-  - `taskit.md` - Phase-based execution command
-  - `examples.md` - Usage examples and scenarios
-- `create-worktree.md` - Git worktree workflow
-- `wt-alias-setup.md` - Bash alias configuration
+
+### Core System Files
+- `CLAUDE-FILES-ORGANIZATION.md` - **MANDATORY file organization**
+- `middleware/lyra-universal.md` - Universal AI prompt optimization
+
+### Workflow Documentation
+- `workflows/agent-os/` - Project initialization system
+- `workflows/ai-dev-tasks/` - PRD-based development
+  - `create-prd.md` - PRD generation process
+  - `generate-tasks.md` - Task list creation
+  - `process-task-list.md` - Task execution
+- `workflows/complete-system/` - Six-agent validation
+- `workflows/orchestrated-only/` - Three-agent streamlined
+- `workflows/phase-based-workflow/` - Context management
+
+### Command References
+- `commands/systemcc.md` - Master router documentation
+- `commands/agetos.md` - Agent OS commands
+- `commands/aidevtasks.md` - PRD workflow commands
+- `commands/help.md` - Complete command reference
 
 ## File Organization System
 
