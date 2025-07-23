@@ -1,17 +1,21 @@
-# /systemcc - Unified Claude Code System Command with AI Prompt Optimization
+# /systemcc - Master Router for Unified Claude Agent System
 
 ## Purpose
-The `/systemcc` command is a unified entry point that first optimizes your prompt using Lyra (AI prompt specialist), then automatically analyzes task complexity and selects the appropriate workflow - either the complete six-agent system or the streamlined orchestrated workflow.
+The `/systemcc` command is the master router that:
+1. Optimizes all prompts using Lyra universal middleware
+2. Intelligently routes to the most appropriate subsystem
+3. Provides access to all workflows: Agent OS, AI Dev Tasks, Complete System, Orchestrated, and Phase-based
+4. Allows manual workflow selection when needed
 
 ## How It Works
 
 When you use `/systemcc "your task description"`, the system will:
 
-1. **Optimize Your Prompt with Lyra** (NEW FIRST STEP):
+1. **Universal Lyra Optimization**:
+   - Apply Lyra middleware from `middleware/lyra-universal.md`
    - Transform vague requests into precision-crafted prompts
-   - Apply 4-D methodology: Deconstruct, Diagnose, Develop, Deliver
-   - Ensure complete code delivery specifications
-   - Leverage Claude Code's project context awareness
+   - Generate complexity score and workflow suggestions
+   - Ensure complete specifications for any workflow
 
 2. **Analyze Context Size** (HIGHEST PRIORITY):
    - Current conversation token count
@@ -26,23 +30,37 @@ When you use `/systemcc "your task description"`, the system will:
    - Required validation depth
 
 4. **Auto-Select Workflow**:
+   - **Agent OS (/agetos)** for project initialization and standards
+   - **AI Dev Tasks (/aidevtasks)** for PRD-based feature development
    - **Phase-Based (/taskit)** for large contexts or complex multi-hour tasks
-   - **Complete System** for complex, multi-phase tasks
+   - **Complete System** for complex, multi-phase validation tasks
    - **Orchestrated-Only** for simpler, focused tasks
 
 5. **Execute Selected Workflow** with optimized prompt and appropriate configuration
 
 ## Usage
 
+### Basic Usage
 ```bash
-/systemcc "implement user authentication with JWT tokens"
-# Analyzes: Multi-file, security-critical → Selects Complete System
+/systemcc "your task description"
+```
 
-/systemcc "fix typo in header component"  
-# Analyzes: Single file, low risk → Selects Orchestrated-Only
+### Force Specific Workflow
+```bash
+/systemcc --workflow=agetos "setup project standards"
+/systemcc --workflow=aidevtasks "build user dashboard feature"
+/systemcc --workflow=taskit "refactor entire application"
+/systemcc --workflow=complete "implement payment system"
+/systemcc --workflow=orchestrated "fix button styling"
+```
 
-/systemcc "refactor entire data layer to use Redux Toolkit"
-# Analyzes: Architecture change, high risk → Selects Complete System
+### Direct Subsystem Access
+```bash
+/agetos init                    # Initialize Agent OS directly
+/aidevtasks create-prd          # Start PRD workflow directly
+/taskit "large refactoring"     # Use phase-based directly
+/planner "complex feature"      # Start complete system directly
+/orchestrated "simple fix"      # Use streamlined workflow directly
 ```
 
 ## Lyra Prompt Optimization (First Step)
@@ -154,15 +172,30 @@ When this command is invoked:
    - Estimate time requirements
    ```
 
-4. **Decision Matrix**:
+4. **Enhanced Decision Matrix**:
    ```
+   Agent OS (/agetos) Indicators:
+   - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
+   - New project initialization
+   - Coding standards establishment
+   - Development workflow setup
+   - Tool configuration
+   - Team conventions
+   
+   AI Dev Tasks (/aidevtasks) Indicators:
+   - Keywords: "build feature", "create system", "product", "user story"
+   - Feature development from scratch
+   - Complex user-facing functionality
+   - Needs detailed requirements
+   - Benefits from PRD approach
+   - Multi-component features
+   
    Phase-Based (/taskit) Indicators:
    - Context already > 30,000 tokens
    - More than 10 files loaded
    - Project has 100+ files
    - Task touches 5+ modules
    - Estimated time > 60 minutes
-   - Multiple system integrations
    - Keywords: "entire", "all", "across", "throughout", "migrate"
    
    Complete System Indicators:
@@ -170,8 +203,8 @@ When this command is invoked:
    - Multi-system integration (< 5 modules)
    - Database schema changes
    - API design changes
-   - Cross-functional features
    - High-risk modifications
+   - Needs thorough validation
    
    Orchestrated-Only Indicators:
    - Keywords: "fix", "update", "tweak", "adjust", "simple"
@@ -179,14 +212,22 @@ When this command is invoked:
    - UI text updates
    - Configuration changes
    - Style adjustments
-   - Small context footprint
+   - Bug fixes
    ```
 
 5. **Execute Workflow** (With Optimized Prompt):
    ```
    # Note: {optimized_prompt} is the Lyra-enhanced version
    
-   IF context_size > 30000 OR predicted_context_large:
+   IF forced_workflow:
+     Execute: /{forced_workflow} "{optimized_prompt}"
+   ELIF detected_type == 'project_setup':
+     Execute: /agetos "{optimized_prompt}"
+     Reason: "Project initialization and standards"
+   ELIF detected_type == 'feature_development':
+     Execute: /aidevtasks create-prd "{optimized_prompt}"
+     Reason: "Complex feature benefits from PRD approach"
+   ELIF context_size > 30000 OR predicted_context_large:
      Execute: /taskit "{optimized_prompt}"
      Reason: "Large context requires phase-based approach"
    ELIF estimated_time > 60_minutes:
@@ -202,65 +243,123 @@ When this command is invoked:
 ## Context-Aware Scoring Algorithm
 
 ```python
-def analyze_for_workflow_selection(task_description, context_info):
-    # PRIORITY 1: Context-based routing
+def analyze_for_workflow_selection(task_description, context_info, lyra_metadata):
+    # Use Lyra universal middleware first
+    lyra_result = lyra_optimize({
+        'command': 'systemcc',
+        'prompt': task_description,
+        'context': context_info
+    })
+    
+    # Check for forced workflow
+    if '--workflow=' in task_description:
+        workflow = extract_workflow_flag(task_description)
+        return (workflow, 'User specified workflow')
+    
+    # PRIORITY 1: Task type detection
+    # Agent OS detection
+    agetos_keywords = ['setup', 'initialize', 'standards', 'conventions', 
+                      'project structure', 'coding style', 'team practices']
+    if any(keyword in task_description.lower() for keyword in agetos_keywords):
+        return ('agetos', 'Project initialization and standards')
+    
+    # AI Dev Tasks detection
+    aidevtasks_keywords = ['build feature', 'create system', 'product requirement',
+                          'user story', 'new functionality', 'from scratch']
+    if any(keyword in task_description.lower() for keyword in aidevtasks_keywords):
+        return ('aidevtasks', 'Feature development with PRD approach')
+    
+    # PRIORITY 2: Context-based routing
     if context_info['current_tokens'] > 30000:
         return ('taskit', 'Context size exceeds optimal threshold')
     
     if context_info['loaded_files'] > 10:
         return ('taskit', 'Too many files in context')
     
-    if context_info['project_files'] > 100 and mentions_cross_cutting_changes(task):
-        return ('taskit', 'Large project with broad changes')
+    # PRIORITY 3: Complexity from Lyra metadata
+    complexity = lyra_result.metadata.complexity_score
     
-    # PRIORITY 2: Time/complexity routing
-    estimated_time = estimate_task_duration(task_description)
-    if estimated_time > 60:
-        return ('taskit', 'Complex task requiring phases')
-    
-    # PRIORITY 3: Standard complexity scoring
-    score = 0
-    
-    # Check for complex keywords (+2 each)
-    complex_keywords = ["architecture", "refactor", "security", "performance", 
-                       "migration", "integration", "system", "database", "api"]
-    
-    # Check for simple keywords (-1 each)
-    simple_keywords = ["fix", "typo", "update", "tweak", "adjust", "simple",
-                      "minor", "small", "quick"]
-    
-    # Scope and risk assessment
-    if mentions_multiple_files: score += 3
-    if mentions_testing_required: score += 2
-    if involves_auth_or_security: score += 5
-    if involves_data_layer: score += 3
-    
-    # Decision
-    if score > 5:
-        return ('complete_system', 'Complex task requiring full validation')
+    if complexity >= 9:
+        return ('taskit', 'Very complex task requiring phases')
+    elif complexity >= 7:
+        return ('aidevtasks', 'Complex feature needing PRD')
+    elif complexity >= 5:
+        return ('complete_system', 'Multi-step task with validation')
     else:
-        return ('orchestrated', 'Simple task suitable for streamlined workflow')
+        return ('orchestrated', 'Simple task for quick execution')
 ```
 
-## Integration with Existing System
+## Integration with Unified System
 
-This command integrates seamlessly with:
-- `README-AGENT-SYSTEM.md` guidelines
-- Existing agent workflows
-- Git worktree management
-- Project documentation standards
-- `ClaudeFiles/` directory structure for organized output
+This master router integrates all subsystems:
 
-## Benefits
+### Workflows Available
+1. **Agent OS** (`workflows/agent-os/`) - Project initialization and standards
+2. **AI Dev Tasks** (`workflows/ai-dev-tasks/`) - PRD-based development
+3. **Complete System** (`workflows/complete-system/`) - 6-agent validation
+4. **Orchestrated** (`workflows/orchestrated-only/`) - Streamlined execution
+5. **Phase-Based** (`workflows/phase-based-workflow/`) - Context management
 
-1. **Eliminates Manual Decision** - No need to read README-AGENT-SYSTEM.md each time
-2. **Optimizes Resource Usage** - Uses lighter workflow when appropriate
-3. **Maintains Quality** - Always applies the right level of validation
-4. **Speeds Development** - Reduces decision overhead
+### Universal Components
+- **Lyra Middleware** (`middleware/lyra-universal.md`) - Applied to all commands
+- **ClaudeFiles Organization** - Unified output structure
+- **Git Integration** - Consistent across all workflows
+
+### Direct Access Commands
+While `/systemcc` provides intelligent routing, users can directly access:
+- `/agetos` - Agent OS workflow
+- `/aidevtasks` - PRD-based development
+- `/taskit` - Phase-based execution
+- `/planner` - Complete system start
+- `/orchestrated` - Streamlined workflow
+
+## Benefits of Unified System
+
+1. **Universal Prompt Optimization** - Lyra enhances all commands
+2. **Intelligent Routing** - Automatically selects best workflow
+3. **Complete Integration** - Access to all tools from one command
+4. **Flexibility** - Force specific workflows when needed
+5. **Backward Compatible** - All existing commands still work
+6. **Context Aware** - Manages large codebases efficiently
+7. **Quality First** - Right validation level for each task
 
 ## Examples
 
-### Example 1: Large Context Detection
+### Example 1: Agent OS Detection
+```
+User: /systemcc "setup coding standards for our Python project"
+
+Step 1 - Lyra Universal Optimization:
+Original: "setup coding standards for our Python project"
+Optimized: "Initialize comprehensive coding standards for Python project including: Black formatter configuration, Flake8 linting rules with custom exceptions, pre-commit hooks for code quality, pytest configuration with coverage requirements, type checking with mypy, documentation standards with docstring conventions, and CI/CD integration. Create team-specific style guide aligned with PEP 8."
+
+Step 2 - Workflow Detection:
+- Keywords detected: "setup", "standards"
+- Project initialization task identified
+→ Routing to Agent OS workflow
+
+Executing: /agetos "[optimized prompt]"
+Reason: Project standards and initialization
+```
+
+### Example 2: AI Dev Tasks Detection
+```
+User: /systemcc "build a user dashboard with analytics"
+
+Step 1 - Lyra Universal Optimization:
+Original: "build a user dashboard with analytics"
+Optimized: "Build comprehensive user dashboard feature with real-time analytics. Requirements: 1) Dashboard layout with customizable widgets, 2) Analytics visualizations using Chart.js for metrics like user activity, revenue, engagement, 3) Date range filtering, 4) Export functionality for reports, 5) Responsive design for mobile/tablet, 6) Performance: <2s load time with lazy loading, 7) Role-based widget visibility. Deliver complete frontend components and backend APIs with tests."
+
+Step 2 - Workflow Detection:
+- Keywords detected: "build feature", "dashboard"
+- Complex user-facing feature identified
+→ Routing to AI Dev Tasks for PRD approach
+
+Executing: /aidevtasks create-prd "[optimized prompt]"
+Reason: Complex feature benefits from PRD-based development
+```
+
+### Example 3: Large Context Detection
 ```
 User: /systemcc "refactor authentication across all services"
 
@@ -320,18 +419,37 @@ Step 3 - Task Analysis:
 Executing: /orchestrated "[optimized prompt]"
 ```
 
-### Example 4: Growing Context Trigger
+### Example 6: Growing Context Trigger
 ```
 User: /systemcc "add export functionality to all data tables"
 
-Context Analysis:
+Step 1 - Lyra Universal Optimization:
+Original: "add export functionality to all data tables"
+Optimized: "Add comprehensive export functionality to all data tables across the application. Requirements: 1) Support formats: CSV, Excel, PDF, JSON, 2) Handle large datasets with streaming, 3) Preserve formatting and filters, 4) Include column selection UI, 5) Background job processing for large exports, 6) Email delivery option, 7) Apply to all existing table components. Maintain consistent UX across all tables."
+
+Step 2 - Context Analysis:
 - Current context: 28,000 tokens (near limit)
 - Task touches 8 different modules ✓
 - Predicted final context: 50,000+ tokens ✓
 → Using Phase-Based Approach to prevent context overload
 
-Executing: /taskit "add export functionality to all data tables"
+Executing: /taskit "[optimized prompt]"
 Reason: Predicted context growth requires phases
+```
+
+### Example 7: Forced Workflow Selection
+```
+User: /systemcc --workflow=complete "add user preferences"
+
+Step 1 - Lyra Universal Optimization:
+[Optimization happens regardless of forced workflow]
+
+Step 2 - Workflow Detection:
+- Forced workflow flag detected: --workflow=complete
+→ Bypassing auto-detection
+
+Executing: /planner "[optimized prompt]"
+Reason: User specified complete system workflow
 ```
 
 ## Error Handling

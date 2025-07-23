@@ -7,6 +7,14 @@ Execute complex tasks using phase-based development for optimal context usage an
 
 Execute the following workflow when the user types `/taskit "task description"`:
 
+### 0. Lyra Universal Optimization
+
+**First, optimize the prompt using Lyra middleware:**
+- Apply `middleware/lyra-universal.md` to enhance the task description
+- Transform vague requests into detailed specifications
+- Ensure completeness for phase-based execution
+- Use the optimized prompt for all subsequent phases
+
 ### 1. Task Analysis Phase
 
 **Analyze the task and create a phase plan:**
