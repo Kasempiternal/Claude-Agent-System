@@ -1,30 +1,36 @@
-# /systemcc - Unified Claude Code System Command
+# /systemcc - Unified Claude Code System Command with AI Prompt Optimization
 
 ## Purpose
-The `/systemcc` command is a unified entry point that automatically analyzes your task complexity and selects the appropriate workflow - either the complete six-agent system or the streamlined orchestrated workflow.
+The `/systemcc` command is a unified entry point that first optimizes your prompt using Lyra (AI prompt specialist), then automatically analyzes task complexity and selects the appropriate workflow - either the complete six-agent system or the streamlined orchestrated workflow.
 
 ## How It Works
 
 When you use `/systemcc "your task description"`, the system will:
 
-1. **Analyze Context Size** (HIGHEST PRIORITY):
+1. **Optimize Your Prompt with Lyra** (NEW FIRST STEP):
+   - Transform vague requests into precision-crafted prompts
+   - Apply 4-D methodology: Deconstruct, Diagnose, Develop, Deliver
+   - Ensure complete code delivery specifications
+   - Leverage Claude Code's project context awareness
+
+2. **Analyze Context Size** (HIGHEST PRIORITY):
    - Current conversation token count
    - Number of files already loaded
    - Project size and complexity
    - Predicted context growth
 
-2. **Analyze Task Complexity**:
+3. **Analyze Task Complexity**:
    - Scope of changes (single file vs multi-file)
    - Type of task (bug fix, feature, architecture change)
    - Risk level and dependencies
    - Required validation depth
 
-3. **Auto-Select Workflow**:
+4. **Auto-Select Workflow**:
    - **Phase-Based (/taskit)** for large contexts or complex multi-hour tasks
    - **Complete System** for complex, multi-phase tasks
    - **Orchestrated-Only** for simpler, focused tasks
 
-4. **Execute Selected Workflow** with appropriate configuration
+5. **Execute Selected Workflow** with optimized prompt and appropriate configuration
 
 ## Usage
 
@@ -39,11 +45,98 @@ When you use `/systemcc "your task description"`, the system will:
 # Analyzes: Architecture change, high risk → Selects Complete System
 ```
 
+## Lyra Prompt Optimization (First Step)
+
+When `/systemcc` is invoked, Lyra first optimizes the user's prompt using the 4-D methodology:
+
+### The 4-D Methodology for Claude Code
+
+1. **DECONSTRUCT**
+   - Extract coding intent, feature requirements, and technical context
+   - Identify implementation scope and code deliverables needed
+   - Map existing codebase knowledge vs. new requirements
+
+2. **DIAGNOSE**
+   - Audit for technical clarity and specification gaps
+   - Check implementation completeness and constraint clarity
+   - Assess complexity for single vs. multi-agent approach
+
+3. **DEVELOP**
+   - Select optimal techniques based on request type:
+     - Bug Fixes → Precise error context + systematic debugging
+     - Feature Development → Clear requirements + implementation scope
+     - Refactoring → Architecture goals + code quality standards
+     - UI/UX → Design principles + user experience objectives
+   - Assign appropriate developer expertise level
+   - Structure for Claude Code's agentic capabilities
+
+4. **DELIVER**
+   - Construct development-focused prompt
+   - Specify complete code delivery expectations
+   - Provide implementation and testing guidance
+
+### Optimization Techniques
+- **Foundation**: Developer role assignment, technical context, deliverable specs, implementation scope
+- **Advanced**: Multi-agent workflows, systematic debugging, architecture planning, code quality frameworks
+- **Claude Code Specific**:
+  - Leverage existing project context awareness
+  - Specify complete code delivery (never partial implementations)
+  - Structure multi-step development processes
+  - Enable parallel agent generation when beneficial
+
+### Auto-Detection Logic
+```python
+def detect_prompt_mode(task_description):
+    # Simple fixes/features → BASIC mode
+    if is_simple_task(task_description):
+        return "BASIC"
+    # Complex architecture/multi-component → DETAIL mode
+    elif is_complex_task(task_description):
+        return "DETAIL"
+    else:
+        # Inform user with override option
+        return prompt_user_for_mode()
+```
+
+### Lyra Response Formats
+
+**For Simple Tasks (BASIC mode):**
+```
+**Your Optimized Prompt:**
+[Development-focused prompt with specific requirements]
+
+**What Changed:** [Key technical improvements made]
+```
+
+**For Complex Tasks (DETAIL mode):**
+```
+**Your Optimized Prompt:**
+[Comprehensive development prompt with detailed specifications]
+
+**Key Improvements:**
+- [Technical clarity enhancements]
+- [Specification additions]
+- [Context leveraging]
+
+**Techniques Applied:** [Development methodologies used]
+
+**Pro Tip:** [Claude Code specific guidance]
+```
+
 ## Implementation Instructions
 
 When this command is invoked:
 
-1. **Context Analysis** (First Priority):
+1. **Prompt Optimization with Lyra**:
+   ```
+   - Analyze user's raw prompt
+   - Apply 4-D methodology (Deconstruct, Diagnose, Develop, Deliver)
+   - Auto-detect complexity for BASIC or DETAIL mode
+   - Transform into precision-crafted development prompt
+   - Present optimized prompt to user
+   ```
+
+2. **Context Analysis** (Second Priority):
    ```
    - Check current context size (tokens)
    - Count loaded files and their sizes
@@ -52,16 +145,16 @@ When this command is invoked:
    - Predict context growth for the task
    ```
 
-2. **Task Analysis**:
+3. **Task Analysis** (Using Optimized Prompt):
    ```
-   - Parse the task description
+   - Parse the optimized task description
    - Check for keywords indicating complexity
    - Evaluate scope indicators
    - Consider risk factors
    - Estimate time requirements
    ```
 
-3. **Decision Matrix**:
+4. **Decision Matrix**:
    ```
    Phase-Based (/taskit) Indicators:
    - Context already > 30,000 tokens
@@ -89,19 +182,21 @@ When this command is invoked:
    - Small context footprint
    ```
 
-4. **Execute Workflow**:
+5. **Execute Workflow** (With Optimized Prompt):
    ```
+   # Note: {optimized_prompt} is the Lyra-enhanced version
+   
    IF context_size > 30000 OR predicted_context_large:
-     Execute: /taskit "{task_description}"
+     Execute: /taskit "{optimized_prompt}"
      Reason: "Large context requires phase-based approach"
    ELIF estimated_time > 60_minutes:
-     Execute: /taskit "{task_description}"
+     Execute: /taskit "{optimized_prompt}"
      Reason: "Complex task benefits from phase decomposition"
    ELIF complexity_score > 5:
-     Execute: /planner "{task_description}"
+     Execute: /planner "{optimized_prompt}"
      Follow with: /executer, /verifier, /tester, /documenter, /updater
    ELSE:
-     Execute: /orchestrated "{task_description}"
+     Execute: /orchestrated "{optimized_prompt}"
    ```
 
 ## Context-Aware Scoring Algorithm
@@ -169,13 +264,17 @@ This command integrates seamlessly with:
 ```
 User: /systemcc "refactor authentication across all services"
 
-Context Analysis:
+Step 1 - Lyra Prompt Optimization:
+Original: "refactor authentication across all services"
+Optimized: "As a senior fullstack engineer, refactor the authentication system across all microservices to implement OAuth 2.0 with JWT tokens. Requirements: 1) Maintain backward compatibility during migration, 2) Implement centralized auth service, 3) Update all service endpoints with new auth middleware, 4) Add comprehensive tests for auth flows. Deliver complete, production-ready code with proper error handling and logging."
+
+Step 2 - Context Analysis:
 - Current context: 42,000 tokens ✓
 - Project size: 250+ files ✓
 - Cross-cutting changes ✓
 → Using Phase-Based Approach for optimal context management
 
-Executing: /taskit "refactor authentication across all services"
+Executing: /taskit "[optimized prompt]"
 Reason: Large context requires phase decomposition
 ```
 
@@ -183,34 +282,42 @@ Reason: Large context requires phase decomposition
 ```
 User: /systemcc "implement real-time chat with WebSocket support"
 
-Context Analysis:
+Step 1 - Lyra Prompt Optimization:
+Original: "implement real-time chat with WebSocket support"
+Optimized: "As a senior fullstack developer, implement a production-ready real-time chat system using WebSocket. Requirements: 1) Client-side: React component with message UI, typing indicators, online status, 2) Server-side: WebSocket server with Socket.io, message persistence, room management, 3) Features: 1-to-1 and group chat, message history, reconnection handling, 4) Security: Authentication, rate limiting, input sanitization. Deliver complete implementation with both frontend and backend code, including error handling and tests."
+
+Step 2 - Context Analysis:
 - Current context: 8,000 tokens
 - Estimated duration: 45 minutes
 
-Task Analysis:
+Step 3 - Task Analysis:
 - Multi-file changes required ✓
 - New technology integration ✓
 - Security considerations ✓
 → Selecting Complete System Workflow
 
-Executing: /planner "implement real-time chat with WebSocket support"
+Executing: /planner "[optimized prompt]"
 ```
 
 ### Example 3: Simple Task (Any Context)
 ```
 User: /systemcc "update button color to match new brand guidelines"
 
-Context Analysis:
+Step 1 - Lyra Prompt Optimization (BASIC mode detected):
+Original: "update button color to match new brand guidelines"
+Optimized: "Update all button components to use the new brand color palette. Primary buttons: #007AFF, Secondary: #5856D6, Destructive: #FF3B30. Ensure proper hover states, disabled states, and maintain WCAG AA contrast ratios. Update any related CSS variables and theme configurations."
+
+Step 2 - Context Analysis:
 - Task scope: Single file
 - No context accumulation
 
-Task Analysis:
+Step 3 - Task Analysis:
 - Style-only modification ✓
 - Low risk ✓
 - Minimal testing ✓
 → Selecting Orchestrated-Only Workflow
 
-Executing: /orchestrated "update button color to match new brand guidelines"
+Executing: /orchestrated "[optimized prompt]"
 ```
 
 ### Example 4: Growing Context Trigger

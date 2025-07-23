@@ -21,6 +21,7 @@ Just describe what you want to build - the system handles the rest:
 ```bash
 /systemcc "implement user authentication with JWT"
 ```
+**NEW**: Now with Lyra AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
 
 ### 🔍 Auto-Adaptation: `/analyzecc`
 Automatically detects and adapts to your tech stack:

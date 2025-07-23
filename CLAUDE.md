@@ -22,11 +22,11 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
 
 ## Agent System Commands
 
-### NEW: Unified System Command
+### NEW: Unified System Command with AI Optimization
 ```bash
-/systemcc "describe your task"  # Auto-selects appropriate workflow
+/systemcc "describe your task"  # Optimizes prompt & auto-selects workflow
 ```
-Automatically analyzes task complexity and chooses between complete-system or orchestrated workflow.
+First optimizes your prompt using Lyra (AI specialist), then analyzes task complexity and chooses between complete-system or orchestrated workflow.
 
 ### NEW: Phase-Based Task Execution
 ```bash
