@@ -56,7 +56,7 @@
 
 3. **Development Cycle (Agent D)**
    - Implement features according to specifications in current directory
-   - Write tests and documentation as needed
+   - Write documentation as needed
    - Commit changes with descriptive messages
    - Signal completion to Orchestrator
 

@@ -62,7 +62,7 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Consider all implications, edge
 ### Code References
 - **Similar Implementation**: `src/[path/to/similar/feature]` - [How it relates]
 - **Pattern Example**: `src/[path/to/pattern/usage]` - [What to follow]
-- **Test Cases**: `tests/[relevant-test-files]` - [Existing test patterns]
+- **Validation Examples**: `src/[validation-examples]` - [Existing validation patterns]
 - **Configuration**: `config/[relevant-configs]` - [Build/environment setup]
 - **Documentation**: `docs/examples/[relevant-examples]` - [Usage examples]
 
