@@ -1,8 +1,10 @@
 # /systemcc - Master Router for Unified Claude Agent System
 
+⚠️ **CRITICAL IMPLEMENTATION NOTE**: When executing /systemcc, you MUST visibly show the Lyra AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
+
 ## Purpose
 The `/systemcc` command is the master router that:
-1. Optimizes all prompts using Lyra universal middleware
+1. Optimizes all prompts using Lyra universal middleware (ALWAYS SHOW THIS)
 2. Intelligently routes to the most appropriate subsystem
 3. Provides access to all workflows: Agent OS, AI Dev Tasks, Complete System, Orchestrated, and Phase-based
 4. Allows manual workflow selection when needed
@@ -145,13 +147,45 @@ def detect_prompt_mode(task_description):
 
 When this command is invoked:
 
-1. **Prompt Optimization with Lyra**:
+1. **Prompt Optimization with Lyra** (ALWAYS SHOW THIS TO USER):
    ```
+   CRITICAL: You MUST show the Lyra optimization process to the user with proper formatting.
+   
+   Display Format:
+   ═══════════════════════════════════════════════════════════════
+   🎯 LYRA AI PROMPT OPTIMIZATION
+   ═══════════════════════════════════════════════════════════════
+   
+   📝 Original Request:
+   "[user's raw prompt]"
+   
+   🔍 Analysis Phase:
+   - Deconstructing intent...
+   - Diagnosing gaps...
+   - Developing enhancements...
+   - Delivering optimized prompt...
+   
+   ✨ Optimized Prompt:
+   "[enhanced prompt with complete specifications]"
+   
+   📊 Optimization Details:
+   - Mode: [BASIC/DETAIL]
+   - Complexity Score: [1-10]
+   - Improvements Applied: [number]
+   
+   🔧 Key Enhancements:
+   • [Enhancement 1]
+   • [Enhancement 2]
+   • [Enhancement 3]
+   
+   ═══════════════════════════════════════════════════════════════
+   
+   Implementation steps:
    - Analyze user's raw prompt
    - Apply 4-D methodology (Deconstruct, Diagnose, Develop, Deliver)
    - Auto-detect complexity for BASIC or DETAIL mode
    - Transform into precision-crafted development prompt
-   - Present optimized prompt to user
+   - ALWAYS present the formatted output above to user
    ```
 
 2. **Context Analysis** (Second Priority):
@@ -329,9 +363,34 @@ While `/systemcc` provides intelligent routing, users can directly access:
 ```
 User: /systemcc "setup coding standards for our Python project"
 
-Step 1 - Lyra Universal Optimization:
-Original: "setup coding standards for our Python project"
-Optimized: "Initialize comprehensive coding standards for Python project including: Black formatter configuration, Flake8 linting rules with custom exceptions, pre-commit hooks for code quality, pytest configuration with coverage requirements, type checking with mypy, documentation standards with docstring conventions, and CI/CD integration. Create team-specific style guide aligned with PEP 8."
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"setup coding standards for our Python project"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Initialize comprehensive coding standards for Python project including: Black formatter configuration, Flake8 linting rules with custom exceptions, pre-commit hooks for code quality, pytest configuration with coverage requirements, type checking with mypy, documentation standards with docstring conventions, and CI/CD integration. Create team-specific style guide aligned with PEP 8."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 6
+- Improvements Applied: 8
+
+🔧 Key Enhancements:
+• Added specific Python tooling (Black, Flake8, mypy)
+• Included pre-commit hooks for enforcement
+• Specified documentation standards
+• Added CI/CD integration requirements
+
+═══════════════════════════════════════════════════════════════
 
 Step 2 - Workflow Detection:
 - Keywords detected: "setup", "standards"
@@ -402,9 +461,34 @@ Executing: /planner "[optimized prompt]"
 ```
 User: /systemcc "update button color to match new brand guidelines"
 
-Step 1 - Lyra Prompt Optimization (BASIC mode detected):
-Original: "update button color to match new brand guidelines"
-Optimized: "Update all button components to use the new brand color palette. Primary buttons: #007AFF, Secondary: #5856D6, Destructive: #FF3B30. Ensure proper hover states, disabled states, and maintain WCAG AA contrast ratios. Update any related CSS variables and theme configurations."
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"update button color to match new brand guidelines"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Update all button components to use the new brand color palette. Primary buttons: #007AFF, Secondary: #5856D6, Destructive: #FF3B30. Ensure proper hover states, disabled states, and maintain WCAG AA contrast ratios. Update any related CSS variables and theme configurations."
+
+📊 Optimization Details:
+- Mode: BASIC
+- Complexity Score: 2
+- Improvements Applied: 4
+
+🔧 Key Enhancements:
+• Added specific color values for clarity
+• Included accessibility requirements (WCAG)
+• Specified button states to update
+• Added CSS variable update reminder
+
+═══════════════════════════════════════════════════════════════
 
 Step 2 - Context Analysis:
 - Task scope: Single file
