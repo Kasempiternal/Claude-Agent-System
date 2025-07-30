@@ -1,11 +1,15 @@
-# /systemcc - Master Router for Unified Claude Agent System
+# /systemcc - The ONLY Command You Need
 
 ## Purpose
-The `/systemcc` command is the master router that:
-1. Optimizes all prompts using Lyra universal middleware
-2. Intelligently routes to the most appropriate subsystem
-3. Provides access to all workflows: Agent OS, AI Dev Tasks, Complete System, Orchestrated, and Phase-based
-4. Allows manual workflow selection when needed
+The `/systemcc` command is your single interface to ALL Claude capabilities:
+1. **Automatically analyzes your project on first run** (no need for /analyze!)
+2. Optimizes your request using Lyra AI
+3. Automatically selects the best workflow
+4. Executes EVERYTHING internally - no more manual commands
+5. Completes your task end-to-end
+
+**YOU NEVER NEED TO RUN**: `/analyze`, `/planner`, `/executer`, `/verifier`, `/agetos`, `/aidevtasks`, etc. 
+**Everything is handled automatically by /systemcc!**
 
 ## How It Works
 
@@ -36,32 +40,38 @@ When you use `/systemcc "your task description"`, the system will:
    - **Complete System** for complex, multi-phase validation tasks
    - **Orchestrated-Only** for simpler, focused tasks
 
-5. **Execute Selected Workflow** with optimized prompt and appropriate configuration
+5. **Automatically Execute Selected Workflow** with the **Automated Workflow Executor**:
+   - All agents run sequentially without manual commands
+   - Real-time progress updates
+   - User input only when needed
+   - Complete end-to-end execution
 
 ## Usage
 
-### Basic Usage
+### The ONLY Way to Use This:
 ```bash
-/systemcc "your task description"
+# Just use this for EVERYTHING:
+/systemcc "what you want done"
+
+# That's it! First run will auto-analyze, then proceed with your task
 ```
 
-### Force Specific Workflow
+### Examples:
 ```bash
-/systemcc --workflow=agetos "setup project standards"
-/systemcc --workflow=aidevtasks "build user dashboard feature"
-/systemcc --workflow=taskit "refactor entire application"
-/systemcc --workflow=complete "implement payment system"
-/systemcc --workflow=orchestrated "fix button styling"
+/systemcc "fix the login button color"
+/systemcc "add user authentication system"
+/systemcc "refactor the payment module"
+/systemcc "create a dashboard for analytics"
+/systemcc "optimize database queries"
 ```
 
-### Direct Subsystem Access
-```bash
-/agetos init                    # Initialize Agent OS directly
-/aidevtasks create-prd          # Start PRD workflow directly
-/taskit "large refactoring"     # Use phase-based directly
-/planner "complex feature"      # Start complete system directly
-/orchestrated "simple fix"      # Use streamlined workflow directly
-```
+**That's it!** Claude figures out:
+- Simple fix? → Runs 3-agent workflow internally
+- Complex feature? → Runs 6-agent workflow internally
+- New feature? → Creates PRD, tasks, implements internally
+- Large codebase? → Uses phase-based approach internally
+
+**YOU DON'T NEED TO KNOW OR SPECIFY THE WORKFLOW!**
 
 ## Lyra Prompt Optimization (First Step)
 
@@ -145,7 +155,19 @@ def detect_prompt_mode(task_description):
 
 When this command is invoked:
 
-1. **Prompt Optimization with Lyra**:
+1. **First-Run Detection**:
+   ```
+   - Check for ClaudeFiles/.analysis-status file
+   - If not exists:
+     → Display: "🔍 First time in this project - running analysis first..."
+     → Execute lightweight project analysis
+     → Create .analysis-status with project info
+     → Display: "✅ Analysis complete! Now proceeding with your task..."
+   - If exists:
+     → Skip analysis and proceed normally
+   ```
+
+2. **Prompt Optimization with Lyra**:
    ```
    - Analyze user's raw prompt
    - Apply 4-D methodology (Deconstruct, Diagnose, Develop, Deliver)
@@ -154,7 +176,24 @@ When this command is invoked:
    - Present optimized prompt to user
    ```
 
-2. **Context Analysis** (Second Priority):
+2. **Workflow Selection Transparency**:
+   ```
+   🧠 Analyzing: "[task description]"
+   
+   📊 Task Analysis:
+      - Complexity: [High/Medium/Low] ([score]/10)
+      - Scope: [X files, Y components affected]
+      - Risk Level: [High/Medium/Low] (security/breaking changes)
+      - Estimated Time: [15-30min/45-60min/2+ hours]
+   
+   📋 Selected Approach: [Workflow Name]
+      ↳ Why: [Clear reasoning for selection]
+      ↳ Process: [Brief overview of phases]
+   
+   Ready to proceed? (yes/adjust/explain more)
+   ```
+
+3. **Context Analysis** (Second Priority):
    ```
    - Check current context size (tokens)
    - Count loaded files and their sizes
@@ -163,13 +202,22 @@ When this command is invoked:
    - Predict context growth for the task
    ```
 
-3. **Task Analysis** (Using Optimized Prompt):
+4. **Task Analysis** (Using Optimized Prompt):
    ```
    - Parse the optimized task description
    - Check for keywords indicating complexity
    - Evaluate scope indicators
    - Consider risk factors
    - Estimate time requirements
+   ```
+
+5. **Specification Gathering** (When Needed):
+   ```
+   - Use middleware/specification-gatherer.md
+   - Collect all requirements upfront
+   - Show only relevant question categories
+   - Provide smart defaults
+   - Pass complete specs to workflow
    ```
 
 4. **Enhanced Decision Matrix**:
@@ -215,32 +263,33 @@ When this command is invoked:
    - Bug fixes
    ```
 
-5. **Execute Workflow** (With Optimized Prompt):
+5. **Execute Workflow Automatically** (With Optimized Prompt):
    ```
-   # Note: {optimized_prompt} is the Lyra-enhanced version
+   # Claude executes everything internally - no exposed commands!
    
-   IF forced_workflow:
-     Execute: /{forced_workflow} "{optimized_prompt}"
-   ELIF detected_type == 'project_setup':
-     Execute: /agetos "{optimized_prompt}"
-     Reason: "Project initialization and standards"
+   IF detected_type == 'project_setup':
+     Internal: Agent OS workflow
+     Process: Analyze → Architect → Build → Document
    ELIF detected_type == 'feature_development':
-     Execute: /aidevtasks create-prd "{optimized_prompt}"
-     Reason: "Complex feature benefits from PRD approach"
+     Internal: AI Dev Tasks workflow
+     Process: Create PRD → Generate Tasks → Implement
    ELIF context_size > 30000 OR predicted_context_large:
-     Execute: /taskit "{optimized_prompt}"
-     Reason: "Large context requires phase-based approach"
+     Internal: Phase-based workflow
+     Process: Decompose → Execute Phases → Integrate
    ELIF estimated_time > 60_minutes:
-     Execute: /taskit "{optimized_prompt}"
-     Reason: "Complex task benefits from phase decomposition"
+     Internal: Phase-based workflow
+     Process: Break into manageable phases
    ELIF complexity_score > 5:
-     Execute: /planner "{optimized_prompt}"
-     Follow with: /executer, /verifier, /tester, /documenter, /updater
+     Internal: Complete 6-agent workflow
+     Process: Strategic Plan → Implementation → Validation → Testing → Documentation → Deployment
    ELSE:
-     Execute: /orchestrated "{optimized_prompt}"
+     Internal: Streamlined 3-agent workflow
+     Process: Analyze → Implement → Review
+   
+   # User sees progress but NEVER needs to run commands!
    ```
 
-## Context-Aware Scoring Algorithm
+## Enhanced Context-Aware Decision Engine
 
 ```python
 def analyze_for_workflow_selection(task_description, context_info, lyra_metadata):
@@ -251,42 +300,88 @@ def analyze_for_workflow_selection(task_description, context_info, lyra_metadata
         'context': context_info
     })
     
-    # Check for forced workflow
-    if '--workflow=' in task_description:
-        workflow = extract_workflow_flag(task_description)
-        return (workflow, 'User specified workflow')
+    # Initialize scoring system
+    scores = {
+        'complexity': 0,
+        'risk': 0,
+        'scope': 0,
+        'context_size': 0,
+        'time_estimate': 0
+    }
     
-    # PRIORITY 1: Task type detection
-    # Agent OS detection
-    agetos_keywords = ['setup', 'initialize', 'standards', 'conventions', 
-                      'project structure', 'coding style', 'team practices']
-    if any(keyword in task_description.lower() for keyword in agetos_keywords):
-        return ('agetos', 'Project initialization and standards')
+    # Multi-factor analysis
+    analysis = perform_comprehensive_analysis(task_description, context_info, lyra_result)
     
-    # AI Dev Tasks detection
-    aidevtasks_keywords = ['build feature', 'create system', 'product requirement',
-                          'user story', 'new functionality', 'from scratch']
-    if any(keyword in task_description.lower() for keyword in aidevtasks_keywords):
-        return ('aidevtasks', 'Feature development with PRD approach')
-    
-    # PRIORITY 2: Context-based routing
+    # PRIORITY 1: Context-based routing (overrides everything)
     if context_info['current_tokens'] > 30000:
-        return ('taskit', 'Context size exceeds optimal threshold')
+        return ('taskit', 'Context size exceeds optimal threshold', analysis)
     
     if context_info['loaded_files'] > 10:
-        return ('taskit', 'Too many files in context')
+        return ('taskit', 'Too many files in context', analysis)
     
-    # PRIORITY 3: Complexity from Lyra metadata
-    complexity = lyra_result.metadata.complexity_score
+    # PRIORITY 2: Pattern-based detection
+    detected_patterns = detect_patterns(task_description, context_info)
     
-    if complexity >= 9:
-        return ('taskit', 'Very complex task requiring phases')
-    elif complexity >= 7:
-        return ('aidevtasks', 'Complex feature needing PRD')
-    elif complexity >= 5:
-        return ('complete_system', 'Multi-step task with validation')
-    else:
-        return ('orchestrated', 'Simple task for quick execution')
+    # PRIORITY 3: Risk assessment
+    risk_level = assess_risk(task_description, detected_patterns)
+    
+    # PRIORITY 4: Intelligent workflow selection
+    workflow = select_optimal_workflow(analysis, detected_patterns, risk_level)
+    
+    return (workflow.name, workflow.reason, analysis)
+
+def perform_comprehensive_analysis(task_desc, context, lyra_result):
+    """Multi-dimensional task analysis"""
+    return {
+        'complexity_score': calculate_complexity(task_desc, lyra_result),
+        'affected_components': identify_affected_components(task_desc),
+        'risk_factors': identify_risks(task_desc),
+        'estimated_duration': estimate_duration(task_desc, context),
+        'pattern_matches': find_codebase_patterns(task_desc),
+        'security_implications': check_security_impact(task_desc),
+        'breaking_changes': detect_breaking_changes(task_desc)
+    }
+
+def calculate_complexity(task_desc, lyra_result):
+    """Advanced complexity scoring beyond keywords"""
+    factors = {
+        'technical_depth': analyze_technical_requirements(task_desc),
+        'integration_points': count_integration_points(task_desc),
+        'data_complexity': assess_data_operations(task_desc),
+        'ui_complexity': assess_ui_requirements(task_desc),
+        'testing_needs': evaluate_testing_requirements(task_desc)
+    }
+    
+    # Weight and combine factors
+    weighted_score = sum(factors[k] * WEIGHTS[k] for k in factors)
+    return min(10, weighted_score + lyra_result.metadata.complexity_score)
+
+def select_optimal_workflow(analysis, patterns, risk):
+    """Intelligent workflow selection based on multiple factors"""
+    
+    # High risk always gets full validation
+    if risk.level == 'HIGH':
+        return Workflow('complete_system', 
+                       f'High-risk changes require comprehensive validation: {risk.reasons}')
+    
+    # Feature development with unclear requirements
+    if analysis['complexity_score'] > 6 and 'feature' in patterns:
+        return Workflow('aidevtasks', 
+                       'Complex feature benefits from PRD-based approach')
+    
+    # Large scope but well-defined
+    if analysis['affected_components'] > 5 and analysis['complexity_score'] < 7:
+        return Workflow('taskit', 
+                       'Large scope benefits from phase-based execution')
+    
+    # Simple, low-risk changes
+    if analysis['complexity_score'] < 4 and risk.level == 'LOW':
+        return Workflow('orchestrated', 
+                       'Simple task suitable for streamlined execution')
+    
+    # Default to complete system for safety
+    return Workflow('complete_system', 
+                   'Comprehensive approach for balanced risk/complexity')
 ```
 
 ## Integration with Unified System
@@ -305,13 +400,61 @@ This master router integrates all subsystems:
 - **ClaudeFiles Organization** - Unified output structure
 - **Git Integration** - Consistent across all workflows
 
-### Direct Access Commands
-While `/systemcc` provides intelligent routing, users can directly access:
-- `/agetos` - Agent OS workflow
-- `/aidevtasks` - PRD-based development
-- `/taskit` - Phase-based execution
-- `/planner` - Complete system start
-- `/orchestrated` - Streamlined workflow
+### Internal Workflow Handling
+**These happen automatically inside Claude - you never run these:**
+- Agent OS workflow - For project setup and standards
+- AI Dev Tasks - For feature development with PRDs
+- Phase-based execution - For large contexts
+- Complete system - For complex validations
+- Orchestrated workflow - For quick fixes
+
+**Claude runs these internally based on your task!**
+
+## Automated Workflow Execution
+
+All workflows now use the **Automated Workflow Executor** (`middleware/automated-workflow-executor.md`) to provide:
+
+### Automatic Agent Sequencing
+- **Complete System**: PLANNER → EXECUTER → VERIFIER → TESTER → DOCUMENTER → UPDATER
+- **Orchestrated**: Orchestrator → Developer → Reviewer
+- **Agent OS**: Analyze → Architect → Build → Document
+- **AI Dev Tasks**: Create PRD → Generate Tasks → Process Tasks
+- **Phase-Based**: Decompose → Execute Phases → Integrate Results
+
+### Progress Tracking
+```
+🚀 Starting Complete System Workflow...
+✅ PLANNER: Strategic analysis complete (1/6)
+🔄 EXECUTER: Implementing solution... (2/6)
+✅ EXECUTER: Implementation complete (2/6)
+🔄 VERIFIER: Running quality checks... (3/6)
+```
+
+### Smart User Interactions
+The system only pauses for input when:
+1. **Specifications Needed**: "What fields should the form have?"
+2. **Technical Choices**: "PostgreSQL or MySQL for database?"
+3. **Feature Clarification**: "Should this work offline?"
+4. **Context Required**: "What's your authentication system?"
+
+**NEVER asks you to run commands!**
+
+Example:
+```
+User: /systemcc "add product search"
+
+Claude: 🚀 Analyzing your request...
+
+❓ I need some details about the search functionality:
+1. What fields should be searchable? (name, description, tags, etc.)
+2. Do you need filters? (price range, category, etc.)
+3. Should it support fuzzy matching?
+
+User: Name and description, yes filters for price and category, yes fuzzy matching
+
+Claude: 🔄 Phase 1/6: Designing search architecture...
+[Continues automatically through ALL phases]
+```
 
 ## Benefits of Unified System
 
@@ -322,6 +465,9 @@ While `/systemcc` provides intelligent routing, users can directly access:
 5. **Backward Compatible** - All existing commands still work
 6. **Context Aware** - Manages large codebases efficiently
 7. **Quality First** - Right validation level for each task
+8. **Fully Automated** - All workflows execute end-to-end without manual commands
+9. **Smart Interactions** - Only asks for input when truly needed
+10. **Seamless Experience** - Focus on requirements, not process
 
 ## Examples
 

@@ -1,17 +1,18 @@
 # /orchestrated - Streamlined Three-Agent Workflow
 
 ## Purpose
-Execute simple to moderate complexity tasks using the streamlined three-agent workflow. This provides quick, efficient implementation with built-in quality checks for focused development tasks.
+Execute simple to moderate complexity tasks using the streamlined three-agent workflow. This provides quick, efficient implementation with built-in quality checks for focused development tasks. **All three agents execute automatically in a single seamless flow.**
 
 ## How It Works
 
 When you use `/orchestrated "task description"`, the system will:
 
 1. **Apply Lyra Universal Optimization** to clarify requirements
-2. **Orchestrate** the task breakdown and approach
-3. **Develop** the implementation with best practices
-4. **Review** the code for quality and completeness
-5. **Deliver** production-ready code quickly
+2. **Automatically execute all three agents**:
+   - ✅ ORCHESTRATOR analyzes and plans
+   - 🔄 DEVELOPER implements solution
+   - 🔄 REVIEWER validates quality
+3. **Deliver** production-ready code without manual intervention
 
 ## Usage
 
@@ -27,45 +28,81 @@ When you use `/orchestrated "task description"`, the system will:
 /systemcc "simple bug fix"  # Often routes to orchestrated
 ```
 
-## Implementation
+## Automated Execution
 
-When invoked:
+The system uses the **Automated Workflow Executor** to provide:
 
-1. **Lyra Optimization**:
-   ```
-   Apply middleware/lyra-universal.md
-   - Enhance task clarity
-   - Add implementation details
-   - Specify quality requirements
-   ```
+1. **Seamless Flow**: All three agents run automatically
+2. **Real-time Updates**: Progress shown as work happens
+3. **Smart Interactions**: Only asks when choices are needed
+4. **Complete Delivery**: From analysis to reviewed code
 
-2. **Execute Orchestrated Workflow**:
-   ```
-   Use workflows/orchestrated-only/m-orchestrated-dev.md
-   - Single-pass implementation
-   - Integrated quality checks
-   - Rapid delivery
-   ```
+### Example Automated Flow
+```
+User: /orchestrated "add dark mode toggle to settings"
 
-## Three-Agent Process
+Claude: 🚀 Starting Orchestrated Workflow...
 
-### 1. Orchestrator (Planning)
+✅ ORCHESTRATOR: Task analysis complete
+   - Identified: Settings UI update
+   - Approach: Toggle component + theme system
+   - Files: SettingsPage.tsx, theme.ts
+
+🔄 DEVELOPER: Implementing dark mode toggle...
+✅ DEVELOPER: Implementation complete
+   - Added DarkModeToggle component
+   - Integrated theme switching logic
+   - Persisted preference to localStorage
+
+🔄 REVIEWER: Validating implementation...
+✅ REVIEWER: Code review passed
+   - ✓ Accessibility: ARIA labels present
+   - ✓ Performance: No re-render issues
+   - ✓ Best practices: Clean code patterns
+
+✨ Task Complete! Dark mode toggle ready for use.
+```
+
+## Three-Agent Process (Automated)
+
+### 1. Orchestrator (Planning) - Automatic
 - Analyzes the optimized request
 - Creates implementation approach
 - Identifies affected files
 - Sets quality criteria
+- **Passes context to Developer automatically**
 
-### 2. Developer (Implementation)
-- Executes the plan
+### 2. Developer (Implementation) - Automatic
+- Executes the plan from Orchestrator
 - Writes clean, tested code
 - Follows project patterns
 - Handles edge cases
+- **Passes code to Reviewer automatically**
 
-### 3. Reviewer (Quality)
+### 3. Reviewer (Quality) - Automatic
 - Validates implementation
 - Checks best practices
 - Ensures completeness
 - Confirms deliverables
+- **Returns final result to user**
+
+## User Interaction Points
+
+The workflow only pauses when:
+
+1. **Implementation Choice**: Multiple valid approaches exist
+2. **Missing Context**: Need project-specific information
+3. **Risk Assessment**: Changes might have side effects
+
+Example:
+```
+🔄 DEVELOPER: For the email validation, which approach do you prefer?
+   1. HTML5 email input with pattern attribute
+   2. Custom regex validation with error messages
+   3. Third-party validation library
+   
+Your choice (1-3): _
+```
 
 ## When to Use Orchestrated
 

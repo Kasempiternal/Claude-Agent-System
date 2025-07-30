@@ -575,7 +575,7 @@ useEffect(() => {
 - UI/UX Standards: ✅ Compliant
 
 ### Documentation Findings
-- Patterns from `docs/[specific.md]`: ✅ Implemented correctly
+- Patterns from `ClaudeFiles/documentation/[specific.md]`: ✅ Implemented correctly
 - Deviations: None / [List with justification]
 - New patterns for documentation: [List if any]
 

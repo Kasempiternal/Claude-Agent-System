@@ -44,11 +44,11 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Consider all implications, edge
 [CRITICAL - Link documentation that EXECUTER MUST read before implementation:]
 
 ### Primary Documentation (Read First)
-- **For [Problem Area]**: `docs/[category]/[SPECIFIC-DOC.md]` - [Why this is needed]
-- **Architecture Pattern**: `docs/architecture/[RELEVANT.md]` - [Specific section]
-- **Component Guidelines**: `docs/components/[PATTERN.md]` - [Relevant patterns]
-- **Performance Guide**: `docs/performance/[OPTIMIZATION.md]` - [Performance considerations]
-- **Build Configuration**: `docs/build/[CONFIG.md]` - [Build-related patterns]
+- **For [Problem Area]**: `ClaudeFiles/documentation/[category]/[SPECIFIC-DOC.md]` - [Why this is needed]
+- **Architecture Pattern**: `ClaudeFiles/documentation/architecture/[RELEVANT.md]` - [Specific section]
+- **Component Guidelines**: `ClaudeFiles/documentation/components/[PATTERN.md]` - [Relevant patterns]
+- **Performance Guide**: `ClaudeFiles/documentation/performance/[OPTIMIZATION.md]` - [Performance considerations]
+- **Build Configuration**: `ClaudeFiles/documentation/build/[CONFIG.md]` - [Build-related patterns]
 
 ### Supporting Documentation
 - **LEARNINGS.md**: [Specific learning entries that apply]
@@ -64,7 +64,7 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Consider all implications, edge
 - **Pattern Example**: `src/[path/to/pattern/usage]` - [What to follow]
 - **Validation Examples**: `src/[validation-examples]` - [Existing validation patterns]
 - **Configuration**: `config/[relevant-configs]` - [Build/environment setup]
-- **Documentation**: `docs/examples/[relevant-examples]` - [Usage examples]
+- **Documentation**: `ClaudeFiles/documentation/examples/[relevant-examples]` - [Usage examples]
 
 ## 🛠️ Solution Design
 - **Strategy**: [How to fix properly]
@@ -219,7 +219,7 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Consider all implications, edge
 1. Update LEARNINGS.md with new pattern
 2. Update CLAUDE.md if new rules discovered
 3. Document performance metrics
-4. Update relevant docs/ files
+4. Update relevant ClaudeFiles/documentation/ files
 
 ### Phase 5 - UPDATER (⚡ PARALLEL: NO)
 **Dependencies**: All phases complete
@@ -242,16 +242,16 @@ Solution: Implement code splitting and lazy loading
 
 ## 📚 Required Documentation
 ### Primary Documentation (Read First)
-- **Bundle Optimization**: `docs/performance/BUNDLE-OPTIMIZATION.md#code-splitting` - Lazy loading patterns
-- **Build Configuration**: `docs/build/WEBPACK-CONFIG.md` - Proper chunking setup
-- **Performance Patterns**: `docs/performance/LOADING-STRATEGIES.md` - Progressive loading
+- **Bundle Optimization**: `ClaudeFiles/documentation/performance/BUNDLE-OPTIMIZATION.md#code-splitting` - Lazy loading patterns
+- **Build Configuration**: `ClaudeFiles/documentation/build/WEBPACK-CONFIG.md` - Proper chunking setup
+- **Performance Patterns**: `ClaudeFiles/documentation/performance/LOADING-STRATEGIES.md` - Progressive loading
 
 ### Supporting Documentation
 - **LEARNINGS.md**: Entry #23 - "Bundle Size Optimization"
 - **Build Tools**: Webpack/Vite configuration files affected
 
 Phases:
-- Phase 1: EXECUTER implements code splitting following docs/performance/BUNDLE-OPTIMIZATION.md (45min)
+- Phase 1: EXECUTER implements code splitting following ClaudeFiles/documentation/performance/BUNDLE-OPTIMIZATION.md (45min)
 - Phase 2&3: VERIFIER + TESTER run parallel (20min each)
 - Phase 4: DOCUMENTER updates LEARNINGS.md (15min)
 - Phase 5: UPDATER commits (5min)
@@ -279,9 +279,9 @@ Solution: Implement geometry pooling and optimized render loop
 
 ## 📚 Required Documentation
 ### Primary Documentation (Read First)
-- **Three.js Optimization**: `docs/graphics/THREEJS-PERFORMANCE.md#geometry-pooling` - Object pooling patterns
-- **Render Loop**: `docs/graphics/RENDER-OPTIMIZATION.md` - Efficient animation patterns
-- **Memory Management**: `docs/graphics/MEMORY-MANAGEMENT.md` - Cleanup strategies
+- **Three.js Optimization**: `ClaudeFiles/documentation/graphics/THREEJS-PERFORMANCE.md#geometry-pooling` - Object pooling patterns
+- **Render Loop**: `ClaudeFiles/documentation/graphics/RENDER-OPTIMIZATION.md` - Efficient animation patterns
+- **Memory Management**: `ClaudeFiles/documentation/graphics/MEMORY-MANAGEMENT.md` - Cleanup strategies
 
 Phases:
 - Phase 1: EXECUTER implements geometry pooling (60min)
@@ -298,9 +298,9 @@ Solution: Fix build configuration and export structure
 
 ## 📚 Required Documentation
 ### Primary Documentation (Read First)
-- **Package Structure**: `docs/packages/PACKAGE-STRUCTURE.md#typescript-exports` - Proper export patterns
-- **Build Config**: `docs/packages/BUILD-CONFIG.md` - Rollup/Webpack setup for libraries
-- **Type Definitions**: `docs/packages/TYPESCRIPT-SETUP.md` - Declaration file generation
+- **Package Structure**: `ClaudeFiles/documentation/packages/PACKAGE-STRUCTURE.md#typescript-exports` - Proper export patterns
+- **Build Config**: `ClaudeFiles/documentation/packages/BUILD-CONFIG.md` - Rollup/Webpack setup for libraries
+- **Type Definitions**: `ClaudeFiles/documentation/packages/TYPESCRIPT-SETUP.md` - Declaration file generation
 
 Phases:
 - Phase 1: EXECUTER fixes build config and exports (30min)
@@ -475,9 +475,9 @@ Common Approaches:
 - Critical path optimization
 
 Documentation Areas:
-- docs/performance/
-- docs/build/
-- docs/optimization/
+- ClaudeFiles/documentation/performance/
+- ClaudeFiles/documentation/build/
+- ClaudeFiles/documentation/optimization/
 ```
 
 ### Accessibility (a11y)
@@ -489,9 +489,9 @@ Common Requirements:
 - Color contrast compliance
 
 Documentation Areas:
-- docs/accessibility/
-- docs/components/
-- docs/testing/
+- ClaudeFiles/documentation/accessibility/
+- ClaudeFiles/documentation/components/
+- ClaudeFiles/documentation/testing/
 ```
 
 ### Build and Deployment
@@ -503,9 +503,9 @@ Common Tools:
 - Asset optimization
 
 Documentation Areas:
-- docs/build/
-- docs/deployment/
-- docs/infrastructure/
+- ClaudeFiles/documentation/build/
+- ClaudeFiles/documentation/deployment/
+- ClaudeFiles/documentation/infrastructure/
 ```
 
 ## 🧑‍🔧 DEBUGGING STRATEGIES BY PROJECT TYPE
