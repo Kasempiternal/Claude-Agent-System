@@ -164,3 +164,5 @@ MIT License - see [LICENSE](LICENSE) for details.
 **Remember**: The goal is not just to code faster, but to code better. Ship quality code on the first try, not the fifth.
 
 *Made with ❤️ by the Claude AI Community*
+
+![CodeRabbit Pull Request Reviews](https://img.shields.io/coderabbit/prs/github/Kasempiternal/Claude-Agent-System?utm_source=oss&utm_medium=github&utm_campaign=Kasempiternal%2FClaude-Agent-System&labelColor=171717&color=FF570A&link=https%3A%2F%2Fcoderabbit.ai&label=CodeRabbit+Reviews)

@@ -1,12 +1,17 @@
 # /systemcc - The ONLY Command You Need
 
+⚠️ **CRITICAL IMPLEMENTATION NOTE**: When executing /systemcc, you MUST visibly show the Lyra AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
+
 ## Purpose
-The `/systemcc` command is your single interface to ALL Claude capabilities:
+
+The `/systemcc` command is the master router that:
 1. **Automatically analyzes your project on first run** (no need for /analyze!)
-2. Optimizes your request using Lyra AI
-3. Automatically selects the best workflow
-4. Executes EVERYTHING internally - no more manual commands
-5. Completes your task end-to-end
+2. Optimizes your request using Lyra AI (ALWAYS SHOW THIS)
+3. Intelligently routes to the most appropriate subsystem
+4. Provides access to all workflows: Agent OS, AI Dev Tasks, Complete System, Orchestrated, and Phase-based
+5. Automatically selects the best workflow
+6. Executes EVERYTHING internally - no more manual commands
+7. Completes your task end-to-end
 
 **YOU NEVER NEED TO RUN**: `/analyze`, `/planner`, `/executer`, `/verifier`, `/agetos`, `/aidevtasks`, etc. 
 **Everything is handled automatically by /systemcc!**
@@ -167,16 +172,48 @@ When this command is invoked:
      → Skip analysis and proceed normally
    ```
 
-2. **Prompt Optimization with Lyra**:
+2. **Prompt Optimization with Lyra** (ALWAYS SHOW THIS TO USER):
    ```
+   CRITICAL: You MUST show the Lyra optimization process to the user with proper formatting.
+   
+   Display Format:
+   ═══════════════════════════════════════════════════════════════
+   🎯 LYRA AI PROMPT OPTIMIZATION
+   ═══════════════════════════════════════════════════════════════
+   
+   📝 Original Request:
+   "[user's raw prompt]"
+   
+   🔍 Analysis Phase:
+   - Deconstructing intent...
+   - Diagnosing gaps...
+   - Developing enhancements...
+   - Delivering optimized prompt...
+   
+   ✨ Optimized Prompt:
+   "[enhanced prompt with complete specifications]"
+   
+   📊 Optimization Details:
+   - Mode: [BASIC/DETAIL]
+   - Complexity Score: [1-10]
+   - Improvements Applied: [number]
+   
+   🔧 Key Enhancements:
+   • [Enhancement 1]
+   • [Enhancement 2]
+   • [Enhancement 3]
+   
+   ═══════════════════════════════════════════════════════════════
+   
+   Implementation steps:
    - Analyze user's raw prompt
    - Apply 4-D methodology (Deconstruct, Diagnose, Develop, Deliver)
    - Auto-detect complexity for BASIC or DETAIL mode
    - Transform into precision-crafted development prompt
-   - Present optimized prompt to user
+   - ALWAYS present the formatted output above to user
    ```
 
-2. **Workflow Selection Transparency**:
+3. **Workflow Selection Transparency**:
    ```
    🧠 Analyzing: "[task description]"
    
@@ -193,7 +230,7 @@ When this command is invoked:
    Ready to proceed? (yes/adjust/explain more)
    ```
 
-3. **Context Analysis** (Second Priority):
+4. **Context Analysis** (Second Priority):
    ```
    - Check current context size (tokens)
    - Count loaded files and their sizes
@@ -202,7 +239,7 @@ When this command is invoked:
    - Predict context growth for the task
    ```
 
-4. **Task Analysis** (Using Optimized Prompt):
+5. **Task Analysis** (Using Optimized Prompt):
    ```
    - Parse the optimized task description
    - Check for keywords indicating complexity
@@ -211,7 +248,7 @@ When this command is invoked:
    - Estimate time requirements
    ```
 
-5. **Specification Gathering** (When Needed):
+6. **Specification Gathering** (When Needed):
    ```
    - Use middleware/specification-gatherer.md
    - Collect all requirements upfront
@@ -220,7 +257,7 @@ When this command is invoked:
    - Pass complete specs to workflow
    ```
 
-4. **Enhanced Decision Matrix**:
+7. **Enhanced Decision Matrix**:
    ```
    Agent OS (/agetos) Indicators:
    - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
@@ -263,7 +300,7 @@ When this command is invoked:
    - Bug fixes
    ```
 
-5. **Execute Workflow Automatically** (With Optimized Prompt):
+8. **Execute Workflow Automatically** (With Optimized Prompt):
    ```
    # Claude executes everything internally - no exposed commands!
    
@@ -475,9 +512,34 @@ Claude: 🔄 Phase 1/6: Designing search architecture...
 ```
 User: /systemcc "setup coding standards for our Python project"
 
-Step 1 - Lyra Universal Optimization:
-Original: "setup coding standards for our Python project"
-Optimized: "Initialize comprehensive coding standards for Python project including: Black formatter configuration, Flake8 linting rules with custom exceptions, pre-commit hooks for code quality, pytest configuration with coverage requirements, type checking with mypy, documentation standards with docstring conventions, and CI/CD integration. Create team-specific style guide aligned with PEP 8."
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"setup coding standards for our Python project"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Initialize comprehensive coding standards for Python project including: Black formatter configuration, Flake8 linting rules with custom exceptions, pre-commit hooks for code quality, pytest configuration with coverage requirements, type checking with mypy, documentation standards with docstring conventions, and CI/CD integration. Create team-specific style guide aligned with PEP 8."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 6
+- Improvements Applied: 8
+
+🔧 Key Enhancements:
+• Added specific Python tooling (Black, Flake8, mypy)
+• Included pre-commit hooks for enforcement
+• Specified documentation standards
+• Added CI/CD integration requirements
+
+═══════════════════════════════════════════════════════════════
 
 Step 2 - Workflow Detection:
 - Keywords detected: "setup", "standards"
@@ -523,7 +585,7 @@ Executing: /taskit "[optimized prompt]"
 Reason: Large context requires phase decomposition
 ```
 
-### Example 2: Complex Task (Normal Context)
+### Example 4: Complex Task (Normal Context)
 ```
 User: /systemcc "implement real-time chat with WebSocket support"
 
@@ -544,13 +606,38 @@ Step 3 - Task Analysis:
 Executing: /planner "[optimized prompt]"
 ```
 
-### Example 3: Simple Task (Any Context)
+### Example 5: Simple Task (Any Context)
 ```
 User: /systemcc "update button color to match new brand guidelines"
 
-Step 1 - Lyra Prompt Optimization (BASIC mode detected):
-Original: "update button color to match new brand guidelines"
-Optimized: "Update all button components to use the new brand color palette. Primary buttons: #007AFF, Secondary: #5856D6, Destructive: #FF3B30. Ensure proper hover states, disabled states, and maintain WCAG AA contrast ratios. Update any related CSS variables and theme configurations."
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"update button color to match new brand guidelines"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Update all button components to use the new brand color palette. Primary buttons: #007AFF, Secondary: #5856D6, Destructive: #FF3B30. Ensure proper hover states, disabled states, and maintain WCAG AA contrast ratios. Update any related CSS variables and theme configurations."
+
+📊 Optimization Details:
+- Mode: BASIC
+- Complexity Score: 2
+- Improvements Applied: 4
+
+🔧 Key Enhancements:
+• Added specific color values for clarity
+• Included accessibility requirements (WCAG)
+• Specified button states to update
+• Added CSS variable update reminder
+
+═══════════════════════════════════════════════════════════════
 
 Step 2 - Context Analysis:
 - Task scope: Single file
