@@ -5,13 +5,15 @@ Structured feature development using Product Requirement Documents (PRDs) and hi
 
 ## How It Works
 
-When you use `/aidevtasks`, the system will:
+When you use `/aidevtasks`, the system will **automatically execute all phases**:
 
 1. **Apply Lyra Universal Optimization** to enhance your request
-2. **Create a PRD** with clarifying questions for comprehensive requirements
-3. **Generate hierarchical tasks** from the approved PRD
-4. **Process tasks one at a time** with user approval checkpoints
-5. **Commit completed parent tasks** with proper git management
+2. **Automatically run the PRD workflow**:
+   - ✅ CREATE PRD with clarifying questions
+   - 🔄 GENERATE hierarchical tasks from approved PRD
+   - 🔄 PROCESS tasks systematically with checkpoints
+   - 🔄 COMMIT completed features with git management
+3. **Deliver complete feature** with minimal manual intervention
 
 ## Usage
 
@@ -32,31 +34,66 @@ When you use `/aidevtasks`, the system will:
 /systemcc "build a new feature for user management"  # Auto-routes to aidevtasks
 ```
 
-## Workflow Phases
+## Automated Workflow Execution
 
-### Phase 1: PRD Creation
+The system uses the **Automated Workflow Executor** to seamlessly progress through all phases:
+
+### Automatic Phase Progression
+```
+🚀 Starting AI Dev Tasks Workflow...
+
+✅ PRD CREATION: Gathering requirements
+   ❓ What user roles will access this feature?
+   ❓ Should there be audit logging?
+   [User provides answers]
+✅ PRD CREATION: Comprehensive PRD generated
+
+🔄 TASK GENERATION: Analyzing PRD...
+✅ TASK GENERATION: Parent tasks created
+   - 5 parent tasks identified
+   - Awaiting approval to generate sub-tasks
+   
+   Ready to proceed? (Type 'Go' to continue)
+   
+🔄 TASK GENERATION: Creating detailed sub-tasks...
+✅ TASK GENERATION: Complete task hierarchy ready
+
+🔄 TASK PROCESSING: Starting implementation...
+   Working on: 1.1 Create user model schema
+✅ Sub-task 1.1 complete
+
+🔄 Continue with next sub-task? (yes/no)
+
+[Process continues automatically with checkpoints]
+
+✨ Feature Complete! All tasks implemented and tested.
+```
+
+## Workflow Phases (Automated)
+
+### Phase 1: PRD Creation (Interactive)
 Uses `workflows/ai-dev-tasks/create-prd.md`:
 1. Receive feature request
-2. Ask clarifying questions
-3. Generate comprehensive PRD
+2. Ask clarifying questions **[User Input Required]**
+3. Generate comprehensive PRD automatically
 4. Save to `ClaudeFiles/workflows/ai-dev-tasks/prds/`
 
-### Phase 2: Task Generation
+### Phase 2: Task Generation (Semi-Automatic)
 Uses `workflows/ai-dev-tasks/generate-tasks.md`:
-1. Analyze PRD requirements
+1. Analyze PRD requirements automatically
 2. Assess current codebase
 3. Generate parent tasks (high-level)
-4. Wait for user approval
-5. Generate detailed sub-tasks
+4. **[User Approval: "Go" to continue]**
+5. Generate detailed sub-tasks automatically
 6. Save task list
 
-### Phase 3: Task Processing
+### Phase 3: Task Processing (Checkpoint-Based)
 Uses `workflows/ai-dev-tasks/process-task-list.md`:
 1. Work on one sub-task at a time
-2. Mark sub-tasks complete
+2. Mark sub-tasks complete automatically
 3. Run tests when parent task done
 4. Commit completed parent tasks
-5. Continue with user approval
+5. **[User Checkpoint: Continue yes/no]**
 
 ## PRD Structure
 
@@ -86,50 +123,64 @@ Generated PRDs include:
   - [ ] 2.1 Sub-task detail
 ```
 
+## User Interaction Points
+
+The automated workflow pauses only for:
+
+1. **PRD Clarifying Questions**: Feature requirements and specifications
+2. **Task Generation Approval**: "Go" to proceed with sub-task generation
+3. **Processing Checkpoints**: Continue after each parent task completion
+4. **Critical Decisions**: Architecture choices or breaking changes
+
+Example interactions:
+```
+❓ PRD Creation: What authentication methods should be supported?
+   1. Email/password only
+   2. Email/password + OAuth
+   3. Full SSO integration
+   
+Your choice (1-3): _
+
+✅ Parent tasks generated. Type 'Go' to generate detailed sub-tasks.
+
+🔄 Parent task 1.0 complete. Continue with task 2.0? (yes/no): _
+```
+
 ## Implementation Instructions
 
-When invoked:
+When invoked, the automated executor will:
 
-1. **Command Parsing**:
+1. **Command Routing**:
    ```python
-   if command == "create-prd":
-       start_prd_creation(optimized_prompt)
+   # All commands now trigger full automated workflow
+   if command == "create-prd" or no_command:
+       auto_execute_full_workflow(optimized_prompt)
    elif command == "generate-tasks":
-       generate_from_prd(prd_file)
+       auto_continue_from_prd(prd_file)
    elif command == "process-tasks":
-       process_task_list(task_file)
-   else:
-       # Default to PRD creation
-       start_prd_creation(optimized_prompt)
+       auto_continue_from_tasks(task_file)
    ```
 
-2. **PRD Creation Flow**:
+2. **Automated Flow**:
    ```
+   Phase 1: PRD Creation
    - Apply Lyra optimization
-   - Ask clarifying questions
-   - Wait for user responses
+   - Ask clarifying questions [PAUSE FOR USER]
    - Generate PRD document
-   - Save to ClaudeFiles/workflows/ai-dev-tasks/prds/
-   ```
-
-3. **Task Generation Flow**:
-   ```
-   - Read specified PRD
-   - Analyze current codebase
+   - Auto-proceed to Phase 2
+   
+   Phase 2: Task Generation  
+   - Analyze PRD automatically
    - Generate parent tasks
-   - Get user approval ("Go")
-   - Generate detailed sub-tasks
-   - Save task list
-   ```
-
-4. **Task Processing Flow**:
-   ```
-   - Read task list
-   - Find next incomplete sub-task
-   - Implement the sub-task
-   - Mark as complete
-   - If parent task done: test & commit
-   - Ask user to continue
+   - Get approval [PAUSE FOR USER: "Go"]
+   - Generate sub-tasks
+   - Auto-proceed to Phase 3
+   
+   Phase 3: Task Processing
+   - Implement sub-tasks sequentially
+   - Test and commit parent tasks
+   - Checkpoint after parents [PAUSE FOR USER]
+   - Continue until complete
    ```
 
 ## Integration Points

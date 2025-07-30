@@ -1,7 +1,7 @@
 # /planner - Strategic Analysis & Solution Architecture
 
 ## Purpose
-Start the complete six-agent workflow system with the PLANNER agent. This command initiates comprehensive strategic analysis and solution design for complex development tasks.
+Start the complete six-agent workflow system with the PLANNER agent. This command initiates comprehensive strategic analysis and solution design for complex development tasks. **The system will automatically execute all subsequent agents without requiring manual commands.**
 
 ## How It Works
 
@@ -11,7 +11,13 @@ When you use `/planner "problem or idea"`, the system will:
 2. **Perform root cause analysis** to understand the real problem
 3. **Design a comprehensive solution** with clear phases
 4. **Create detailed instructions** for subsequent agents
-5. **Save the plan** for the execution workflow
+5. **Automatically execute the complete workflow**:
+   - ✅ PLANNER creates strategic plan
+   - 🔄 EXECUTER implements solution (automatic)
+   - 🔄 VERIFIER validates quality (automatic)
+   - 🔄 TESTER runs functional tests (automatic)
+   - 🔄 DOCUMENTER updates docs (automatic)
+   - 🔄 UPDATER commits changes (automatic)
 
 ## Usage
 
@@ -27,31 +33,76 @@ When you use `/planner "problem or idea"`, the system will:
 /systemcc "complex feature requiring validation"  # May route to planner
 ```
 
-## Implementation
+## Automated Execution
 
-When invoked, follow these steps:
+The system now uses the **Automated Workflow Executor** (middleware/automated-workflow-executor.md) to:
 
-1. **Lyra Optimization**:
-   ```
-   Apply middleware/lyra-universal.md
-   - Enhance problem description
-   - Add technical context
-   - Clarify success criteria
-   ```
+1. **Execute Agents Sequentially**: Each agent runs automatically after the previous one completes
+2. **Provide Progress Updates**: Real-time status of each agent's execution
+3. **Handle User Interactions**: Only pauses when clarification or choices are needed
+4. **Maintain Context**: Preserves WORK.md and results across all agents
+5. **Complete End-to-End**: From problem analysis to committed code
 
-2. **Execute PLANNER Agent**:
-   ```
-   Use workflows/complete-system/planner-agent.md
-   - Perform root cause analysis
-   - Create phased solution
-   - Generate WORK.md file
-   ```
+### Example Automated Flow
+```
+User: /planner "add user authentication"
 
-3. **Prepare for Next Phase**:
-   ```
-   Save to: ClaudeFiles/temp/WORK.md
-   Ready for: /executer command
-   ```
+Claude: 🚀 Starting Complete System Workflow...
+
+✅ PLANNER: Root cause analysis complete
+   - Created comprehensive plan in WORK.md
+   - Identified 5 implementation phases
+
+🔄 EXECUTER: Implementing authentication system...
+✅ EXECUTER: Implementation complete
+   - Created AuthController.js
+   - Added JWT middleware
+   - Set up user sessions
+
+🔄 VERIFIER: Running quality checks...
+✅ VERIFIER: All checks passed
+   - TypeScript: No errors
+   - ESLint: Clean
+   - Tests: Ready
+
+🔄 TESTER: Running functional tests...
+✅ TESTER: All scenarios validated
+   - Login/logout flows working
+   - Token validation correct
+   - Error handling robust
+
+🔄 DOCUMENTER: Updating documentation...
+✅ DOCUMENTER: Documentation complete
+   - Updated LEARNINGS.md
+   - Added API docs
+   - Created user guide
+
+🔄 UPDATER: Preparing commit...
+✅ UPDATER: Changes committed
+   - Branch: feature/auth-system
+   - Commit: "feat: Add JWT-based authentication"
+
+✨ Workflow Complete! Authentication system fully implemented.
+```
+
+## User Interaction Points
+
+The automated workflow will only pause for user input when:
+
+1. **Clarification Needed**: Ambiguous requirements need specification
+2. **Choice Required**: Multiple valid implementation approaches
+3. **Approval Needed**: High-risk or breaking changes
+4. **Context Missing**: Additional project-specific information required
+
+Example:
+```
+🔄 EXECUTER: I need clarification on the session storage approach:
+   1. Redis (recommended for production)
+   2. In-memory (simpler, for development)
+   3. Database sessions
+   
+Please choose (1-3): _
+```
 
 ## Integration with Complete System
 
@@ -61,12 +112,24 @@ The PLANNER creates a WORK.md file that includes:
 - **Success Criteria** - How to measure completion
 - **Parallel Execution Notes** - Which phases can run simultaneously
 
-## Next Steps
+## Benefits of Automation
 
-After running /planner:
-1. Review the generated plan in WORK.md
-2. Run `/executer` to implement Phase 2
-3. Continue with `/verifier`, `/tester`, `/documenter`, `/updater`
+1. **No Manual Commands**: All agents execute automatically
+2. **Faster Delivery**: Reduced time from problem to solution
+3. **Consistent Quality**: All validation steps always run
+4. **Better UX**: Focus on requirements, not process
+5. **Complete Execution**: No forgotten steps
+
+## Manual Override
+
+If you need to run agents individually:
+```bash
+/planner "task" --manual
+# Then manually run each agent:
+/executer
+/verifier
+# etc.
+```
 
 ## Example
 

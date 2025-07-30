@@ -99,7 +99,7 @@ grep -r "await\s\+[a-zA-Z]" src/ --include="*.ts" --include="*.tsx" | grep -v "t
 
 2. **Pattern Extraction Process**
    ```markdown
-   From: docs/architecture/SERVICES.md
+   From: ClaudeFiles/documentation/architecture/SERVICES.md
    Pattern: selectService with retry wrapper
    Usage: ALL service implementations MUST use this
    Example: [Copy the exact code pattern]
@@ -709,22 +709,22 @@ const useWindowResize = (callback: () => void) => {
 - Patterns used: [List from docs]
 
 ### Documentation Compliance:
-- ✅ Followed patterns from: `docs/[specific-doc.md]`
+- ✅ Followed patterns from: `ClaudeFiles/documentation/[specific-doc.md]`
 - ✅ Implemented as shown in: [Section reference]
 - ✅ Code matches examples in: [Documentation reference]
 - ⚠ Deviations (if any): [Explain why with justification]
 
 ### Files Changed:
-1. `services/entity.service.ts` - Added error handling and retry logic from docs/architecture/SERVICES.md
-2. `hooks/useEntities.ts` - Implemented data fetching patterns as per docs/architecture/HOOKS.md
-3. `components/EntityCard.tsx` - Created following docs/ui-ux/UI-CONSISTENCY.md
+1. `services/entity.service.ts` - Added error handling and retry logic from ClaudeFiles/documentation/architecture/SERVICES.md
+2. `hooks/useEntities.ts` - Implemented data fetching patterns as per ClaudeFiles/documentation/architecture/HOOKS.md
+3. `components/EntityCard.tsx` - Created following ClaudeFiles/documentation/ui-ux/UI-CONSISTENCY.md
 4. `utils/three/SceneManager.ts` - Three.js scene management (if applicable)
 5. `styles/EntityCard.module.css` - Component styling with CSS modules
 6. `types/entity.types.ts` - TypeScript type definitions
 
 ### Database Changes:
 - [Any migrations or schema updates]
-- [Reference to SQL patterns used from docs/database/]
+- [Reference to SQL patterns used from ClaudeFiles/documentation/database/]
 - [API endpoint modifications]
 
 ### Validation Results:

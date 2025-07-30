@@ -5,13 +5,15 @@ Initialize and standardize projects using the Agent OS framework. This command p
 
 ## How It Works
 
-When you use `/agetos`, the system will:
+When you use `/agetos`, the system will **automatically execute all phases**:
 
 1. **Apply Lyra Universal Optimization** to your request
-2. **Analyze** your project structure and technology stack
-3. **Architect** appropriate standards and conventions
-4. **Build** configuration files and workflows
-5. **Document** all conventions for team alignment
+2. **Automatically run all Agent OS phases**:
+   - ✅ ANALYZE project structure and technology stack
+   - 🔄 ARCHITECT appropriate standards and conventions
+   - 🔄 BUILD configuration files and workflows
+   - 🔄 DOCUMENT all conventions for team alignment
+3. **Deliver complete project setup** without manual intervention
 
 ## Usage
 
@@ -36,40 +38,74 @@ When you use `/agetos`, the system will:
 /systemcc "initialize project standards"  # Auto-routes to agetos
 ```
 
+## Automated Execution
+
+The system uses the **Automated Workflow Executor** to run all phases seamlessly:
+
+### Automatic Phase Progression
+```
+🚀 Starting Agent OS Workflow...
+
+✅ ANALYSIS: Project structure analyzed
+   - Detected: TypeScript, React, Node.js
+   - Current standards: Minimal
+   - Improvement areas identified
+
+🔄 ARCHITECTURE: Designing standards...
+✅ ARCHITECTURE: Standards framework complete
+   - Code style: Airbnb + custom rules
+   - Testing: Jest + React Testing Library
+   - Git workflow: Feature branches
+
+🔄 BUILD: Creating configuration files...
+✅ BUILD: All configurations generated
+   - .eslintrc.js created
+   - .prettierrc added
+   - tsconfig.json optimized
+   - CI/CD pipelines ready
+
+🔄 DOCUMENTATION: Creating team guides...
+✅ DOCUMENTATION: Complete guides generated
+   - Team coding standards
+   - Onboarding documentation
+   - Architecture decisions
+
+✨ Agent OS Complete! Project fully standardized.
+```
+
+### User Interaction Points
+
+The workflow only pauses when:
+1. **Technology Choice**: Multiple valid options exist
+2. **Standards Preference**: Team-specific decisions needed
+3. **Integration Conflicts**: Existing tools need reconciliation
+
+Example:
+```
+🔄 ARCHITECTURE: Which testing framework should I configure?
+   1. Jest (recommended, already partially configured)
+   2. Vitest (modern, faster alternative)
+   3. Mocha + Chai (traditional choice)
+   
+Your preference (1-3): _
+```
+
 ## Implementation Instructions
 
-When this command is invoked:
+When this command is invoked, the automated executor will:
 
 1. **Lyra Optimization**:
-   ```
    - Apply universal middleware from middleware/lyra-universal.md
    - Optimize for project initialization context
    - Extract specific requirements and preferences
-   ```
 
-2. **Project Analysis**:
-   ```
-   - Detect technology stack
-   - Identify existing patterns
-   - Find configuration files
-   - Assess current standards
-   ```
+2. **Automatic Phase Execution**:
+   - **Phase 1: Analysis** → Detect stack, patterns, current state
+   - **Phase 2: Architecture** → Design standards framework
+   - **Phase 3: Build** → Generate all configurations
+   - **Phase 4: Documentation** → Create team guides
 
-3. **Standards Selection**:
-   ```
-   - Choose appropriate language standards
-   - Select linting and formatting rules
-   - Define git workflow patterns
-   - Establish documentation requirements
-   ```
-
-4. **Implementation**:
-   ```
-   - Create/update configuration files
-   - Set up git hooks
-   - Generate CI/CD templates
-   - Create documentation templates
-   ```
+All phases execute automatically with progress updates.
 
 ## Workflow Phases
 
