@@ -386,6 +386,17 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
 ## 🙏 Acknowledgments
 
+### Community-Driven Development
+This system was born from real-world experiences and insights shared by the Claude AI community on Reddit. Special thanks to the following discussions that shaped this project:
+
+- [Insights after one month of Claude Code max usage](https://www.reddit.com/r/ClaudeAI/comments/1msk88r/insights_after_one_month_of_claude_code_max/) - Real-world usage patterns and optimization strategies
+- [My current Claude Code sub-agents workflow](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Multi-agent workflow foundations
+- [How phase-based development made Claude Code 10x better](https://www.reddit.com/r/ClaudeAI/comments/1lw5oie/how_phasebased_development_made_claude_code_10x/) - Phase-based execution methodology
+- [How we 10x'd our dev speed with Claude Code](https://www.reddit.com/r/ClaudeAI/comments/1mc80q8/how_we_10xd_our_dev_speed_with_claude_code_and/) - Performance optimization techniques
+- [20 years of software engineering experience with Claude](https://www.reddit.com/r/ClaudeAI/comments/1m1efu0/as_an_software_egineer_with_20_years_of_experience/) - Professional development patterns
+
+What started as a personal compilation test evolved into a daily-use tool through the collective wisdom of experienced developers sharing their workflows and discoveries.
+
 ### Agent OS Integration
 The Agent OS framework integrated into this system comes from:
 - **Original Source**: [buildermethods.com/agent-os](https://buildermethods.com/agent-os)
