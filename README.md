@@ -21,7 +21,7 @@ Just describe what you want to build - the system handles the rest:
 ```bash
 /systemcc "implement user authentication with JWT"
 ```
-**NEW**: Now with Lyra AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
+**NEW**: Now with Kase AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
 
 ### 🪄 Specialized Workflows Now Integrated
 
@@ -68,6 +68,249 @@ This adapts the system to your specific tech stack.
 /systemcc "what you want to build"
 ```
 The system automatically selects the best workflow.
+
+## 🔄 /systemcc Decision Flow - Complete Cascade
+
+Here's the complete decision-making cascade that happens when you invoke `/systemcc`:
+
+```
+User: /systemcc "your task"
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  1. MEMORY BANK INITIALIZATION      │
+├─────────────────────────────────────┤
+│ • Load ClaudeFiles/memory/*.md      │
+│ • Restore previous context          │
+│ • Check patterns & decisions        │
+│ • Review troubleshooting database   │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  2. SECURITY PRE-SCAN (Optional)    │
+├─────────────────────────────────────┤
+│ IF --secure flag OR suspicious:     │
+│ • Run PromptSecure-Ultra            │
+│ • Decode Base64/URL/HTML/Unicode    │
+│ • Check injection patterns          │
+│   ├─ CRITICAL → Block execution 🛑  │
+│   ├─ HIGH → Require confirmation ⚠️ │
+│   └─ SAFE → Continue ✅             │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  3. FIRST-RUN DETECTION             │
+├─────────────────────────────────────┤
+│ Check: ClaudeFiles/.analysis-status │
+│   ├─ NOT EXISTS:                    │
+│   │  • Run project analysis         │
+│   │  • Create .analysis-status      │
+│   │  • Update memory bank           │
+│   └─ EXISTS: Skip to next step      │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  4. KASE AI PROMPT OPTIMIZATION     │
+├─────────────────────────────────────┤
+│ Apply 4-D Methodology:              │
+│ • DECONSTRUCT - Extract intent      │
+│ • DIAGNOSE - Find gaps              │
+│ • DEVELOP - Add specifications      │
+│ • DELIVER - Craft final prompt      │
+│                                      │
+│ Mode Selection:                      │
+│   ├─ Simple task → BASIC mode       │
+│   └─ Complex task → DETAIL mode     │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  5. CONTEXT SIZE ANALYSIS           │
+├─────────────────────────────────────┤
+│ Check Current Context:               │
+│ • Token count: [X] tokens           │
+│ • Loaded files: [N] files           │
+│ • Project size: [M] total files     │
+│                                      │
+│ Decision Points:                     │
+│   ├─ > 30,000 tokens → Phase-based  │
+│   ├─ > 10 files loaded → Phase-based│
+│   └─ < Thresholds → Continue        │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  6. TASK COMPLEXITY ANALYSIS        │
+├─────────────────────────────────────┤
+│ Evaluate Task Characteristics:       │
+│ • Scope: Single/Multi-file          │
+│ • Type: Bug/Feature/Refactor        │
+│ • Risk: Security/Breaking changes   │
+│ • Time: Minutes/Hours estimate      │
+│                                      │
+│ Complexity Score: [1-10]            │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  7. WORKFLOW SELECTION MATRIX       │
+├─────────────────────────────────────┤
+│ Pattern Detection & Routing:         │
+│                                      │
+│ ┌─────────────────────────┐         │
+│ │ Keywords Found?          │         │
+│ └────────┬────────────────┘         │
+│          │                           │
+│   ┌──────▼──────┐                   │
+│   │ "setup"     │──→ AGENT OS       │
+│   │ "initialize"│    (/agetos)      │
+│   │ "standards" │                   │
+│   └─────────────┘                   │
+│                                      │
+│   ┌─────────────┐                   │
+│   │ "build"     │──→ AI DEV TASKS   │
+│   │ "feature"   │    (/aidevtasks)  │
+│   │ "product"   │                   │
+│   └─────────────┘                   │
+│                                      │
+│   ┌─────────────┐                   │
+│   │ Context     │──→ PHASE-BASED    │
+│   │ > 30k tokens│    (/taskit)      │
+│   │ > 5 modules │                   │
+│   └─────────────┘                   │
+│                                      │
+│   ┌─────────────┐                   │
+│   │ Complexity  │──→ COMPLETE       │
+│   │ Score > 5   │    (6 agents)     │
+│   │ High risk   │                   │
+│   └─────────────┘                   │
+│                                      │
+│   ┌─────────────┐                   │
+│   │ Simple task │──→ ORCHESTRATED   │
+│   │ Score < 4   │    (3 agents)     │
+│   │ Low risk    │                   │
+│   └─────────────┘                   │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  8. USER CONFIRMATION               │
+├─────────────────────────────────────┤
+│ Display Analysis:                    │
+│ • Task: [description]                │
+│ • Complexity: [High/Med/Low]        │
+│ • Workflow: [selected]              │
+│ • Reason: [why this workflow]       │
+│                                      │
+│ "Ready to proceed? (yes/adjust)"    │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  9. WORKFLOW EXECUTION              │
+├─────────────────────────────────────┤
+│ Selected Workflow Runs:              │
+│                                      │
+│ ┌─ AGENT OS ────────────────┐       │
+│ │ Analyze→Architect→Build→  │       │
+│ │ Document→Test→Deploy       │       │
+│ └────────────────────────────┘       │
+│                                      │
+│ ┌─ AI DEV TASKS ────────────┐       │
+│ │ Create PRD→Generate Tasks→ │       │
+│ │ Process Each Task→Complete │       │
+│ └────────────────────────────┘       │
+│                                      │
+│ ┌─ PHASE-BASED ─────────────┐       │
+│ │ Decompose→Execute Phases→  │       │
+│ │ Integrate→Validate         │       │
+│ └────────────────────────────┘       │
+│                                      │
+│ ┌─ COMPLETE (6 Agents) ─────┐       │
+│ │ PLANNER→EXECUTER→VERIFIER→│       │
+│ │ TESTER→DOCUMENTER→UPDATER  │       │
+│ └────────────────────────────┘       │
+│                                      │
+│ ┌─ ORCHESTRATED (3 Agents) ─┐       │
+│ │ Orchestrator→Developer→    │       │
+│ │ Reviewer→Complete          │       │
+│ └────────────────────────────┘       │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  10. SMART USER INTERACTIONS        │
+├─────────────────────────────────────┤
+│ ONLY pause for:                      │
+│ • Specifications needed              │
+│ • Technical choices (DB type)       │
+│ • Feature clarifications            │
+│ • Missing context                   │
+│                                      │
+│ NEVER ask to run commands!          │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  11. MEMORY BANK UPDATE             │
+├─────────────────────────────────────┤
+│ After completion:                    │
+│ • Update activeContext.md           │
+│ • Document new patterns             │
+│ • Record decisions made             │
+│ • Add troubleshooting solutions     │
+│ • Run memory-bank-synchronizer      │
+└────────────┬────────────────────────┘
+             │
+             ▼
+        ✅ TASK COMPLETE
+
+```
+
+### 📊 Decision Priority Hierarchy
+
+1. **🔴 CRITICAL OVERRIDE**: Security threats → Block immediately
+2. **🟠 CONTEXT OVERRIDE**: >30k tokens → Force phase-based
+3. **🟡 PATTERN MATCH**: Keywords found → Specific workflow
+4. **🟢 COMPLEXITY SCORE**: Calculate → Select best fit
+5. **🔵 DEFAULT**: When uncertain → Complete system
+
+### 🎯 Workflow Selection Logic
+
+```
+IF security_risk == CRITICAL:
+    → ABORT
+
+ELIF context_tokens > 30000 OR files_loaded > 10:
+    → PHASE-BASED (/taskit)
+
+ELIF keywords in ["setup", "initialize", "standards"]:
+    → AGENT OS (/agetos)
+
+ELIF keywords in ["build", "feature", "product"]:
+    → AI DEV TASKS (/aidevtasks)
+
+ELIF complexity_score > 5 OR risk == HIGH:
+    → COMPLETE SYSTEM (6 agents)
+
+ELIF complexity_score < 4 AND risk == LOW:
+    → ORCHESTRATED (3 agents)
+
+ELSE:
+    → COMPLETE SYSTEM (default safe choice)
+```
+
+### 🔍 Key Decision Factors
+
+| Factor | Weight | Triggers |
+|--------|--------|----------|
+| **Context Size** | 40% | >30k tokens = Phase-based |
+| **Task Keywords** | 30% | Specific patterns = Specific workflow |
+| **Complexity Score** | 20% | 1-3: Simple, 4-6: Medium, 7-10: Complex |
+| **Security Risk** | 10% | Any risk = More validation |
 
 ## 🏗️ System Architecture
 

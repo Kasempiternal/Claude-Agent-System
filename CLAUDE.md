@@ -1,8 +1,44 @@
 # CLAUDE.md - Claude Agent System
 This file provides project-specific guidance to Claude Code when working in this repository.
 
+## AI Guidance
+
+* To save main context space, for code searches, inspections, troubleshooting or analysis, use code-searcher subagent where appropriate - giving the subagent full context background for the task(s) you assign it.
+* After receiving tool results, carefully reflect on their quality and determine optimal next steps before proceeding. Use your thinking to plan and iterate based on this new information, and then take the best next action.
+* For maximum efficiency, whenever you need to perform multiple independent operations, invoke all relevant tools simultaneously rather than sequentially.
+* Before you finish, please verify your solution
+* Do what has been asked; nothing more, nothing less.
+* NEVER create files unless they're absolutely necessary for achieving your goal.
+* ALWAYS prefer editing an existing file to creating a new one.
+* NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
+* When you update or modify core context files, also update memory bank documentation
+
+## Memory Bank System
+
+This project uses a structured memory bank system with specialized context files. Always check these files for relevant information before starting work:
+
+### Core Context Files
+
+* **ClaudeFiles/memory/CLAUDE-activeContext.md** - Current session state, goals, and progress
+* **ClaudeFiles/memory/CLAUDE-patterns.md** - Established code patterns and conventions
+* **ClaudeFiles/memory/CLAUDE-decisions.md** - Architecture decisions and rationale
+* **ClaudeFiles/memory/CLAUDE-troubleshooting.md** - Common issues and proven solutions
+* **ClaudeFiles/memory/CLAUDE-config-variables.md** - Configuration variables reference (if exists)
+* **ClaudeFiles/memory/CLAUDE-temp.md** - Temporary scratch pad (only read when referenced)
+
+**Important:** Always reference the active context file first to understand what's currently being worked on and maintain session continuity.
+
+### Memory Bank Updates
+
+When working on tasks:
+1. Read relevant memory files at start
+2. Update activeContext.md with progress
+3. Document new patterns in patterns.md
+4. Record decisions in decisions.md
+5. Add solutions to troubleshooting.md
+
 ## Project Overview
-This is the Claude Agent System repository - a comprehensive multi-agent workflow system for structured development. 
+This is the Claude Agent System repository - a comprehensive multi-agent workflow system for structured development with persistent memory and enterprise security features. 
 
 ## How to Use This System
 
@@ -33,7 +69,7 @@ Claude: 🔍 First time in this project - running analysis first...
 ```
 
 ### Unified System Structure
-- **Middleware**: `middleware/` - Universal Lyra AI optimization
+- **Middleware**: `middleware/` - Universal Kase AI optimization
 - **Workflows**: `workflows/` - All workflow implementations
   - `agent-os/` - Project initialization framework
   - `ai-dev-tasks/` - PRD-based development
@@ -99,7 +135,7 @@ Claude: [Creates PRD, generates tasks, implements - all automatic]
 
 ### Core System Files
 - `CLAUDE-FILES-ORGANIZATION.md` - **MANDATORY file organization**
-- `middleware/lyra-universal.md` - Universal AI prompt optimization
+- `middleware/kase-universal.md` - Universal AI prompt optimization
 - `middleware/automated-workflow-executor.md` - **NEW: Automatic agent execution system**
 
 ### Workflow Documentation
