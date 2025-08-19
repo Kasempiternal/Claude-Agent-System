@@ -68,23 +68,21 @@ Quick execution for simple tasks.
 ```
 
 #### Complete System (6 Sequential Agents)
-For complex tasks requiring thorough validation:
-1. `/planner` - Strategic analysis
-2. `/executer` - Implementation
-3. `/verifier` - Quality check
-4. `/tester` - Functional testing
-5. `/documenter` - Documentation
-6. `/updater` - Version control
+For complex tasks requiring thorough validation, `/systemcc` automatically runs:
+1. Strategic analysis phase
+2. Implementation phase
+3. Quality verification phase
+4. Functional testing phase
+5. Documentation phase
+6. Version control phase
 
-### 🛠️ Direct Agent Access
+### 🛠️ Workflow Access
 
-For power users who want specific agents:
-- `/planner` - Start complete system workflow
-- `/executer` - Continue after planner
-- `/verifier` - Run quality checks
-- `/tester` - Execute tests
-- `/documenter` - Update documentation
-- `/updater` - Handle version control
+All workflows are accessed through `/systemcc` which automatically:
+- Detects task complexity
+- Selects appropriate workflow
+- Runs all agents sequentially
+- No manual agent commands needed
 
 ### 🔍 Utility Commands
 

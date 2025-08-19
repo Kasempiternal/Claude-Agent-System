@@ -10,7 +10,7 @@ The CLAUDE Agents System is a structured workflow for implementing features and 
 - **Role**: Investigates problems and designs solutions
 - **Analyzes**: Root causes, not symptoms
 - **Creates**: Detailed phases for other agents
-- **Command**: `/planner "describe your problem or idea"`
+- **Activated by**: `/systemcc` when complex tasks are detected
 
 ### 2. EXECUTER - The Builder
 - **Role**: Implements the solution
@@ -47,10 +47,13 @@ The CLAUDE Agents System is a structured workflow for implementing features and 
 ### Step 1: Identify Problem
 User reports an issue or proposes a feature:
 ```bash
-/planner "Bundle size too large, app loading slowly"
+/systemcc "Bundle size too large, app loading slowly"
 ```
 
-### Step 2: PLANNER Investigation
+### Step 2: Automatic Workflow Selection
+`/systemcc` detects this is a complex task and automatically initiates the complete 6-agent workflow.
+
+### Step 3: PLANNER Investigation
 PLANNER analyzes:
 - Current code implementation
 - Documentation in docs/
@@ -60,15 +63,13 @@ PLANNER analyzes:
 
 Output: 5 phases with specific instructions for each agent
 
-### Step 3: Sequential Execution
-Each agent reads their phase and executes:
-```bash
-/executer   # Implements fix based on Phase 1
-/verifier   # Validates code quality from Phase 2
-/tester     # Tests functionality from Phase 3
-/documenter # Updates documentation from Phase 4
-/updater    # Commits changes from Phase 5
-```
+### Step 4: Automatic Sequential Execution
+`/systemcc` automatically runs each agent in sequence:
+- Phase 1: Implementation (EXECUTER)
+- Phase 2: Code validation (VERIFIER)
+- Phase 3: Functionality testing (TESTER)
+- Phase 4: Documentation update (DOCUMENTER)
+- Phase 5: Version control (UPDATER)
 
 ### Step 4: Safe Deployment
 - Changes committed to `development` branch
@@ -358,8 +359,8 @@ Monitoring ← Production Deployment ← Testing ← Implementation
 1. Install Claude.ai desktop app
 2. Enable Claude Code features
 3. Open project in Claude
-4. Use `/planner "your problem"` to start
-5. Follow agent sequence
+4. Use `/systemcc "your problem"` to start
+5. Agents run automatically in sequence
 6. Deploy safely
 
 ## Advanced Usage
