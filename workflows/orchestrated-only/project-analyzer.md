@@ -212,7 +212,7 @@ REPLACEMENTS = {
 - Adapt validation rules to detected stack
 
 ### With Agent OS
-- Update `.agent-os/standards/tech-stack.md`
+- Update `workflows/agent-os/standards/tech-stack.md`
 - Adapt code examples in standards
 - Align with detected patterns
 
@@ -247,7 +247,7 @@ REPLACEMENTS = {
 ✅ complete-system/verifier-agent.md - {language} validation
 ✅ complete-system/tester-agent.md - {test_framework} configuration
 ✅ complete-system/executer-agent.md - {language} examples
-✅ .agent-os/standards/tech-stack.md - Full stack documentation
+✅ workflows/agent-os/standards/tech-stack.md - Full stack documentation
 
 ### Command Adaptations
 - Lint: `{lint_command}`

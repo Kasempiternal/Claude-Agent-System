@@ -303,7 +303,7 @@ button-analysis.txt                # Should be in ClaudeFiles
 ```
 
 ## Agent OS Attribution
-The Agent OS framework (.agent-os directory) is integrated from:
+The Agent OS workflow framework (workflows/agent-os/) is inspired by and adapted from:
 - Source: https://buildermethods.com/agent-os
 - Tutorial: https://www.youtube.com/watch?v=CTMyzeKKb0o&t
-- Modifications: Adapted for multi-language support and integration with our analyzecc system
+- Modifications: Integrated into unified systemcc workflow with multi-language support

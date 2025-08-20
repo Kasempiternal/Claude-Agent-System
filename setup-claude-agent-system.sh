@@ -93,11 +93,8 @@ cp -r "$TEMP_DIR/complete-system/"* "$CLAUDE_DIR/complete-system/" 2>/dev/null |
 cp -r "$TEMP_DIR/orchestrated-only/"* "$CLAUDE_DIR/orchestrated-only/" 2>/dev/null || true
 cp -r "$TEMP_DIR/phase-based-workflow/"* "$CLAUDE_DIR/phase-based-workflow/" 2>/dev/null || true
 
-# Copy Agent OS files if they exist
-if [ -d "$TEMP_DIR/.agent-os" ]; then
-    cp -r "$TEMP_DIR/.agent-os" "$CLAUDE_DIR/" 2>/dev/null || true
-    print_status "Agent OS files installed"
-fi
+# Agent OS is now integrated into workflows/agent-os/
+# No separate .agent-os directory needed
 
 # Copy important documentation files
 cp "$TEMP_DIR/README-AGENT-SYSTEM.md" "$CLAUDE_DIR/" 2>/dev/null || true

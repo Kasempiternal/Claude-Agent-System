@@ -26,6 +26,7 @@ Breaks complex tasks into focused phases for optimal context management.
 - Best for tasks > 1 hour or large codebases
 - Reduces context by 60-80%
 - Maintains quality across all phases
+- See `workflows/phase-based-workflow/taskit.md` for details
 
 ```bash
 /taskit "refactor entire payment system"

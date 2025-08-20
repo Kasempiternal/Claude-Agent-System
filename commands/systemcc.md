@@ -286,21 +286,23 @@ When this command is invoked:
 
 9. **Enhanced Decision Matrix**:
    ```
-   Agent OS (/agetos) Indicators:
+   Agent OS Integration (Complete System + Agent OS) Indicators:
    - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
-   - New project initialization
-   - Coding standards establishment
-   - Development workflow setup
-   - Tool configuration
-   - Team conventions
+   - Keywords: "plan product", "analyze codebase", "create spec", "mission", "roadmap"
+   - Keywords: "tech stack", "coding standards", "best practices", "team conventions"
+   - New project initialization with comprehensive standards
+   - Existing project standardization and analysis
+   - Product planning and specification creation
+   - Architecture documentation and decision recording
+   - Development workflow and tool configuration setup
    
    AI Dev Tasks (/aidevtasks) Indicators:
    - Keywords: "build feature", "create system", "product", "user story"
-   - Feature development from scratch
+   - Feature development from scratch (without standards focus)
    - Complex user-facing functionality
-   - Needs detailed requirements
-   - Benefits from PRD approach
+   - Needs detailed requirements via PRD approach
    - Multi-component features
+   - User-centric development
    
    Phase-Based (/taskit) Indicators:
    - Context already > 30,000 tokens
@@ -310,13 +312,13 @@ When this command is invoked:
    - Estimated time > 60 minutes
    - Keywords: "entire", "all", "across", "throughout", "migrate"
    
-   Complete System Indicators:
+   Complete System (Standard) Indicators:
    - Keywords: "architecture", "refactor", "security", "performance"
    - Multi-system integration (< 5 modules)
    - Database schema changes
    - API design changes
-   - High-risk modifications
-   - Needs thorough validation
+   - High-risk modifications requiring validation
+   - Complex technical implementations
    
    Orchestrated-Only Indicators:
    - Keywords: "fix", "update", "tweak", "adjust", "simple"
@@ -331,9 +333,9 @@ When this command is invoked:
    ```
    # Claude executes everything internally - no exposed commands!
    
-   IF detected_type == 'project_setup':
-     Internal: Agent OS workflow
-     Process: Analyze → Architect → Build → Document
+   IF detected_type == 'agent_os_integration':
+     Internal: Complete System with Agent OS phases
+     Process: Agent OS Analysis → Strategic Plan → Agent OS Architecture → Implementation → Standards Creation → Validation → Testing → Documentation → Deployment
    ELIF detected_type == 'feature_development':
      Internal: AI Dev Tasks workflow
      Process: Create PRD → Generate Tasks → Implement
@@ -357,6 +359,7 @@ When this command is invoked:
    → Document any new patterns in CLAUDE-patterns.md
    → Record decisions made in CLAUDE-decisions.md
    → Add any issues/solutions to CLAUDE-troubleshooting.md
+   → Create/update Agent OS standards files when applicable
    ```
 
 11. **Memory Bank Persistence**:
@@ -448,22 +451,46 @@ def calculate_complexity(task_desc, lyra_result):
 def select_optimal_workflow(analysis, patterns, risk):
     """Intelligent workflow selection based on multiple factors"""
     
-    # High risk always gets full validation
+    # PRIORITY 1: Agent OS Integration Detection
+    agent_os_keywords = [
+        'setup', 'initialize', 'standards', 'conventions', 'project structure',
+        'plan product', 'analyze codebase', 'create spec', 'mission', 'roadmap',
+        'tech stack', 'coding standards', 'best practices', 'team conventions',
+        'code style', 'development workflow', 'tool configuration'
+    ]
+    
+    agent_os_scenarios = [
+        'new project initialization',
+        'existing project standardization',
+        'product planning and specification',
+        'architecture documentation',
+        'development workflow setup'
+    ]
+    
+    if any(keyword in analysis['task_description'].lower() for keyword in agent_os_keywords):
+        return Workflow('agent_os_integration', 
+                       'Agent OS methodology detected - comprehensive standards and specification approach')
+    
+    if any(scenario in analysis['context_hints'] for scenario in agent_os_scenarios):
+        return Workflow('agent_os_integration',
+                       'Agent OS workflow patterns detected')
+    
+    # PRIORITY 2: High risk always gets full validation
     if risk.level == 'HIGH':
         return Workflow('complete_system', 
                        f'High-risk changes require comprehensive validation: {risk.reasons}')
     
-    # Feature development with unclear requirements
+    # PRIORITY 3: Feature development with unclear requirements
     if analysis['complexity_score'] > 6 and 'feature' in patterns:
         return Workflow('aidevtasks', 
                        'Complex feature benefits from PRD-based approach')
     
-    # Large scope but well-defined
+    # PRIORITY 4: Large scope but well-defined
     if analysis['affected_components'] > 5 and analysis['complexity_score'] < 7:
         return Workflow('taskit', 
                        'Large scope benefits from phase-based execution')
     
-    # Simple, low-risk changes
+    # PRIORITY 5: Simple, low-risk changes
     if analysis['complexity_score'] < 4 and risk.level == 'LOW':
         return Workflow('orchestrated', 
                        'Simple task suitable for streamlined execution')
@@ -560,7 +587,7 @@ Claude: 🔄 Phase 1/6: Designing search architecture...
 
 ## Examples
 
-### Example 1: Agent OS Detection
+### Example 1: Agent OS Integration Detection
 ```
 User: /systemcc "setup coding standards for our Python project"
 
@@ -593,26 +620,78 @@ User: /systemcc "setup coding standards for our Python project"
 
 ═══════════════════════════════════════════════════════════════
 
-Step 2 - Workflow Detection:
-- Keywords detected: "setup", "standards"
-- Project initialization task identified
-→ Routing to Agent OS workflow
+🧠 Workflow Detection:
+- Keywords detected: "setup", "coding standards"
+- Agent OS methodology identified
+→ Routing to Complete System with Agent OS Integration
 
-Executing: /agetos "[optimized prompt]"
-Reason: Project standards and initialization
+🚀 Executing Agent OS Enhanced Workflow:
+✅ Phase 1/9: AGENT_OS_ANALYZER - Project analysis complete
+✅ Phase 2/9: AGENT_OS_ARCHITECT - Standards framework designed  
+✅ Phase 3/9: PLANNER - Implementation strategy complete
+🔄 Phase 4/9: EXECUTER - Implementing configurations...
+✅ Phase 4/9: EXECUTER - Configuration files generated
+✅ Phase 5/9: STANDARDS_CREATOR - All standards files created
+✅ Phase 6/9: VERIFIER - Quality validation passed
+✅ Phase 7/9: TESTER - Standards testing complete
+✅ Phase 8/9: DOCUMENTER - Team documentation ready
+✅ Phase 9/9: UPDATER - Project fully standardized
+
+✨ Agent OS Integration Complete!
+📁 Created: tech-stack.md, code-style.md, best-practices.md
+🔧 Generated: .flake8, pyproject.toml, pre-commit config
+📚 Documented: Team onboarding guide and development workflow
 ```
 
-### Example 2: AI Dev Tasks Detection
+### Example 2: Agent OS Product Planning Detection
+```
+User: /systemcc "analyze our codebase and create a product roadmap"
+
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION  
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"analyze our codebase and create a product roadmap"
+
+✨ Optimized Prompt:
+"Conduct comprehensive codebase analysis and create strategic product roadmap including: 1) Technology stack assessment with upgrade recommendations, 2) Code quality metrics and improvement areas, 3) Architecture decisions documentation, 4) Feature development priorities, 5) Technical debt roadmap, 6) Team capability assessment, 7) 6-month development timeline with milestones."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 8
+- Improvements Applied: 7
+
+═══════════════════════════════════════════════════════════════
+
+🧠 Workflow Detection:
+- Keywords detected: "analyze codebase", "product roadmap"  
+- Agent OS product planning scenario identified
+→ Routing to Complete System with Agent OS Integration
+
+🚀 Executing Agent OS Enhanced Workflow:
+✅ Phase 1/9: AGENT_OS_ANALYZER - Codebase analysis complete
+    • Technology stack: React, Node.js, PostgreSQL
+    • Standards score: 3/5 (needs improvement)
+    • 47 improvement opportunities identified
+✅ Phase 2/9: AGENT_OS_ARCHITECT - Product framework designed
+    • Mission statement defined
+    • Technical roadmap structured
+    • Standards framework outlined
+🔄 Phase 3/9: PLANNER - Strategic roadmap creation...
+```
+
+### Example 3: AI Dev Tasks Detection (Standard Feature)
 ```
 User: /systemcc "build a user dashboard with analytics"
 
 Step 1 - Lyra Universal Optimization:
-Original: "build a user dashboard with analytics"
+Original: "build a user dashboard with analytics" 
 Optimized: "Build comprehensive user dashboard feature with real-time analytics. Requirements: 1) Dashboard layout with customizable widgets, 2) Analytics visualizations using Chart.js for metrics like user activity, revenue, engagement, 3) Date range filtering, 4) Export functionality for reports, 5) Responsive design for mobile/tablet, 6) Performance: <2s load time with lazy loading, 7) Role-based widget visibility. Deliver complete frontend components and backend APIs with tests."
 
 Step 2 - Workflow Detection:
 - Keywords detected: "build feature", "dashboard"
-- Complex user-facing feature identified
+- Complex user-facing feature (no standards focus)
 → Routing to AI Dev Tasks for PRD approach
 
 Executing: /aidevtasks create-prd "[optimized prompt]"
