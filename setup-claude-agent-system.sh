@@ -59,15 +59,36 @@ else
     exit 1
 fi
 
-# Create subdirectories in .claude
+# Create complete directory structure in .claude
 mkdir -p "$CLAUDE_DIR/commands"
+mkdir -p "$CLAUDE_DIR/middleware" 
+mkdir -p "$CLAUDE_DIR/workflows"
 mkdir -p "$CLAUDE_DIR/complete-system"
 mkdir -p "$CLAUDE_DIR/orchestrated-only"
 mkdir -p "$CLAUDE_DIR/phase-based-workflow"
 
-# Copy command files
-print_info "Installing command files..."
-cp -r "$TEMP_DIR/commands/"* "$CLAUDE_DIR/commands/" 2>/dev/null || true
+# Copy all core system files
+print_info "Installing core system files..."
+
+# Copy commands directory
+if [ -d "$TEMP_DIR/commands" ]; then
+    cp -r "$TEMP_DIR/commands/"* "$CLAUDE_DIR/commands/" 2>/dev/null || true
+    print_status "Commands installed"
+fi
+
+# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems)
+if [ -d "$TEMP_DIR/middleware" ]; then
+    cp -r "$TEMP_DIR/middleware/"* "$CLAUDE_DIR/middleware/" 2>/dev/null || true
+    print_status "Middleware installed (Lyra AI, analysis, memory systems)"
+fi
+
+# Copy complete workflows directory structure
+if [ -d "$TEMP_DIR/workflows" ]; then
+    cp -r "$TEMP_DIR/workflows/"* "$CLAUDE_DIR/workflows/" 2>/dev/null || true
+    print_status "Complete workflow system installed"
+fi
+
+# Copy legacy directories for backward compatibility
 cp -r "$TEMP_DIR/complete-system/"* "$CLAUDE_DIR/complete-system/" 2>/dev/null || true
 cp -r "$TEMP_DIR/orchestrated-only/"* "$CLAUDE_DIR/orchestrated-only/" 2>/dev/null || true
 cp -r "$TEMP_DIR/phase-based-workflow/"* "$CLAUDE_DIR/phase-based-workflow/" 2>/dev/null || true
@@ -83,70 +104,164 @@ cp "$TEMP_DIR/README-AGENT-SYSTEM.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/CLAUDE-FILES-ORGANIZATION.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/setup-claudefiles.sh" "$CLAUDE_DIR/" 2>/dev/null || true
 
-print_status "Command files installed"
+print_status "All system components installed"
 
-# Run ClaudeFiles setup
+# Setup ClaudeFiles directory structure
 print_info "Setting up ClaudeFiles directory structure..."
-if [ -f "$CLAUDE_DIR/setup-claudefiles.sh" ]; then
-    chmod +x "$CLAUDE_DIR/setup-claudefiles.sh"
-    cd "$PROJECT_ROOT" && bash "$CLAUDE_DIR/setup-claudefiles.sh" > /dev/null 2>&1
-    print_status "ClaudeFiles directory structure created"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/documentation"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/tests/results"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/tests/bugs"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/workflows"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/temp"
+mkdir -p "$PROJECT_ROOT/ClaudeFiles/memory"
+
+# Initialize memory bank system
+print_info "Initializing memory bank system..."
+if [ -d "$TEMP_DIR/ClaudeFiles/memory" ]; then
+    cp -r "$TEMP_DIR/ClaudeFiles/memory/"* "$PROJECT_ROOT/ClaudeFiles/memory/" 2>/dev/null || true
+    print_status "Memory bank system initialized"
 else
-    print_info "ClaudeFiles setup script not found - manual setup may be required"
+    # Create basic memory files if they don't exist in source
+    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-activeContext.md" << 'EOF'
+# CLAUDE-activeContext.md
+*Current Session State and Progress Tracking*
+
+## Current Session
+**Date**: $(date +%Y-%m-%d)
+**Primary Task**: [Current task will be updated automatically]
+**Status**: Initialized
+
+## Active Goals
+- [Goals will be tracked automatically]
+
+## Recent Context
+- Project initialized with Claude Agent System
+- Memory bank system ready for learning
+
+---
+*This file maintains continuity across Claude sessions. Updates automatically.*
+EOF
+
+    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-patterns.md" << 'EOF'
+# CLAUDE-patterns.md
+*Established Code Patterns and Conventions*
+
+## Detected Patterns
+- [Code patterns will be learned automatically]
+
+## Naming Conventions
+- [Will be detected from codebase analysis]
+
+## Architecture Patterns
+- [Will be identified during development]
+
+---
+*This file learns and remembers your coding patterns.*
+EOF
+
+    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-decisions.md" << 'EOF'
+# CLAUDE-decisions.md
+*Architecture Decisions and Rationale*
+
+## Decision Log
+- [Architecture decisions will be recorded automatically]
+
+## Technology Choices
+- [Tech stack decisions will be tracked]
+
+---
+*This file maintains a record of important project decisions.*
+EOF
+
+    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-troubleshooting.md" << 'EOF'
+# CLAUDE-troubleshooting.md
+*Common Issues and Proven Solutions*
+
+## Known Issues
+- [Common problems and solutions will be recorded]
+
+## Solution Database
+- [Proven fixes will be stored for reuse]
+
+---
+*This file builds a knowledge base of solutions.*
+EOF
+    print_status "Basic memory bank files created"
 fi
+
+print_status "ClaudeFiles directory structure created"
 
 # Create or update CLAUDE.md
 CLAUDE_MD_PATH="$PROJECT_ROOT/CLAUDE.md"
 if [ ! -f "$CLAUDE_MD_PATH" ]; then
     print_info "Creating CLAUDE.md..."
     cat > "$CLAUDE_MD_PATH" << 'EOF'
-# CLAUDE.md - Project Configuration
+# CLAUDE.md - Claude Agent System Configuration
 
-This project uses the Claude Agent System for AI-assisted development.
+This project uses the Claude Agent System with full automation, intelligent analysis, and persistent memory.
 
-## Quick Start
+## THE ONLY COMMAND YOU NEED
 
-Use `/systemcc "your task description"` to get started. The system will automatically:
-- Analyze your task complexity
-- Detect context size and project scale
-- Route to the appropriate workflow
+```bash
+/systemcc "describe what you want to do"
+```
 
-## Available Commands
+The system automatically:
+- 🔍 Analyzes your codebase (first run only)
+- 🎯 Optimizes your request with Lyra AI
+- 🧠 Selects the best workflow internally
+- ⚡ Executes everything end-to-end
+- 💾 Remembers patterns for future sessions
 
-- `/systemcc` - Universal entry point (RECOMMENDED)
-- `/taskit` - Phase-based execution for complex tasks
-- `/orchestrated` - Quick workflow for simple tasks
-- `/help` - Show all available commands
+## Smart Automation
 
-## How It Works
+The system automatically chooses:
+- **Simple fixes** → Quick 3-agent workflow
+- **Complex features** → Complete 6-agent validation
+- **Large codebases** → Phase-based execution
+- **New features** → PRD-based development
 
-The system automatically selects the best approach:
-- **Large contexts** → Routes to phase-based execution
-- **Complex tasks** → Uses complete 6-agent system
-- **Simple tasks** → Uses streamlined 3-agent workflow
+## Memory Bank System
+
+Your project now has persistent memory in `ClaudeFiles/memory/`:
+- **activeContext.md** - Current session state
+- **patterns.md** - Code conventions and patterns
+- **decisions.md** - Architecture decisions
+- **troubleshooting.md** - Solutions database
 
 ## File Organization
 
-This project uses the ClaudeFiles directory structure for all AI-generated content.
-All non-code files created by Claude agents will be organized in `ClaudeFiles/`.
-See `.claude/CLAUDE-FILES-ORGANIZATION.md` for details.
+All Claude-generated files are organized in `ClaudeFiles/`:
+- `documentation/` - All documentation
+- `tests/` - Test results and bug reports
+- `workflows/` - Task plans and summaries
+- `memory/` - Persistent learning system
+- `temp/` - Temporary working files
 
-## Project-Specific Notes
+## Available Commands
+
+- `/systemcc` - Universal entry point (ALL YOU NEED)
+- `/help` - Show all available commands
+- `/analyzecc` - Manual project re-analysis (rarely needed)
+
+## Project-Specific Configuration
 
 Add your project-specific guidelines below:
 
-### Code Style
-- [Add your code style preferences]
+### Code Style Preferences
+- [Your coding standards will be learned automatically]
 
-### Testing Requirements
-- [Add your testing requirements]
+### Testing Requirements  
+- [Test commands will be detected automatically]
 
 ### Build Commands
-- [Add your build/lint/test commands]
+- [Build/lint commands will be configured automatically]
 
 ## Learn More
 
-See `.claude/commands/help.md` for detailed command documentation.
+- `.claude/commands/help.md` - Complete command reference
+- `.claude/CLAUDE-FILES-ORGANIZATION.md` - File organization details
+- `ClaudeFiles/memory/` - Your project's learning system
 EOF
     print_status "Created CLAUDE.md"
 else
@@ -262,10 +377,12 @@ echo "1. Open your project in Claude Code"
 echo "2. Use ${GREEN}/systemcc \"your task\"${NC} to get started"
 echo "3. Use ${GREEN}/help${NC} to see all available commands"
 echo ""
-echo -e "${BLUE}Files created:${NC}"
-echo "  - $CLAUDE_DIR/ (command system)"
+echo -e "${BLUE}Complete system installed:${NC}"
+echo "  - $CLAUDE_DIR/commands/ (all commands)"
+echo "  - $CLAUDE_DIR/middleware/ (Lyra AI, analysis, memory systems)"
+echo "  - $CLAUDE_DIR/workflows/ (complete workflow system)"
 echo "  - $CLAUDE_MD_PATH (project configuration)"
-echo "  - $CLAUDE_DIR/QUICK_START.md (quick reference)"
+echo "  - ClaudeFiles/memory/ (persistent learning system)"
 echo "  - ClaudeFiles/ (organized output directory)"
 echo ""
 echo -e "${YELLOW}Tip:${NC} The system will automatically manage context and choose the best workflow for you!"

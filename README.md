@@ -21,7 +21,7 @@ Just describe what you want to build - the system handles the rest:
 ```bash
 /systemcc "implement user authentication with JWT"
 ```
-**NEW**: Now with Kase AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
+**NEW**: Now with Lyra AI prompt optimization! Your requests are automatically enhanced for maximum clarity and complete code delivery.
 
 ### 🪄 Specialized Workflows Now Integrated
 
@@ -56,7 +56,7 @@ After setup, there's only **ONE** command you need to know:
 
 That's it! The system automatically:
 - ✅ Analyzes your project (first time only)
-- ✅ Optimizes your request with Kase AI
+- ✅ Optimizes your request with Lyra AI
 - ✅ Selects the best workflow internally
 - ✅ Executes everything end-to-end
 - ✅ No more manual commands needed!
@@ -68,6 +68,25 @@ That's it! The system automatically:
 /systemcc "build analytics dashboard"            # → Auto-selected: AI Dev Tasks
 /systemcc "refactor entire payment module"       # → Auto-selected: Phase-based
 ```
+
+## 🔍 Smart Codebase Analysis (First Run Only)
+
+On first use, `/systemcc` automatically analyzes your project in **4-5 seconds**:
+
+**🔧 What It Detects:**
+- **Tech Stack**: Language, framework, dependencies (`package.json`, `requirements.txt`, etc.)
+- **Conventions**: Naming patterns, file structure, testing approach
+- **Commands**: Your actual `npm test`, `pytest`, `rails test` commands
+- **Project Type**: Web app, API, AI/ML, mobile, etc.
+
+**🧠 Smart Adaptation:**
+- Uses YOUR build/test/lint commands automatically
+- Follows YOUR naming conventions (PascalCase, snake_case, etc.)
+- Speaks YOUR stack language (React hooks, Django views, Rails controllers)
+- Remembers everything for future sessions (never repeats analysis)
+
+**📚 Supports All Major Stacks:**
+Python • JavaScript/TypeScript • Ruby • Java • Go • Rust • PHP • C#
 
 ## 🔄 /systemcc Decision Flow - Complete Cascade
 
