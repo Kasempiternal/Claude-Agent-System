@@ -48,8 +48,8 @@ try {
     exit 1
 }
 
-# Create subdirectories in .claude
-$subdirs = @("commands", "complete-system", "orchestrated-only", "phase-based-workflow")
+# Create complete directory structure in .claude
+$subdirs = @("commands", "middleware", "workflows", "complete-system", "orchestrated-only", "phase-based-workflow")
 foreach ($dir in $subdirs) {
     $path = Join-Path $CLAUDE_DIR $dir
     if (!(Test-Path $path)) {
@@ -57,65 +57,200 @@ foreach ($dir in $subdirs) {
     }
 }
 
-# Copy files
-Write-Info "Installing command files..."
-try {
+# Copy all core system files
+Write-Info "Installing core system files..."
+
+# Copy commands directory
+if (Test-Path "$TEMP_DIR\commands") {
     Copy-Item -Path "$TEMP_DIR\commands\*" -Destination "$CLAUDE_DIR\commands\" -Recurse -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path "$TEMP_DIR\complete-system\*" -Destination "$CLAUDE_DIR\complete-system\" -Recurse -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path "$TEMP_DIR\orchestrated-only\*" -Destination "$CLAUDE_DIR\orchestrated-only\" -Recurse -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path "$TEMP_DIR\phase-based-workflow\*" -Destination "$CLAUDE_DIR\phase-based-workflow\" -Recurse -Force -ErrorAction SilentlyContinue
-    Copy-Item -Path "$TEMP_DIR\README-AGENT-SYSTEM.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
-    Write-Success "Command files installed"
-} catch {
-    Write-Info "Some files may not have been copied (this is normal)"
+    Write-Success "Commands installed"
 }
+
+# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems)
+if (Test-Path "$TEMP_DIR\middleware") {
+    Copy-Item -Path "$TEMP_DIR\middleware\*" -Destination "$CLAUDE_DIR\middleware\" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Success "Middleware installed (Lyra AI, analysis, memory systems)"
+}
+
+# Copy complete workflows directory structure
+if (Test-Path "$TEMP_DIR\workflows") {
+    Copy-Item -Path "$TEMP_DIR\workflows\*" -Destination "$CLAUDE_DIR\workflows\" -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Success "Complete workflow system installed"
+}
+
+# Copy legacy directories for backward compatibility
+Copy-Item -Path "$TEMP_DIR\complete-system\*" -Destination "$CLAUDE_DIR\complete-system\" -Recurse -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "$TEMP_DIR\orchestrated-only\*" -Destination "$CLAUDE_DIR\orchestrated-only\" -Recurse -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "$TEMP_DIR\phase-based-workflow\*" -Destination "$CLAUDE_DIR\phase-based-workflow\" -Recurse -Force -ErrorAction SilentlyContinue
+
+# Copy documentation files
+Copy-Item -Path "$TEMP_DIR\README-AGENT-SYSTEM.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "$TEMP_DIR\CLAUDE-FILES-ORGANIZATION.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
+
+Write-Success "All system components installed"
+
+# Setup ClaudeFiles directory structure
+Write-Info "Setting up ClaudeFiles directory structure..."
+$claudeFilesPath = Join-Path $PROJECT_ROOT "ClaudeFiles"
+$claudeFilesSubdirs = @("documentation", "tests\results", "tests\bugs", "workflows", "temp", "memory")
+foreach ($dir in $claudeFilesSubdirs) {
+    $path = Join-Path $claudeFilesPath $dir
+    if (!(Test-Path $path)) {
+        New-Item -ItemType Directory -Path $path -Force | Out-Null
+    }
+}
+
+# Initialize memory bank system
+Write-Info "Initializing memory bank system..."
+$memoryPath = Join-Path $claudeFilesPath "memory"
+if (Test-Path "$TEMP_DIR\ClaudeFiles\memory") {
+    Copy-Item -Path "$TEMP_DIR\ClaudeFiles\memory\*" -Destination $memoryPath -Recurse -Force -ErrorAction SilentlyContinue
+    Write-Success "Memory bank system initialized"
+} else {
+    # Create basic memory files if they don't exist in source
+    $currentDate = Get-Date -Format "yyyy-MM-dd"
+    
+    @"
+# CLAUDE-activeContext.md
+*Current Session State and Progress Tracking*
+
+## Current Session
+**Date**: $currentDate
+**Primary Task**: [Current task will be updated automatically]
+**Status**: Initialized
+
+## Active Goals
+- [Goals will be tracked automatically]
+
+## Recent Context
+- Project initialized with Claude Agent System
+- Memory bank system ready for learning
+
+---
+*This file maintains continuity across Claude sessions. Updates automatically.*
+"@ | Out-File -FilePath (Join-Path $memoryPath "CLAUDE-activeContext.md") -Encoding UTF8
+
+    @'
+# CLAUDE-patterns.md
+*Established Code Patterns and Conventions*
+
+## Detected Patterns
+- [Code patterns will be learned automatically]
+
+## Naming Conventions
+- [Will be detected from codebase analysis]
+
+## Architecture Patterns
+- [Will be identified during development]
+
+---
+*This file learns and remembers your coding patterns.*
+'@ | Out-File -FilePath (Join-Path $memoryPath "CLAUDE-patterns.md") -Encoding UTF8
+
+    @'
+# CLAUDE-decisions.md
+*Architecture Decisions and Rationale*
+
+## Decision Log
+- [Architecture decisions will be recorded automatically]
+
+## Technology Choices
+- [Tech stack decisions will be tracked]
+
+---
+*This file maintains a record of important project decisions.*
+'@ | Out-File -FilePath (Join-Path $memoryPath "CLAUDE-decisions.md") -Encoding UTF8
+
+    @'
+# CLAUDE-troubleshooting.md
+*Common Issues and Proven Solutions*
+
+## Known Issues
+- [Common problems and solutions will be recorded]
+
+## Solution Database
+- [Proven fixes will be stored for reuse]
+
+---
+*This file builds a knowledge base of solutions.*
+'@ | Out-File -FilePath (Join-Path $memoryPath "CLAUDE-troubleshooting.md") -Encoding UTF8
+
+    Write-Success "Basic memory bank files created"
+}
+
+Write-Success "ClaudeFiles directory structure created"
 
 # Create or update CLAUDE.md
 $CLAUDE_MD_PATH = Join-Path $PROJECT_ROOT "CLAUDE.md"
 if (!(Test-Path $CLAUDE_MD_PATH)) {
     Write-Info "Creating CLAUDE.md..."
     @'
-# CLAUDE.md - Project Configuration
+# CLAUDE.md - Claude Agent System Configuration
 
-This project uses the Claude Agent System for AI-assisted development.
+This project uses the Claude Agent System with full automation, intelligent analysis, and persistent memory.
 
-## Quick Start
+## THE ONLY COMMAND YOU NEED
 
-Use `/systemcc "your task description"` to get started. The system will automatically:
-- Analyze your task complexity
-- Detect context size and project scale
-- Route to the appropriate workflow
+```bash
+/systemcc "describe what you want to do"
+```
+
+The system automatically:
+- 🔍 Analyzes your codebase (first run only)
+- 🎯 Optimizes your request with Lyra AI
+- 🧠 Selects the best workflow internally
+- ⚡ Executes everything end-to-end
+- 💾 Remembers patterns for future sessions
+
+## Smart Automation
+
+The system automatically chooses:
+- **Simple fixes** → Quick 3-agent workflow
+- **Complex features** → Complete 6-agent validation
+- **Large codebases** → Phase-based execution
+- **New features** → PRD-based development
+
+## Memory Bank System
+
+Your project now has persistent memory in `ClaudeFiles/memory/`:
+- **activeContext.md** - Current session state
+- **patterns.md** - Code conventions and patterns
+- **decisions.md** - Architecture decisions
+- **troubleshooting.md** - Solutions database
+
+## File Organization
+
+All Claude-generated files are organized in `ClaudeFiles/`:
+- `documentation/` - All documentation
+- `tests/` - Test results and bug reports
+- `workflows/` - Task plans and summaries
+- `memory/` - Persistent learning system
+- `temp/` - Temporary working files
 
 ## Available Commands
 
-- `/systemcc` - Universal entry point (RECOMMENDED)
-- `/taskit` - Phase-based execution for complex tasks
-- `/orchestrated` - Quick workflow for simple tasks
+- `/systemcc` - Universal entry point (ALL YOU NEED)
 - `/help` - Show all available commands
+- `/analyzecc` - Manual project re-analysis (rarely needed)
 
-## How It Works
-
-The system automatically selects the best approach:
-- **Large contexts** → Routes to phase-based execution
-- **Complex tasks** → Uses complete 6-agent system
-- **Simple tasks** → Uses streamlined 3-agent workflow
-
-## Project-Specific Notes
+## Project-Specific Configuration
 
 Add your project-specific guidelines below:
 
-### Code Style
-- [Add your code style preferences]
+### Code Style Preferences
+- [Your coding standards will be learned automatically]
 
-### Testing Requirements
-- [Add your testing requirements]
+### Testing Requirements  
+- [Test commands will be detected automatically]
 
 ### Build Commands
-- [Add your build/lint/test commands]
+- [Build/lint commands will be configured automatically]
 
 ## Learn More
 
-See `.claude/commands/help.md` for detailed command documentation.
+- `.claude/commands/help.md` - Complete command reference
+- `.claude/CLAUDE-FILES-ORGANIZATION.md` - File organization details
+- `ClaudeFiles/memory/` - Your project's learning system
 '@ | Out-File -FilePath $CLAUDE_MD_PATH -Encoding UTF8
     Write-Success "Created CLAUDE.md"
 } else {
@@ -196,10 +331,13 @@ Write-Host "1. Open your project in Claude Code"
 Write-Host "2. Use " -NoNewline; Write-Host "/systemcc `"your task`"" -ForegroundColor Green -NoNewline; Write-Host " to get started"
 Write-Host "3. Use " -NoNewline; Write-Host "/help" -ForegroundColor Green -NoNewline; Write-Host " to see all available commands"
 Write-Host ""
-Write-Header "Files created:"
-Write-Host "  - $CLAUDE_DIR\ (command system)"
+Write-Header "Complete system installed:"
+Write-Host "  - $CLAUDE_DIR\commands\ (all commands)"
+Write-Host "  - $CLAUDE_DIR\middleware\ (Lyra AI, analysis, memory systems)"
+Write-Host "  - $CLAUDE_DIR\workflows\ (complete workflow system)"
 Write-Host "  - $CLAUDE_MD_PATH (project configuration)"
-Write-Host "  - $CLAUDE_DIR\QUICK_START.md (quick reference)"
+Write-Host "  - ClaudeFiles\memory\ (persistent learning system)"
+Write-Host "  - ClaudeFiles\ (organized output directory)"
 Write-Host ""
 Write-Host "Tip: " -NoNewline -ForegroundColor Yellow
 Write-Host "The system will automatically manage context and choose the best workflow for you!"

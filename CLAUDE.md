@@ -69,7 +69,7 @@ Claude: 🔍 First time in this project - running analysis first...
 ```
 
 ### Unified System Structure
-- **Middleware**: `middleware/` - Universal Kase AI optimization
+- **Middleware**: `middleware/` - Universal Lyra AI optimization
 - **Workflows**: `workflows/` - All workflow implementations
   - `agent-os/` - Project initialization framework
   - `ai-dev-tasks/` - PRD-based development
@@ -135,7 +135,7 @@ Claude: [Creates PRD, generates tasks, implements - all automatic]
 
 ### Core System Files
 - `CLAUDE-FILES-ORGANIZATION.md` - **MANDATORY file organization**
-- `middleware/kase-universal.md` - Universal AI prompt optimization
+- `middleware/lyra-universal.md` - Universal Lyra AI prompt optimization
 - `middleware/automated-workflow-executor.md` - **NEW: Automatic agent execution system**
 
 ### Workflow Documentation

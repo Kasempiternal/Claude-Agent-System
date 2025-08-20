@@ -1,12 +1,12 @@
 # /systemcc - The ONLY Command You Need
 
-⚠️ **CRITICAL IMPLEMENTATION NOTE**: When executing /systemcc, you MUST visibly show the Kase AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
+⚠️ **CRITICAL IMPLEMENTATION NOTE**: When executing /systemcc, you MUST visibly show the Lyra AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
 
 ## Purpose
 
 The `/systemcc` command is the master router that:
 1. **Automatically analyzes your project on first run** (no need for /analyze!)
-2. Optimizes your request using Kase AI (ALWAYS SHOW THIS)
+2. Optimizes your request using Lyra AI (ALWAYS SHOW THIS)
 3. Intelligently routes to the most appropriate subsystem
 4. Provides access to all workflows: Agent OS, AI Dev Tasks, Complete System, Orchestrated, and Phase-based
 5. Automatically selects the best workflow
@@ -20,8 +20,8 @@ The `/systemcc` command is the master router that:
 
 When you use `/systemcc "your task description"`, the system will:
 
-1. **Universal Kase Optimization**:
-   - Apply Kase middleware from `middleware/kase-universal.md`
+1. **Universal Lyra Optimization**:
+   - Apply Lyra middleware from `middleware/lyra-universal.md`
    - Transform vague requests into precision-crafted prompts
    - Generate complexity score and workflow suggestions
    - Ensure complete specifications for any workflow
@@ -78,9 +78,9 @@ When you use `/systemcc "your task description"`, the system will:
 
 **YOU DON'T NEED TO KNOW OR SPECIFY THE WORKFLOW!**
 
-## Kase Prompt Optimization (First Step)
+## Lyra Prompt Optimization (First Step)
 
-When `/systemcc` is invoked, Kase first optimizes the user's prompt using the 4-D methodology:
+When `/systemcc` is invoked, Lyra first optimizes the user's prompt using the 4-D methodology:
 
 ### The 4-D Methodology for Claude Code
 
@@ -131,7 +131,7 @@ def detect_prompt_mode(task_description):
         return prompt_user_for_mode()
 ```
 
-### Kase Response Formats
+### Lyra Response Formats
 
 **For Simple Tasks (BASIC mode):**
 ```
@@ -199,9 +199,9 @@ When this command is invoked:
      → Skip analysis and proceed normally
    ```
 
-4. **Prompt Optimization with Kase** (ALWAYS SHOW THIS TO USER):
+4. **Prompt Optimization with Lyra** (ALWAYS SHOW THIS TO USER):
    ```
-   CRITICAL: You MUST show the Kase optimization process to the user with proper formatting.
+   CRITICAL: You MUST show the Lyra optimization process to the user with proper formatting.
    
    Display Format:
    ═══════════════════════════════════════════════════════════════
@@ -382,8 +382,8 @@ def analyze_for_workflow_selection(task_description, context_info, kase_metadata
         if security_report.risk_level == "CRITICAL":
             return abort_with_security_warning(security_report)
     
-    # Use Kase universal middleware first
-    kase_result = kase_optimize({
+    # Use Lyra universal middleware first
+    lyra_result = lyra_optimize({
         'command': 'systemcc',
         'prompt': task_description,
         'context': context_info
@@ -399,7 +399,7 @@ def analyze_for_workflow_selection(task_description, context_info, kase_metadata
     }
     
     # Multi-factor analysis
-    analysis = perform_comprehensive_analysis(task_description, context_info, kase_result)
+    analysis = perform_comprehensive_analysis(task_description, context_info, lyra_result)
     
     # PRIORITY 1: Context-based routing (overrides everything)
     if context_info['current_tokens'] > 30000:
@@ -419,10 +419,10 @@ def analyze_for_workflow_selection(task_description, context_info, kase_metadata
     
     return (workflow.name, workflow.reason, analysis)
 
-def perform_comprehensive_analysis(task_desc, context, kase_result):
+def perform_comprehensive_analysis(task_desc, context, lyra_result):
     """Multi-dimensional task analysis"""
     return {
-        'complexity_score': calculate_complexity(task_desc, kase_result),
+        'complexity_score': calculate_complexity(task_desc, lyra_result),
         'affected_components': identify_affected_components(task_desc),
         'risk_factors': identify_risks(task_desc),
         'estimated_duration': estimate_duration(task_desc, context),
@@ -431,7 +431,7 @@ def perform_comprehensive_analysis(task_desc, context, kase_result):
         'breaking_changes': detect_breaking_changes(task_desc)
     }
 
-def calculate_complexity(task_desc, kase_result):
+def calculate_complexity(task_desc, lyra_result):
     """Advanced complexity scoring beyond keywords"""
     factors = {
         'technical_depth': analyze_technical_requirements(task_desc),
@@ -443,7 +443,7 @@ def calculate_complexity(task_desc, kase_result):
     
     # Weight and combine factors
     weighted_score = sum(factors[k] * WEIGHTS[k] for k in factors)
-    return min(10, weighted_score + kase_result.metadata.complexity_score)
+    return min(10, weighted_score + lyra_result.metadata.complexity_score)
 
 def select_optimal_workflow(analysis, patterns, risk):
     """Intelligent workflow selection based on multiple factors"""
@@ -485,7 +485,7 @@ This master router integrates all subsystems:
 5. **Phase-Based** (`workflows/phase-based-workflow/`) - Context management
 
 ### Universal Components
-- **Kase Middleware** (`middleware/kase-universal.md`) - Applied to all commands
+- **Lyra Middleware** (`middleware/lyra-universal.md`) - Applied to all commands
 - **ClaudeFiles Organization** - Unified output structure
 - **Git Integration** - Consistent across all workflows
 
@@ -547,7 +547,7 @@ Claude: 🔄 Phase 1/6: Designing search architecture...
 
 ## Benefits of Unified System
 
-1. **Universal Prompt Optimization** - Kase enhances all commands
+1. **Universal Prompt Optimization** - Lyra enhances all commands
 2. **Intelligent Routing** - Automatically selects best workflow
 3. **Complete Integration** - Access to all tools from one command
 4. **Flexibility** - Force specific workflows when needed
@@ -606,7 +606,7 @@ Reason: Project standards and initialization
 ```
 User: /systemcc "build a user dashboard with analytics"
 
-Step 1 - Kase Universal Optimization:
+Step 1 - Lyra Universal Optimization:
 Original: "build a user dashboard with analytics"
 Optimized: "Build comprehensive user dashboard feature with real-time analytics. Requirements: 1) Dashboard layout with customizable widgets, 2) Analytics visualizations using Chart.js for metrics like user activity, revenue, engagement, 3) Date range filtering, 4) Export functionality for reports, 5) Responsive design for mobile/tablet, 6) Performance: <2s load time with lazy loading, 7) Role-based widget visibility. Deliver complete frontend components and backend APIs with tests."
 
@@ -623,7 +623,7 @@ Reason: Complex feature benefits from PRD-based development
 ```
 User: /systemcc "refactor authentication across all services"
 
-Step 1 - Kase Prompt Optimization:
+Step 1 - Lyra Prompt Optimization:
 Original: "refactor authentication across all services"
 Optimized: "As a senior fullstack engineer, refactor the authentication system across all microservices to implement OAuth 2.0 with JWT tokens. Requirements: 1) Maintain backward compatibility during migration, 2) Implement centralized auth service, 3) Update all service endpoints with new auth middleware, 4) Add comprehensive tests for auth flows. Deliver complete, production-ready code with proper error handling and logging."
 
@@ -641,7 +641,7 @@ Reason: Large context requires phase decomposition
 ```
 User: /systemcc "implement real-time chat with WebSocket support"
 
-Step 1 - Kase Prompt Optimization:
+Step 1 - Lyra Prompt Optimization:
 Original: "implement real-time chat with WebSocket support"
 Optimized: "As a senior fullstack developer, implement a production-ready real-time chat system using WebSocket. Requirements: 1) Client-side: React component with message UI, typing indicators, online status, 2) Server-side: WebSocket server with Socket.io, message persistence, room management, 3) Features: 1-to-1 and group chat, message history, reconnection handling, 4) Security: Authentication, rate limiting, input sanitization. Deliver complete implementation with both frontend and backend code, including error handling and tests."
 
@@ -708,7 +708,7 @@ Executing: /orchestrated "[optimized prompt]"
 ```
 User: /systemcc "add export functionality to all data tables"
 
-Step 1 - Kase Universal Optimization:
+Step 1 - Lyra Universal Optimization:
 Original: "add export functionality to all data tables"
 Optimized: "Add comprehensive export functionality to all data tables across the application. Requirements: 1) Support formats: CSV, Excel, PDF, JSON, 2) Handle large datasets with streaming, 3) Preserve formatting and filters, 4) Include column selection UI, 5) Background job processing for large exports, 6) Email delivery option, 7) Apply to all existing table components. Maintain consistent UX across all tables."
 
@@ -726,7 +726,7 @@ Reason: Predicted context growth requires phases
 ```
 User: /systemcc --workflow=complete "add user preferences"
 
-Step 1 - Kase Universal Optimization:
+Step 1 - Lyra Universal Optimization:
 [Optimization happens regardless of forced workflow]
 
 Step 2 - Workflow Detection:
