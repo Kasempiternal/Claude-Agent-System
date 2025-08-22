@@ -130,7 +130,7 @@ Update agent files with detected stack:
    - Import patterns
    - Common patterns
 
-4. `.agent-os/standards/tech-stack.md`
+4. `workflows/agent-os/standards/tech-stack.md`
    - Complete tech stack documentation
    - Version information
    - Dependencies

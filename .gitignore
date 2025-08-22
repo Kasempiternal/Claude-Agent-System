@@ -120,3 +120,8 @@ $RECYCLE.BIN/
 .directory
 .Trash-*
 .nfs*
+# Claude Agent System
+.claude/
+ClaudeFiles/
+!ClaudeFiles/documentation/learnings/
+!ClaudeFiles/documentation/project/
