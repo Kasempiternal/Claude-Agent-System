@@ -39,6 +39,7 @@ When you use `/systemcc "your task description"`, the system will:
    - Required validation depth
 
 4. **Auto-Select Workflow**:
+   - **CCPM Integration** for parallel execution and project management (--pm flag or complex parallel tasks)
    - **Agent OS (/agetos)** for project initialization and standards
    - **AI Dev Tasks (/aidevtasks)** for PRD-based feature development
    - **Phase-Based (/taskit)** for large contexts or complex multi-hour tasks
@@ -68,6 +69,10 @@ When you use `/systemcc "your task description"`, the system will:
 /systemcc "refactor the payment module"
 /systemcc "create a dashboard for analytics"
 /systemcc "optimize database queries"
+
+# NEW: Project Management Mode with CCPM Integration
+/systemcc --pm "build complete e-commerce checkout system"
+/systemcc --pm "implement microservices architecture"
 ```
 
 **That's it!** Claude figures out:
@@ -75,6 +80,8 @@ When you use `/systemcc "your task description"`, the system will:
 - Complex feature? → Runs 6-agent workflow internally
 - New feature? → Creates PRD, tasks, implements internally
 - Large codebase? → Uses phase-based approach internally
+- **NEW:** Complex parallel work? → Activates CCMP integration internally
+- **NEW:** --pm flag? → Always uses project management mode
 
 **YOU DON'T NEED TO KNOW OR SPECIFY THE WORKFLOW!**
 
@@ -329,11 +336,40 @@ When this command is invoked:
    - Bug fixes
    ```
 
-10. **Execute Workflow Automatically** (With Optimized Prompt):
+10. **CCPM Recommendation Logic** (Before Workflow Execution):
+   ```
+   # Check if CCPM would be beneficial (recommendation only)
+   IF --pm flag explicitly provided:
+     → Skip recommendation, go directly to CCPM Integration
+   
+   ELIF ccpm_would_be_beneficial(task_analysis):
+     → Display CCPM recommendation prompt to user
+     → Wait for user confirmation (y/n)
+     → IF user confirms: Route to CCPM Integration
+     → IF user declines: Continue with standard workflow selection
+   
+   # CCPM Recommendation Triggers:
+   def ccmp_would_be_beneficial(analysis):
+       return (
+           analysis.complexity_score > 6 AND 
+           analysis.estimated_time > 60_minutes AND
+           (
+               analysis.independent_components >= 3 OR
+               "parallel" in analysis.keywords OR
+               "concurrent" in analysis.keywords OR
+               "multiple systems" in analysis.description
+           )
+       )
+   ```
+
+11. **Execute Workflow Automatically** (With Optimized Prompt):
    ```
    # Claude executes everything internally - no exposed commands!
    
-   IF detected_type == 'agent_os_integration':
+   IF user_confirmed_ccpm OR explicit_pm_flag:
+     Internal: CCPM Integration workflow
+     Process: Environment Detection → Epic Creation → Task Decomposition → Parallel Execution → Progress Tracking → Integration
+   ELIF detected_type == 'agent_os_integration':
      Internal: Complete System with Agent OS phases
      Process: Agent OS Analysis → Strategic Plan → Agent OS Architecture → Implementation → Standards Creation → Validation → Testing → Documentation → Deployment
    ELIF detected_type == 'feature_development':
@@ -362,20 +398,30 @@ When this command is invoked:
    → Create/update Agent OS standards files when applicable
    ```
 
-11. **Memory Bank Persistence**:
+12. **Memory Bank Persistence**:
    ```
    After workflow completion:
    - Save session summary to activeContext.md
    - Document discovered patterns
    - Record architectural decisions
    - Update troubleshooting database
+   - Document CCPM recommendations and user choices
    - Run memory-bank-synchronizer if needed
    ```
 
-## Enhanced Context-Aware Decision Engine
+## Working Intelligence-Enhanced Decision Engine
+
+The `/systemcc` command now includes REAL, WORKING intelligence improvements:
+- **Local Learning System**: Tracks your decision outcomes and learns what works
+- **Git-Based Collective Intelligence**: Share anonymous learning data via pull requests
+- **Pattern Recognition**: Actual success rate tracking for different task types
+- **Workflow Optimization**: Recommends workflows based on real success data
+- **Immediate Benefits**: Works locally right away, improves over time
 
 ```python
-def analyze_for_workflow_selection(task_description, context_info, kase_metadata):
+def analyze_for_workflow_selection(task_description, context_info, user_preferences=None):
+    """Working intelligence-enhanced decision engine"""
+    
     # Load memory bank context
     memory_context = load_memory_bank()
     
@@ -392,35 +438,161 @@ def analyze_for_workflow_selection(task_description, context_info, kase_metadata
         'context': context_info
     })
     
-    # Initialize scoring system
-    scores = {
-        'complexity': 0,
-        'risk': 0,
-        'scope': 0,
-        'context_size': 0,
-        'time_estimate': 0
-    }
+    # STEP 1: Check for learned recommendations (WORKING NOW)
+    from middleware.working_local_intelligence import intelligence_tracker
+    learned_recommendation = intelligence_tracker.get_workflow_recommendation(task_description)
     
-    # Multi-factor analysis
-    analysis = perform_comprehensive_analysis(task_description, context_info, lyra_result)
+    # STEP 2: Apply existing decision logic
+    base_decision = perform_base_decision_analysis(task_description, context_info, lyra_result)
+    
+    # STEP 3: Combine learned intelligence with base decision
+    if learned_recommendation and learned_recommendation['confidence'] > 0.7:
+        # High confidence learning - use it
+        final_workflow = learned_recommendation['workflow']
+        reasoning = f"🤖 AI Learning: {learned_recommendation['reasoning']} (confidence: {learned_recommendation['confidence']:.0%}, sample: {learned_recommendation['sample_size']} cases)"
+        confidence = learned_recommendation['confidence']
+    else:
+        # Use base decision
+        final_workflow = base_decision['workflow']
+        reasoning = base_decision['reasoning']
+        confidence = 0.7  # Base confidence
+        
+        # Add learning context if available
+        if learned_recommendation:
+            reasoning += f" | 📊 Learning data: {learned_recommendation['sample_size']} similar cases"
+    
+    return {
+        'workflow': final_workflow,
+        'reasoning': reasoning,
+        'confidence': confidence,
+        'learned_recommendation': learned_recommendation
+    }
+
+def perform_base_decision_analysis(task_desc, context, lyra_result):
+    """Working base decision analysis that actually functions"""
     
     # PRIORITY 1: Context-based routing (overrides everything)
-    if context_info['current_tokens'] > 30000:
-        return ('taskit', 'Context size exceeds optimal threshold', analysis)
+    if context.get('current_tokens', 0) > 30000:
+        return {
+            'workflow': 'taskit',
+            'reasoning': 'Context size exceeds optimal threshold',
+            'confidence': 0.9
+        }
     
-    if context_info['loaded_files'] > 10:
-        return ('taskit', 'Too many files in context', analysis)
+    if context.get('loaded_files', 0) > 10:
+        return {
+            'workflow': 'taskit', 
+            'reasoning': 'Too many files in context',
+            'confidence': 0.8
+        }
     
-    # PRIORITY 2: Pattern-based detection
-    detected_patterns = detect_patterns(task_description, context_info)
+    # Calculate basic complexity
+    complexity_score = calculate_working_complexity(task_desc, lyra_result)
     
-    # PRIORITY 3: Risk assessment
-    risk_level = assess_risk(task_description, detected_patterns)
+    # Apply working decision rules
+    if complexity_score <= 3:
+        return {
+            'workflow': 'orchestrated',
+            'reasoning': f'Low complexity task (score: {complexity_score})',
+            'confidence': 0.8
+        }
+    elif complexity_score <= 6:
+        return {
+            'workflow': 'complete_system',
+            'reasoning': f'Medium complexity task (score: {complexity_score})',
+            'confidence': 0.7
+        }
+    else:
+        return {
+            'workflow': 'taskit',
+            'reasoning': f'High complexity task (score: {complexity_score})',
+            'confidence': 0.8
+        }
+
+def calculate_working_complexity(task_desc, lyra_result):
+    """Actually working complexity calculation"""
     
-    # PRIORITY 4: Intelligent workflow selection
-    workflow = select_optimal_workflow(analysis, detected_patterns, risk_level)
+    score = 1
+    desc_lower = task_desc.lower()
     
-    return (workflow.name, workflow.reason, analysis)
+    # Scope indicators
+    if any(word in desc_lower for word in ['all', 'entire', 'across', 'system']):
+        score += 2
+    if any(word in desc_lower for word in ['multiple', 'several', 'various']):
+        score += 1
+    
+    # Technical complexity
+    if any(word in desc_lower for word in ['architecture', 'refactor', 'migrate']):
+        score += 2
+    if any(word in desc_lower for word in ['security', 'auth', 'critical']):
+        score += 1
+    if any(word in desc_lower for word in ['integration', 'api', 'service']):
+        score += 1
+    
+    # Simple indicators (reduce score)
+    if any(word in desc_lower for word in ['fix', 'update', 'change', 'small']):
+        score -= 1
+    
+    # Add Lyra complexity if available
+    if hasattr(lyra_result, 'metadata') and hasattr(lyra_result.metadata, 'complexity_score'):
+        score += lyra_result.metadata.complexity_score // 2
+    
+    return max(1, min(10, score))
+
+def record_workflow_outcome(task_description, workflow_used, success, completion_time=None):
+    """Record outcome for learning - CALL THIS AFTER WORKFLOW COMPLETION"""
+    
+    from middleware.working_local_intelligence import intelligence_tracker
+    return intelligence_tracker.record_decision(
+        task_description=task_description,
+        workflow_chosen=workflow_used,
+        outcome_success=success,
+        completion_time_minutes=completion_time or 30
+    )
+
+## How to Use the Working Intelligence System
+
+### 1. Use /systemcc Normally
+```bash
+/systemcc "add user authentication"
+```
+
+The system will:
+- Apply base decision logic
+- Check for learned recommendations
+- Show learning data if available
+- Make the best decision
+
+### 2. After Task Completion, Record Outcome
+```python
+# Call this after workflow completion
+record_workflow_outcome(
+    task_description="add user authentication",
+    workflow_used="complete_system", 
+    success=True,
+    completion_time=45
+)
+```
+
+### 3. Build Collective Intelligence via Git
+1. Your learning data saves to `ClaudeFiles/intelligence/`
+2. Commit and push your anonymous learning data
+3. Create pull requests to share learning
+4. Run aggregation script to improve systemcc for everyone
+
+### 4. Example Learning Evolution
+```
+# First use: Base decision
+User: /systemcc "add auth"
+→ Selected: complete_system (base logic)
+
+# After 5 auth tasks with 100% success rate:
+User: /systemcc "add auth" 
+→ Selected: complete_system (🤖 AI Learning: 100% success rate, 5 cases)
+
+# After community data aggregation:
+→ Selected: complete_system (🤖 Learned from 247 cases, 94% success rate)
+```
 
 def perform_comprehensive_analysis(task_desc, context, lyra_result):
     """Multi-dimensional task analysis"""
@@ -572,20 +744,177 @@ Claude: 🔄 Phase 1/6: Designing search architecture...
 [Continues automatically through ALL phases]
 ```
 
-## Benefits of Unified System
+## Benefits of Working Intelligence System
 
-1. **Universal Prompt Optimization** - Lyra enhances all commands
-2. **Intelligent Routing** - Automatically selects best workflow
-3. **Complete Integration** - Access to all tools from one command
-4. **Flexibility** - Force specific workflows when needed
-5. **Backward Compatible** - All existing commands still work
-6. **Context Aware** - Manages large codebases efficiently
-7. **Quality First** - Right validation level for each task
-8. **Fully Automated** - All workflows execute end-to-end without manual commands
-9. **Smart Interactions** - Only asks for input when truly needed
-10. **Seamless Experience** - Focus on requirements, not process
+### Immediate Working Features
+1. **Local Learning** - System learns what workflows work best for YOUR tasks
+2. **Success Rate Tracking** - Real data on which workflows succeed for different task types
+3. **Intelligent Recommendations** - Get workflow suggestions based on actual success data
+4. **Git-Based Sharing** - Share anonymous learning data via pull requests
+5. **Zero Privacy Risk** - Only anonymous, hashed task patterns stored locally
+
+### Real Decision Improvements
+6. **Context Awareness** - Automatically detects when to use phase-based execution
+7. **Complexity Scoring** - Working complexity calculation with multiple factors
+8. **Learning Integration** - Combines learned patterns with base decision logic
+9. **Confidence Reporting** - Shows decision confidence and sample sizes
+10. **Outcome Tracking** - Records what actually works for continuous improvement
+
+### Collective Intelligence (Via Git)
+11. **Community Learning** - Aggregate anonymous patterns from all users
+12. **Pattern Recognition** - Identify successful workflow patterns across projects
+13. **Rule Generation** - Auto-generate improved decision rules from collective data
+14. **Success Optimization** - Focus on patterns with 70%+ success rates
+15. **Manual Control** - You control when to share and aggregate data
+
+## Working Intelligence Examples
+
+### Example: Learning from Your Success
+```
+# First time using /systemcc for auth tasks
+User: /systemcc "add user authentication"
+
+🧠 Analyzing: "add user authentication"
+📊 Task Analysis:
+   - Complexity: Medium (5/10)
+   - Risk Level: High (security critical)
+   - Estimated Time: 45-60min
+
+✅ Selected: complete_system
+📝 Reasoning: Medium complexity with security implications
+
+[After successful completion, system records:]
+✓ Task: authentication_complexity_5 
+✓ Workflow: complete_system
+✓ Success: True, Time: 47min
+```
+
+```  
+# After 3 successful auth tasks with complete_system
+User: /systemcc "add OAuth authentication"
+
+🧠 Analyzing: "add OAuth authentication"
+📊 Task Analysis:
+   - Complexity: Medium (5/10)  
+   - Risk Level: High (security critical)
+
+🤖 AI Learning: Similar authentication tasks succeeded 100% with complete_system (3 cases)
+✅ Selected: complete_system
+📝 Reasoning: 🤖 AI Learning: Authentication systems work best with comprehensive validation (confidence: 100%, sample: 3 cases)
+```
+
+### Example: Collective Intelligence via Git
+```
+# After community data aggregation from 50+ users
+User: /systemcc "add user registration"
+
+🧠 Analyzing: "add user registration"  
+📊 Task Analysis:
+   - Complexity: Medium (5/10)
+   - Risk Level: High (security/data)
+
+🤖 Community Learning: Applied learned rules from 247 authentication cases
+✅ Selected: complete_system  
+📝 Reasoning: 🤖 Learned rule: Authentication systems succeed 94% with complete_system | 📊 Learning data: 247 community cases
+
+[Shows learned intelligence from the entire community while preserving privacy]
+```
+
+### Example: Context-Aware Learning
+```
+User: /systemcc "refactor authentication across all microservices"
+
+🧠 Analyzing: "refactor authentication across all microservices"
+📊 Context Analysis: 35,000 tokens, 15 files loaded
+⚠️ Context Constraint: Large context detected
+
+✅ Selected: taskit (Phase-Based Execution)  
+📝 Reasoning: Large context requires phase management | 📊 Learning data: 12 similar refactoring cases
+```
+
+This working intelligence system provides **real improvements** that you can use immediately, with learning that compounds over time through git-based collective intelligence.
 
 ## Examples
+
+### Example 0: CCPM Integration Detection (NEW!)
+```
+User: /systemcc --pm "build complete e-commerce checkout system"
+
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"build complete e-commerce checkout system"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Build comprehensive e-commerce checkout system with parallel development approach. Requirements: 1) Payment processing with multiple gateways (Stripe, PayPal), 2) Cart management with session persistence, 3) Order validation and inventory checks, 4) Email notifications system, 5) Admin dashboard for order management, 6) Mobile-responsive UI/UX, 7) Security: PCI compliance and fraud detection. Implement as independent, parallel-safe components with clear interfaces."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 9
+- Improvements Applied: 12
+
+🔧 Key Enhancements:
+• Added parallel development structure
+• Specified multiple payment gateways
+• Included security requirements (PCI compliance)
+• Added mobile responsiveness requirement
+• Structured for independent component development
+
+═══════════════════════════════════════════════════════════════
+
+🔍 Environment Detection:
+├─ GitHub Repository: ✅ Detected (user/ecommerce-app)
+├─ GitHub CLI: ✅ Available
+├─ gh-sub-issue extension: ⏳ Installing...
+└─ CCPM Mode: ✅ Activated
+
+🎯 Creating Epic: E-commerce Checkout System
+├─ Epic Issue #156 created on GitHub
+├─ 6 parallel-safe tasks identified
+└─ 4 specialized agents ready for deployment
+
+🚀 Parallel Execution Started:
+Agent 1: Payment Processing (Issue #157) 🔄 In Progress
+Agent 2: Cart Management (Issue #158) 🔄 In Progress  
+Agent 3: Order Validation (Issue #159) ⏳ Queued
+Agent 4: Email Notifications (Issue #160) ⏳ Queued
+
+📊 Progress Dashboard: https://github.com/user/ecommerce-app/issues/156
+📋 Project Management: ClaudeFiles/pm/dashboard.md
+
+Expected completion: 2.5 hours → 45 minutes (parallel execution)
+```
+
+### Example 0b: CCPM Local Mode (No GitHub)
+```
+User: /systemcc --pm "refactor authentication across all services"
+
+🔍 Environment Detection:
+├─ GitHub Repository: ❌ Not detected
+├─ Local PM Mode: ✅ Activated
+└─ CCPM-Inspired Workflow: ✅ Ready
+
+📁 Created Local PM Structure:
+├─ ClaudeFiles/pm/epics/epic-20240822-103045.json
+├─ ClaudeFiles/pm/dashboard.md
+└─ 5 parallel-safe tasks identified
+
+🔄 Simulated Parallel Execution:
+Phase 1: Database Schema Updates ✅ Complete (15 min)
+Phase 2: Service A + Service B 🔄 Parallel Phase (est. 30 min)
+Phase 3: Service C + Testing 🔄 Parallel Phase (est. 25 min)
+
+📊 Local Dashboard: ClaudeFiles/pm/dashboard.md
+Expected completion: 3 hours → 1.2 hours (parallel simulation)
+```
 
 ### Example 1: Agent OS Integration Detection
 ```
@@ -801,19 +1130,73 @@ Executing: /taskit "[optimized prompt]"
 Reason: Predicted context growth requires phases
 ```
 
-### Example 7: Forced Workflow Selection
+### Example 7: CCPM Recommendation (NEW!)
 ```
-User: /systemcc --workflow=complete "add user preferences"
+User: /systemcc "build microservices architecture with user service, payment service, and notification service"
 
 Step 1 - Lyra Universal Optimization:
-[Optimization happens regardless of forced workflow]
+Original: "build microservices architecture with user service, payment service, and notification service"
+Optimized: "Build comprehensive microservices architecture with three independent services: 1) User Service with authentication and profile management, 2) Payment Service with Stripe integration and transaction handling, 3) Notification Service with email/SMS capabilities. Include API gateway, service discovery, and inter-service communication. Deliver complete implementation with Docker containers, tests, and documentation."
 
-Step 2 - Workflow Detection:
-- Forced workflow flag detected: --workflow=complete
-→ Bypassing auto-detection
+Step 2 - Task Analysis:
+- Complexity: High (8/10)
+- Independent Components: 3 services ✓
+- Estimated Time: 4+ hours ✓
+- Parallel Potential: High ✓
+
+💡 CCPM RECOMMENDATION:
+This task has 3 independent components that could benefit from parallel execution and project management tracking.
+
+Recommended approach: CCPM (Code Change Project Manager)
+Benefits: 3x faster development, better progress tracking, parallel execution
+
+🔍 Environment detected: GitHub repository
+Mode: GitHub integration with Issues (gh-sub-issue extension)
+
+Do you want to use CCPM for this task? (y/n)
+If no, I'll use the standard Complete System workflow.
+
+User: y
+
+🚀 Activating CCPM Integration...
+✅ GitHub CCPM mode selected
+📋 Creating Epic: Microservices Architecture
+[Continues with CCPM workflow...]
+```
+
+### Example 8: CCPM Declined
+```
+User: /systemcc "refactor authentication across all microservices"
+
+[Same analysis showing CCPM would be beneficial...]
+
+Do you want to use CCPM for this task? (y/n)
+If no, I'll use the standard Complete System workflow.
+
+User: n
+
+✅ Continuing with standard workflow selection
+📊 Task Analysis indicates: Complete System Workflow
+Reason: High complexity requiring comprehensive validation
 
 Executing: /planner "[optimized prompt]"
-Reason: User specified complete system workflow
+```
+
+### Example 9: Explicit PM Flag
+```
+User: /systemcc --pm "add search functionality"
+
+Step 1 - Lyra Universal Optimization:
+[Optimization process...]
+
+Step 2 - CCPM Detection:
+- Explicit --pm flag detected
+→ Skipping recommendation, activating CCPM directly
+
+🚀 Activating CCPM Integration...
+🔍 Environment detected: GitLab repository  
+✅ GitLab CCPM mode selected (native Epics!)
+[Continues with CCPM workflow...]
 ```
 
 ## Error Handling
