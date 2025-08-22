@@ -179,10 +179,13 @@ class WorkingIntelligenceTracker:
             try:
                 with open(self.decisions_file, 'r') as f:
                     return json.load(f)
-            except:
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Corrupt decisions JSON, starting fresh: {e}")
+                return []
+            except OSError as e:
+                print(f"⚠️ Unable to read decisions file: {e}")
                 return []
         return []
-    
     def _load_patterns(self):
         """Load existing patterns"""
         if os.path.exists(self.patterns_file):
