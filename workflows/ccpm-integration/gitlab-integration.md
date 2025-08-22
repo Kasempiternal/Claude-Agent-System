@@ -173,10 +173,9 @@ Parallel Safe: {'✅' if task['parallel_safe'] else '❌'}
             'glab', 'issue', 'create',
             '--title', task['title'],
             '--description', issue_body,
-            '--label', f"task:feature,ccmp-generated,epic-{epic_id}",
+            '--label', f"task:feature,ccpm-generated,epic-{epic_id}",
             '--epic', str(epic_id)  # GitLab native epic linking!
         ]
-        
         result = subprocess.run(cmd, capture_output=True, text=True)
         
         if result.returncode == 0:
