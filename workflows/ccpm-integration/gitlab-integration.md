@@ -321,9 +321,8 @@ cat > .gitlab/issue_templates/task.md << 'EOF'
 Parent Epic: &[epic-id]
 EOF
 
-echo "✅ GitLab CCMP integration setup complete!"
-echo "🦊 Your project is ready for GitLab-powered CCMP workflow!"
-```
+echo "✅ GitLab CCPM integration setup complete!"
+echo "🦊 Your project is ready for GitLab-powered CCPM workflow!"
 
 ## GitLab Integration Advantages
 
