@@ -18,9 +18,14 @@ class WorkingIntelligenceTracker:
         self.intelligence_dir = "ClaudeFiles/intelligence"
         self.decisions_file = f"{self.intelligence_dir}/decision-outcomes.json"
         self.patterns_file = f"{self.intelligence_dir}/success-patterns.json"
+        self.config_file = "ClaudeFiles/.config"
         
         # Ensure directory exists
         os.makedirs(self.intelligence_dir, exist_ok=True)
+        os.makedirs("ClaudeFiles", exist_ok=True)
+        
+        # Load configuration
+        self.config = self._load_config()
         
         # Load existing data
         self.decisions = self._load_decisions()
@@ -28,6 +33,10 @@ class WorkingIntelligenceTracker:
     
     def record_decision(self, task_description, workflow_chosen, outcome_success, completion_time_minutes=30):
         """Record a real decision outcome"""
+        
+        # Check if learning is disabled
+        if self.config.get('INTELLIGENCE_MODE') == 'disabled':
+            return None
         
         # Create anonymous hash of task (no original text stored)
         task_hash = hashlib.md5(task_description.lower().encode()).hexdigest()[:8]
@@ -173,6 +182,23 @@ class WorkingIntelligenceTracker:
         
         self._save_patterns()
     
+    def _load_config(self):
+        """Load configuration settings"""
+        config = {'INTELLIGENCE_MODE': 'local'}  # Default: local learning enabled
+        
+        if os.path.exists(self.config_file):
+            try:
+                with open(self.config_file, 'r') as f:
+                    for line in f:
+                        line = line.strip()
+                        if '=' in line and not line.startswith('#'):
+                            key, value = line.split('=', 1)
+                            config[key.strip()] = value.strip()
+            except Exception:
+                pass  # Use defaults if config file is corrupt
+        
+        return config
+    
     def _load_decisions(self):
         """Load existing decisions"""
         if os.path.exists(self.decisions_file):
@@ -192,19 +218,29 @@ class WorkingIntelligenceTracker:
             try:
                 with open(self.patterns_file, 'r') as f:
                     return json.load(f)
-            except:
+            except json.JSONDecodeError as e:
+                print(f"⚠️ Corrupt patterns JSON, starting fresh: {e}")
+                return {}
+            except OSError as e:
+                print(f"⚠️ Unable to read patterns file: {e}")
                 return {}
         return {}
     
     def _save_decisions(self):
         """Save decisions to file"""
-        with open(self.decisions_file, 'w') as f:
-            json.dump(self.decisions, f, indent=2)
+        try:
+            with open(self.decisions_file, 'w') as f:
+                json.dump(self.decisions, f, indent=2)
+        except OSError as e:
+            print(f"⚠️ Unable to save decisions: {e}")
     
     def _save_patterns(self):
         """Save patterns to file"""
-        with open(self.patterns_file, 'w') as f:
-            json.dump(self.patterns, f, indent=2)
+        try:
+            with open(self.patterns_file, 'w') as f:
+                json.dump(self.patterns, f, indent=2)
+        except OSError as e:
+            print(f"⚠️ Unable to save patterns: {e}")
     
     def get_stats_summary(self):
         """Get summary of learning data"""
@@ -335,6 +371,10 @@ def calculate_working_complexity(task_description):
 def record_workflow_outcome(task_description, workflow_used, success, completion_time=None):
     """Record outcome for learning - CALL THIS AFTER WORKFLOW COMPLETION"""
     
+    if not task_description or not workflow_used:
+        print("⚠️ Missing required parameters for learning record")
+        return None
+        
     return intelligence_tracker.record_decision(
         task_description=task_description,
         workflow_chosen=workflow_used,
@@ -353,6 +393,7 @@ def show_learning_stats():
         return
     
     print(f"📊 Learning Intelligence Stats:")
+    print(f"   Mode: {intelligence_tracker.config.get('INTELLIGENCE_MODE', 'local')}")
     print(f"   Total Decisions: {stats['total_decisions']}")
     print(f"   Success Rate: {stats['success_rate']:.1%}")
     print(f"   Patterns Learned: {stats['patterns_learned']}")
@@ -364,6 +405,47 @@ def show_learning_stats():
     print(f"   Workflow Distribution:")
     for workflow, count in stats['workflow_distribution'].items():
         print(f"      {workflow}: {count} times")
+    
+    return stats
+
+
+def set_intelligence_mode(mode):
+    """Set intelligence mode (local, community, disabled)"""
+    
+    valid_modes = ['local', 'community', 'disabled']
+    if mode not in valid_modes:
+        print(f"❌ Invalid mode. Use: {', '.join(valid_modes)}")
+        return False
+    
+    config_file = "ClaudeFiles/.config"
+    os.makedirs("ClaudeFiles", exist_ok=True)
+    
+    # Read existing config
+    config_lines = []
+    if os.path.exists(config_file):
+        with open(config_file, 'r') as f:
+            config_lines = f.readlines()
+    
+    # Update or add INTELLIGENCE_MODE
+    updated = False
+    for i, line in enumerate(config_lines):
+        if line.strip().startswith('INTELLIGENCE_MODE='):
+            config_lines[i] = f"INTELLIGENCE_MODE={mode}\n"
+            updated = True
+            break
+    
+    if not updated:
+        config_lines.append(f"INTELLIGENCE_MODE={mode}\n")
+    
+    # Write config back
+    with open(config_file, 'w') as f:
+        f.writelines(config_lines)
+    
+    # Update current tracker
+    intelligence_tracker.config['INTELLIGENCE_MODE'] = mode
+    
+    print(f"✅ Intelligence mode set to: {mode}")
+    return True
 
 
 # Global instance - ready to use immediately
