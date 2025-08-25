@@ -411,11 +411,12 @@ When this command is invoked:
 
 ## Working Intelligence-Enhanced Decision Engine
 
-The `/systemcc` command now includes REAL, WORKING intelligence improvements:
-- **Local Learning System**: Tracks your decision outcomes and learns what works
-- **Git-Based Collective Intelligence**: Share anonymous learning data via pull requests
-- **Pattern Recognition**: Actual success rate tracking for different task types
-- **Workflow Optimization**: Recommends workflows based on real success data
+The `/systemcc` command now includes REAL, WORKING **global intelligence** improvements:
+- **Global Learning System**: Works across ALL your Claude projects automatically  
+- **Context-Aware Intelligence**: React auth patterns differ from Django auth patterns
+- **Automatic Migration**: Consolidates existing project data into global intelligence
+- **Cross-Project Benefits**: Authentication learning in Project A helps Project B
+- **Git-Based Community Intelligence**: Optional sharing of anonymous patterns
 - **Immediate Benefits**: Works locally right away, improves over time
 
 ```python
