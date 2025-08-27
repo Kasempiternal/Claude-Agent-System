@@ -2,6 +2,8 @@
 
 Transform your AI coding assistant into a productive development partner. The Claude Agent System provides structured workflows that capture your standards, your stack, and the unique details of your codebase.
 
+**🚀 Latest Update**: Enhanced 5-dimensional decision engine with improved performance and transparency!
+
 ## 🚀 Quick Setup (One Command)
 
 ### Unix/Linux/macOS:
