@@ -532,7 +532,7 @@ class DecisionTransparencyEngine:
         new_confidence = max(0.1, min(0.95, base_result.confidence + confidence_change))
         
         # Estimate workflow change probability
-        workflow_change_threshold = 0.15  # Threshold for workflow change
+        workflow_change_threshold = 0.03  # Tunable; allows flips when perturbations are material
         workflow_changed = abs(confidence_change) > workflow_change_threshold
         
         if workflow_changed:

@@ -324,11 +324,10 @@ class StreamlinedDecisionEngine:
         
         # Word count as complexity indicator
         word_count = len(task_description.split())
-        if word_count > 50:
-            scope_score += 0.1
-        elif word_count > 100:
+        if word_count > 100:
             scope_score += 0.2
-        
+        elif word_count > 50:
+            scope_score += 0.1
         return max(0.0, min(1.0, scope_score))
     
     def calculate_risk_factor(self, task_description: str) -> float:
