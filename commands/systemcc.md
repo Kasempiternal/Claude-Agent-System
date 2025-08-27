@@ -293,6 +293,14 @@ When this command is invoked:
 
 9. **Enhanced Decision Matrix**:
    ```
+   Anti-YOLO Web Workflow Indicators (HIGHEST PRIORITY):
+   - Keywords: "HTML", "CSS", "JavaScript", "webpage", "website", "frontend", "UI"
+   - Keywords: "form", "button", "modal", "dashboard", "page", "component"
+   - Keywords: "React", "Vue", "Angular", "Svelte", "Bootstrap", "Tailwind"
+   - Project contains: package.json with frontend frameworks, *.html files, CSS files
+   - Task patterns: "create [page/form/component]", "build [login/contact] page"
+   - UI/UX design and layout tasks requiring visual planning
+   
    Agent OS Integration (Complete System + Agent OS) Indicators:
    - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
    - Keywords: "plan product", "analyze codebase", "create spec", "mission", "roadmap"
@@ -362,11 +370,15 @@ When this command is invoked:
        )
    ```
 
-11. **Execute Workflow Automatically** (With Optimized Prompt):
+11. **Web Project Detection and Anti-YOLO Routing**:
    ```
-   # Claude executes everything internally - no exposed commands!
+   # NEW: Check for web/HTML projects before standard workflow selection
+   web_detection = check_web_project_indicators(optimized_prompt, project_context)
    
-   IF user_confirmed_ccpm OR explicit_pm_flag:
+   IF web_detection.is_web_project:
+     Internal: Anti-YOLO Web Workflow
+     Process: ASCII Wireframe Creation → User Approval → HTML Implementation → Wireframe-Driven Testing
+   ELIF user_confirmed_ccpm OR explicit_pm_flag:
      Internal: CCPM Integration workflow
      Process: Environment Detection → Epic Creation → Task Decomposition → Parallel Execution → Progress Tracking → Integration
    ELIF detected_type == 'agent_os_integration':
@@ -529,7 +541,159 @@ def fallback_decision_logic(task_description, context_info, lyra_result, error_d
 
 ## Examples
 
-### Example 0: CCPM Integration Detection (NEW!)
+### Example 0: Anti-YOLO Web Workflow (NEW!)
+```
+User: /systemcc "create contact form page"
+
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"create contact form page"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Create responsive contact form page with name, email, subject, and message fields. Include client-side validation, proper accessibility labels, success/error states, and email submission functionality. Use semantic HTML, mobile-first CSS design, and provide clear user feedback."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 4
+- Improvements Applied: 6
+
+🔧 Key Enhancements:
+• Added responsive design requirement
+• Specified form fields and validation
+• Included accessibility considerations
+• Added user feedback states
+
+═══════════════════════════════════════════════════════════════
+
+🧠 Workflow Detection:
+- Web project indicators: "form", "page", project has package.json
+- Visual layout planning required ✓
+→ Routing to Anti-YOLO Web Workflow
+
+🎨 Creating ASCII Wireframe:
+
+┌─ Contact Us ─────────────────────────┐
+│ Get in touch with our team           │
+├─────────────────────────────────────┤
+│ Name:     <input required>           │
+│ Email:    <input type="email" req>   │ 
+│ Subject:  <select>                   │
+│           ├─ General Inquiry         │
+│           ├─ Support Request         │
+│           └─ Feedback               │
+│ Message:  <textarea required>        │
+│           (Minimum 10 characters)    │
+│ ──────────────────────────────────── │
+│ [Submit Message] [Clear Form]        │
+│                                      │
+│ 📧 We respond within 24 hours        │
+└─────────────────────────────────────┘
+
+Mobile (320px):
+┌─ Contact Us ───────┐
+│ Get in touch       │
+├───────────────────┤
+│ Name: <input>      │
+│ Email: <input>     │
+│ Subject: <select>  │
+│ Message:           │
+│ <textarea>         │
+│ ─────────────────  │
+│ [Submit] [Clear]   │
+└───────────────────┘
+
+✋ Wireframe complete! Does this layout look right?
+Type 'yes' to proceed with HTML implementation, or describe changes.
+
+User: yes
+
+✅ Perfect! Proceeding with HTML implementation...
+🔄 Phase 2/4: Generating semantic HTML structure...
+✅ Phase 2/4: HTML structure complete
+🔄 Phase 3/4: Creating responsive CSS...
+✅ Phase 3/4: CSS styling complete  
+🔄 Phase 4/4: Adding form validation JavaScript...
+✅ Phase 4/4: Interactive functionality complete
+
+📁 Files created:
+- contact.html (semantic HTML matching wireframe)
+- contact.css (mobile-first responsive styles)
+- contact.js (validation and form handling)
+
+🧪 Testing against wireframe:
+✅ All wireframe elements present
+✅ Responsive behavior matches
+✅ Form validation working
+✅ Accessibility requirements met
+
+✨ Contact form complete and ready for deployment!
+```
+
+### Example 0b: Anti-YOLO with Changes
+```
+User: /systemcc "build user dashboard"
+
+[Lyra optimization and wireframe creation...]
+
+🎨 ASCII Wireframe:
+┌─ User Dashboard ─────────────────────┐
+│ Welcome, John!          [Settings]   │
+├─────────────────────────────────────┤
+│ ┌─Stats─┐ ┌─Stats─┐ ┌─Stats─┐       │
+│ │  42   │ │ 156   │ │ $2K   │       │  
+│ │Posts  │ │Likes  │ │Earned │       │
+│ └───────┘ └───────┘ └───────┘       │
+├─────────────────────────────────────┤
+│ Recent Activity:                    │
+│ • Posted "Getting Started"          │
+│ • Received 5 new likes              │
+│ • Earned $50 commission             │
+└─────────────────────────────────────┘
+
+✋ Does this layout look right? Type 'yes' to proceed or describe changes.
+
+User: move the stats to the bottom and add a profile section at the top
+
+🔄 Updating wireframe based on your feedback...
+
+┌─ User Dashboard ─────────────────────┐
+│ Welcome, John!          [Settings]   │
+├─────────────────────────────────────┤
+│ ┌─ Profile ─────────────────────────┐ │
+│ │ [Avatar] John Doe                 │ │
+│ │ Member since: Jan 2023            │ │
+│ │ Status: Pro User                  │ │
+│ └───────────────────────────────────┘ │
+├─────────────────────────────────────┤
+│ Recent Activity:                    │
+│ • Posted "Getting Started"          │
+│ • Received 5 new likes              │
+│ • Earned $50 commission             │
+├─────────────────────────────────────┤
+│ ┌─Stats─┐ ┌─Stats─┐ ┌─Stats─┐       │
+│ │  42   │ │ 156   │ │ $2K   │       │  
+│ │Posts  │ │Likes  │ │Earned │       │
+│ └───────┘ └───────┘ └───────┘       │
+└─────────────────────────────────────┘
+
+✋ Updated wireframe! Does this look better?
+
+User: perfect
+
+✅ Great! Proceeding with HTML implementation...
+[Continues with implementation matching the updated wireframe...]
+```
+
+### Example 1: CCPM Integration Detection (NEW!)
 ```
 User: /systemcc --pm "build complete e-commerce checkout system"
 

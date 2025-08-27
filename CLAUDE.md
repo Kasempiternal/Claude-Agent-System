@@ -307,3 +307,4 @@ The Agent OS workflow framework (workflows/agent-os/) is inspired by and adapted
 - Source: https://buildermethods.com/agent-os
 - Tutorial: https://www.youtube.com/watch?v=CTMyzeKKb0o&t
 - Modifications: Integrated into unified systemcc workflow with multi-language support
+- remember to update readme.md with all the important changes

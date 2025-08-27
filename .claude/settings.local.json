@@ -4,7 +4,8 @@
       "Bash(ls:*)",
       "Bash(find:*)",
       "WebFetch(domain:github.com)",
-      "WebFetch(domain:raw.githubusercontent.com)"
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "WebFetch(domain:www.reddit.com)"
     ],
     "deny": []
   }

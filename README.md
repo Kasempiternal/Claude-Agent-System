@@ -2,7 +2,7 @@
 
 Transform your AI coding assistant into a productive development partner. The Claude Agent System provides structured workflows that capture your standards, your stack, and the unique details of your codebase.
 
-**🚀 Latest Update**: Enhanced 5-dimensional decision engine with improved performance and transparency!
+**🚀 Latest Update**: Anti-YOLO Web Workflow integration with ASCII wireframing for HTML/web projects!
 
 ## 🚀 Quick Setup (One Command)
 
@@ -23,10 +23,13 @@ Just describe what you want to build - the system handles the rest:
 ```bash
 /systemcc "implement user authentication with JWT"
 
+# 🆕 NEW: Anti-YOLO Web Workflow (automatic for HTML/web projects)
+/systemcc "create contact form page"                    # → ASCII wireframe → approval → HTML implementation
+
 # 🆕 NEW: Project Management Mode with CCPM Integration
 /systemcc --pm "build complete e-commerce checkout system"
 ```
-**NEW**: Now with advanced mathematical decision engine, Lyra AI prompt optimization, and CCPM integration! Your requests are automatically enhanced for maximum clarity and complete code delivery, with optional parallel execution for 3x faster development.
+**NEW**: Now with Anti-YOLO Method integration for web projects! HTML/CSS/JavaScript tasks automatically use ASCII wireframing for token-efficient visual planning before implementation. Plus advanced mathematical decision engine, Lyra AI prompt optimization, and CCPM integration!
 
 ### 🧠 Enhanced Decision Engine (Behind the Scenes)
 While you just type `/systemcc`, the system uses sophisticated 5-dimensional analysis:
@@ -38,6 +41,7 @@ While you just type `/systemcc`, the system uses sophisticated 5-dimensional ana
 
 ### 🪄 Specialized Workflows Now Integrated
 
+**🆕 Anti-YOLO Web Workflow** - ASCII wireframing for HTML/CSS/JS projects (automatic)
 **🆕 CCPM Integration** - Parallel execution with GitHub/GitLab or local PM (automatic)
 **Agent OS** - Professional project setup (automatic)
 **AI Dev Tasks** - Build features with PRDs (automatic)
@@ -49,6 +53,7 @@ While you just type `/systemcc`, the system uses sophisticated 5-dimensional ana
 The system automatically detects and adapts to your tech stack on first use - no manual commands needed!
 
 ### 🤖 Fully Automated Workflow Selection
+- **🆕 Web projects** → Anti-YOLO workflow with ASCII wireframing (automatic)
 - **Simple tasks** → Streamlined 3-agent workflow (automatic)
 - **Complex features** → Comprehensive 6-agent system (automatic)
 - **Large contexts** → Phase-based execution (automatic)
@@ -80,9 +85,15 @@ That's it! The system automatically:
 
 ### Examples:
 ```bash
+# 🆕 NEW: Web projects automatically use Anti-YOLO workflow
+/systemcc "create contact form page"             # → ASCII wireframe → approval → HTML implementation
+/systemcc "build user dashboard"                 # → Wireframe first, then React components
+/systemcc "add login modal"                      # → Visual layout planning → CSS/JS
+
+# Standard workflows (auto-selected)
 /systemcc "fix the login button color"           # → Auto-selected: Quick workflow
 /systemcc "add user authentication system"       # → Auto-selected: Complete system
-/systemcc "build analytics dashboard"            # → Auto-selected: AI Dev Tasks
+/systemcc "build analytics dashboard"            # → Auto-selected: AI Dev Tasks  
 /systemcc "refactor entire payment module"       # → Auto-selected: Phase-based
 
 # 🆕 NEW: Project Management Mode (CCPM Integration)
@@ -108,6 +119,69 @@ On first use, `/systemcc` automatically analyzes your project in **4-5 seconds**
 
 **📚 Supports All Major Stacks:**
 Python • JavaScript/TypeScript • Ruby • Java • Go • Rust • PHP • C#
+
+## 🎨 NEW: Anti-YOLO Web Workflow
+
+### 🚀 Automatic ASCII Wireframing for Web Projects
+
+For HTML/CSS/JavaScript projects, the system now automatically uses the revolutionary **Anti-YOLO Method** - inspired by the [community post](https://www.reddit.com/r/ClaudeAI/comments/1n1941k/the_antiyolo_method_why_i_make_claude_draw_ascii/) that showed 70-90% reduction in iteration cycles.
+
+### 🎯 How It Works
+
+```bash
+# Any web-related task automatically triggers Anti-YOLO workflow
+/systemcc "create contact form"
+
+# System detects web project indicators and automatically:
+# 1. Creates ASCII wireframe first
+# 2. Shows you the layout for approval  
+# 3. Waits for your "yes" or requested changes
+# 4. Only then generates production HTML/CSS/JS
+```
+
+### 📋 Example Workflow
+
+```
+User: /systemcc "create contact form page"
+
+🎨 Creating ASCII Wireframe:
+
+┌─ Contact Us ─────────────────────────┐
+│ Get in touch with our team           │
+├─────────────────────────────────────┤
+│ Name:     <input required>           │
+│ Email:    <input type="email" req>   │ 
+│ Subject:  <select>                   │
+│ Message:  <textarea required>        │
+│ ──────────────────────────────────── │
+│ [Submit Message] [Clear Form]        │
+└─────────────────────────────────────┘
+
+✋ Does this layout look right? 
+Type 'yes' to proceed with HTML implementation, or describe changes.
+
+User: yes
+
+✅ Perfect! Proceeding with HTML implementation...
+[Generates production-ready HTML/CSS/JS matching wireframe exactly]
+```
+
+### 🔧 Key Benefits
+
+- **🎯 Token Efficiency**: ASCII wireframes use ~90% fewer tokens than HTML mockups
+- **⚡ Faster Iterations**: Layout changes happen at wireframe stage (cheap) not HTML stage (expensive)  
+- **🎭 No Surprises**: You see exactly what you'll get before any code is written
+- **📱 Responsive Planning**: Mobile/desktop layouts planned visually first
+- **🧪 Test-Driven**: Wireframe becomes the test specification
+
+### 🔍 Automatic Detection
+
+The system automatically detects web projects using:
+- **Keywords**: "HTML", "CSS", "form", "page", "component", "dashboard", "modal"
+- **Project Files**: `package.json`, `*.html`, CSS files, React/Vue/Angular projects
+- **Frameworks**: React, Vue, Angular, Svelte, Bootstrap, Tailwind
+
+**No configuration needed** - just use `/systemcc` as normal!
 
 ## 🧠 /systemcc Enhanced Decision Engine - Complete Thinking Tree
 
@@ -583,6 +657,7 @@ If no, I'll use the standard [WorkflowName] workflow.
 
 | Factor | Weight | Triggers |
 |--------|--------|----------|
+| **🆕 Web Project Detection** | Highest Priority | HTML/CSS/JS keywords = Anti-YOLO workflow |
 | **Context Size** | 40% | >30k tokens = Phase-based |
 | **Task Patterns** | 30% | Enhanced keyword matching = Specific workflow |
 | **5D Complexity Score** | 20% | 1-3: Simple, 4-6: Medium, 7-10: Complex |
@@ -592,7 +667,7 @@ If no, I'll use the standard [WorkflowName] workflow.
 
 ## 🏗️ Enhanced System Architecture
 
-The Claude Agent System now includes **seven workflow modes** powered by sophisticated enhanced decision engine:
+The Claude Agent System now includes **eight workflow modes** powered by sophisticated enhanced decision engine:
 
 ### 🧠 Enhanced Foundation Layer
 **Behind every `/systemcc` command:**
@@ -603,6 +678,14 @@ The Claude Agent System now includes **seven workflow modes** powered by sophist
 - **Memory Bank Integration**: Historical pattern recognition and continuous workflow optimization
 
 ### 🎯 Workflow Selection Modes
+
+### 🆕 Anti-YOLO Web Workflow (NEW!)
+For HTML/CSS/JavaScript projects:
+- **ASCII Wireframe Creation** - Token-efficient visual planning
+- **User Approval Checkpoint** - "Does this layout look right?"
+- **Wireframe-to-HTML Implementation** - Production code matching wireframe
+- **Wireframe-Driven Testing** - Validation against approved layout
+- **Result**: 70-90% fewer iteration cycles, perfect first-pass implementations
 
 ### 🆕 CCPM Integration (NEW!)
 For parallel execution and project management:
@@ -672,6 +755,10 @@ your-project/
 │   ├── complete-system/       # 6-agent workflow
 │   ├── orchestrated-only/     # 3-agent workflow
 │   ├── phase-based-workflow/  # Phase execution
+│   ├── 🆕 anti-yolo-web/      # ASCII wireframing workflow
+│   │   ├── wireframe-designer.md      # ASCII wireframe creation
+│   │   ├── wireframe-to-html.md       # HTML implementation
+│   │   └── workflow-orchestrator.md   # Complete workflow
 │   ├── 🆕 ccmp-integration/   # CCPM workflow system
 │   ├── agent-os/              # Project setup workflow
 │   └── ai-dev-tasks/          # PRD-based development
@@ -682,6 +769,9 @@ your-project/
 └── ClaudeFiles/              # AI-generated files
     ├── memory/               # Memory bank system
     ├── workflows/            # Workflow outputs
+    ├── 🆕 wireframes/        # ASCII wireframes (Anti-YOLO)
+    │   ├── contact-form.txt # Approved wireframes
+    │   └── dashboard.txt    # Layout references
     ├── 🆕 pm/                # Project management
     │   ├── epics/           # Epic definitions
     │   ├── issues/          # Task tracking
@@ -697,6 +787,7 @@ your-project/
 - **🆕 `/systemcc --pm`** - Project Management mode with CCPM integration
 
 ### Internal Workflows (Auto-Selected by /systemcc):
+- **🆕 Anti-YOLO Web Workflow** - ASCII wireframing for HTML/CSS/JS projects
 - **🆕 CCPM Integration** - Parallel execution with GitHub/GitLab or local PM
 - Agent OS - Project setup and standards
 - AI Dev Tasks - PRD-based feature development  
@@ -763,14 +854,15 @@ The system automatically adapts to:
 ## 🌟 Why Claude Agent System?
 
 1. **One Command Does Everything** - No need to learn multiple commands
-2. **🧠 Enhanced Decision Engine** - Sophisticated 5D scoring, pattern recognition, rule-based logic
-3. **Fully Automated** - Smart workflow selection with enhanced reasoning and transparency
-4. **Quality First** - Built-in best practices with comprehensive risk assessment
-5. **Context Efficient** - Intelligent context prediction handles large codebases efficiently
-6. **Stack Aware** - Auto-adapts to your tech stack with pattern learning
-7. **🚀 Performance Optimized** - Enhanced analysis delivers 60-80% efficiency improvements
-8. **🔍 Decision Transparency** - Full reasoning audit available with clear explanations
-9. **Community Driven** - Best practices from r/ClaudeAI with continuous improvement
+2. **🎨 Visual Planning First** - Anti-YOLO method for web projects with ASCII wireframing
+3. **🧠 Enhanced Decision Engine** - Sophisticated 5D scoring, pattern recognition, rule-based logic
+4. **Fully Automated** - Smart workflow selection with enhanced reasoning and transparency
+5. **Quality First** - Built-in best practices with comprehensive risk assessment
+6. **Context Efficient** - Intelligent context prediction handles large codebases efficiently
+7. **Stack Aware** - Auto-adapts to your tech stack with pattern learning
+8. **🚀 Performance Optimized** - Enhanced analysis delivers 60-80% efficiency improvements
+9. **🔍 Decision Transparency** - Full reasoning audit available with clear explanations
+10. **Community Driven** - Best practices from r/ClaudeAI with continuous improvement
 
 ## 🤝 Contributing
 
@@ -788,6 +880,7 @@ This system was born from real-world experiences and insights shared by the Clau
 - [How phase-based development made Claude Code 10x better](https://www.reddit.com/r/ClaudeAI/comments/1lw5oie/how_phasebased_development_made_claude_code_10x/) - Phase-based execution methodology
 - [How we 10x'd our dev speed with Claude Code](https://www.reddit.com/r/ClaudeAI/comments/1mc80q8/how_we_10xd_our_dev_speed_with_claude_code_and/) - Performance optimization techniques
 - [20 years of software engineering experience with Claude](https://www.reddit.com/r/ClaudeAI/comments/1m1efu0/as_an_software_egineer_with_20_years_of_experience/) - Professional development patterns
+- **🆕 [The Anti-YOLO Method](https://www.reddit.com/r/ClaudeAI/comments/1n1941k/the_antiyolo_method_why_i_make_claude_draw_ascii/)** - ASCII wireframing workflow for HTML/web projects (integrated as automatic web workflow)
 
 What started as a personal compilation test evolved into a daily-use tool through the collective wisdom of experienced developers sharing their workflows and discoveries.
 
