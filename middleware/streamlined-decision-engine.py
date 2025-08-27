@@ -7,9 +7,29 @@ Maintains decision quality while avoiding over-engineering complexity.
 
 import math
 import re
+import logging
 from typing import Dict, List, Tuple, Any, Optional
 from dataclasses import dataclass
 from enum import Enum
+# Import constants with fallback for standalone execution
+try:
+    from .decision_constants import (
+        SCORE_MIN, SCORE_MAX, CONTEXT_OVERFLOW_THRESHOLD, CRITICAL_RISK_THRESHOLD,
+        CRITICAL_TIME_THRESHOLD, TECH_COMPLEXITY_WEIGHTS, RISK_WEIGHTS, 
+        TIME_PRESSURE_WEIGHTS, TIME_SPECIFIC_PHRASES, CONTEXT_LOAD_PARAMS,
+        SCOPE_PARAMS, GLOBAL_SCOPE_INDICATORS, MULTI_COMPONENT_INDICATORS,
+        GROWTH_INDICATORS, WORKFLOW_WEIGHTS, WORKFLOW_SUITABILITY, SCORE_LEVELS,
+        NORMALIZATION, VALIDATION, FALLBACK
+    )
+except ImportError:
+    from decision_constants import (
+        SCORE_MIN, SCORE_MAX, CONTEXT_OVERFLOW_THRESHOLD, CRITICAL_RISK_THRESHOLD,
+        CRITICAL_TIME_THRESHOLD, TECH_COMPLEXITY_WEIGHTS, RISK_WEIGHTS, 
+        TIME_PRESSURE_WEIGHTS, TIME_SPECIFIC_PHRASES, CONTEXT_LOAD_PARAMS,
+        SCOPE_PARAMS, GLOBAL_SCOPE_INDICATORS, MULTI_COMPONENT_INDICATORS,
+        GROWTH_INDICATORS, WORKFLOW_WEIGHTS, WORKFLOW_SUITABILITY, SCORE_LEVELS,
+        NORMALIZATION, VALIDATION, FALLBACK
+    )
 
 
 class WorkflowType(Enum):
@@ -68,42 +88,26 @@ class StreamlinedDecisionEngine:
     """
     
     def __init__(self):
-        self.initialize_scoring_weights()
-        self.initialize_workflow_thresholds()
-        self.initialize_decision_rules()
+        # Initialize logging
+        self.logger = logging.getLogger(__name__)
+        
+        try:
+            self.initialize_scoring_weights()
+            self.initialize_workflow_thresholds()
+            self.initialize_decision_rules()
+            self.logger.info("StreamlinedDecisionEngine initialized successfully")
+        except Exception as e:
+            self.logger.error(f"Failed to initialize StreamlinedDecisionEngine: {e}")
+            raise
     
     def initialize_scoring_weights(self):
         """Initialize factor importance weights for different workflow types"""
         
         self.workflow_factor_weights = {
-            WorkflowType.ORCHESTRATED: {
-                'technical_complexity': 0.4,
-                'scope_impact': 0.2,
-                'risk_factor': 0.2,
-                'context_load': 0.1,
-                'time_pressure': 0.1
-            },
-            WorkflowType.COMPLETE_SYSTEM: {
-                'technical_complexity': 0.25,
-                'scope_impact': 0.2,
-                'risk_factor': 0.35,  # Risk is most important for complete system
-                'context_load': 0.15,
-                'time_pressure': 0.05
-            },
-            WorkflowType.TASKIT: {
-                'technical_complexity': 0.15,
-                'scope_impact': 0.35,  # Scope is most important for phase-based
-                'risk_factor': 0.15,
-                'context_load': 0.3,   # Context management crucial
-                'time_pressure': 0.05
-            },
-            WorkflowType.AIDEVTASKS: {
-                'technical_complexity': 0.3,
-                'scope_impact': 0.25,
-                'risk_factor': 0.2,
-                'context_load': 0.15,
-                'time_pressure': 0.1
-            }
+            WorkflowType.ORCHESTRATED: WORKFLOW_WEIGHTS['ORCHESTRATED'],
+            WorkflowType.COMPLETE_SYSTEM: WORKFLOW_WEIGHTS['COMPLETE_SYSTEM'],
+            WorkflowType.TASKIT: WORKFLOW_WEIGHTS['TASKIT'],
+            WorkflowType.AIDEVTASKS: WORKFLOW_WEIGHTS['AIDEVTASKS']
         }
     
     def initialize_workflow_thresholds(self):
@@ -111,9 +115,9 @@ class StreamlinedDecisionEngine:
         
         # Critical override thresholds
         self.critical_thresholds = {
-            'context_overflow': 0.8,      # Force taskit if context load > 0.8
-            'critical_risk': 0.8,        # Force complete_system if risk > 0.8
-            'critical_time': 0.9          # Influence urgency handling
+            'context_overflow': CONTEXT_OVERFLOW_THRESHOLD,
+            'critical_risk': CRITICAL_RISK_THRESHOLD,
+            'critical_time': CRITICAL_TIME_THRESHOLD
         }
         
         # Workflow suitability ranges
@@ -215,89 +219,104 @@ class StreamlinedDecisionEngine:
         Calculate scores across 5 dimensions using practical algorithms
         """
         
-        # 1. Technical Complexity - Enhanced keyword analysis with weighting
-        technical_complexity = self.calculate_technical_complexity(task_description)
-        
-        # 2. Scope Impact - Project scope analysis
-        scope_impact = self.calculate_scope_impact(task_description, context_info)
-        
-        # 3. Risk Factor - Risk indicator detection
-        risk_factor = self.calculate_risk_factor(task_description)
-        
-        # 4. Context Load - Context size and growth prediction
-        context_load = self.calculate_context_load(task_description, context_info)
-        
-        # 5. Time Pressure - Urgency detection
-        time_pressure = self.calculate_time_pressure(task_description)
-        
-        return TaskAnalysis(
-            technical_complexity=technical_complexity,
-            scope_impact=scope_impact,
-            risk_factor=risk_factor,
-            context_load=context_load,
-            time_pressure=time_pressure
-        )
+        try:
+            # 1. Technical Complexity - Enhanced keyword analysis with weighting
+            technical_complexity = self._safe_calculate(
+                self.calculate_technical_complexity, task_description, 'technical_complexity'
+            )
+            
+            # 2. Scope Impact - Project scope analysis
+            scope_impact = self._safe_calculate(
+                self.calculate_scope_impact, task_description, context_info, 'scope_impact'
+            )
+            
+            # 3. Risk Factor - Risk indicator detection
+            risk_factor = self._safe_calculate(
+                self.calculate_risk_factor, task_description, 'risk_factor'
+            )
+            
+            # 4. Context Load - Context size and growth prediction
+            context_load = self._safe_calculate(
+                self.calculate_context_load, task_description, context_info, 'context_load'
+            )
+            
+            # 5. Time Pressure - Urgency detection
+            time_pressure = self._safe_calculate(
+                self.calculate_time_pressure, task_description, 'time_pressure'
+            )
+            
+            analysis = TaskAnalysis(
+                technical_complexity=technical_complexity,
+                scope_impact=scope_impact,
+                risk_factor=risk_factor,
+                context_load=context_load,
+                time_pressure=time_pressure
+            )
+            
+            self.logger.debug(f"Five-dimensional analysis completed: {analysis}")
+            return analysis
+            
+        except Exception as e:
+            self.logger.error(f"Error in five-dimensional analysis: {e}")
+            # Return conservative fallback scores
+            return TaskAnalysis(
+                technical_complexity=0.5,
+                scope_impact=0.5,
+                risk_factor=0.7,  # Conservative high risk
+                context_load=0.3,
+                time_pressure=0.2
+            )
+    
+    def _safe_calculate(self, func, *args, score_name: str) -> float:
+        """Safely execute calculation function with error handling"""
+        try:
+            result = func(*args)
+            if not isinstance(result, (int, float)) or not (SCORE_MIN <= result <= SCORE_MAX):
+                self.logger.warning(f"Invalid {score_name} score: {result}, using fallback")
+                return 0.5  # Safe middle ground
+            return float(result)
+        except Exception as e:
+            self.logger.error(f"Error calculating {score_name}: {e}")
+            return 0.5  # Safe fallback
     
     def calculate_technical_complexity(self, task_description: str) -> float:
         """Enhanced technical complexity calculation"""
         
+        if not task_description:
+            return 0.0
+            
         desc_lower = task_description.lower()
         complexity_score = 0.0
         
-        # High complexity indicators (weighted)
-        high_complexity_patterns = {
-            'architecture': 0.3,
-            'refactor': 0.25,
-            'migrate': 0.25,
-            'system': 0.2,
-            'complex': 0.2,
-            'algorithm': 0.25,
-            'optimization': 0.2,
-            'integration': 0.2,
-            'scalable': 0.2,
-            'distributed': 0.3
+        # Use centralized complexity weights
+        complexity_patterns = {
+            **TECH_COMPLEXITY_WEIGHTS['HIGH'],
+            **TECH_COMPLEXITY_WEIGHTS['MEDIUM'], 
+            **TECH_COMPLEXITY_WEIGHTS['LOW']
         }
         
-        # Medium complexity indicators
-        medium_complexity_patterns = {
-            'implement': 0.15,
-            'create': 0.1,
-            'build': 0.1,
-            'design': 0.15,
-            'api': 0.15,
-            'database': 0.15,
-            'auth': 0.15,
-            'security': 0.2
-        }
-        
-        # Low complexity indicators (reduce score)
-        low_complexity_patterns = {
-            'fix': -0.1,
-            'update': -0.05,
-            'change': -0.05,
-            'small': -0.1,
-            'simple': -0.15,
-            'quick': -0.1,
-            'typo': -0.2
-        }
-        
-        # Calculate weighted score
-        for pattern, weight in high_complexity_patterns.items():
+        # Calculate weighted score with performance optimization
+        matched_patterns = 0
+        for pattern, weight in complexity_patterns.items():
             if pattern in desc_lower:
                 complexity_score += weight
+                matched_patterns += 1
+                # Early termination for very high complexity
+                if complexity_score > 1.5:
+                    break
         
-        for pattern, weight in medium_complexity_patterns.items():
-            if pattern in desc_lower:
-                complexity_score += weight
+        # Normalize using constants
+        sigmoid_center = NORMALIZATION['SIGMOID_CENTER']
+        sigmoid_scale = NORMALIZATION['SIGMOID_SCALE']
+        normalized_score = 1 / (1 + math.exp(-(complexity_score - sigmoid_center) / sigmoid_scale))
         
-        for pattern, weight in low_complexity_patterns.items():
-            if pattern in desc_lower:
-                complexity_score += weight
+        result = max(SCORE_MIN, min(SCORE_MAX, normalized_score))
         
-        # Normalize to [0, 1] range using sigmoid
-        normalized_score = 1 / (1 + math.exp(-(complexity_score - 0.3) / 0.2))
-        
-        return max(0.0, min(1.0, normalized_score))
+        # Log for debugging if high complexity detected
+        if result > SCORE_LEVELS['HIGH']:
+            self.logger.debug(f"High technical complexity detected: {result:.3f} from {matched_patterns} patterns")
+            
+        return result
     
     def calculate_scope_impact(self, task_description: str, context_info: Dict[str, Any]) -> float:
         """Calculate scope impact based on breadth indicators"""
@@ -642,6 +661,25 @@ def enhanced_workflow_selection(task_description: str, context_info: Dict[str, A
     
     Provides sophisticated analysis without over-engineering complexity
     """
+    
+    # Input validation
+    if not task_description or not isinstance(task_description, str):
+        raise ValueError("task_description must be a non-empty string")
+    
+    if len(task_description.strip()) == 0:
+        raise ValueError("task_description cannot be empty or whitespace only")
+    
+    if len(task_description) > VALIDATION['MAX_TASK_DESCRIPTION_LENGTH']:
+        task_description = task_description[:VALIDATION['MAX_TASK_DESCRIPTION_LENGTH']]
+    
+    # Ensure context_info has required structure
+    context_info = context_info or {}
+    context_info.setdefault('current_tokens', 0)
+    context_info.setdefault('loaded_files', 0)
+    
+    # Validate context values
+    context_info['current_tokens'] = max(0, int(context_info.get('current_tokens', 0)))
+    context_info['loaded_files'] = max(0, int(context_info.get('loaded_files', 0)))
     
     try:
         # Initialize streamlined decision engine

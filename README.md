@@ -651,7 +651,7 @@ If no, I'll use the standard [WorkflowName] workflow.
 - **🐙 GitHub**: Full integration with Issues and gh-sub-issue extension  
 - **📁 None**: Local PM system with 60-70% of CCPM benefits
 
-**🎯 GitLab Answer**: If user has GitLab instead of GitHub, CCPM falls back to Local PM mode (60-70% of benefits through local project management system).
+**🎯 Git Hosting Fallback**: If neither GitLab nor GitHub is available, CCPM falls back to Local PM mode (60–70% of benefits through the local project management system).
 
 ### 🔍 Decision Factor Summary
 

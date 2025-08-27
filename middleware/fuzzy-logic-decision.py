@@ -117,6 +117,8 @@ class FuzzyMembershipFunctions:
     def gaussian(mean: float, std: float) -> Callable[[float], float]:
         """Create Gaussian (bell-curve) membership function"""
         def membership(x: float) -> float:
+            if std == 0:  # Avoid division by zero
+                return 1.0 if x == mean else 0.0
             return math.exp(-0.5 * ((x - mean) / std) ** 2)
         return membership
     
