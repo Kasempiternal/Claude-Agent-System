@@ -487,11 +487,12 @@ class FuzzyWorkflowDecision:
             if x <= a or x >= c:
                 return 0.0
             elif a < x <= b:
-                return (x - a) / (b - a)
+                denom = (b - a) or 1e-9
+                return (x - a) / denom
             else:  # b < x < c
-                return (c - x) / (c - b)
+                denom = (c - b) or 1e-9
+                return (c - x) / denom
         return membership
-    
     def setup_fuzzy_rules(self):
         """Define fuzzy inference rules"""
         
