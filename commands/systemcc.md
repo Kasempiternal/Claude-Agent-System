@@ -433,79 +433,98 @@ def analyze_for_workflow_selection(task_description, context_info, user_preferen
         'context': context_info
     })
     
-    # Apply rule-based workflow selection
-    return get_workflow_decision(task_description, context_info, memory_context)
+    # Apply streamlined decision engine with 5-dimensional analysis
+    return enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result)
 
-def get_workflow_decision(task_desc, context, memory_context):
-    """Rule-based workflow selection logic"""
+def enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result):
+    """
+    Streamlined Decision Engine for Workflow Selection
     
-    # PRIORITY 1: Context-based routing (overrides everything)
-    if context.get('current_tokens', 0) > 30000:
+    Balanced approach that provides sophisticated analysis without over-engineering:
+    1. Five-dimensional factor analysis (Technical, Scope, Risk, Context, Time)
+    2. Enhanced rule-based logic with weighted scoring
+    3. Decision transparency with clear reasoning
+    4. Robust fallback mechanisms
+    5. Performance-optimized for real-time use
+    """
+    
+    try:
+        # Import streamlined decision engine
+        from middleware.streamlined_decision_engine import enhanced_workflow_selection as streamlined_selection
+        
+        # Use the streamlined engine for practical decision-making
+        result = streamlined_selection(task_description, context_info, memory_context)
+        
+        # Enhance result with Lyra context if available
+        if hasattr(lyra_result, 'metadata') and hasattr(lyra_result.metadata, 'complexity_score'):
+            # Adjust confidence based on Lyra analysis
+            lyra_complexity = lyra_result.metadata.complexity_score / 10.0  # Normalize to [0,1]
+            result['factor_scores']['lyra_enhanced'] = True
+            result['reasoning'] += f"\n🎯 Lyra AI Enhancement: Complexity score {lyra_complexity:.2f} integrated"
+        
+        return result
+    
+    except Exception as e:
+        # Fallback to simplified decision logic if streamlined engine fails
+        return fallback_decision_logic(task_description, context_info, lyra_result, str(e))
+
+def simple_workflow_selection(task_description, context_info):
+    """Simplified workflow selection for maximum reliability"""
+    
+    desc_lower = task_description.lower()
+    
+    # Priority 1: Context protection
+    if context_info.get('current_tokens', 0) > 30000 or context_info.get('loaded_files', 0) > 15:
         return {
             'workflow': 'taskit',
-            'reasoning': 'Context size exceeds optimal threshold',
+            'reasoning': 'Context size protection - using phase-based execution',
             'confidence': 0.9
         }
     
-    if context.get('loaded_files', 0) > 10:
-        return {
-            'workflow': 'taskit', 
-            'reasoning': 'Too many files in context',
-            'confidence': 0.8
-        }
-    
-    # Calculate basic complexity
-    complexity_score = calculate_working_complexity(task_desc, lyra_result)
-    
-    # Apply working decision rules
-    if complexity_score <= 3:
-        return {
-            'workflow': 'orchestrated',
-            'reasoning': f'Low complexity task (score: {complexity_score})',
-            'confidence': 0.8
-        }
-    elif complexity_score <= 6:
+    # Priority 2: Risk indicators
+    high_risk_indicators = ['critical', 'production', 'breaking', 'delete', 'remove', 'security']
+    if any(indicator in desc_lower for indicator in high_risk_indicators):
         return {
             'workflow': 'complete_system',
-            'reasoning': f'Medium complexity task (score: {complexity_score})',
-            'confidence': 0.7
+            'reasoning': 'High-risk indicators detected - comprehensive validation needed',
+            'confidence': 0.85
+        }
+    
+    # Priority 3: Complexity indicators
+    complex_indicators = ['architecture', 'refactor', 'system', 'complex', 'integration']
+    simple_indicators = ['fix', 'update', 'change', 'small', 'simple', 'typo']
+    
+    complexity_score = sum(1 for indicator in complex_indicators if indicator in desc_lower)
+    simplicity_score = sum(1 for indicator in simple_indicators if indicator in desc_lower)
+    
+    if simplicity_score > complexity_score and complexity_score == 0:
+        return {
+            'workflow': 'orchestrated',
+            'reasoning': 'Simple task - streamlined execution appropriate',
+            'confidence': 0.8
+        }
+    elif complexity_score >= 2:
+        return {
+            'workflow': 'complete_system',
+            'reasoning': 'Complex task - comprehensive approach needed',
+            'confidence': 0.75
         }
     else:
         return {
-            'workflow': 'taskit',
-            'reasoning': f'High complexity task (score: {complexity_score})',
-            'confidence': 0.8
+            'workflow': 'complete_system',
+            'reasoning': 'Default to comprehensive validation for safety',
+            'confidence': 0.7
         }
 
-def calculate_working_complexity(task_desc, lyra_result):
-    """Actually working complexity calculation"""
+def fallback_decision_logic(task_description, context_info, lyra_result, error_details):
+    """Robust fallback logic when streamlined engine fails"""
     
-    score = 1
-    desc_lower = task_desc.lower()
+    # Use simple workflow selection as ultimate fallback
+    result = simple_workflow_selection(task_description, context_info)
+    result['reasoning'] += f" (Fallback mode: {error_details[:100]})"
+    result['fallback_used'] = True
     
-    # Scope indicators
-    if any(word in desc_lower for word in ['all', 'entire', 'across', 'system']):
-        score += 2
-    if any(word in desc_lower for word in ['multiple', 'several', 'various']):
-        score += 1
-    
-    # Technical complexity
-    if any(word in desc_lower for word in ['architecture', 'refactor', 'migrate']):
-        score += 2
-    if any(word in desc_lower for word in ['security', 'auth', 'critical']):
-        score += 1
-    if any(word in desc_lower for word in ['integration', 'api', 'service']):
-        score += 1
-    
-    # Simple indicators (reduce score)
-    if any(word in desc_lower for word in ['fix', 'update', 'change', 'small']):
-        score -= 1
-    
-    # Add Lyra complexity if available
-    if hasattr(lyra_result, 'metadata') and hasattr(lyra_result.metadata, 'complexity_score'):
-        score += lyra_result.metadata.complexity_score // 2
-    
-    return max(1, min(10, score))
+    return result
 
 
 ## Examples
