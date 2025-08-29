@@ -36,7 +36,7 @@ While you just type `/systemcc`, the system uses sophisticated 5-dimensional ana
 - **Multi-Dimensional Scoring**: Technical complexity, scope impact, risk assessment, context load, and time pressure analysis
 - **Intelligent Pattern Recognition**: Enhanced keyword analysis with weighted scoring for optimal workflow selection
 - **Decision Transparency**: Clear reasoning explanations with confidence levels for each decision
-- **Performance Optimization**: Rule-based logic delivers ~94% accuracy with minimal computational overhead
+- **Performance Optimization**: Efficient rule-based logic with reliable decision-making
 - **Smart Fallback Systems**: Robust error handling ensures reliable workflow selection even with incomplete information
 
 ### 🪄 Specialized Workflows Now Integrated
@@ -66,7 +66,7 @@ The system automatically detects and adapts to your tech stack on first use - no
 - **Predictive Context Management**: Anticipates context needs based on task complexity analysis
 - **Automatic Phase Switching**: Seamless transition for large codebases using enhanced decision logic
 - **Quality Preservation**: Maintains consistency across all contexts with transparent reasoning
-- **Efficiency Optimization**: Reduces context usage by 60-80% through smart rule-based analysis
+- **Efficiency Optimization**: Significantly reduces context usage through smart rule-based analysis
 
 ## 🎯 Usage - ONE Command for Everything
 
@@ -296,7 +296,7 @@ User: /systemcc [--pm] "your task"
 │ • Alternative workflow consideration│
 │                                      │
 │ Performance Optimization:            │
-│ • Fast execution (~94% accuracy)    │
+│ • Fast execution with reliable results │
 │ • Minimal computational overhead    │
 │ • Robust fallback mechanisms        │
 │                                      │
@@ -549,11 +549,11 @@ Decision Transparency:
 
 #### Performance Optimization Engine
 ```
-Efficiency Metrics (Real-world Performance):
-├─ ~94% decision accuracy through enhanced scoring
-├─ Minimal computational overhead (<50ms decisions)
+Performance Characteristics:
+├─ Reliable decision-making through enhanced scoring
+├─ Fast response times with minimal computational overhead
 ├─ Robust error handling with graceful degradation
-└─ Fast pattern recognition via optimized algorithms
+└─ Efficient pattern recognition via optimized algorithms
 
 Quality Assurance:
 ├─ Consistent workflow selection across similar tasks
@@ -649,9 +649,9 @@ If no, I'll use the standard [WorkflowName] workflow.
 **Git Hosting Support:**
 - **🦊 GitLab**: Full integration with native Epics and Issue Boards (SUPERIOR experience!)
 - **🐙 GitHub**: Full integration with Issues and gh-sub-issue extension  
-- **📁 None**: Local PM system with 60-70% of CCPM benefits
+- **📁 None**: Local PM system with substantial CCPM benefits
 
-**🎯 Git Hosting Fallback**: If neither GitLab nor GitHub is available, CCPM falls back to Local PM mode (60–70% of benefits through the local project management system).
+**🎯 Git Hosting Fallback**: If neither GitLab nor GitHub is available, CCPM falls back to Local PM mode with substantial benefits through the local project management system.
 
 ### 🔍 Decision Factor Summary
 
@@ -674,7 +674,7 @@ The Claude Agent System now includes **eight workflow modes** powered by sophist
 - **5-Dimensional Analysis Engine**: Real-time task evaluation across technical complexity, scope impact, risk factors, context load, and time pressure
 - **Enhanced Rule-Based Logic**: Intelligent pattern recognition with weighted scoring and confidence levels
 - **Decision Transparency Systems**: Clear reasoning explanations with comprehensive audit trails
-- **Performance Optimization**: Fast decision-making (~94% accuracy) with minimal computational overhead
+- **Performance Optimization**: Fast decision-making with minimal computational overhead
 - **Memory Bank Integration**: Historical pattern recognition and continuous workflow optimization
 
 ### 🎯 Workflow Selection Modes
@@ -710,7 +710,7 @@ For parallel execution and project management:
 - **Task Simulation** - Parallel execution simulation
 - **Progress Dashboard** - Real-time status tracking
 - **Velocity Analytics** - Performance measurements
-- **Result**: 60-70% efficiency improvement
+- **Result**: Notable efficiency improvements
 
 ### Complete System (6 Agents)
 For complex, multi-file changes:
@@ -817,25 +817,25 @@ Want to see how the system made its decision? Use the transparency flag:
 - Alternative workflows considered with scoring
 
 #### Performance Metrics
-The enhanced decision system delivers measurable improvements:
+The enhanced decision system delivers practical improvements:
 
 ```
-📊 Measured Performance Gains:
-├─ Decision Accuracy: ~94% (enhanced rule-based logic)
-├─ Context Efficiency: 73% reduction in token usage
-├─ Risk Prediction: ~89% accuracy in issue prevention
-├─ Workflow Selection: 91.8% user satisfaction
-├─ Execution Speed: Average 2.3x faster completion
-└─ Memory Usage: 45% reduction through smart analysis
+📊 Key Performance Benefits:
+├─ Reliable Decision Making: Consistent workflow selection
+├─ Context Efficiency: Significant reduction in token usage
+├─ Risk Awareness: Proactive issue prevention
+├─ User Experience: High satisfaction with workflow selection
+├─ Execution Speed: Notably faster task completion
+└─ Memory Optimization: Efficient resource utilization
 ```
 
-#### Enhanced Learning System Performance
+#### Learning System Benefits
 ```
-🧠 Continuous Improvement Metrics:
+🧠 Continuous Improvement Features:
 ├─ Pattern Recognition: Improves through usage feedback
-├─ Stack Adaptation: 87% faster on repeated technologies
-├─ Risk Assessment: High accuracy through rule refinement
-└─ User Preference: 96% alignment through pattern learning
+├─ Stack Adaptation: Faster responses for familiar technologies
+├─ Risk Assessment: Better predictions through experience
+└─ User Preference: Strong alignment through pattern learning
 ```
 
 ## 🚀 Supported Tech Stacks
@@ -860,7 +860,7 @@ The system automatically adapts to:
 5. **Quality First** - Built-in best practices with comprehensive risk assessment
 6. **Context Efficient** - Intelligent context prediction handles large codebases efficiently
 7. **Stack Aware** - Auto-adapts to your tech stack with pattern learning
-8. **🚀 Performance Optimized** - Enhanced analysis delivers 60-80% efficiency improvements
+8. **🚀 Performance Optimized** - Enhanced analysis delivers significant efficiency improvements
 9. **🔍 Decision Transparency** - Full reasoning audit available with clear explanations
 10. **Community Driven** - Best practices from r/ClaudeAI with continuous improvement
 
@@ -916,10 +916,10 @@ For users: Just type `/systemcc "what you want"` - the enhanced system handles e
 **The Promise**: Sophisticated AI reasoning delivers better decisions through transparent, efficient analysis.  
 **The Goal**: Not just to code faster, but to code better. Ship quality code on the first try, not the fifth.
 
-### 🎯 Enhanced Benefits in Practice
-- **~94% decision accuracy** through multi-dimensional enhanced analysis
-- **73% context efficiency** through intelligent prediction  
-- **~89% risk prediction accuracy** via comprehensive assessment
+### 🎯 Key Benefits in Practice
+- **Reliable decision-making** through multi-dimensional analysis
+- **Improved context efficiency** through intelligent prediction  
+- **Proactive risk prevention** via comprehensive assessment
 - **One simple command** for users: `/systemcc`
 
 *Made with ❤️ by the Claude AI Community*
