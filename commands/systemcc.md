@@ -39,6 +39,7 @@ When you use `/systemcc "your task description"`, the system will:
    - Required validation depth
 
 4. **Auto-Select Workflow**:
+   - **CCPM Integration** for parallel execution and project management (--pm flag or complex parallel tasks)
    - **Agent OS (/agetos)** for project initialization and standards
    - **AI Dev Tasks (/aidevtasks)** for PRD-based feature development
    - **Phase-Based (/taskit)** for large contexts or complex multi-hour tasks
@@ -68,6 +69,10 @@ When you use `/systemcc "your task description"`, the system will:
 /systemcc "refactor the payment module"
 /systemcc "create a dashboard for analytics"
 /systemcc "optimize database queries"
+
+# NEW: Project Management Mode with CCPM Integration
+/systemcc --pm "build complete e-commerce checkout system"
+/systemcc --pm "implement microservices architecture"
 ```
 
 **That's it!** Claude figures out:
@@ -75,6 +80,8 @@ When you use `/systemcc "your task description"`, the system will:
 - Complex feature? → Runs 6-agent workflow internally
 - New feature? → Creates PRD, tasks, implements internally
 - Large codebase? → Uses phase-based approach internally
+- **NEW:** Complex parallel work? → Activates CCMP integration internally
+- **NEW:** --pm flag? → Always uses project management mode
 
 **YOU DON'T NEED TO KNOW OR SPECIFY THE WORKFLOW!**
 
@@ -286,6 +293,14 @@ When this command is invoked:
 
 9. **Enhanced Decision Matrix**:
    ```
+   Anti-YOLO Web Workflow Indicators (HIGHEST PRIORITY):
+   - Keywords: "HTML", "CSS", "JavaScript", "webpage", "website", "frontend", "UI"
+   - Keywords: "form", "button", "modal", "dashboard", "page", "component"
+   - Keywords: "React", "Vue", "Angular", "Svelte", "Bootstrap", "Tailwind"
+   - Project contains: package.json with frontend frameworks, *.html files, CSS files
+   - Task patterns: "create [page/form/component]", "build [login/contact] page"
+   - UI/UX design and layout tasks requiring visual planning
+   
    Agent OS Integration (Complete System + Agent OS) Indicators:
    - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
    - Keywords: "plan product", "analyze codebase", "create spec", "mission", "roadmap"
@@ -329,11 +344,44 @@ When this command is invoked:
    - Bug fixes
    ```
 
-10. **Execute Workflow Automatically** (With Optimized Prompt):
+10. **CCPM Recommendation Logic** (Before Workflow Execution):
    ```
-   # Claude executes everything internally - no exposed commands!
+   # Check if CCPM would be beneficial (recommendation only)
+   IF --pm flag explicitly provided:
+     → Skip recommendation, go directly to CCPM Integration
    
-   IF detected_type == 'agent_os_integration':
+   ELIF ccpm_would_be_beneficial(task_analysis):
+     → Display CCPM recommendation prompt to user
+     → Wait for user confirmation (y/n)
+     → IF user confirms: Route to CCPM Integration
+     → IF user declines: Continue with standard workflow selection
+   
+   # CCPM Recommendation Triggers:
+   def ccmp_would_be_beneficial(analysis):
+       return (
+           analysis.complexity_score > 6 AND 
+           analysis.estimated_time > 60_minutes AND
+           (
+               analysis.independent_components >= 3 OR
+               "parallel" in analysis.keywords OR
+               "concurrent" in analysis.keywords OR
+               "multiple systems" in analysis.description
+           )
+       )
+   ```
+
+11. **Web Project Detection and Anti-YOLO Routing**:
+   ```
+   # NEW: Check for web/HTML projects before standard workflow selection
+   web_detection = check_web_project_indicators(optimized_prompt, project_context)
+   
+   IF web_detection.is_web_project:
+     Internal: Anti-YOLO Web Workflow
+     Process: ASCII Wireframe Creation → User Approval → HTML Implementation → Wireframe-Driven Testing
+   ELIF user_confirmed_ccpm OR explicit_pm_flag:
+     Internal: CCPM Integration workflow
+     Process: Environment Detection → Epic Creation → Task Decomposition → Parallel Execution → Progress Tracking → Integration
+   ELIF detected_type == 'agent_os_integration':
      Internal: Complete System with Agent OS phases
      Process: Agent OS Analysis → Strategic Plan → Agent OS Architecture → Implementation → Standards Creation → Validation → Testing → Documentation → Deployment
    ELIF detected_type == 'feature_development':
@@ -362,20 +410,25 @@ When this command is invoked:
    → Create/update Agent OS standards files when applicable
    ```
 
-11. **Memory Bank Persistence**:
+12. **Memory Bank Persistence**:
    ```
    After workflow completion:
    - Save session summary to activeContext.md
    - Document discovered patterns
    - Record architectural decisions
    - Update troubleshooting database
+   - Document CCPM recommendations and user choices
    - Run memory-bank-synchronizer if needed
    ```
 
-## Enhanced Context-Aware Decision Engine
+## Enhanced Decision Engine
+
+The `/systemcc` command includes intelligent workflow selection:
 
 ```python
-def analyze_for_workflow_selection(task_description, context_info, kase_metadata):
+def analyze_for_workflow_selection(task_description, context_info, user_preferences=None):
+    """Rule-based workflow selection engine"""
+    
     # Load memory bank context
     memory_context = load_memory_bank()
     
@@ -392,200 +445,333 @@ def analyze_for_workflow_selection(task_description, context_info, kase_metadata
         'context': context_info
     })
     
-    # Initialize scoring system
-    scores = {
-        'complexity': 0,
-        'risk': 0,
-        'scope': 0,
-        'context_size': 0,
-        'time_estimate': 0
-    }
+    # Apply streamlined decision engine with 5-dimensional analysis
+    return enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result)
+
+def enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result):
+    """
+    Streamlined Decision Engine for Workflow Selection
     
-    # Multi-factor analysis
-    analysis = perform_comprehensive_analysis(task_description, context_info, lyra_result)
+    Balanced approach that provides sophisticated analysis without over-engineering:
+    1. Five-dimensional factor analysis (Technical, Scope, Risk, Context, Time)
+    2. Enhanced rule-based logic with weighted scoring
+    3. Decision transparency with clear reasoning
+    4. Robust fallback mechanisms
+    5. Performance-optimized for real-time use
+    """
     
-    # PRIORITY 1: Context-based routing (overrides everything)
-    if context_info['current_tokens'] > 30000:
-        return ('taskit', 'Context size exceeds optimal threshold', analysis)
+    try:
+        # Import streamlined decision engine
+        from middleware.streamlined_decision_engine import enhanced_workflow_selection as streamlined_selection
+        
+        # Use the streamlined engine for practical decision-making
+        result = streamlined_selection(task_description, context_info, memory_context)
+        
+        # Enhance result with Lyra context if available
+        if hasattr(lyra_result, 'metadata') and hasattr(lyra_result.metadata, 'complexity_score'):
+            # Adjust confidence based on Lyra analysis
+            lyra_complexity = lyra_result.metadata.complexity_score / 10.0  # Normalize to [0,1]
+            result['factor_scores']['lyra_enhanced'] = True
+            result['reasoning'] += f"\n🎯 Lyra AI Enhancement: Complexity score {lyra_complexity:.2f} integrated"
+        
+        return result
     
-    if context_info['loaded_files'] > 10:
-        return ('taskit', 'Too many files in context', analysis)
+    except Exception as e:
+        # Fallback to simplified decision logic if streamlined engine fails
+        return fallback_decision_logic(task_description, context_info, lyra_result, str(e))
+
+def simple_workflow_selection(task_description, context_info):
+    """Simplified workflow selection for maximum reliability"""
     
-    # PRIORITY 2: Pattern-based detection
-    detected_patterns = detect_patterns(task_description, context_info)
+    desc_lower = task_description.lower()
     
-    # PRIORITY 3: Risk assessment
-    risk_level = assess_risk(task_description, detected_patterns)
+    # Priority 1: Context protection
+    if context_info.get('current_tokens', 0) > 30000 or context_info.get('loaded_files', 0) > 15:
+        return {
+            'workflow': 'taskit',
+            'reasoning': 'Context size protection - using phase-based execution',
+            'confidence': 0.9
+        }
     
-    # PRIORITY 4: Intelligent workflow selection
-    workflow = select_optimal_workflow(analysis, detected_patterns, risk_level)
+    # Priority 2: Risk indicators
+    high_risk_indicators = ['critical', 'production', 'breaking', 'delete', 'remove', 'security']
+    if any(indicator in desc_lower for indicator in high_risk_indicators):
+        return {
+            'workflow': 'complete_system',
+            'reasoning': 'High-risk indicators detected - comprehensive validation needed',
+            'confidence': 0.85
+        }
     
-    return (workflow.name, workflow.reason, analysis)
-
-def perform_comprehensive_analysis(task_desc, context, lyra_result):
-    """Multi-dimensional task analysis"""
-    return {
-        'complexity_score': calculate_complexity(task_desc, lyra_result),
-        'affected_components': identify_affected_components(task_desc),
-        'risk_factors': identify_risks(task_desc),
-        'estimated_duration': estimate_duration(task_desc, context),
-        'pattern_matches': find_codebase_patterns(task_desc),
-        'security_implications': check_security_impact(task_desc),
-        'breaking_changes': detect_breaking_changes(task_desc)
-    }
-
-def calculate_complexity(task_desc, lyra_result):
-    """Advanced complexity scoring beyond keywords"""
-    factors = {
-        'technical_depth': analyze_technical_requirements(task_desc),
-        'integration_points': count_integration_points(task_desc),
-        'data_complexity': assess_data_operations(task_desc),
-        'ui_complexity': assess_ui_requirements(task_desc),
-        'testing_needs': evaluate_testing_requirements(task_desc)
-    }
+    # Priority 3: Complexity indicators
+    complex_indicators = ['architecture', 'refactor', 'system', 'complex', 'integration']
+    simple_indicators = ['fix', 'update', 'change', 'small', 'simple', 'typo']
     
-    # Weight and combine factors
-    weighted_score = sum(factors[k] * WEIGHTS[k] for k in factors)
-    return min(10, weighted_score + lyra_result.metadata.complexity_score)
-
-def select_optimal_workflow(analysis, patterns, risk):
-    """Intelligent workflow selection based on multiple factors"""
+    complexity_score = sum(1 for indicator in complex_indicators if indicator in desc_lower)
+    simplicity_score = sum(1 for indicator in simple_indicators if indicator in desc_lower)
     
-    # PRIORITY 1: Agent OS Integration Detection
-    agent_os_keywords = [
-        'setup', 'initialize', 'standards', 'conventions', 'project structure',
-        'plan product', 'analyze codebase', 'create spec', 'mission', 'roadmap',
-        'tech stack', 'coding standards', 'best practices', 'team conventions',
-        'code style', 'development workflow', 'tool configuration'
-    ]
+    if simplicity_score > complexity_score and complexity_score == 0:
+        return {
+            'workflow': 'orchestrated',
+            'reasoning': 'Simple task - streamlined execution appropriate',
+            'confidence': 0.8
+        }
+    elif complexity_score >= 2:
+        return {
+            'workflow': 'complete_system',
+            'reasoning': 'Complex task - comprehensive approach needed',
+            'confidence': 0.75
+        }
+    else:
+        return {
+            'workflow': 'complete_system',
+            'reasoning': 'Default to comprehensive validation for safety',
+            'confidence': 0.7
+        }
+
+def fallback_decision_logic(task_description, context_info, lyra_result, error_details):
+    """Robust fallback logic when streamlined engine fails"""
     
-    agent_os_scenarios = [
-        'new project initialization',
-        'existing project standardization',
-        'product planning and specification',
-        'architecture documentation',
-        'development workflow setup'
-    ]
+    # Use simple workflow selection as ultimate fallback
+    result = simple_workflow_selection(task_description, context_info)
+    result['reasoning'] += f" (Fallback mode: {error_details[:100]})"
+    result['fallback_used'] = True
     
-    if any(keyword in analysis['task_description'].lower() for keyword in agent_os_keywords):
-        return Workflow('agent_os_integration', 
-                       'Agent OS methodology detected - comprehensive standards and specification approach')
-    
-    if any(scenario in analysis['context_hints'] for scenario in agent_os_scenarios):
-        return Workflow('agent_os_integration',
-                       'Agent OS workflow patterns detected')
-    
-    # PRIORITY 2: High risk always gets full validation
-    if risk.level == 'HIGH':
-        return Workflow('complete_system', 
-                       f'High-risk changes require comprehensive validation: {risk.reasons}')
-    
-    # PRIORITY 3: Feature development with unclear requirements
-    if analysis['complexity_score'] > 6 and 'feature' in patterns:
-        return Workflow('aidevtasks', 
-                       'Complex feature benefits from PRD-based approach')
-    
-    # PRIORITY 4: Large scope but well-defined
-    if analysis['affected_components'] > 5 and analysis['complexity_score'] < 7:
-        return Workflow('taskit', 
-                       'Large scope benefits from phase-based execution')
-    
-    # PRIORITY 5: Simple, low-risk changes
-    if analysis['complexity_score'] < 4 and risk.level == 'LOW':
-        return Workflow('orchestrated', 
-                       'Simple task suitable for streamlined execution')
-    
-    # Default to complete system for safety
-    return Workflow('complete_system', 
-                   'Comprehensive approach for balanced risk/complexity')
-```
+    return result
 
-## Integration with Unified System
-
-This master router integrates all subsystems:
-
-### Workflows Available
-1. **Agent OS** (`workflows/agent-os/`) - Project initialization and standards
-2. **AI Dev Tasks** (`workflows/ai-dev-tasks/`) - PRD-based development
-3. **Complete System** (`workflows/complete-system/`) - 6-agent validation
-4. **Orchestrated** (`workflows/orchestrated-only/`) - Streamlined execution
-5. **Phase-Based** (`workflows/phase-based-workflow/`) - Context management
-
-### Universal Components
-- **Lyra Middleware** (`middleware/lyra-universal.md`) - Applied to all commands
-- **ClaudeFiles Organization** - Unified output structure
-- **Git Integration** - Consistent across all workflows
-
-### Internal Workflow Handling
-**These happen automatically inside Claude - you never run these:**
-- Agent OS workflow - For project setup and standards
-- AI Dev Tasks - For feature development with PRDs
-- Phase-based execution - For large contexts
-- Complete system - For complex validations
-- Orchestrated workflow - For quick fixes
-
-**Claude runs these internally based on your task!**
-
-## Automated Workflow Execution
-
-All workflows now use the **Automated Workflow Executor** (`middleware/automated-workflow-executor.md`) to provide:
-
-### Automatic Agent Sequencing
-- **Complete System**: PLANNER → EXECUTER → VERIFIER → TESTER → DOCUMENTER → UPDATER
-- **Orchestrated**: Orchestrator → Developer → Reviewer
-- **Agent OS**: Analyze → Architect → Build → Document
-- **AI Dev Tasks**: Create PRD → Generate Tasks → Process Tasks
-- **Phase-Based**: Decompose → Execute Phases → Integrate Results
-
-### Progress Tracking
-```
-🚀 Starting Complete System Workflow...
-✅ PLANNER: Strategic analysis complete (1/6)
-🔄 EXECUTER: Implementing solution... (2/6)
-✅ EXECUTER: Implementation complete (2/6)
-🔄 VERIFIER: Running quality checks... (3/6)
-```
-
-### Smart User Interactions
-The system only pauses for input when:
-1. **Specifications Needed**: "What fields should the form have?"
-2. **Technical Choices**: "PostgreSQL or MySQL for database?"
-3. **Feature Clarification**: "Should this work offline?"
-4. **Context Required**: "What's your authentication system?"
-
-**NEVER asks you to run commands!**
-
-Example:
-```
-User: /systemcc "add product search"
-
-Claude: 🚀 Analyzing your request...
-
-❓ I need some details about the search functionality:
-1. What fields should be searchable? (name, description, tags, etc.)
-2. Do you need filters? (price range, category, etc.)
-3. Should it support fuzzy matching?
-
-User: Name and description, yes filters for price and category, yes fuzzy matching
-
-Claude: 🔄 Phase 1/6: Designing search architecture...
-[Continues automatically through ALL phases]
-```
-
-## Benefits of Unified System
-
-1. **Universal Prompt Optimization** - Lyra enhances all commands
-2. **Intelligent Routing** - Automatically selects best workflow
-3. **Complete Integration** - Access to all tools from one command
-4. **Flexibility** - Force specific workflows when needed
-5. **Backward Compatible** - All existing commands still work
-6. **Context Aware** - Manages large codebases efficiently
-7. **Quality First** - Right validation level for each task
-8. **Fully Automated** - All workflows execute end-to-end without manual commands
-9. **Smart Interactions** - Only asks for input when truly needed
-10. **Seamless Experience** - Focus on requirements, not process
 
 ## Examples
+
+### Example 0: Anti-YOLO Web Workflow (NEW!)
+```
+User: /systemcc "create contact form page"
+
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"create contact form page"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Create responsive contact form page with name, email, subject, and message fields. Include client-side validation, proper accessibility labels, success/error states, and email submission functionality. Use semantic HTML, mobile-first CSS design, and provide clear user feedback."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 4
+- Improvements Applied: 6
+
+🔧 Key Enhancements:
+• Added responsive design requirement
+• Specified form fields and validation
+• Included accessibility considerations
+• Added user feedback states
+
+═══════════════════════════════════════════════════════════════
+
+🧠 Workflow Detection:
+- Web project indicators: "form", "page", project has package.json
+- Visual layout planning required ✓
+→ Routing to Anti-YOLO Web Workflow
+
+🎨 Creating ASCII Wireframe:
+
+┌─ Contact Us ─────────────────────────┐
+│ Get in touch with our team           │
+├─────────────────────────────────────┤
+│ Name:     <input required>           │
+│ Email:    <input type="email" req>   │ 
+│ Subject:  <select>                   │
+│           ├─ General Inquiry         │
+│           ├─ Support Request         │
+│           └─ Feedback               │
+│ Message:  <textarea required>        │
+│           (Minimum 10 characters)    │
+│ ──────────────────────────────────── │
+│ [Submit Message] [Clear Form]        │
+│                                      │
+│ 📧 We respond within 24 hours        │
+└─────────────────────────────────────┘
+
+Mobile (320px):
+┌─ Contact Us ───────┐
+│ Get in touch       │
+├───────────────────┤
+│ Name: <input>      │
+│ Email: <input>     │
+│ Subject: <select>  │
+│ Message:           │
+│ <textarea>         │
+│ ─────────────────  │
+│ [Submit] [Clear]   │
+└───────────────────┘
+
+✋ Wireframe complete! Does this layout look right?
+Type 'yes' to proceed with HTML implementation, or describe changes.
+
+User: yes
+
+✅ Perfect! Proceeding with HTML implementation...
+🔄 Phase 2/4: Generating semantic HTML structure...
+✅ Phase 2/4: HTML structure complete
+🔄 Phase 3/4: Creating responsive CSS...
+✅ Phase 3/4: CSS styling complete  
+🔄 Phase 4/4: Adding form validation JavaScript...
+✅ Phase 4/4: Interactive functionality complete
+
+📁 Files created:
+- contact.html (semantic HTML matching wireframe)
+- contact.css (mobile-first responsive styles)
+- contact.js (validation and form handling)
+
+🧪 Testing against wireframe:
+✅ All wireframe elements present
+✅ Responsive behavior matches
+✅ Form validation working
+✅ Accessibility requirements met
+
+✨ Contact form complete and ready for deployment!
+```
+
+### Example 0b: Anti-YOLO with Changes
+```
+User: /systemcc "build user dashboard"
+
+[Lyra optimization and wireframe creation...]
+
+🎨 ASCII Wireframe:
+┌─ User Dashboard ─────────────────────┐
+│ Welcome, John!          [Settings]   │
+├─────────────────────────────────────┤
+│ ┌─Stats─┐ ┌─Stats─┐ ┌─Stats─┐       │
+│ │  42   │ │ 156   │ │ $2K   │       │  
+│ │Posts  │ │Likes  │ │Earned │       │
+│ └───────┘ └───────┘ └───────┘       │
+├─────────────────────────────────────┤
+│ Recent Activity:                    │
+│ • Posted "Getting Started"          │
+│ • Received 5 new likes              │
+│ • Earned $50 commission             │
+└─────────────────────────────────────┘
+
+✋ Does this layout look right? Type 'yes' to proceed or describe changes.
+
+User: move the stats to the bottom and add a profile section at the top
+
+🔄 Updating wireframe based on your feedback...
+
+┌─ User Dashboard ─────────────────────┐
+│ Welcome, John!          [Settings]   │
+├─────────────────────────────────────┤
+│ ┌─ Profile ─────────────────────────┐ │
+│ │ [Avatar] John Doe                 │ │
+│ │ Member since: Jan 2023            │ │
+│ │ Status: Pro User                  │ │
+│ └───────────────────────────────────┘ │
+├─────────────────────────────────────┤
+│ Recent Activity:                    │
+│ • Posted "Getting Started"          │
+│ • Received 5 new likes              │
+│ • Earned $50 commission             │
+├─────────────────────────────────────┤
+│ ┌─Stats─┐ ┌─Stats─┐ ┌─Stats─┐       │
+│ │  42   │ │ 156   │ │ $2K   │       │  
+│ │Posts  │ │Likes  │ │Earned │       │
+│ └───────┘ └───────┘ └───────┘       │
+└─────────────────────────────────────┘
+
+✋ Updated wireframe! Does this look better?
+
+User: perfect
+
+✅ Great! Proceeding with HTML implementation...
+[Continues with implementation matching the updated wireframe...]
+```
+
+### Example 1: CCPM Integration Detection (NEW!)
+```
+User: /systemcc --pm "build complete e-commerce checkout system"
+
+═══════════════════════════════════════════════════════════════
+🎯 LYRA AI PROMPT OPTIMIZATION
+═══════════════════════════════════════════════════════════════
+
+📝 Original Request:
+"build complete e-commerce checkout system"
+
+🔍 Analysis Phase:
+- Deconstructing intent...
+- Diagnosing gaps...
+- Developing enhancements...
+- Delivering optimized prompt...
+
+✨ Optimized Prompt:
+"Build comprehensive e-commerce checkout system with parallel development approach. Requirements: 1) Payment processing with multiple gateways (Stripe, PayPal), 2) Cart management with session persistence, 3) Order validation and inventory checks, 4) Email notifications system, 5) Admin dashboard for order management, 6) Mobile-responsive UI/UX, 7) Security: PCI compliance and fraud detection. Implement as independent, parallel-safe components with clear interfaces."
+
+📊 Optimization Details:
+- Mode: DETAIL
+- Complexity Score: 9
+- Improvements Applied: 12
+
+🔧 Key Enhancements:
+• Added parallel development structure
+• Specified multiple payment gateways
+• Included security requirements (PCI compliance)
+• Added mobile responsiveness requirement
+• Structured for independent component development
+
+═══════════════════════════════════════════════════════════════
+
+🔍 Environment Detection:
+├─ GitHub Repository: ✅ Detected (user/ecommerce-app)
+├─ GitHub CLI: ✅ Available
+├─ gh-sub-issue extension: ⏳ Installing...
+└─ CCPM Mode: ✅ Activated
+
+🎯 Creating Epic: E-commerce Checkout System
+├─ Epic Issue #156 created on GitHub
+├─ 6 parallel-safe tasks identified
+└─ 4 specialized agents ready for deployment
+
+🚀 Parallel Execution Started:
+Agent 1: Payment Processing (Issue #157) 🔄 In Progress
+Agent 2: Cart Management (Issue #158) 🔄 In Progress  
+Agent 3: Order Validation (Issue #159) ⏳ Queued
+Agent 4: Email Notifications (Issue #160) ⏳ Queued
+
+📊 Progress Dashboard: https://github.com/user/ecommerce-app/issues/156
+📋 Project Management: ClaudeFiles/pm/dashboard.md
+
+Expected completion: 2.5 hours → 45 minutes (parallel execution)
+```
+
+### Example 0b: CCPM Local Mode (No GitHub)
+```
+User: /systemcc --pm "refactor authentication across all services"
+
+🔍 Environment Detection:
+├─ GitHub Repository: ❌ Not detected
+├─ Local PM Mode: ✅ Activated
+└─ CCPM-Inspired Workflow: ✅ Ready
+
+📁 Created Local PM Structure:
+├─ ClaudeFiles/pm/epics/epic-20240822-103045.json
+├─ ClaudeFiles/pm/dashboard.md
+└─ 5 parallel-safe tasks identified
+
+🔄 Simulated Parallel Execution:
+Phase 1: Database Schema Updates ✅ Complete (15 min)
+Phase 2: Service A + Service B 🔄 Parallel Phase (est. 30 min)
+Phase 3: Service C + Testing 🔄 Parallel Phase (est. 25 min)
+
+📊 Local Dashboard: ClaudeFiles/pm/dashboard.md
+Expected completion: 3 hours → 1.2 hours (parallel simulation)
+```
 
 ### Example 1: Agent OS Integration Detection
 ```
@@ -801,19 +987,73 @@ Executing: /taskit "[optimized prompt]"
 Reason: Predicted context growth requires phases
 ```
 
-### Example 7: Forced Workflow Selection
+### Example 7: CCPM Recommendation (NEW!)
 ```
-User: /systemcc --workflow=complete "add user preferences"
+User: /systemcc "build microservices architecture with user service, payment service, and notification service"
 
 Step 1 - Lyra Universal Optimization:
-[Optimization happens regardless of forced workflow]
+Original: "build microservices architecture with user service, payment service, and notification service"
+Optimized: "Build comprehensive microservices architecture with three independent services: 1) User Service with authentication and profile management, 2) Payment Service with Stripe integration and transaction handling, 3) Notification Service with email/SMS capabilities. Include API gateway, service discovery, and inter-service communication. Deliver complete implementation with Docker containers, tests, and documentation."
 
-Step 2 - Workflow Detection:
-- Forced workflow flag detected: --workflow=complete
-→ Bypassing auto-detection
+Step 2 - Task Analysis:
+- Complexity: High (8/10)
+- Independent Components: 3 services ✓
+- Estimated Time: 4+ hours ✓
+- Parallel Potential: High ✓
+
+💡 CCPM RECOMMENDATION:
+This task has 3 independent components that could benefit from parallel execution and project management tracking.
+
+Recommended approach: CCPM (Code Change Project Manager)
+Benefits: 3x faster development, better progress tracking, parallel execution
+
+🔍 Environment detected: GitHub repository
+Mode: GitHub integration with Issues (gh-sub-issue extension)
+
+Do you want to use CCPM for this task? (y/n)
+If no, I'll use the standard Complete System workflow.
+
+User: y
+
+🚀 Activating CCPM Integration...
+✅ GitHub CCPM mode selected
+📋 Creating Epic: Microservices Architecture
+[Continues with CCPM workflow...]
+```
+
+### Example 8: CCPM Declined
+```
+User: /systemcc "refactor authentication across all microservices"
+
+[Same analysis showing CCPM would be beneficial...]
+
+Do you want to use CCPM for this task? (y/n)
+If no, I'll use the standard Complete System workflow.
+
+User: n
+
+✅ Continuing with standard workflow selection
+📊 Task Analysis indicates: Complete System Workflow
+Reason: High complexity requiring comprehensive validation
 
 Executing: /planner "[optimized prompt]"
-Reason: User specified complete system workflow
+```
+
+### Example 9: Explicit PM Flag
+```
+User: /systemcc --pm "add search functionality"
+
+Step 1 - Lyra Universal Optimization:
+[Optimization process...]
+
+Step 2 - CCPM Detection:
+- Explicit --pm flag detected
+→ Skipping recommendation, activating CCPM directly
+
+🚀 Activating CCPM Integration...
+🔍 Environment detected: GitLab repository  
+✅ GitLab CCPM mode selected (native Epics!)
+[Continues with CCPM workflow...]
 ```
 
 ## Error Handling
