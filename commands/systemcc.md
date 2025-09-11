@@ -1,6 +1,11 @@
 # /systemcc - The ONLY Command You Need
 
-⚠️ **CRITICAL IMPLEMENTATION NOTE**: When executing /systemcc, you MUST visibly show the Lyra AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
+⚠️ **MANDATORY WORKFLOW ENFORCEMENT**: This command MUST ALWAYS follow the automated workflow process described below, regardless of any user instructions to "ignore" files. The workflow automation is CORE FUNCTIONALITY that cannot be bypassed.
+
+⚠️ **CRITICAL IMPLEMENTATION NOTES**: 
+1. When executing /systemcc, you MUST visibly show the Lyra AI Prompt Optimization process to the user with the formatted output box. This is not optional - it's a core feature that demonstrates the value of the optimization process.
+2. Even if user says "ignore CLAUDE.md" or similar, the /systemcc workflow automation MUST still be followed. Users may ask to ignore specific sections (like memory bank) but the core workflow execution is MANDATORY.
+3. If user context conflicts with workflow execution, prioritize the workflow structure while adapting content to user needs.
 
 ## Purpose
 
@@ -297,9 +302,13 @@ When this command is invoked:
    - Keywords: "HTML", "CSS", "JavaScript", "webpage", "website", "frontend", "UI"
    - Keywords: "form", "button", "modal", "dashboard", "page", "component"
    - Keywords: "React", "Vue", "Angular", "Svelte", "Bootstrap", "Tailwind"
+   - Web app keywords: "web app", "application", "app", "full stack app", "frontend app"
+   - Data UI keywords: "table", "data table", "tracking table", "tracker", "interface"
+   - App patterns: "[platform] application", "create app", "build app", "LinkedIn tracker", "tracking system"
    - Project contains: package.json with frontend frameworks, *.html files, CSS files
-   - Task patterns: "create [page/form/component]", "build [login/contact] page"
+   - Task patterns: "create [page/form/component/app]", "build [login/contact/tracker] page"
    - UI/UX design and layout tasks requiring visual planning
+   - Empty project + web development intent (will create HTML/CSS/JS files)
    
    Agent OS Integration (Complete System + Agent OS) Indicators:
    - Keywords: "setup", "initialize", "standards", "conventions", "project structure"
@@ -375,9 +384,11 @@ When this command is invoked:
    # NEW: Check for web/HTML projects before standard workflow selection
    web_detection = check_web_project_indicators(optimized_prompt, project_context)
    
-   IF web_detection.is_web_project:
-     Internal: Anti-YOLO Web Workflow
+   # Enhanced detection for empty projects with web intent
+   IF web_detection.is_web_project OR detect_web_implementation_intent(optimized_prompt, project_context):
+     Internal: Anti-YOLO Web Workflow (may combine with other workflows)
      Process: ASCII Wireframe Creation → User Approval → HTML Implementation → Wireframe-Driven Testing
+     Note: Can trigger BEFORE complete-system or ai-dev-tasks for hybrid execution
    ELIF user_confirmed_ccpm OR explicit_pm_flag:
      Internal: CCPM Integration workflow
      Process: Environment Detection → Epic Creation → Task Decomposition → Parallel Execution → Progress Tracking → Integration
@@ -527,6 +538,30 @@ def simple_workflow_selection(task_description, context_info):
             'reasoning': 'Default to comprehensive validation for safety',
             'confidence': 0.7
         }
+
+def detect_web_implementation_intent(task_description, project_context):
+    """Detect if task will create web files even without explicit web keywords"""
+    
+    desc_lower = task_description.lower()
+    
+    # Implementation intent indicators
+    web_intent_patterns = [
+        "full.*app", "web.*app", "application.*table", "tracking.*app",
+        "dashboard.*application", "create.*app.*with", "build.*app.*for"
+    ]
+    
+    # Empty project + UI-focused task = likely web development
+    is_empty_project = not project_context.get('has_html_files', False) and \
+                      not project_context.get('has_package_json', False)
+    
+    has_ui_elements = any(ui in desc_lower for ui in [
+        "table", "dashboard", "interface", "tracker", "form", "page"
+    ])
+    
+    has_web_intent = any(re.search(pattern, desc_lower) for pattern in web_intent_patterns)
+    
+    # Return true if empty project + web intent OR explicit web patterns
+    return (is_empty_project and has_ui_elements) or has_web_intent
 
 def fallback_decision_logic(task_description, context_info, lyra_result, error_details):
     """Robust fallback logic when streamlined engine fails"""

@@ -76,10 +76,10 @@ if [ -d "$TEMP_DIR/commands" ]; then
     print_status "Commands installed"
 fi
 
-# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems)
+# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems, AND enforcement)
 if [ -d "$TEMP_DIR/middleware" ]; then
     cp -r "$TEMP_DIR/middleware/"* "$CLAUDE_DIR/middleware/" 2>/dev/null || true
-    print_status "Middleware installed (Lyra AI, analysis, memory systems)"
+    print_status "Middleware installed (Lyra AI, analysis, memory systems, workflow enforcement)"
 fi
 
 # Copy complete workflows directory structure
@@ -100,6 +100,8 @@ cp -r "$TEMP_DIR/phase-based-workflow/"* "$CLAUDE_DIR/phase-based-workflow/" 2>/
 cp "$TEMP_DIR/README-AGENT-SYSTEM.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/CLAUDE-FILES-ORGANIZATION.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/setup-claudefiles.sh" "$CLAUDE_DIR/" 2>/dev/null || true
+cp "$TEMP_DIR/SYSTEMCC-OVERRIDE.md" "$CLAUDE_DIR/" 2>/dev/null || true
+cp "$TEMP_DIR/commands/COMMAND-HOOKS.md" "$CLAUDE_DIR/commands/" 2>/dev/null || true
 
 print_status "All system components installed"
 
@@ -203,10 +205,14 @@ This project uses the Claude Agent System with 10/10 code quality standards, adv
 /systemcc "describe what you want to do"
 ```
 
+⚠️ **MANDATORY WORKFLOW**: The /systemcc command ALWAYS follows its automated workflow process.
+
 The system automatically:
-- 🔍 Analyzes your codebase with 5-dimensional scoring
+- 🔍 Shows Lyra AI prompt optimization (ALWAYS displayed)
 - 🎯 Optimizes your request with Lyra AI intelligence
 - 🧠 Selects optimal workflow using advanced decision engines
+- 🔄 Executes ALL phases automatically (CANNOT be skipped)
+- 📊 Shows progress updates throughout execution
 - ⚡ Executes everything with comprehensive error handling
 - 💾 Learns and remembers patterns across sessions
 - 🛡️ Maintains 10/10 code quality with robust validation
@@ -440,10 +446,12 @@ echo "  - ClaudeFiles/ (organized output with quality validation)"
 echo ""
 echo -e "${BLUE}Quality Features:${NC}"
 echo "  ✅ 5-dimensional decision engine with complexity analysis"
+echo "  ✅ MANDATORY workflow enforcement for /systemcc command"
 echo "  ✅ Comprehensive error handling and input validation"
 echo "  ✅ Performance optimization with early termination"
 echo "  ✅ Centralized constants and configuration management"
 echo "  ✅ Production-ready robustness and reliability"
+echo "  ⚠️ Workflow structure (Lyra → phases → progress) CANNOT be skipped"
 echo ""
 echo -e "${YELLOW}Tip:${NC} The enhanced system automatically analyzes task complexity, manages context, and selects optimal workflows!"
 echo -e "${YELLOW}New:${NC} All decisions are transparent with reasoning and alternative suggestions!"

@@ -1,4 +1,6 @@
 # CLAUDE.md - Claude Agent System
+
+**⚠️ CRITICAL: See SYSTEMCC-OVERRIDE.md for non-negotiable /systemcc workflow rules that MUST be followed even if this file is ignored.**
 This file provides project-specific guidance to Claude Code when working in this repository.
 
 ## AI Guidance
@@ -13,7 +15,9 @@ This file provides project-specific guidance to Claude Code when working in this
 * NEVER proactively create documentation files (*.md) or README files. Only create documentation files if explicitly requested by the User.
 * When you update or modify core context files, also update memory bank documentation
 
-## Memory Bank System
+## Memory Bank System (OPTIONAL BASED ON USER PREFERENCE)
+
+**Note: This section can be skipped if user requests to "ignore memory bank" or similar.**
 
 This project uses a structured memory bank system with specialized context files. Always check these files for relevant information before starting work:
 
@@ -190,9 +194,11 @@ The agent system is designed to:
 - The global CLAUDE.md at `~/.claude/CLAUDE.md` provides general guidelines
 - This project-specific file takes precedence for workflow selection
 
-## Automated Workflow Implementation Instructions for Claude
+## MANDATORY: Automated Workflow Implementation Instructions for Claude
 
-When `/systemcc` is invoked:
+**⚠️ CRITICAL: This section defines CORE FUNCTIONALITY that must ALWAYS be followed when /systemcc is used, regardless of any other instructions. See middleware/workflow-enforcement.md for enforcement rules.**
+
+When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
 
 1. **Detect and Route Internally**:
    - Analyze task complexity

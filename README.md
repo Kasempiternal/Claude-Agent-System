@@ -28,6 +28,7 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 - 👥 Runs multiple AI agents in sequence
 - ✅ Completes everything end-to-end
 
+⚠️ **IMPORTANT**: The `/systemcc` command ALWAYS follows its automated workflow process, showing Lyra optimization and executing all phases. This is core functionality that ensures quality and consistency.
 ## 📝 Real Examples
 
 ```bash
@@ -584,14 +585,15 @@ This enables:
 ## 🛠️ Available Commands
 
 **Primary Command:**
-- `/systemcc "your task"` - Does everything automatically
+- `/systemcc "your task"` - Does everything automatically (ALWAYS shows Lyra optimization and follows workflow)
 - `/systemcc --pm "your task"` - Project management mode
 - `/systemcc --debug "your task"` - Show AI decision-making process
+
+**⚠️ Workflow Enforcement:** The `/systemcc` command's automated workflow (Lyra optimization → workflow selection → phase execution) is MANDATORY and cannot be skipped, ensuring consistent quality across all tasks.
 
 **Utility Commands:**
 - `/help` - Show all commands  
 - `/analyzecc` - Manual project analysis (first run auto-triggers this)
-
 **Advanced Options:**
 - `/systemcc --secure "task"` - Enhanced security scanning
 - `/systemcc --pm --dashboard` - Refresh project management dashboard

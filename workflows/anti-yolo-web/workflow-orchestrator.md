@@ -76,11 +76,33 @@ def should_use_anti_yolo_workflow(task_description, project_context):
     
     # Load web project detector
     from middleware.web_project_detector import detect_web_project
+    from middleware.web_implementation_intent import detect_web_implementation_intent
     
     detection_result = detect_web_project(task_description, project_context)
+    intent_result = detect_web_implementation_intent(task_description, project_context)
     
-    return detection_result['isWebProject'] and detection_result['confidence'] in ['high', 'medium']
+    return (detection_result['isWebProject'] and detection_result['confidence'] in ['high', 'medium']) or intent_result
 ```
+
+### Hybrid Workflow Mode (NEW!)
+The Anti-YOLO workflow can now operate as a **pre-phase** for other workflows:
+
+#### Anti-YOLO → Complete System
+For complex web applications requiring full validation:
+1. **Phase 0**: ASCII Wireframe Creation + User Approval
+2. **Phase 1-6**: Standard Complete System workflow
+3. **Benefit**: Visual planning + comprehensive validation
+
+#### Anti-YOLO → AI Dev Tasks  
+For feature-rich web applications:
+1. **Phase 0**: ASCII Wireframe Creation + User Approval
+2. **Phase 1-3**: PRD Creation → Task Generation → Implementation
+3. **Benefit**: Visual planning + systematic feature development
+
+#### Anti-YOLO Standalone
+For simple web interfaces:
+1. **Phase 1-5**: Complete Anti-YOLO workflow only
+2. **Benefit**: Fast, visual-first web development
 
 ### Execution Flow
 ```python
@@ -203,4 +225,38 @@ def execute_anti_yolo_workflow(optimized_prompt, project_context):
 - Reduced debugging time in production
 - Better accessibility compliance
 
-This orchestrator ensures that the Anti-YOLO methodology is applied consistently and effectively to all web development tasks.
+## Example: LinkedIn Application Tracker Use Case
+
+### User Request: "create a full web app with a table to follow my LinkedIn application"
+
+**Detection Process:**
+1. **Keyword Analysis**: "full web app" + "table" → Web application intent detected
+2. **Project Context**: Empty project → Implementation intent confirmed  
+3. **Workflow Selection**: Anti-YOLO → Complete System (hybrid mode)
+
+**Execution Flow:**
+```
+🎨 Web application detected! Creating visual layout first...
+
+┌─ LinkedIn Application Tracker ──────────────────┐
+│ My Job Applications              [+ New] [Filter]│
+├─────────────────────────────────────────────────┤
+│ Company    │ Position    │ Status     │ Applied │
+├─────────────────────────────────────────────────┤
+│ Google     │ SWE         │ Interview  │ Jan 15  │
+│ Microsoft  │ Frontend    │ Applied    │ Jan 20  │
+│ Apple      │ Full Stack  │ Rejected   │ Jan 10  │
+├─────────────────────────────────────────────────┤
+│ [Previous] [1] [2] [3] [Next]          3 of 47  │
+└─────────────────────────────────────────────────┘
+
+✋ Does this layout look right? Type 'yes' to proceed or describe changes.
+
+User: yes
+
+✅ Perfect! Proceeding with comprehensive implementation...
+🔄 Phase 1/6: Strategic architecture planning...
+[Complete System workflow continues with wireframe as reference]
+```
+
+This orchestrator ensures that the Anti-YOLO methodology is applied consistently and effectively to all web development tasks, including hybrid execution with other workflows.

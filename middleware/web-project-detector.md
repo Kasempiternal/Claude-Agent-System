@@ -12,12 +12,22 @@ Automatically detect when a task involves web/frontend development to route it t
 - "React", "Vue", "Angular", "Svelte"
 - "Bootstrap", "Tailwind", "styled-components"
 
+### Web Application Keywords
+- "web app", "application", "app", "full stack app", "frontend app"
+- "data table", "tracking table", "tracker", "interface"
+- "[platform] application", "LinkedIn tracker", "tracking system"
+
 ### Task Type Patterns
-- "create [component/page/form/dashboard]"
-- "build [login/signup/contact] page"
-- "add [search/navigation/sidebar]"
-- "design [layout/interface]"
-- "implement [frontend/UI]"
+- "create [component/page/form/dashboard/app]"
+- "build [login/signup/contact/tracker] page"
+- "add [search/navigation/sidebar/table]"
+- "design [layout/interface/application]"
+- "implement [frontend/UI/web app]"
+
+### Implementation Intent Patterns
+- "full.*app", "web.*app", "application.*table", "tracking.*app"
+- "dashboard.*application", "create.*app.*with", "build.*app.*for"
+- Empty project + UI elements (table, dashboard, tracker, form, interface)
 
 ### Project Context Detection
 Check for existing web project files:
@@ -37,10 +47,19 @@ systemcc → web-project-detector → [web detected?] → anti-yolo-web workflow
 
 ## Detection Logic
 
-### Primary Detection (Explicit)
-If task contains web keywords or patterns → Route to Anti-YOLO Web
+### Priority 1: Explicit Web Keywords
+If task contains HTML/CSS/JavaScript/React/Vue keywords → Route to Anti-YOLO Web
 
-### Secondary Detection (Context)
+### Priority 2: Web Application Intent (NEW!)
+If task contains "app"/"application" + UI elements (table/dashboard/tracker) → Route to Anti-YOLO Web
+Special case: Empty project + web development intent → Route to Anti-YOLO Web
+
+### Priority 3: Implementation Intent Detection
+For empty projects, detect patterns like:
+- "full web app", "create app with table", "build [platform] tracker"
+- "LinkedIn application tracker", "tracking system", "dashboard application"
+
+### Priority 4: Project Context Detection
 If no explicit keywords but project has web files → Ask user:
 "I detected this might be a web/frontend project. Would you like to use the visual wireframe workflow? (y/n)"
 
