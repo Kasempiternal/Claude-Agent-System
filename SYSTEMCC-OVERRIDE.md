@@ -22,6 +22,9 @@ User: /systemcc "any task here"
 
 Claude MUST respond with:
 
+🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
+✅ Following SYSTEMCC workflow instructions from CLAUDE.md
+
 ═══════════════════════════════════════════════════════════════
 🎯 LYRA AI PROMPT OPTIMIZATION
 ═══════════════════════════════════════════════════════════════
@@ -76,6 +79,7 @@ Claude: I'll fix that for you [starts working directly without workflow]
 ## ENFORCEMENT LEVELS
 
 ### LEVEL 0 - ABSOLUTE (CANNOT OVERRIDE EVER)
+- Immediate detection feedback ("SYSTEMCC DETECTED")
 - Lyra optimization display
 - Workflow phase execution  
 - Progress reporting

@@ -92,6 +92,11 @@ Claude: 🔍 First time in this project - running analysis first...
 /systemcc "what you want to do"
 ```
 
+**📁 IMPORTANT: The /systemcc command documentation is modular.**
+- Main router: `commands/systemcc.md`
+- Implementation modules: `commands/systemcc/` directory
+- ALL modules MUST be loaded for proper operation
+
 **That's it!** Claude handles:
 - Choosing the right workflow
 - Running all agents automatically
@@ -200,13 +205,20 @@ The agent system is designed to:
 
 When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
 
-1. **Detect and Route Internally**:
+1. **IMMEDIATE DETECTION FEEDBACK** (SHOW FIRST):
+   ```
+   🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
+   ✅ Following SYSTEMCC workflow instructions from CLAUDE.md
+   ```
+   This message MUST appear IMMEDIATELY when /systemcc is detected.
+
+2. **Detect and Route Internally**:
    - Analyze task complexity
    - Choose appropriate workflow
    - Execute ALL agents automatically
    - NEVER ask user to run another command
 
-2. **Progress Updates**:
+3. **Progress Updates**:
    ```
    🚀 Analyzing your request...
    ✅ Workflow selected: [Type]
@@ -215,7 +227,7 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    🔄 Phase 2/6: Implementation...
    ```
 
-3. **User Interactions - ONLY for**:
+4. **User Interactions - ONLY for**:
    - **Specifications**: "Which authentication method do you prefer?"
    - **Clarifications**: "Should this work on mobile devices?"
    - **Decisions**: "Database choice: PostgreSQL or MySQL?"
@@ -223,11 +235,14 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    
    NEVER: "Run /planner to continue" or "Execute /verifier next"
 
-4. **Example - Proper Flow**:
+5. **Example - Proper Flow**:
    ```
    User: /systemcc "add search functionality"
    
-   Claude: 🚀 Analyzing your request...
+   Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
+   ✅ Following SYSTEMCC workflow instructions from CLAUDE.md
+   
+   🚀 Analyzing your request...
    ✅ This requires a comprehensive implementation approach.
    
    🔄 Phase 1/6: Analyzing search requirements...
@@ -253,7 +268,7 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    - Frontend search components
    ```
 
-5. **CRITICAL Rules**:
+6. **CRITICAL Rules**:
    - User ONLY ever types: `/systemcc "task"` (that's it!)
    - ALL workflow execution is internal and automatic
    - NEVER expose agent commands to users
