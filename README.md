@@ -25,10 +25,10 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 **That's it!** The system automatically:
 - 🎯 Shows immediate detection feedback ("SYSTEMCC DETECTED")
 - 🔍 Analyzes your codebase (first time only)
-- ⚡ **NEW:** Detects parallel execution opportunities (30-40% faster)
+- ⚡ **NEW:** Detects batch optimization opportunities
 - 🎯 Picks the right workflow for your task  
-- 👥 Runs agents in parallel batches when possible
-- ✅ Completes everything end-to-end with performance metrics
+- 👥 Groups similar operations to reduce overhead
+- ✅ Completes everything end-to-end efficiently
 
 ⚠️ **IMPORTANT**: The `/systemcc` command ALWAYS follows its automated workflow process, showing immediate detection feedback, Lyra optimization, and executing all phases. This is core functionality that ensures quality and consistency.
 
@@ -50,9 +50,9 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 /systemcc --pm "build e-commerce checkout system"  
 # ↳ Creates GitHub/GitLab issues → Parallel development
 
-# Force parallel optimization (NEW)
-/systemcc --parallel "create CRUD for users, posts, comments"
-# ↳ Batches operations → 40% faster execution
+# Force batch optimization (NEW)
+/systemcc --batch "create CRUD for users, posts, comments"
+# ↳ Groups operations → Reduced tool switching
 ```
 
 ## 🎨 What Makes This Different
@@ -69,12 +69,12 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 - Chooses optimal workflow (3-agent vs 6-agent vs phase-based)
 - Handles any size codebase
 
-**⚡ NEW: Parallel Execution Optimization:**
+**⚡ NEW: Batch Optimization:**
 - Automatically detects independent components
-- Batches file operations (create 10 files in 1 operation)
-- Runs shell commands simultaneously
-- Visual progress tracking with performance metrics
-- 30-40% faster for multi-component tasks
+- Batches file operations (create multiple files in 1 operation)
+- Runs shell commands in background when possible
+- Groups similar operations together
+- Reduces tool switching overhead
 
 **Supports Everything:**
 Python • React • Vue • Angular • Ruby • Java • Go • Rust • PHP • C# • and more
@@ -209,18 +209,18 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │ • Identify non-conflicting files    │
 │ • Group similar operations          │
 │                                     │
-│ Parallel Score (0-10):             │
-│ ├─ 8-10: High parallelism (40% faster) │
-│ ├─ 5-7: Medium (20-30% faster)     │
-│ └─ 0-4: Sequential recommended     │
+│ Batch Potential:                   │
+│ ├─ High: Many similar operations    │
+│ ├─ Medium: Some grouping possible   │
+│ └─ Low: Sequential recommended      │
 │                                     │
 │ Batch Opportunities:                │
 │ • Multi-file creation/editing       │
-│ • Parallel shell commands           │
+│ • Background shell commands         │
 │ • Independent test generation       │
 │                                     │
-│ IF parallel_score > 5:             │
-│ └─ → Enable parallel execution mode │
+│ IF batch_potential == 'high':      │
+│ └─ → Enable batch optimization mode │
 └────────────┬────────────────────────┘
              │
              ▼
@@ -395,10 +395,10 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │ │                                 │ │
 │ │ "This task has [N] independent  │ │
 │ │  components that could benefit  │ │
-│ │  from parallel execution.       │ │
+│ │  from batch optimization.        │ │
 │ │                                 │ │
 │ │  Expected benefits:             │ │
-│ │  • 3x faster development       │ │
+│ │  • Reduced tool switching      │ │
 │ │  • Better progress tracking     │ │
 │ │  • Parallel quality assurance  │ │
 │ │                                 │ │
@@ -472,7 +472,7 @@ For larger projects, use the `--pm` flag to activate Critical Chain Project Mana
    └─ Issue #4: Order confirmation system
 
 🚀 Deploying parallel agents to GitHub Issues...
-📈 Expected completion: 3x faster with parallel execution
+📈 Expected completion: More efficient with batch optimization
 ```
 
 **Git Platform Support:**
@@ -666,4 +666,4 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 **Made with ❤️ by the Claude AI Community**
 
-*The Promise: Not just to code faster, but to code better. Ship quality code on the first try, not the fifth.*
+*The Promise: Not just to code efficiently, but to code better. Ship quality code on the first try, not the fifth.*

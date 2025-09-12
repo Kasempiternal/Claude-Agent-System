@@ -419,9 +419,9 @@ Write-Host "  ✅ Comprehensive error handling and input validation"
 Write-Host "  ✅ Performance optimization with early termination"
 Write-Host "  ✅ Centralized constants and configuration management"
 Write-Host "  ✅ Production-ready robustness and reliability"
-Write-Host "  ⚡ NEW: Parallel execution optimization (30-40% faster)"
+Write-Host "  ⚡ NEW: Batch optimization for reduced tool switching"
 Write-Host ""
 Write-Host "Tip: " -NoNewline -ForegroundColor Yellow
 Write-Host "The enhanced system automatically analyzes task complexity, manages context, and selects optimal workflows!"
 Write-Host "New: " -NoNewline -ForegroundColor Yellow
-Write-Host "Parallel execution optimizer detects independent components and batches operations for up to 40% faster completion!"
+Write-Host "Batch optimizer groups similar operations to reduce tool switching overhead!"
