@@ -23,12 +23,15 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 ```
 
 **That's it!** The system automatically:
+- 🎯 Shows immediate detection feedback ("SYSTEMCC DETECTED")
 - 🔍 Analyzes your codebase (first time only)
 - 🎯 Picks the right workflow for your task  
 - 👥 Runs multiple AI agents in sequence
 - ✅ Completes everything end-to-end
 
-⚠️ **IMPORTANT**: The `/systemcc` command ALWAYS follows its automated workflow process, showing Lyra optimization and executing all phases. This is core functionality that ensures quality and consistency.
+⚠️ **IMPORTANT**: The `/systemcc` command ALWAYS follows its automated workflow process, showing immediate detection feedback, Lyra optimization, and executing all phases. This is core functionality that ensures quality and consistency.
+
+📁 **NEW**: Modular systemcc structure in `.claude/commands/systemcc/` for improved reliability and detection.
 ## 📝 Real Examples
 
 ```bash
@@ -530,6 +533,10 @@ When installed, the system adds this organized structure:
 your-project/
 ├── .claude/                    # Agent system (auto git-ignored)
 │   ├── commands/              # Command definitions
+│   │   └── systemcc/         # Modular systemcc documentation
+│   │       ├── 01-CRITICAL-DETECTION.md
+│   │       ├── 02-LYRA-OPTIMIZATION.md
+│   │       └── ... (8 focused modules)
 │   ├── workflows/             # All workflow implementations
 │   │   ├── anti-yolo-web/     # ASCII wireframing
 │   │   ├── complete-system/   # 6-agent validation  

@@ -70,10 +70,17 @@ mkdir -p "$CLAUDE_DIR/phase-based-workflow"
 # Copy all core system files
 print_info "Installing core system files..."
 
-# Copy commands directory
+# Copy commands directory (including new modular systemcc structure)
 if [ -d "$TEMP_DIR/commands" ]; then
     cp -r "$TEMP_DIR/commands/"* "$CLAUDE_DIR/commands/" 2>/dev/null || true
-    print_status "Commands installed"
+    # Ensure systemcc modules are copied
+    if [ -d "$TEMP_DIR/commands/systemcc" ]; then
+        mkdir -p "$CLAUDE_DIR/commands/systemcc"
+        cp -r "$TEMP_DIR/commands/systemcc/"* "$CLAUDE_DIR/commands/systemcc/" 2>/dev/null || true
+        print_status "Commands installed (including modular systemcc)"
+    else
+        print_status "Commands installed"
+    fi
 fi
 
 # Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems, AND enforcement)
@@ -206,8 +213,10 @@ This project uses the Claude Agent System with 10/10 code quality standards, adv
 ```
 
 ⚠️ **MANDATORY WORKFLOW**: The /systemcc command ALWAYS follows its automated workflow process.
+📁 **MODULAR STRUCTURE**: The systemcc command uses modular documentation in `.claude/commands/systemcc/` for improved reliability.
 
 The system automatically:
+- 🎯 Shows immediate detection feedback ("SYSTEMCC DETECTED")
 - 🔍 Shows Lyra AI prompt optimization (ALWAYS displayed)
 - 🎯 Optimizes your request with Lyra AI intelligence
 - 🧠 Selects optimal workflow using advanced decision engines

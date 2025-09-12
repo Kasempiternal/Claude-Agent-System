@@ -60,10 +60,20 @@ foreach ($dir in $subdirs) {
 # Copy all core system files
 Write-Info "Installing core system files..."
 
-# Copy commands directory
+# Copy commands directory (including new modular systemcc structure)
 if (Test-Path "$TEMP_DIR\commands") {
     Copy-Item -Path "$TEMP_DIR\commands\*" -Destination "$CLAUDE_DIR\commands\" -Recurse -Force -ErrorAction SilentlyContinue
-    Write-Success "Commands installed"
+    # Ensure systemcc modules are copied
+    if (Test-Path "$TEMP_DIR\commands\systemcc") {
+        $systemccPath = Join-Path $CLAUDE_DIR "commands\systemcc"
+        if (!(Test-Path $systemccPath)) {
+            New-Item -ItemType Directory -Path $systemccPath | Out-Null
+        }
+        Copy-Item -Path "$TEMP_DIR\commands\systemcc\*" -Destination $systemccPath -Recurse -Force -ErrorAction SilentlyContinue
+        Write-Success "Commands installed (including modular systemcc)"
+    } else {
+        Write-Success "Commands installed"
+    }
 }
 
 # Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems)
@@ -86,6 +96,8 @@ Copy-Item -Path "$TEMP_DIR\phase-based-workflow\*" -Destination "$CLAUDE_DIR\pha
 # Copy documentation files
 Copy-Item -Path "$TEMP_DIR\README-AGENT-SYSTEM.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
 Copy-Item -Path "$TEMP_DIR\CLAUDE-FILES-ORGANIZATION.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "$TEMP_DIR\SYSTEMCC-OVERRIDE.md" -Destination "$CLAUDE_DIR\" -Force -ErrorAction SilentlyContinue
+Copy-Item -Path "$TEMP_DIR\commands\COMMAND-HOOKS.md" -Destination "$CLAUDE_DIR\commands\" -Force -ErrorAction SilentlyContinue
 
 Write-Success "All system components installed"
 
