@@ -59,6 +59,16 @@ After detection and Lyra optimization, follow these steps:
 - Evaluate scope indicators
 - Consider risk factors
 - Estimate time requirements
+- Analyze for parallel execution opportunities
+```
+
+### 5a. Parallel Optimization Analysis (NEW)
+```
+- Identify independent components
+- Calculate parallel score (0-10)
+- Determine batch operation potential
+- Estimate time savings
+- Plan parallel phases if score > 5
 ```
 
 ### 6. Specification Gathering (When Needed)
@@ -74,7 +84,7 @@ After detection and Lyra optimization, follow these steps:
 
 **CRITICAL: Execute ALL phases automatically!**
 
-User should see:
+#### Sequential Mode (Default)
 ```
 🔄 Phase 1/N: [Phase name]...
 [Work on phase]
@@ -87,6 +97,26 @@ User should see:
 [Continue through ALL phases]
 
 ✨ Task complete!
+```
+
+#### Parallel Mode (When Detected)
+```
+⚡ PARALLEL EXECUTION DETECTED
+Identified [X] independent components for batch processing
+
+⚡ Parallel Phase 1/N: [Component Group]
+┌─────────────────────────────────────────┐
+│ Working on [X] files simultaneously...  │
+├─────────────────────────────────────────┤
+│ ▶ file1.js              ████████ 100%  │
+│ ▶ file2.js              ████████ 100%  │
+│ ▶ file3.js              ████████ 100%  │
+└─────────────────────────────────────────┘
+✅ Phase 1/N: [X] files in single operation
+
+[Continue with parallel or sequential phases]
+
+✨ Task complete! Time saved: ~[X] minutes ([Y]% faster)
 ```
 
 ### 8. Memory Bank Persistence

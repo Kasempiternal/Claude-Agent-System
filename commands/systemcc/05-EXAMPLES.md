@@ -253,14 +253,61 @@ User: 1
 [Continues with workflow...]
 ```
 
+## Example 9: Parallel Execution (NEW)
+
+```
+User: /systemcc "create CRUD operations for users, posts, and comments"
+
+Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
+✅ Following SYSTEMCC workflow instructions from CLAUDE.md
+
+[Lyra optimization...]
+
+📊 Task Analysis:
+- Complexity: Medium (6/10)
+- Scope: 12+ files (models, controllers, routes, tests)
+
+⚡ Parallel Optimization:
+- Independent Components: 3 (users, posts, comments)
+- Parallel Score: 8/10
+- Batch Operations: Available
+- Potential Time Savings: 40%
+
+→ Selected: Complete System with Parallel Optimization
+
+⚡ PARALLEL EXECUTION ACTIVE
+Identified 3 independent CRUD modules
+
+⚡ Parallel Phase 1/3: Models & Controllers
+┌─────────────────────────────────────────┐
+│ Creating 6 files simultaneously...      │
+├─────────────────────────────────────────┤
+│ ▶ models/user.js        ████████ 100%  │
+│ ▶ models/post.js        ████████ 100%  │
+│ ▶ models/comment.js     ████████ 100%  │
+│ ▶ controllers/user.js   ████████ 100%  │
+│ ▶ controllers/post.js   ████████ 100%  │
+│ ▶ controllers/comment.js ████████ 100% │
+└─────────────────────────────────────────┘
+✅ Phase 1: 6 files in 1 operation (saved 5 tool calls)
+
+⚡ Parallel Phase 2/3: Routes & Middleware
+[Similar parallel execution...]
+
+✨ Task complete! 
+Time: 15 min (vs 25 min sequential)
+Performance: 40% faster
+```
+
 ## Common Patterns
 
 ### Always Show:
 1. Detection feedback FIRST
 2. Lyra optimization box
 3. Workflow selection reasoning
-4. Phase progress updates
-5. Completion message
+4. Parallel optimization analysis (when applicable)
+5. Phase progress updates (parallel or sequential)
+6. Completion message with metrics
 
 ### Never Show:
 - "Run /planner next"
