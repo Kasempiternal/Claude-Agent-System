@@ -16,18 +16,18 @@
 6. **`05-EXAMPLES.md`** - All workflow examples
 7. **`06-DECISION-ENGINE.md`** - Decision logic
 8. **`07-ERROR-HANDLING.md`** - Error recovery
-9. **`08-PARALLEL-OPTIMIZER.md`** - Parallel detection (NEW)
-10. **`09-PARALLEL-EXECUTION.md`** - Batch operations (NEW)
+9. **`08-PARALLEL-OPTIMIZER.md`** - Batch optimization (NEW)
+10. **`09-PARALLEL-EXECUTION.md`** - Batch execution (NEW)
 
 ## Quick Summary
 
 The `/systemcc` command is the ONLY command users need. It:
 - Shows immediate detection feedback
 - Optimizes requests with Lyra AI
-- **NEW:** Detects parallel execution opportunities
+- **NEW:** Detects batch operation opportunities
 - Auto-selects the best workflow + optimization
-- Executes everything automatically (parallel or sequential)
-- Completes tasks end-to-end with performance metrics
+- Executes everything automatically with batching where beneficial
+- Completes tasks end-to-end
 
 ## Critical Execution Order
 

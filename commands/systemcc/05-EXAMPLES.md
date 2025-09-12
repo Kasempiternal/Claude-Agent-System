@@ -253,7 +253,7 @@ User: 1
 [Continues with workflow...]
 ```
 
-## Example 9: Parallel Execution (NEW)
+## Example 9: Batch Optimization (NEW)
 
 ```
 User: /systemcc "create CRUD operations for users, posts, and comments"
@@ -267,36 +267,30 @@ Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
 - Complexity: Medium (6/10)
 - Scope: 12+ files (models, controllers, routes, tests)
 
-⚡ Parallel Optimization:
+⚡ Batch Optimization:
 - Independent Components: 3 (users, posts, comments)
-- Parallel Score: 8/10
+- Batch Potential: High
 - Batch Operations: Available
-- Potential Time Savings: 40%
+- Tool Switching: Can reduce significantly
 
-→ Selected: Complete System with Parallel Optimization
+→ Selected: Complete System with Batch Optimization
 
-⚡ PARALLEL EXECUTION ACTIVE
-Identified 3 independent CRUD modules
+⚡ BATCH OPTIMIZATION ACTIVE
+Identified 3 independent CRUD modules for grouping
 
-⚡ Parallel Phase 1/3: Models & Controllers
-┌─────────────────────────────────────────┐
-│ Creating 6 files simultaneously...      │
-├─────────────────────────────────────────┤
-│ ▶ models/user.js        ████████ 100%  │
-│ ▶ models/post.js        ████████ 100%  │
-│ ▶ models/comment.js     ████████ 100%  │
-│ ▶ controllers/user.js   ████████ 100%  │
-│ ▶ controllers/post.js   ████████ 100%  │
-│ ▶ controllers/comment.js ████████ 100% │
-└─────────────────────────────────────────┘
-✅ Phase 1: 6 files in 1 operation (saved 5 tool calls)
+🔄 Batch Operation: Models & Controllers
+├─ models/user.js
+├─ models/post.js
+├─ models/comment.js
+├─ controllers/user.js
+├─ controllers/post.js
+└─ controllers/comment.js
+✅ 6 files created in single MultiEdit operation
 
-⚡ Parallel Phase 2/3: Routes & Middleware
-[Similar parallel execution...]
+🔄 Batch Operation: Routes & Middleware
+[Similar batch creation...]
 
-✨ Task complete! 
-Time: 15 min (vs 25 min sequential)
-Performance: 40% faster
+✨ Task complete with optimized execution
 ```
 
 ## Common Patterns
@@ -305,9 +299,9 @@ Performance: 40% faster
 1. Detection feedback FIRST
 2. Lyra optimization box
 3. Workflow selection reasoning
-4. Parallel optimization analysis (when applicable)
-5. Phase progress updates (parallel or sequential)
-6. Completion message with metrics
+4. Batch optimization analysis (when beneficial)
+5. Phase progress updates
+6. Completion message
 
 ### Never Show:
 - "Run /planner next"

@@ -62,13 +62,13 @@ After detection and Lyra optimization, follow these steps:
 - Analyze for parallel execution opportunities
 ```
 
-### 5a. Parallel Optimization Analysis (NEW)
+### 5a. Batch Optimization Analysis (NEW)
 ```
 - Identify independent components
-- Calculate parallel score (0-10)
 - Determine batch operation potential
-- Estimate time savings
-- Plan parallel phases if score > 5
+- Group similar operations
+- Check for MultiEdit opportunities
+- Plan batched execution if beneficial
 ```
 
 ### 6. Specification Gathering (When Needed)
@@ -99,24 +99,24 @@ After detection and Lyra optimization, follow these steps:
 ✨ Task complete!
 ```
 
-#### Parallel Mode (When Detected)
+#### Batch Mode (When Beneficial)
 ```
-⚡ PARALLEL EXECUTION DETECTED
-Identified [X] independent components for batch processing
+⚡ BATCH OPTIMIZATION ACTIVE
+Identified [X] similar operations to group
 
-⚡ Parallel Phase 1/N: [Component Group]
-┌─────────────────────────────────────────┐
-│ Working on [X] files simultaneously...  │
-├─────────────────────────────────────────┤
-│ ▶ file1.js              ████████ 100%  │
-│ ▶ file2.js              ████████ 100%  │
-│ ▶ file3.js              ████████ 100%  │
-└─────────────────────────────────────────┘
-✅ Phase 1/N: [X] files in single operation
+🔄 Batch Operation: [Component Group]
+├─ file1.js
+├─ file2.js  
+├─ file3.js
+└─ file4.js
+✅ [X] files created/modified in single operation
 
-[Continue with parallel or sequential phases]
+🔄 Background Tasks: [If applicable]
+├─ npm install (background)
+├─ build process (background)
+└─ Monitoring output...
 
-✨ Task complete! Time saved: ~[X] minutes ([Y]% faster)
+✨ Task complete with optimized execution
 ```
 
 ### 8. Memory Bank Persistence

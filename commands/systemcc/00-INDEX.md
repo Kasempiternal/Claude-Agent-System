@@ -17,9 +17,9 @@
 6. **`06-DECISION-ENGINE.md`** - Advanced decision logic
 7. **`07-ERROR-HANDLING.md`** - Error recovery strategies
 
-### ⚡ LEVEL 3 - PERFORMANCE (NEW)
-8. **`08-PARALLEL-OPTIMIZER.md`** - Parallel execution detection
-9. **`09-PARALLEL-EXECUTION.md`** - Batch operation engine
+### ⚡ LEVEL 3 - OPTIMIZATION (NEW)
+8. **`08-PARALLEL-OPTIMIZER.md`** - Batch optimization detection
+9. **`09-PARALLEL-EXECUTION.md`** - Batch execution engine
 
 ## Quick Reference
 
@@ -32,10 +32,10 @@
 1. **Detection** → "SYSTEMCC DETECTED" message
 2. **Lyra** → Optimize prompt with 4-D methodology
 3. **Analysis** → Context, complexity, risk assessment
-4. **Parallel Check** → Identify batch operation opportunities
-5. **Selection** → Choose best workflow + optimization mode
-6. **Execution** → Run phases (parallel or sequential)
-7. **Completion** → Summary with performance metrics
+4. **Batch Check** → Identify grouping opportunities
+5. **Selection** → Choose best workflow + optimization
+6. **Execution** → Run with batch operations where beneficial
+7. **Completion** → Summary and results
 
 ### Critical Rules
 - **ALWAYS** show detection feedback first
@@ -82,16 +82,16 @@
 - Fallback patterns
 
 ### 08-PARALLEL-OPTIMIZER.md (NEW)
-- Parallel detection algorithm
-- Batch operation identification
-- Performance scoring
-- Time savings calculation
+- Batch detection logic
+- Grouping opportunities
+- Operation type analysis
+- Tool optimization strategies
 
 ### 09-PARALLEL-EXECUTION.md (NEW)
-- Batch file operations
-- Parallel shell commands
-- Progress visualization
-- Performance tracking
+- MultiEdit usage
+- Background command execution
+- Batch tool calls
+- Error handling for batches
 
 ## Enforcement Hierarchy
 

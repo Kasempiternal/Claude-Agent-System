@@ -10,11 +10,11 @@
    - Project size and complexity
    - Predicted context growth
 
-2. **Parallel Optimization Analysis** (NEW - HIGH PRIORITY)
+2. **Batch Optimization Analysis** (NEW - HIGH PRIORITY)
    - Number of independent components
    - Batch operation opportunities
-   - Parallel execution score (0-10)
-   - Time savings potential
+   - Grouping potential for similar operations
+   - Tool switching reduction possible
 
 3. **Task Complexity Analysis**
    - Scope of changes (single file vs multi-file)
@@ -145,16 +145,16 @@ Show this to user after selection:
    - Risk Level: [High/Medium/Low]
    - Estimated Time: [15-30min/45-60min/2+ hours]
 
-⚡ Parallel Optimization:
+⚡ Batch Optimization:
    - Independent Components: [count]
-   - Parallel Score: [score]/10
+   - Batch Potential: [High/Medium/Low]
    - Batch Operations: [Available/Not suitable]
-   - Potential Time Savings: [X%]
+   - Tool Switching: [Can reduce/Sequential needed]
 
 📋 Selected Approach: [Workflow Name]
    ↳ Why: [Clear reasoning for selection]
    ↳ Process: [Brief overview of phases]
-   ↳ Optimization: [Parallel/Sequential/Hybrid]
+   ↳ Optimization: [Batch operations/Sequential/Mixed]
 
 Ready to proceed? (yes/adjust/explain more)
 ```
@@ -165,28 +165,28 @@ Ready to proceed? (yes/adjust/explain more)
 # Priority order for selection
 IF web_detection.is_web_project:
     → Anti-YOLO Web Workflow
-    → Check for parallel opportunities in components
+    → Check for batch opportunities in components
 ELIF user_confirmed_ccpm OR explicit_pm_flag:
     → CCPM Integration
-    → Automatic parallel task decomposition
-ELIF parallel_score > 7 AND independent_components > 3:
-    → Enable parallel optimization for ANY workflow
-    → Batch operations where possible
+    → Automatic task decomposition
+ELIF batch_potential == 'high' AND independent_components > 3:
+    → Enable batch optimization for ANY workflow
+    → Group similar operations together
 ELIF detected_type == 'agent_os_integration':
     → Complete System with Agent OS
-    → Check for parallel setup tasks
+    → Check for batch setup tasks
 ELIF detected_type == 'feature_development':
     → AI Dev Tasks
-    → Analyze for parallel component creation
+    → Analyze for batch component creation
 ELIF context_size > 30000:
     → Phase-based workflow
-    → Use parallel operations within phases
+    → Use batch operations within phases
 ELIF complexity_score > 5:
     → Complete 6-agent workflow
-    → Optimize with parallel phases
+    → Optimize with batched phases
 ELSE:
     → Streamlined 3-agent workflow
-    → Still check for batch operations
+    → Still check for batch opportunities
 ```
 
 ## Next Steps
