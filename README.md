@@ -2,6 +2,35 @@
 
 **Turn Claude into your personal development team.** One command handles everything - from planning through implementation to deployment, with automatic code review and continuous learning.
 
+**Current Version:** 2.0.0 | [View Changelog](CHANGELOG.md)
+
+## 🎉 What's New in v2.0.0
+
+### Triple Code Review System
+Every task now gets reviewed by 3 specialized experts in parallel (5 min max):
+- **Senior Engineer** - Code quality & best practices
+- **Lead Engineer** - Architecture & scalability
+- **Architect** - System integration & patterns
+
+Critical issues are auto-fixed immediately.
+
+### Automatic Memory Updates
+The system now learns from every session automatically:
+- Captures patterns, decisions, and solutions
+- **NEW:** `dont_dos.md` - Remembers what you DON'T want
+- Updates after every task completion
+- No manual memory management needed
+
+### Enhanced Analysis Engine
+Upgraded from 5 to **8 dimensions**:
+- Added: Code Minimalism (modify vs create)
+- Added: Security Sensitivity (auth/database detection)
+- Added: Pattern Reusability (leverage existing code)
+
+[See full changelog →](CHANGELOG.md)
+
+---
+
 ## 🚀 Quick Setup
 
 **One command installs everything:**
