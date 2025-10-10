@@ -121,7 +121,5 @@ $RECYCLE.BIN/
 .Trash-*
 .nfs*
 # Claude Agent System
+# All Claude-generated files are now inside .claude/files/
 .claude/
-ClaudeFiles/
-!ClaudeFiles/documentation/learnings/
-!ClaudeFiles/documentation/project/

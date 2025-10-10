@@ -1,66 +1,133 @@
 # DECISION ENGINE MODULE
 
-## Enhanced Decision Engine
+## Simplified Decision Engine
 
 ### Core Function
 
 ```python
 def analyze_for_workflow_selection(task_description, context_info, user_preferences=None):
-    """Rule-based workflow selection engine"""
-    
+    """Simplified workflow selection focused on code minimalism"""
+
     # Load memory bank context
     memory_context = load_memory_bank()
-    
-    # Check for security threats if enabled
-    if should_run_security_scan(task_description):
+
+    # Enhanced security detection for database/SQL operations
+    if should_run_security_scan_enhanced(task_description):
         security_report = run_prompt_security_scan(task_description)
         if security_report.risk_level == "CRITICAL":
             return abort_with_security_warning(security_report)
-    
+
     # Use Lyra universal middleware first
     lyra_result = lyra_optimize({
         'command': 'systemcc',
         'prompt': task_description,
         'context': context_info
     })
-    
-    # Apply streamlined decision engine
-    return enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result)
+
+    # Apply simplified decision engine with code minimalism
+    return simplified_workflow_selection(task_description, context_info, memory_context, lyra_result)
+```
+
+## Enhanced Security Detection
+
+```python
+def should_run_security_scan_enhanced(task_description):
+    """
+    Automatically detect when security scanning is required
+    Especially for database, SQL, encoding, and authentication tasks
+    """
+
+    desc_lower = task_description.lower()
+
+    # Database and SQL related keywords (ALWAYS scan)
+    database_keywords = [
+        'database', 'sql', 'query', 'queries', 'migration', 'schema',
+        'table', 'tables', 'column', 'columns', 'index', 'indexes',
+        'postgres', 'mysql', 'mongodb', 'redis', 'sqlite', 'oracle',
+        'orm', 'sequelize', 'typeorm', 'prisma', 'knex', 'mongoose',
+        'insert', 'update', 'delete', 'select', 'join', 'where'
+    ]
+
+    # Encoding and potential injection vectors (ALWAYS scan)
+    encoding_keywords = [
+        'encode', 'decode', 'base64', 'encoding', 'decoding',
+        'serialize', 'deserialize', 'json', 'xml', 'yaml',
+        'escape', 'unescape', 'sanitize', 'injection', 'xss'
+    ]
+
+    # Authentication and security (ALWAYS scan)
+    auth_keywords = [
+        'auth', 'authentication', 'authorization', 'login', 'logout',
+        'password', 'token', 'jwt', 'oauth', 'session', 'cookie',
+        'permission', 'role', 'rbac', 'acl', 'security', 'crypto',
+        'encrypt', 'decrypt', 'hash', 'salt', 'key', 'certificate'
+    ]
+
+    # Network and API operations (scan if suspicious)
+    network_keywords = [
+        'api', 'endpoint', 'webhook', 'request', 'response',
+        'http', 'https', 'rest', 'graphql', 'grpc', 'websocket',
+        'fetch', 'axios', 'curl', 'post', 'get', 'put', 'patch'
+    ]
+
+    # Check for any database/SQL/encoding keywords
+    for keyword in database_keywords + encoding_keywords + auth_keywords:
+        if keyword in desc_lower:
+            print(f"🔐 Security scan auto-enabled: '{keyword}' detected")
+            return True
+
+    # Check for network operations with data handling
+    for keyword in network_keywords:
+        if keyword in desc_lower and any(data_word in desc_lower for data_word in ['data', 'payload', 'body', 'params']):
+            print(f"🔐 Security scan auto-enabled: Network operation with data handling detected")
+            return True
+
+    # Check for explicit security flags
+    if '--security' in task_description or '--scan' in task_description:
+        return True
+
+    return False
 ```
 
 ## Streamlined Selection Logic
 
 ```python
-def enhanced_workflow_selection(task_description, context_info, memory_context, lyra_result):
+def simplified_workflow_selection(task_description, context_info, memory_context, lyra_result):
     """
-    Streamlined Decision Engine for Workflow Selection
-    
-    Balanced approach:
-    1. Five-dimensional factor analysis
-    2. Enhanced rule-based logic with weighted scoring
-    3. Decision transparency with clear reasoning
-    4. Robust fallback mechanisms
-    5. Performance-optimized for real-time use
+    Simplified Decision Engine for Workflow Selection
+
+    Professional approach focused on:
+    1. Code minimalism scoring
+    2. Practical heuristics
+    3. Clear, understandable rules
+    4. Fast decision making
+    5. Team-friendly code generation
     """
-    
+
     try:
-        # Import streamlined decision engine
-        from middleware.streamlined_decision_engine import enhanced_workflow_selection as streamlined_selection
-        
-        # Use the streamlined engine
-        result = streamlined_selection(task_description, context_info, memory_context)
-        
-        # Enhance with Lyra context
+        # Import simplified decision engine
+        from middleware.simplified_decision_engine import select_workflow
+
+        # Calculate workflow with code minimalism focus
+        result = select_workflow(task_description, context_info)
+
+        # Enhance with Lyra context if available
         if hasattr(lyra_result, 'metadata'):
-            lyra_complexity = lyra_result.metadata.complexity_score / 10.0
-            result['factor_scores']['lyra_enhanced'] = True
-            result['reasoning'] += f"\n🎯 Lyra Enhancement: Complexity {lyra_complexity:.2f}"
-        
+            result['lyra_enhanced'] = True
+
+        # Add professional code standards reminder
+        result['code_standards'] = {
+            'minimize_new_files': True,
+            'prefer_modifications': True,
+            'surgical_changes': True,
+            'team_friendly': True
+        }
+
         return result
-    
+
     except Exception as e:
-        # Fallback to simplified logic
-        return fallback_decision_logic(task_description, context_info, lyra_result, str(e))
+        # Fallback to simple logic
+        return simple_workflow_selection(task_description, context_info)
 ```
 
 ## Simple Workflow Selection

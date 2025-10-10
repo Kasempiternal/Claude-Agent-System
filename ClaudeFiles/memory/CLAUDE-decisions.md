@@ -127,5 +127,71 @@
 - **Alternative considered**: Session-only
 - **Decision**: Memory bank for continuity
 
+## NEW Architecture Decisions (2025-10-10)
+
+### ADR-006: Post-Execution Triple Review System
+**Date**: 2025-10-10
+**Status**: Implemented
+**Context**: Need final quality validation after workflow completion
+**Decision**: Implement 3 parallel reviewers (Senior, Lead, Architect)
+**Rationale**:
+- Different perspectives catch different issues
+- Parallel execution keeps it fast (5 min max)
+- Auto-fix critical issues immediately
+- Provides 10/10 code quality assurance
+**Consequences**:
+- Additional 5 minutes to workflow
+- Better code quality
+- Fewer production issues
+- Learning captured for future
+
+### ADR-007: User Preference Tracking (dont_dos.md)
+**Date**: 2025-10-10
+**Status**: Implemented
+**Context**: Need to remember user corrections and preferences
+**Decision**: Create dedicated dont_dos.md for negative feedback
+**Rationale**:
+- User says "no/stop/don't" → immediate capture
+- Prevents repeating unwanted behaviors
+- Personalizes system to user preferences
+- Complements positive patterns with negative ones
+**Consequences**:
+- Better user experience over time
+- Reduced friction in interactions
+- System learns what NOT to do
+- Permanent preference memory
+
+### ADR-008: Automatic Memory Updates
+**Date**: 2025-10-10
+**Status**: Implemented
+**Context**: Memory updates were manual and often forgotten
+**Decision**: Make memory updates automatic and mandatory (LEVEL 0)
+**Rationale**:
+- Every session should contribute to knowledge
+- Manual updates are often skipped
+- Automatic capture preserves all learnings
+- Deduplication prevents bloat
+**Consequences**:
+- No lost learnings
+- System continuously improves
+- Memory files stay current
+- Better continuity across sessions
+
+### ADR-009: Brief Output Philosophy
+**Date**: 2025-10-10
+**Status**: Implemented
+**Context**: User feedback: too verbose, creates unnecessary docs
+**Decision**: Brief summaries only, no docs unless requested
+**Rationale**:
+- Users want results, not essays
+- No unsolicited documentation creation
+- 3 bullet points maximum for summaries
+- Focus on what changed and why
+**Consequences**:
+- Cleaner project directories
+- Faster completion messages
+- Better user satisfaction
+- Less noise in output
+
 ---
 *This file records important decisions. Add new ADRs as decisions are made.*

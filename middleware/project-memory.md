@@ -84,17 +84,16 @@ dependency_map:
 
 ## Memory Storage
 
-All project memory is stored in `ClaudeFiles/project-memory/`:
+All project memory is stored in `.claude/files/memory/`:
 
 ```
-ClaudeFiles/
-└── project-memory/
-    ├── conventions.yaml       # Detected code conventions
-    ├── preferences.yaml       # User preferences and choices
-    ├── patterns.yaml         # Solution patterns
-    ├── relationships.yaml    # Component dependencies
-    └── history/
-        └── decisions-[date].md  # Historical decision log
+.claude/files/
+└── memory/
+    ├── CLAUDE-patterns.md       # Detected code conventions and patterns
+    ├── CLAUDE-decisions.md      # User preferences and architecture decisions
+    ├── CLAUDE-activeContext.md  # Current session state
+    ├── CLAUDE-troubleshooting.md # Solutions database
+    └── CLAUDE-config-variables.md  # Configuration variables reference
 ```
 
 ## Intelligent Features
@@ -210,7 +209,7 @@ Claude: ✓ Updated file structure conventions.
 
 ## Privacy & Control
 
-- All memory stored locally in ClaudeFiles/
+- All memory stored locally in .claude/files/memory/
 - Can be reviewed and edited manually
 - Can be cleared with `/clear-memory`
 - Never shared across projects

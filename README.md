@@ -1,6 +1,6 @@
-# Claude Agent System 🤖
+# Claude Agent System
 
-**Turn Claude into your personal development team.** One command automatically handles your entire coding workflow - from planning to testing to deployment.
+**Turn Claude into your personal development team.** One command handles everything - from planning through implementation to deployment, with automatic code review and continuous learning.
 
 ## 🚀 Quick Setup
 
@@ -14,25 +14,32 @@ curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.ps1 | iex
 ```
 
-## ✨ How It Works
+## How It Works
 
-### Just one command for everything:
+### Just one command:
 
 ```bash
-/systemcc "what you want to build"
+/systemcc "what you want to do"
 ```
 
-**That's it!** The system automatically:
-- 🎯 Shows immediate detection feedback ("SYSTEMCC DETECTED")
-- 🔍 Analyzes your codebase (first time only)
-- ⚡ **NEW:** Detects batch optimization opportunities
-- 🎯 Picks the right workflow for your task  
-- 👥 Groups similar operations to reduce overhead
-- ✅ Completes everything end-to-end efficiently
+The system then:
+1. **Shows detection confirmation** - Immediate feedback that command was recognized
+2. **Analyzes your project** - Deep scan on first use, cached for future
+3. **Optimizes the request** - AI enhancement for clarity and completeness
+4. **Selects best workflow** - Picks between 3-agent, 6-agent, or specialized flows
+5. **Executes automatically** - All phases run without manual intervention
+6. **Reviews the code** - 3 parallel reviewers check quality (NEW)
+7. **Updates memory** - Learns from every session for continuous improvement (NEW)
+8. **Shows brief summary** - What changed and why, no fluff
 
-⚠️ **IMPORTANT**: The `/systemcc` command ALWAYS follows its automated workflow process, showing immediate detection feedback, Lyra optimization, and executing all phases. This is core functionality that ensures quality and consistency.
+### What's Actually Happening
 
-📁 **NEW**: Modular systemcc structure in `.claude/commands/systemcc/` for improved reliability and detection.
+The system uses multiple specialized workflows. You don't pick - it does:
+- **Simple fixes** → 3-agent streamlined workflow
+- **Complex features** → 6-agent comprehensive validation
+- **Web projects** → ASCII wireframe first, then code
+- **Large codebases** → Phase-based execution for memory management
+- **New projects** → Full initialization and setup
 ## 📝 Real Examples
 
 ```bash
@@ -55,33 +62,47 @@ iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/ma
 # ↳ Groups operations → Reduced tool switching
 ```
 
-## 🎨 What Makes This Different
+## What Makes This Different
 
-**For Web Projects:** Automatic "Anti-YOLO" wireframing
-- Creates ASCII layout first
-- You approve the design  
-- Then builds pixel-perfect HTML/CSS
-- 90% fewer revisions needed
+### Triple Code Review (NEW)
+After implementation, three specialized reviewers run in parallel:
+- **Senior Engineer** - Checks code quality, best practices, clean code
+- **Lead Engineer** - Reviews architecture, technical debt, scalability
+- **Architect** - Validates system integration, enterprise patterns
 
-**Smart Workflow Selection:** 
-- Detects your tech stack automatically
-- Uses YOUR test commands, YOUR naming conventions
-- Chooses optimal workflow (3-agent vs 6-agent vs phase-based)
-- Handles any size codebase
+All three run simultaneously (5 minutes max). Critical issues are auto-fixed immediately.
 
-**⚡ NEW: Batch Optimization:**
-- Automatically detects independent components
-- Batches file operations (create multiple files in 1 operation)
-- Runs shell commands in background when possible
-- Groups similar operations together
-- Reduces tool switching overhead
+### Continuous Learning System (NEW)
+The system remembers everything:
+- **Your patterns** - Coding style, naming conventions, preferences
+- **Your decisions** - Architecture choices, technology selections
+- **Your "don'ts"** - What you DON'T want (captured when you say "no" or "stop")
+- **Solutions** - Fixes to problems for future reference
 
-**Supports Everything:**
-Python • React • Vue • Angular • Ruby • Java • Go • Rust • PHP • C# • and more
+Every session makes it smarter. It learns what you want AND what you don't want.
 
-## 🧠 Complete AI Decision Engine - Full Processing Pipeline
+### Anti-YOLO Web Development
+For web projects, it creates an ASCII wireframe first:
+- See the layout before any code is written
+- Approve or request changes while it's cheap
+- Then generates the exact HTML/CSS/JS
+- Drastically reduces revision cycles
 
-Ever wonder how `/systemcc` picks the perfect workflow? Here's the comprehensive system that processes every request:
+### Intelligent Workflow Selection
+The system analyzes your request across 5 dimensions:
+- Technical complexity
+- Scope impact
+- Risk assessment
+- Context load
+- Time pressure
+
+Then automatically picks the right workflow. No manual selection needed.
+
+**Supports all major languages and frameworks**
+
+## The Decision Engine - How It Actually Works
+
+Here's what happens when you run `/systemcc`:
 
 ```
 User: /systemcc [--pm] [--debug] [--secure] "your request"

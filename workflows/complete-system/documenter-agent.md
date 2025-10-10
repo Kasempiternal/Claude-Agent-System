@@ -8,19 +8,19 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Every pattern discovered must b
 ## 📚 DOCUMENTATION NAVIGATION
 
 ### IMPORTANT: File Organization Requirement
-**ALL non-code files MUST be created in the `ClaudeFiles/` directory structure as defined in `CLAUDE-FILES-ORGANIZATION.md`. This is MANDATORY.**
+**ALL non-code files MUST be created in the `.claude/files/` directory structure as defined in `CLAUDE-FILES-ORGANIZATION.md`. This is MANDATORY.**
 
 ### Using GUIDE.md
 ```markdown
-1. **Always start with ClaudeFiles/documentation/GUIDE.md** - Your documentation map
+1. **Always start with .claude/files/documentation/GUIDE.md** - Your documentation map
 2. **Find the right category**:
-   - Architecture changes → ClaudeFiles/documentation/architecture/
-   - Components/UI → ClaudeFiles/documentation/components/
-   - API/Services → ClaudeFiles/documentation/api/
-   - Build/Deployment → ClaudeFiles/documentation/build/
-   - Performance → ClaudeFiles/documentation/performance/
-   - Testing → ClaudeFiles/documentation/testing/
-   - Three.js/WebGL → ClaudeFiles/documentation/graphics/
+   - Architecture changes → .claude/files/documentation/architecture/
+   - Components/UI → .claude/files/documentation/components/
+   - API/Services → .claude/files/documentation/api/
+   - Build/Deployment → .claude/files/documentation/build/
+   - Performance → .claude/files/documentation/performance/
+   - Testing → .claude/files/documentation/testing/
+   - Three.js/WebGL → .claude/files/documentation/graphics/
 3. **Update the right file** - Don't create duplicates
 4. **Cross-reference** - Link related documentation
 ```
@@ -28,28 +28,28 @@ THINK HARD, THINK DEEP, WORK IN ULTRATHINK MODE! Every pattern discovered must b
 ## 🏗️ DOCUMENTATION HIERARCHY
 
 ### Primary Documentation Files
-1. **LEARNINGS.md** (in ClaudeFiles/documentation/learnings/) - All discovered patterns and solutions
+1. **LEARNINGS.md** (in .claude/files/documentation/learnings/) - All discovered patterns and solutions
 2. **CLAUDE_COMPACT.md** (in root) - Essential rules only (rarely updated)
-3. **PROJECT_DOCUMENTATION.md** (in ClaudeFiles/documentation/project/) - Project status and overview
-4. **SYSTEMS.md** (in ClaudeFiles/documentation/project/) - System architecture patterns
-5. **Specific docs** (in ClaudeFiles/documentation/[category]/) - Feature/module documentation
+3. **PROJECT_DOCUMENTATION.md** (in .claude/files/documentation/project/) - Project status and overview
+4. **SYSTEMS.md** (in .claude/files/documentation/project/) - System architecture patterns
+5. **Specific docs** (in .claude/files/documentation/[category]/) - Feature/module documentation
 
 ### Documentation Flow
 ```
-Problem Solved → ClaudeFiles/documentation/learnings/LEARNINGS.md (always)
+Problem Solved → .claude/files/documentation/learnings/LEARNINGS.md (always)
                ↓
                If Critical Rule → CLAUDE_COMPACT.md (rare, stays in root)
                ↓
-               If New System → ClaudeFiles/documentation/project/SYSTEMS.md
+               If New System → .claude/files/documentation/project/SYSTEMS.md
                ↓
-               If New Feature → Create in ClaudeFiles/documentation/features/
+               If New Feature → Create in .claude/files/documentation/features/
 ```
 
 ## 📋 DOCUMENTATION PROTOCOL
 
 ### Step 1: Harvest Knowledge (10 min)
 ```markdown
-1. Read ClaudeFiles/temp/WORK.md completely:
+1. Read .claude/files/temp/WORK.md completely:
    - Problem statement
    - Root cause analysis
    - Solution implemented
@@ -81,18 +81,18 @@ Problem Solved → ClaudeFiles/documentation/learnings/LEARNINGS.md (always)
 
 ### Step 3: Documentation Updates (20 min)
 ```markdown
-# IMPORTANT: All paths must use ClaudeFiles/ structure
-1. ALWAYS update ClaudeFiles/documentation/learnings/LEARNINGS.md first
-2. Update ClaudeFiles/documentation/project/PROJECT_DOCUMENTATION.md status
-3. Update documentation that was referenced in ClaudeFiles/temp/WORK.md:
+# IMPORTANT: All paths must use .claude/files/ structure
+1. ALWAYS update .claude/files/documentation/learnings/LEARNINGS.md first
+2. Update .claude/files/documentation/project/PROJECT_DOCUMENTATION.md status
+3. Update documentation that was referenced in .claude/files/temp/WORK.md:
    - If patterns changed from linked docs
    - If new edge cases discovered
    - If performance benchmarks updated
    - If security requirements evolved
-4. Create/update specific docs in ClaudeFiles/documentation/[category]/
-5. Update ClaudeFiles/documentation/project/SYSTEMS.md if architecture changed
+4. Create/update specific docs in .claude/files/documentation/[category]/
+5. Update .claude/files/documentation/project/SYSTEMS.md if architecture changed
 6. RARELY update CLAUDE.md (only for critical rules, stays in root)
-7. Update ClaudeFiles/documentation/GUIDE.md if adding new documentation files
+7. Update .claude/files/documentation/GUIDE.md if adding new documentation files
 ```
 
 ### Step 4: Validation (5 min)
@@ -101,7 +101,7 @@ Problem Solved → ClaudeFiles/documentation/learnings/LEARNINGS.md (always)
 2. Verify anti-patterns are documented
 3. Check all links work
 4. Confirm code examples are complete
-5. Update ClaudeFiles/temp/WORK.md as ✅ COMPLETE
+5. Update .claude/files/temp/WORK.md as ✅ COMPLETE
 ```
 
 ## 📝 LEARNINGS.md PATTERN FORMAT
@@ -290,7 +290,7 @@ For language-specific patterns
 ## 🔄 SPECIAL DOCUMENTATION CASES
 
 ### Breaking Changes
-Create migration guide in ClaudeFiles/documentation/migrations/
+Create migration guide in .claude/files/documentation/migrations/
 ```markdown
 # Migration Guide: [Feature] ([Date])
 
@@ -307,7 +307,7 @@ Create migration guide in ClaudeFiles/documentation/migrations/
 ```
 
 ### New Features
-Create feature documentation in ClaudeFiles/documentation/features/
+Create feature documentation in .claude/files/documentation/features/
 ```markdown
 # [Feature Name] Documentation
 
@@ -328,7 +328,7 @@ Create feature documentation in ClaudeFiles/documentation/features/
 ```
 
 ### Performance Optimizations
-Update ClaudeFiles/documentation/performance/
+Update .claude/files/documentation/performance/
 ```markdown
 # Performance Optimization: [Area]
 
@@ -356,16 +356,16 @@ Update ClaudeFiles/documentation/performance/
 ## ✅ DOCUMENTATION CHECKLIST
 
 ### Essential Updates
-- [ ] ClaudeFiles/documentation/learnings/LEARNINGS.md updated with new pattern
+- [ ] .claude/files/documentation/learnings/LEARNINGS.md updated with new pattern
 - [ ] Pattern includes both correct and incorrect examples
-- [ ] ClaudeFiles/documentation/project/PROJECT_DOCUMENTATION.md status current
-- [ ] ClaudeFiles/temp/WORK.md marked as complete
+- [ ] .claude/files/documentation/project/PROJECT_DOCUMENTATION.md status current
+- [ ] .claude/files/temp/WORK.md marked as complete
 
 ### Conditional Updates
-- [ ] ClaudeFiles/documentation/project/SYSTEMS.md updated (if architecture changed)
-- [ ] Migration guide created in ClaudeFiles/documentation/migrations/ (if breaking changes)
-- [ ] Feature doc created in ClaudeFiles/documentation/features/ (if new feature)
-- [ ] Performance doc updated in ClaudeFiles/documentation/performance/ (if optimization)
+- [ ] .claude/files/documentation/project/SYSTEMS.md updated (if architecture changed)
+- [ ] Migration guide created in .claude/files/documentation/migrations/ (if breaking changes)
+- [ ] Feature doc created in .claude/files/documentation/features/ (if new feature)
+- [ ] Performance doc updated in .claude/files/documentation/performance/ (if optimization)
 - [ ] Package.json updated (if dependency changes)
 - [ ] Build config updated (if build changes)
 - [ ] CLAUDE_COMPACT.md updated (ONLY if new critical rule, stays in root)
@@ -410,24 +410,24 @@ Update ClaudeFiles/documentation/performance/
 - **New Patterns**: [count] added to LEARNINGS.md
 - **Anti-Patterns**: [count] documented
 - **Files Updated**:
-  - `ClaudeFiles/documentation/learnings/LEARNINGS.md` - [X] new patterns
-  - `ClaudeFiles/documentation/project/PROJECT_DOCUMENTATION.md` - Status updated
-  - [Other files in ClaudeFiles/]
+  - `.claude/files/documentation/learnings/LEARNINGS.md` - [X] new patterns
+  - `.claude/files/documentation/project/PROJECT_DOCUMENTATION.md` - Status updated
+  - [Other files in .claude/files/]
 
 ### Referenced Documentation Updates:
-- `ClaudeFiles/documentation/[category]/[file.md]`: Updated [what changed]
+- `.claude/files/documentation/[category]/[file.md]`: Updated [what changed]
 - Performance benchmarks: [Updated/Confirmed]
 - Security requirements: [Updated/Confirmed]
 
 ### Key Patterns Added:
 1. **[Pattern Name]**: [Brief description]
-   - Linked to: `ClaudeFiles/documentation/[relevant-doc.md]`
+   - Linked to: `.claude/files/documentation/[relevant-doc.md]`
 2. **[Pattern Name]**: [Brief description]
-   - Linked to: `ClaudeFiles/documentation/[relevant-doc.md]`
+   - Linked to: `.claude/files/documentation/[relevant-doc.md]`
 
 ### Cross-References Created:
 - Connected [doc1] ↔ [doc2] for [reason]
-- Updated ClaudeFiles/documentation/GUIDE.md: [if new docs added]
+- Updated .claude/files/documentation/GUIDE.md: [if new docs added]
 
 ### Migration Guides:
 - [If any created]
