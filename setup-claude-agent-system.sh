@@ -259,12 +259,14 @@ This project uses the Claude Agent System with 10/10 code quality standards, adv
 The system automatically:
 - 🎯 Shows immediate detection feedback ("SYSTEMCC DETECTED")
 - 🔍 Shows Lyra AI prompt optimization (ALWAYS displayed)
+- 📋 **NEW**: Detects build configuration (Makefile, CI/CD, linters, formatters)
 - 🎯 Optimizes your request with Lyra AI intelligence
 - 🧠 Selects optimal workflow using advanced decision engines
 - 🔄 Executes ALL phases automatically (CANNOT be skipped)
-- 🔍 **NEW**: Runs triple code review (Senior, Lead, Architect) in parallel
-- 📝 **NEW**: Auto-updates memory banks after every task
-- 🚫 **NEW**: Learns what you DON'T want from corrections
+- 🔍 Runs triple code review (Senior, Lead, Architect) in parallel
+- 📝 Auto-updates memory banks after every task
+- 🚫 Learns what you DON'T want from corrections
+- ✅ **NEW**: Ensures all code follows your pipeline/build rules
 - 📊 Shows progress updates throughout execution
 - ⚡ Executes everything with comprehensive error handling
 - 💾 Learns and remembers patterns across sessions
@@ -347,6 +349,22 @@ Add your project-specific guidelines below:
 ### Build Commands
 - [Build/lint commands will be configured with quality checks]
 
+## Build Configuration Auto-Detection
+
+The system automatically detects and applies build configuration from:
+- **Makefile** - Extracts formatter/linter commands and flags
+- **CI/CD Files** - `.gitlab-ci.yml`, `.github/workflows/*.yml`
+- **Language Configs** - `pyproject.toml`, `package.json`, `setup.cfg`
+- **Tool Configs** - `.pre-commit-config.yaml`, `tox.ini`, `.eslintrc`
+
+When detected, all generated code automatically follows:
+- Formatting rules (black, prettier, etc.)
+- Linting standards (flake8, eslint, mypy)
+- Test requirements (pytest, jest)
+- Pipeline stage requirements
+
+See `Makefile.example` for a sample configuration.
+
 ## Learn More
 
 - `.claude/commands/help.md` - Complete command reference
@@ -406,11 +424,12 @@ cat > "$CLAUDE_DIR/QUICK_START.md" << 'EOF'
 Just use: `/systemcc "describe what you want to do"`
 
 The enhanced system automatically:
-1. **5-Dimensional Analysis** - Evaluates technical complexity, scope impact, risk factors, context load, and time pressure
-2. **Intelligent Routing** - Selects optimal workflow based on sophisticated decision algorithms
-3. **Quality Assurance** - Validates all inputs, handles errors gracefully, and maintains production standards
-4. **Performance Optimization** - Uses early termination, caching, and efficient pattern matching
-5. **Transparent Reasoning** - Provides detailed decision explanations and alternative suggestions
+1. **8-Dimensional Analysis** - Evaluates technical complexity, scope impact, risk factors, context load, time pressure, code minimalism, security, and pattern reusability
+2. **Build Configuration Detection** - Automatically detects and applies Makefile, CI/CD, and linting rules
+3. **Intelligent Routing** - Selects optimal workflow based on sophisticated decision algorithms
+4. **Quality Assurance** - Validates all inputs, handles errors gracefully, and maintains production standards
+5. **Performance Optimization** - Uses early termination, caching, and efficient pattern matching
+6. **Transparent Reasoning** - Provides detailed decision explanations and alternative suggestions
 
 ## Examples
 
@@ -431,8 +450,9 @@ The enhanced system automatically:
 ## Intelligent Features
 
 ### Decision Engine Transparency
-- Real-time scoring across 5 dimensions
-- Confidence levels and alternative workflow suggestions  
+- Real-time scoring across 8 dimensions
+- Build configuration auto-detection and application
+- Confidence levels and alternative workflow suggestions
 - Performance metrics and optimization feedback
 - Detailed reasoning for all workflow selections
 
@@ -499,15 +519,18 @@ echo "  - .claude/files/memory/ (persistent learning system)"
 echo "  - .claude/files/ (organized output with quality validation)"
 echo ""
 echo -e "${BLUE}Quality Features:${NC}"
-echo "  ✅ 5-dimensional decision engine with complexity analysis"
+echo "  ✅ 8-dimensional decision engine with complexity analysis"
+echo "  ✅ Build configuration auto-detection (Makefile, CI/CD, linters)"
 echo "  ✅ Triple code review system (Senior, Lead, Architect)"
 echo "  ✅ Automatic memory updates after every task"
 echo "  ✅ Learns what you DON'T want from corrections"
+echo "  ✅ Pipeline-ready code generation (follows your build rules)"
 echo "  ✅ MANDATORY workflow enforcement for /systemcc command"
 echo "  ✅ Comprehensive error handling and input validation"
 echo "  ✅ Performance optimization with early termination"
 echo "  ✅ Production-ready robustness and reliability"
-echo "  ⚠️ Workflow structure (Lyra → phases → review → memory) CANNOT be skipped"
+echo "  ⚠️ Workflow structure (Lyra → build config → phases → review → memory) CANNOT be skipped"
 echo ""
 echo -e "${YELLOW}Tip:${NC} The enhanced system automatically analyzes task complexity, manages context, and selects optimal workflows!"
+echo -e "${YELLOW}New:${NC} Build configuration detector ensures all code follows your pipeline rules automatically!"
 echo -e "${YELLOW}New:${NC} Batch optimizer groups similar operations to reduce tool switching overhead!"
