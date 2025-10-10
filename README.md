@@ -2,9 +2,24 @@
 
 **Turn Claude into your personal development team.** One command handles everything - from planning through implementation to deployment, with automatic code review and continuous learning.
 
-**Current Version:** 2.0.0 | [View Changelog](CHANGELOG.md)
+**Current Version:** 2.1.0 | [View Changelog](CHANGELOG.md)
 
-## 🎉 What's New in v2.0.0
+## 🎉 What's New in v2.1.0
+
+### Build Configuration Auto-Detection (NEW)
+The system now automatically detects and applies your project's build rules:
+- **Auto-scans** Makefile, CI/CD files, linting configs
+- **Extracts** formatting rules (black, prettier, isort)
+- **Applies** linting standards (flake8, eslint, mypy)
+- **Ensures** all generated code passes your pipeline on first commit
+
+No configuration needed - just have a Makefile or CI/CD file, and systemcc automatically follows your team's standards!
+
+[See full changelog →](CHANGELOG.md)
+
+---
+
+## 🎉 What's New in v2.0.0 (Still NEW!)
 
 ### Triple Code Review System
 Every task now gets reviewed by 3 specialized experts in parallel (5 min max):
@@ -33,14 +48,10 @@ Upgraded from 5 to **8 dimensions**:
 
 ## 🚀 Quick Setup
 
-**One command installs everything:**
+**One command installs everything (macOS/Linux):**
 
 ```bash
-# macOS/Linux
 curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.sh | bash
-
-# Windows PowerShell
-iwr -useb https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.ps1 | iex
 ```
 
 ## How It Works
@@ -55,11 +66,12 @@ The system then:
 1. **Shows detection confirmation** - Immediate feedback that command was recognized
 2. **Analyzes your project** - Deep scan on first use, cached for future
 3. **Optimizes the request** - AI enhancement for clarity and completeness
-4. **Selects best workflow** - Picks between 3-agent, 6-agent, or specialized flows
-5. **Executes automatically** - All phases run without manual intervention
-6. **Reviews the code** - 3 parallel reviewers check quality (NEW)
-7. **Updates memory** - Learns from every session for continuous improvement (NEW)
-8. **Shows brief summary** - What changed and why, no fluff
+4. **Detects build configuration** - Auto-scans Makefile/CI/CD for code standards (NEW)
+5. **Selects best workflow** - Picks between 3-agent, 6-agent, or specialized flows
+6. **Executes automatically** - All phases run without manual intervention
+7. **Reviews the code** - 3 parallel reviewers check quality (NEW)
+8. **Updates memory** - Learns from every session for continuous improvement (NEW)
+9. **Shows brief summary** - What changed and why, no fluff
 
 ### What's Actually Happening
 
@@ -92,6 +104,15 @@ The system uses multiple specialized workflows. You don't pick - it does:
 ```
 
 ## What Makes This Different
+
+### Build Configuration Auto-Detection (NEW)
+No more pipeline failures! The system automatically:
+- **Scans** your Makefile, CI/CD files, and linting configs
+- **Extracts** formatting rules (black, prettier, isort with exact flags)
+- **Applies** linting standards (flake8, eslint, mypy with your ignores)
+- **Ensures** all generated code passes your pipeline on first commit
+
+Example: If your Makefile has `black --line-length 100`, all Python code will automatically use 100-character lines. Works with Python, JavaScript, Go, and more!
 
 ### Triple Code Review (NEW)
 After implementation, three specialized reviewers run in parallel:
@@ -198,6 +219,27 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │    • Select enhancement mode:       │
 │    │  ├─ BASIC (simple tasks)       │
 │    │  └─ DETAIL (complex features)  │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  📋 BUILD CONFIG DETECTION (NEW)    │
+├─────────────────────────────────────┤
+│ Auto-scan for build configurations: │
+│                                     │
+│ File Detection:                     │
+│ • Makefile, .gitlab-ci.yml          │
+│ • .github/workflows/*.yml           │
+│ • pyproject.toml, package.json      │
+│ • .pre-commit-config.yaml           │
+│                                     │
+│ Extract Rules:                      │
+│ • Formatters: black, prettier       │
+│ • Linters: flake8, eslint, mypy     │
+│ • Test requirements & coverage      │
+│                                     │
+│ IF config detected:                 │
+│ └─ → Apply rules to all code ✅     │
 └────────────┬────────────────────────┘
              │
              ▼
