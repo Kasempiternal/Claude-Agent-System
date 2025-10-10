@@ -89,12 +89,15 @@ For web projects, it creates an ASCII wireframe first:
 - Drastically reduces revision cycles
 
 ### Intelligent Workflow Selection
-The system analyzes your request across 5 dimensions:
-- Technical complexity
-- Scope impact
-- Risk assessment
-- Context load
-- Time pressure
+The system analyzes your request across 8 dimensions:
+1. **Code Minimalism** - Can we modify existing code vs creating new?
+2. **Technical Complexity** - Algorithm sophistication, API integrations
+3. **Scope Impact** - Files affected, system-wide changes
+4. **Risk Assessment** - Breaking changes, security implications
+5. **Context Load** - Memory usage, token requirements
+6. **Time Pressure** - Urgency indicators, deadline sensitivity
+7. **Security Sensitivity** - Authentication, database, encoding operations
+8. **Pattern Reusability** - Existing patterns to leverage
 
 Then automatically picks the right workflow. No manual selection needed.
 
@@ -246,11 +249,18 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
              │
              ▼
 ┌─────────────────────────────────────┐
-│  🧮 5-DIMENSIONAL ANALYSIS ENGINE   │
+│  🧮 8-DIMENSIONAL ANALYSIS ENGINE   │
 ├─────────────────────────────────────┤
-│ Score task across five dimensions:  │
+│ Score task across eight dimensions: │
 │                                     │
-│ 1️⃣ TECHNICAL COMPLEXITY [0.0-1.0]: │
+│ 1️⃣ CODE MINIMALISM [0.0-1.0]:      │
+│    • Modify vs create analysis      │
+│    • Existing code leverage         │
+│    • Minimal change approach        │
+│    Keywords: "fix", "update",       │
+│             "modify", "change"      │
+│                                     │
+│ 2️⃣ TECHNICAL COMPLEXITY [0.0-1.0]: │
 │    • Algorithm sophistication       │
 │    • API integration requirements   │
 │    • Framework-specific patterns    │
@@ -259,7 +269,7 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │    Keywords: "algorithm", "API", "auth", │
 │             "security", "crypto"    │
 │                                     │
-│ 2️⃣ SCOPE IMPACT [0.0-1.0]:         │
+│ 3️⃣ SCOPE IMPACT [0.0-1.0]:         │
 │    • File modification prediction   │
 │    • Cross-service dependencies     │
 │    • Integration touchpoints        │
@@ -267,7 +277,7 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │    Keywords: "refactor", "system",  │
 │             "architecture", "migrate"│
 │                                     │
-│ 3️⃣ RISK ASSESSMENT [0.0-1.0]:      │
+│ 4️⃣ RISK ASSESSMENT [0.0-1.0]:      │
 │    • Data integrity risks           │
 │    • Security vulnerability intro   │
 │    • Performance impact potential   │
@@ -275,18 +285,32 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 │    Keywords: "critical", "production", │
 │             "database", "payment"   │
 │                                     │
-│ 4️⃣ CONTEXT LOAD [0.0-1.0]:         │
+│ 5️⃣ CONTEXT LOAD [0.0-1.0]:         │
 │    • Token requirement estimation   │
 │    • Memory usage prediction        │
 │    • Processing complexity          │
 │    • Multi-file coordination needs  │
 │                                     │
-│ 5️⃣ TIME PRESSURE [0.0-1.0]:        │
+│ 6️⃣ TIME PRESSURE [0.0-1.0]:        │
 │    • Urgency keyword detection      │
 │    • Deadline sensitivity           │
 │    • Critical path identification   │
 │    Keywords: "urgent", "ASAP", "fix", │
 │             "broken", "down"        │
+│                                     │
+│ 7️⃣ SECURITY SENSITIVITY [0.0-1.0]: │
+│    • Authentication/authorization   │
+│    • Database operations            │
+│    • Data encoding/decoding         │
+│    • API security requirements      │
+│    Keywords: "auth", "login", "jwt", │
+│             "password", "encrypt"   │
+│                                     │
+│ 8️⃣ PATTERN REUSABILITY [0.0-1.0]:  │
+│    • Existing pattern detection     │
+│    • Code reuse opportunities       │
+│    • Historical success patterns    │
+│    • Team conventions leverage      │
 │                                     │
 │ Enhanced Pattern Recognition:       │
 │ • Historical success patterns       │
@@ -544,16 +568,19 @@ The system automatically chooses from these battle-tested workflows:
 
 ## 🔬 Advanced Features
 
-### 🧠 5-Dimensional Task Analysis
-Behind the simple `/systemcc` command, the system evaluates every request across five dimensions:
+### 🧠 8-Dimensional Task Analysis
+Behind the simple `/systemcc` command, the system evaluates every request across eight dimensions:
 
 ```
 📊 ANALYSIS DIMENSIONS:
+├─ Code Minimalism: Modify vs create, minimal changes
 ├─ Technical Complexity: Algorithm sophistication, API integrations
-├─ Scope Impact: Files affected, system-wide changes  
+├─ Scope Impact: Files affected, system-wide changes
 ├─ Risk Assessment: Breaking changes, security implications
 ├─ Context Load: Memory usage, token requirements
-└─ Time Pressure: Urgency indicators, deadline sensitivity
+├─ Time Pressure: Urgency indicators, deadline sensitivity
+├─ Security Sensitivity: Auth, database, encoding operations
+└─ Pattern Reusability: Existing patterns to leverage
 ```
 
 **Smart Pattern Recognition:**
@@ -594,18 +621,32 @@ your-project/
 │   │   └── systemcc/         # Modular systemcc documentation
 │   │       ├── 01-CRITICAL-DETECTION.md
 │   │       ├── 02-LYRA-OPTIMIZATION.md
-│   │       └── ... (8 focused modules)
+│   │       ├── 10-POST-REVIEW.md      # NEW: Review system
+│   │       ├── 11-MEMORY-UPDATE.md    # NEW: Auto-updates
+│   │       └── ... (11 total modules)
+│   ├── agents/                # NEW: Code reviewers
+│   │   ├── code-reviewer-senior.md
+│   │   ├── code-reviewer-lead.md
+│   │   └── code-reviewer-architect.md
 │   ├── workflows/             # All workflow implementations
 │   │   ├── anti-yolo-web/     # ASCII wireframing
-│   │   ├── complete-system/   # 6-agent validation  
+│   │   ├── complete-system/   # 6-agent validation
 │   │   ├── orchestrated/      # 3-agent streamlined
 │   │   ├── phase-based/       # Large codebase handling
 │   │   ├── agent-os/          # Project setup
-│   │   └── ai-dev-tasks/      # PRD-based development
+│   │   ├── ai-dev-tasks/      # PRD-based development
+│   │   └── post-execution-review/  # NEW: Triple review
 │   └── middleware/            # AI optimization systems
+│       └── memory-auto-updater.md  # NEW: Memory updates
 ├── CLAUDE.md                  # Your project's AI instructions
+├── test-enhanced-system.sh    # NEW: Verify installation
 └── ClaudeFiles/              # AI-generated content
     ├── memory/               # Learning and patterns
+    │   ├── CLAUDE-activeContext.md
+    │   ├── CLAUDE-patterns.md
+    │   ├── CLAUDE-decisions.md
+    │   ├── CLAUDE-troubleshooting.md
+    │   └── CLAUDE-dont_dos.md     # NEW: User preferences
     ├── wireframes/           # ASCII wireframes (web projects)
     ├── pm/                   # Project management (CCPM mode)
     └── documentation/        # Generated docs and reports
@@ -636,8 +677,9 @@ The system learns and remembers:
 ClaudeFiles/memory/
 ├── CLAUDE-activeContext.md    # Current session state
 ├── CLAUDE-patterns.md         # Your coding patterns
-├── CLAUDE-decisions.md        # Architecture decisions made  
+├── CLAUDE-decisions.md        # Architecture decisions made
 ├── CLAUDE-troubleshooting.md  # Solutions to past issues
+├── CLAUDE-dont_dos.md         # What NOT to do (NEW)
 └── CLAUDE-temp.md            # Working scratch pad
 ```
 
@@ -646,19 +688,38 @@ This enables:
 - **Speed**: Doesn't re-analyze known project structure
 - **Quality**: Learns from past mistakes and successes
 - **Context**: Maintains session continuity
+- **Preferences**: Remembers what you DON'T want (captured from corrections)
+
+## ✅ Installation Verification
+
+After running the setup script, verify all components are installed:
+
+```bash
+./test-enhanced-system.sh
+```
+
+This checks for:
+- Core directories and workflows
+- Triple code review agents (Senior, Lead, Architect)
+- Post-execution review system
+- Memory bank files (including new dont_dos.md)
+- All systemcc modules
+
+If any components are missing, the script shows exactly what needs to be fixed.
 
 ## 🛠️ Available Commands
 
 **Primary Command:**
-- `/systemcc "your task"` - Does everything automatically (ALWAYS shows Lyra optimization and follows workflow)
+- `/systemcc "your task"` - Does everything automatically (includes review + memory updates)
 - `/systemcc --pm "your task"` - Project management mode
 - `/systemcc --debug "your task"` - Show AI decision-making process
 
-**⚠️ Workflow Enforcement:** The `/systemcc` command's automated workflow (Lyra optimization → workflow selection → phase execution) is MANDATORY and cannot be skipped, ensuring consistent quality across all tasks.
+**⚠️ Workflow Enforcement:** The `/systemcc` command's automated workflow (Lyra optimization → workflow selection → phase execution → review → memory update) is MANDATORY and cannot be skipped, ensuring consistent quality across all tasks.
 
 **Utility Commands:**
-- `/help` - Show all commands  
+- `/help` - Show all commands
 - `/analyzecc` - Manual project analysis (first run auto-triggers this)
+
 **Advanced Options:**
 - `/systemcc --secure "task"` - Enhanced security scanning
 - `/systemcc --pm --dashboard` - Refresh project management dashboard
