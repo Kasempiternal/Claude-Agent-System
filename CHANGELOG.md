@@ -5,6 +5,97 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.0] - 2025-01-10
+
+### 🎯 Feature Release - Build Configuration Auto-Detection
+
+This release adds automatic detection and application of build configuration rules to ensure all generated code complies with CI/CD pipelines and team standards from the start.
+
+### Added
+- **Build Configuration Detector Middleware** (`middleware/build-config-detector.md`):
+  - Automatically scans for configuration files (Makefile, CI/CD, language configs)
+  - Extracts formatting rules (black, prettier, isort, gofmt)
+  - Detects linting standards (flake8, eslint, mypy, golint)
+  - Parses test requirements and pipeline stages
+  - Supports multiple languages (Python, JavaScript, Go)
+  - Graceful fallback to best practices when no config detected
+
+- **SystemCC Build Config Module** (`commands/systemcc/03-BUILD-CONFIG.md`):
+  - Runs automatically after Lyra optimization (LEVEL 0 - mandatory)
+  - Displays detected configuration in formatted box
+  - Applies rules to all generated code
+  - Stores configuration in memory bank for reuse
+  - Parses complex command-line flags and parameters
+
+- **Example Configuration** (`Makefile.example`):
+  - Real-world Python project setup
+  - Demonstrates black, isort, flake8, mypy configuration
+  - Shows CI/CD pipeline stages
+  - Ready to copy and test
+
+### Enhanced
+- **Lyra AI Optimization** (`middleware/lyra-universal.md`):
+  - Now accepts build configuration in context
+  - Automatically includes formatting/linting requirements in prompts
+  - Enhanced prompt optimization with build standards
+  - Examples for Python and JavaScript projects
+
+- **SystemCC Command Router** (`commands/systemcc.md`):
+  - Added module #3 (BUILD-CONFIG) to execution order
+  - Updated module list from 10 to 11 modules
+  - Enhanced execution flow with build detection step
+  - Improved documentation and references
+
+- **Project Documentation** (`CLAUDE.md`):
+  - Added build configuration auto-detection section
+  - Updated workflow execution steps
+  - Enhanced development guidelines
+  - Added supported configuration files list
+
+### Supported Configuration Files
+- **Build Files**: Makefile, makefile
+- **CI/CD**: .gitlab-ci.yml, .github/workflows/*.yml, azure-pipelines.yml
+- **Python**: pyproject.toml, setup.cfg, tox.ini, .flake8
+- **JavaScript**: package.json, .eslintrc*, .prettierrc*
+- **Go**: go.mod, .golangci.yml
+- **Universal**: .pre-commit-config.yaml, .editorconfig
+
+### Supported Tools
+- **Python**: black, isort, autopep8, flake8, pylint, mypy, pytest
+- **JavaScript**: prettier, eslint, tslint, jest, mocha
+- **Go**: gofmt, goimports, golint, golangci-lint
+
+### Benefits
+- ✅ **Automatic Compliance** - Generated code follows team standards without manual intervention
+- ✅ **Pipeline Success** - Code passes CI/CD checks on first commit
+- ✅ **Team Consistency** - Uses exact same rules as the rest of the team
+- ✅ **Time Saving** - No manual formatting or fixing after generation
+- ✅ **Zero Configuration** - Just have a Makefile/pipeline config, and it works
+- ✅ **Learning System** - Stores detected patterns in memory bank for reuse
+
+### Technical Details
+- 6 files changed: 3 new files, 3 modified files
+- +1,051 insertions, -28 deletions
+- Fully backward compatible - all existing workflows still function
+- Non-breaking changes - optional feature that activates when config is present
+
+### Usage Example
+```bash
+# Copy example configuration
+cp Makefile.example Makefile
+
+# Run systemcc with any task
+/systemcc "create user authentication module"
+
+# System automatically detects and applies build rules:
+# ✅ Formats with black (line-length: 100)
+# ✅ Sorts imports with isort (profile: black)
+# ✅ Ensures flake8 compliance
+# ✅ Adds type hints for mypy
+```
+
+---
+
 ## [2.0.0] - 2025-01-10
 
 ### 🎉 Major Release - Enhanced Review & Memory System
@@ -105,6 +196,7 @@ The first public release of the Claude Agent System.
 
 ## Version History Summary
 
+- **v2.1.0** (2025-01-10) - Build Configuration Auto-Detection
 - **v2.0.0** (2025-01-10) - Enhanced Review & Memory System
 - **v1.0.0** (2025-01-18) - Initial Public Release
 
