@@ -4,17 +4,17 @@
 
 ### Priority Order for Workflow Selection
 
-1. **Context Size Analysis** (HIGHEST PRIORITY)
+1. **Code Minimalism Analysis** (HIGHEST PRIORITY - NEW)
+   - Existing code reuse potential
+   - Modification vs creation ratio
+   - Configuration-based solutions
+   - Surgical change opportunities
+
+2. **Context Size Analysis** (HIGH PRIORITY)
    - Current conversation token count
    - Number of files already loaded
    - Project size and complexity
    - Predicted context growth
-
-2. **Batch Optimization Analysis** (NEW - HIGH PRIORITY)
-   - Number of independent components
-   - Batch operation opportunities
-   - Grouping potential for similar operations
-   - Tool switching reduction possible
 
 3. **Task Complexity Analysis**
    - Scope of changes (single file vs multi-file)
@@ -24,7 +24,21 @@
 
 ## Workflow Indicators
 
-### Anti-YOLO Web Workflow (HIGHEST PRIORITY)
+### Code Minimalism Optimized Selection (NEW - HIGHEST PRIORITY)
+**Keywords:**
+- "fix", "update", "modify", "change", "adjust", "patch"
+- "refactor", "improve", "optimize", "clean up"
+- "config", "setting", "environment variable"
+
+**Indicators for Minimal Code:**
+- Working with existing codebase
+- Modifying rather than creating
+- Single-concern changes
+- Configuration-based solutions
+
+**Process:** Analyze existing → Modify surgically → Validate minimally
+
+### Anti-YOLO Web Workflow (HIGH PRIORITY)
 **Keywords:**
 - "HTML", "CSS", "JavaScript", "webpage", "website", "frontend", "UI"
 - "form", "button", "modal", "dashboard", "page", "component"
@@ -140,21 +154,22 @@ Show this to user after selection:
 🧠 Analyzing: "[task description]"
 
 📊 Task Analysis:
-   - Complexity: [High/Medium/Low] ([score]/10)
+   - Code Minimalism: [High/Medium/Low] ([score]/1.0)
+   - Complexity: [High/Medium/Low] ([score]/1.0)
    - Scope: [X files, Y components affected]
    - Risk Level: [High/Medium/Low]
-   - Estimated Time: [15-30min/45-60min/2+ hours]
+   - Context Load: [current tokens/30k]
 
-⚡ Batch Optimization:
-   - Independent Components: [count]
-   - Batch Potential: [High/Medium/Low]
-   - Batch Operations: [Available/Not suitable]
-   - Tool Switching: [Can reduce/Sequential needed]
+💡 Code Generation Approach:
+   - Strategy: [Modify existing/Create minimal new/Config change]
+   - Files to modify: [estimated count]
+   - New files needed: [Yes/No - avoid if possible]
+   - Reuse potential: [High/Medium/Low]
 
-📋 Selected Approach: [Workflow Name]
-   ↳ Why: [Clear reasoning for selection]
-   ↳ Process: [Brief overview of phases]
-   ↳ Optimization: [Batch operations/Sequential/Mixed]
+📋 Selected Workflow: [Workflow Name]
+   ↳ Why: [Clear reasoning focusing on minimal changes]
+   ↳ Process: [Brief overview emphasizing surgical changes]
+   ↳ Goal: [Minimal, reviewable, professional code]
 
 Ready to proceed? (yes/adjust/explain more)
 ```

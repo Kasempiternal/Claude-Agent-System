@@ -41,7 +41,7 @@ else
     print_info "Not in a git repository. Using current directory: $PROJECT_ROOT"
 fi
 
-# Create .claude directory if it doesn't exist
+# Create .claude directory structure if it doesn't exist
 CLAUDE_DIR="$PROJECT_ROOT/.claude"
 if [ ! -d "$CLAUDE_DIR" ]; then
     mkdir -p "$CLAUDE_DIR"
@@ -49,6 +49,10 @@ if [ ! -d "$CLAUDE_DIR" ]; then
 else
     print_info ".claude directory already exists"
 fi
+
+# Create additional directories for new features
+mkdir -p "$CLAUDE_DIR/agents"
+print_info "Creating agents directory for reviewers..."
 
 # Clone the Claude Agent System repository to temp directory
 print_info "Cloning Claude Agent System repository..."
@@ -89,10 +93,24 @@ if [ -d "$TEMP_DIR/middleware" ]; then
     print_status "Middleware installed (Lyra AI, analysis, memory systems, workflow enforcement)"
 fi
 
+# Copy agents directory (NEW - contains code reviewers)
+# Note: Agents are in the root .claude/agents in the repo structure
+if [ -d "$TEMP_DIR/Claude-Agent-System/.claude/agents" ]; then
+    cp -r "$TEMP_DIR/Claude-Agent-System/.claude/agents/"* "$CLAUDE_DIR/agents/" 2>/dev/null || true
+    print_status "Code review agents installed (Senior, Lead, Architect)"
+elif [ -d "$TEMP_DIR/.claude/agents" ]; then
+    cp -r "$TEMP_DIR/.claude/agents/"* "$CLAUDE_DIR/agents/" 2>/dev/null || true
+    print_status "Code review agents installed (Senior, Lead, Architect)"
+fi
+
 # Copy complete workflows directory structure
 if [ -d "$TEMP_DIR/workflows" ]; then
     cp -r "$TEMP_DIR/workflows/"* "$CLAUDE_DIR/workflows/" 2>/dev/null || true
     print_status "Complete workflow system installed"
+    # Check specifically for post-execution review
+    if [ -d "$TEMP_DIR/workflows/post-execution-review" ]; then
+        print_status "Post-execution triple review system installed"
+    fi
 fi
 
 # Copy legacy directories for backward compatibility
@@ -112,23 +130,30 @@ cp "$TEMP_DIR/commands/COMMAND-HOOKS.md" "$CLAUDE_DIR/commands/" 2>/dev/null || 
 
 print_status "All system components installed"
 
-# Setup ClaudeFiles directory structure
-print_info "Setting up ClaudeFiles directory structure..."
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/documentation"
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/tests/results"
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/tests/bugs"
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/workflows"
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/temp"
-mkdir -p "$PROJECT_ROOT/ClaudeFiles/memory"
+# Setup .claude/files directory structure (hidden from git)
+print_info "Setting up .claude/files directory structure..."
+mkdir -p "$PROJECT_ROOT/.claude/files/documentation"
+mkdir -p "$PROJECT_ROOT/.claude/files/tests/results"
+mkdir -p "$PROJECT_ROOT/.claude/files/tests/bugs"
+mkdir -p "$PROJECT_ROOT/.claude/files/workflows"
+mkdir -p "$PROJECT_ROOT/.claude/files/temp"
+mkdir -p "$PROJECT_ROOT/.claude/files/memory"
 
 # Initialize memory bank system
 print_info "Initializing memory bank system..."
-if [ -d "$TEMP_DIR/ClaudeFiles/memory" ]; then
-    cp -r "$TEMP_DIR/ClaudeFiles/memory/"* "$PROJECT_ROOT/ClaudeFiles/memory/" 2>/dev/null || true
+# Try multiple possible locations for memory files
+if [ -d "$TEMP_DIR/Claude-Agent-System/ClaudeFiles/memory" ]; then
+    cp -r "$TEMP_DIR/Claude-Agent-System/ClaudeFiles/memory/"* "$PROJECT_ROOT/.claude/files/memory/" 2>/dev/null || true
+    print_status "Memory bank system initialized from ClaudeFiles"
+elif [ -d "$TEMP_DIR/ClaudeFiles/memory" ]; then
+    cp -r "$TEMP_DIR/ClaudeFiles/memory/"* "$PROJECT_ROOT/.claude/files/memory/" 2>/dev/null || true
+    print_status "Memory bank system initialized"
+elif [ -d "$TEMP_DIR/.claude/files/memory" ]; then
+    cp -r "$TEMP_DIR/.claude/files/memory/"* "$PROJECT_ROOT/.claude/files/memory/" 2>/dev/null || true
     print_status "Memory bank system initialized"
 else
     # Create basic memory files if they don't exist in source
-    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-activeContext.md" << 'EOF'
+    cat > "$PROJECT_ROOT/.claude/files/memory/CLAUDE-activeContext.md" << 'EOF'
 # CLAUDE-activeContext.md
 *Current Session State and Progress Tracking*
 
@@ -148,7 +173,7 @@ else
 *This file maintains continuity across Claude sessions. Updates automatically.*
 EOF
 
-    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-patterns.md" << 'EOF'
+    cat > "$PROJECT_ROOT/.claude/files/memory/CLAUDE-patterns.md" << 'EOF'
 # CLAUDE-patterns.md
 *Established Code Patterns and Conventions*
 
@@ -165,7 +190,7 @@ EOF
 *This file learns and remembers your coding patterns.*
 EOF
 
-    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-decisions.md" << 'EOF'
+    cat > "$PROJECT_ROOT/.claude/files/memory/CLAUDE-decisions.md" << 'EOF'
 # CLAUDE-decisions.md
 *Architecture Decisions and Rationale*
 
@@ -179,7 +204,7 @@ EOF
 *This file maintains a record of important project decisions.*
 EOF
 
-    cat > "$PROJECT_ROOT/ClaudeFiles/memory/CLAUDE-troubleshooting.md" << 'EOF'
+    cat > "$PROJECT_ROOT/.claude/files/memory/CLAUDE-troubleshooting.md" << 'EOF'
 # CLAUDE-troubleshooting.md
 *Common Issues and Proven Solutions*
 
@@ -192,7 +217,23 @@ EOF
 ---
 *This file builds a knowledge base of solutions.*
 EOF
-    print_status "Basic memory bank files created"
+
+    cat > "$PROJECT_ROOT/.claude/files/memory/CLAUDE-dont_dos.md" << 'EOF'
+# CLAUDE-dont_dos.md
+*User Preferences and Things to Avoid*
+
+## What NOT to Do
+- Don't create summary documents unless explicitly requested
+- Don't be verbose in explanations - keep it brief
+- Don't create files that weren't requested
+
+## User Feedback Log
+- [User corrections will be captured automatically when you say "no", "stop", or "don't"]
+
+---
+*This file learns what you DON'T want, improving with every correction.*
+EOF
+    print_status "Basic memory bank files created (including dont_dos)"
 fi
 
 print_status "ClaudeFiles directory structure created"
@@ -221,6 +262,9 @@ The system automatically:
 - 🎯 Optimizes your request with Lyra AI intelligence
 - 🧠 Selects optimal workflow using advanced decision engines
 - 🔄 Executes ALL phases automatically (CANNOT be skipped)
+- 🔍 **NEW**: Runs triple code review (Senior, Lead, Architect) in parallel
+- 📝 **NEW**: Auto-updates memory banks after every task
+- 🚫 **NEW**: Learns what you DON'T want from corrections
 - 📊 Shows progress updates throughout execution
 - ⚡ Executes everything with comprehensive error handling
 - 💾 Learns and remembers patterns across sessions
@@ -244,15 +288,16 @@ Workflow selection:
 
 ## Memory Bank System
 
-Your project now has persistent memory in `ClaudeFiles/memory/`:
+Your project now has persistent memory in `.claude/files/memory/`:
 - **activeContext.md** - Current session state
 - **patterns.md** - Code conventions and patterns
 - **decisions.md** - Architecture decisions
 - **troubleshooting.md** - Solutions database
+- **dont_dos.md** - What NOT to do (learns from your corrections)
 
 ## File Organization
 
-All Claude-generated files are organized in `ClaudeFiles/`:
+All Claude-generated files are organized in `.claude/files/`:
 - `documentation/` - All documentation
 - `tests/` - Test results and bug reports
 - `workflows/` - Task plans and summaries
@@ -306,7 +351,7 @@ Add your project-specific guidelines below:
 
 - `.claude/commands/help.md` - Complete command reference
 - `.claude/CLAUDE-FILES-ORGANIZATION.md` - File organization details
-- `ClaudeFiles/memory/` - Your project's learning system
+- `.claude/files/memory/` - Your project's learning system
 EOF
     print_status "Created CLAUDE.md"
 else
@@ -336,20 +381,20 @@ if [ -f "$GITIGNORE_PATH" ]; then
         print_info ".claude already in .gitignore"
     fi
     
-    if ! grep -q "^ClaudeFiles/$" "$GITIGNORE_PATH"; then
+    if ! grep -q "^.claude/files/$" "$GITIGNORE_PATH"; then
         if [ "$ADDED_ITEMS" = false ]; then
             echo "" >> "$GITIGNORE_PATH"
             echo "# Claude Agent System" >> "$GITIGNORE_PATH"
         fi
-        echo "ClaudeFiles/" >> "$GITIGNORE_PATH"
-        echo "!ClaudeFiles/documentation/learnings/" >> "$GITIGNORE_PATH"
-        echo "!ClaudeFiles/documentation/project/" >> "$GITIGNORE_PATH"
+        echo ".claude/files/" >> "$GITIGNORE_PATH"
+        echo "!.claude/files/documentation/learnings/" >> "$GITIGNORE_PATH"
+        echo "!.claude/files/documentation/project/" >> "$GITIGNORE_PATH"
         print_status "Added ClaudeFiles to .gitignore"
     else
         print_info "ClaudeFiles already in .gitignore"
     fi
 else
-    print_info "No .gitignore file found - consider adding .claude/ and ClaudeFiles/ to version control exclusions"
+    print_info "No .gitignore file found - consider adding .claude/ and .claude/files/ to version control exclusions"
 fi
 
 # Create a quick reference file
@@ -421,11 +466,11 @@ The system uses intelligent context load prediction:
 
 ## File Organization
 
-All Claude-generated files are organized in the `ClaudeFiles/` directory:
-- `ClaudeFiles/documentation/` - All documentation
-- `ClaudeFiles/tests/` - Test results and bug reports
-- `ClaudeFiles/workflows/` - Workflow files and summaries
-- `ClaudeFiles/temp/` - Temporary working files
+All Claude-generated files are organized in the `.claude/files/` directory:
+- `.claude/files/documentation/` - All documentation
+- `.claude/files/tests/` - Test results and bug reports
+- `.claude/files/workflows/` - Workflow files and summaries
+- `.claude/files/temp/` - Temporary working files
 
 See `.claude/CLAUDE-FILES-ORGANIZATION.md` for complete details.
 
@@ -450,18 +495,19 @@ echo "  - $CLAUDE_DIR/commands/ (intelligent command system)"
 echo "  - $CLAUDE_DIR/middleware/ (advanced decision engines, Lyra AI, quality systems)"
 echo "  - $CLAUDE_DIR/workflows/ (complete workflow system)"
 echo "  - $CLAUDE_MD_PATH (enhanced project configuration)"
-echo "  - ClaudeFiles/memory/ (persistent learning system)"
-echo "  - ClaudeFiles/ (organized output with quality validation)"
+echo "  - .claude/files/memory/ (persistent learning system)"
+echo "  - .claude/files/ (organized output with quality validation)"
 echo ""
 echo -e "${BLUE}Quality Features:${NC}"
 echo "  ✅ 5-dimensional decision engine with complexity analysis"
+echo "  ✅ Triple code review system (Senior, Lead, Architect)"
+echo "  ✅ Automatic memory updates after every task"
+echo "  ✅ Learns what you DON'T want from corrections"
 echo "  ✅ MANDATORY workflow enforcement for /systemcc command"
 echo "  ✅ Comprehensive error handling and input validation"
 echo "  ✅ Performance optimization with early termination"
-echo "  ✅ Centralized constants and configuration management"
 echo "  ✅ Production-ready robustness and reliability"
-echo "  ⚡ NEW: Batch optimization for reduced tool switching"
-echo "  ⚠️ Workflow structure (Lyra → phases → progress) CANNOT be skipped"
+echo "  ⚠️ Workflow structure (Lyra → phases → review → memory) CANNOT be skipped"
 echo ""
 echo -e "${YELLOW}Tip:${NC} The enhanced system automatically analyzes task complexity, manages context, and selects optimal workflows!"
 echo -e "${YELLOW}New:${NC} Batch optimizer groups similar operations to reduce tool switching overhead!"

@@ -110,5 +110,56 @@ Use Task tool with:
 - Aggregate results efficiently
 - Handle partial failures
 
+## Review Patterns (NEW)
+
+### Triple Review System
+```markdown
+Phase: Post-Execution Review
+Mode: PARALLEL
+Reviewers:
+- Senior Engineer: Code quality
+- Lead Engineer: Architecture
+- Architect: System integration
+Time: 5 minutes max (all parallel)
+```
+
+### Review Decision Matrix
+- All PASS → Ready to ship
+- Any CRITICAL → Auto-fix immediately
+- MAJOR issues → Fix in session
+- MINOR issues → Log for later
+
+## Memory Update Patterns (NEW)
+
+### Automatic Capture
+```python
+CAPTURE_TRIGGERS = [
+    "workflow_complete",
+    "user_interruption",
+    "error_resolved",
+    "pattern_discovered",
+    "decision_made"
+]
+```
+
+### User Feedback Pattern
+```markdown
+When user says "no/stop/don't":
+1. IMMEDIATELY STOP
+2. Capture to dont_dos.md
+3. Acknowledge learning
+4. Ask for preference
+5. Update memory
+```
+
+### Session Completion Pattern
+```markdown
+After task complete:
+1. Run triple review (if code changed)
+2. Auto-update ALL memory files
+3. Show BRIEF summary (3 bullet points)
+4. NO document creation unless requested
+```
+
 ---
 *This file documents discovered patterns. Update when new patterns emerge.*
