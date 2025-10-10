@@ -1,0 +1,82 @@
+# Example Makefile for Build Configuration Detection
+# Copy this to "Makefile" in your project root to test the detection
+
+.PHONY: format format_check static test build clean help
+
+# Default target
+help:
+	@echo "Available targets:"
+	@echo "  format       - Format code with black and isort"
+	@echo "  format_check - Check formatting without modifying files"
+	@echo "  static       - Run static analysis (flake8, mypy)"
+	@echo "  test         - Run tests with pytest"
+	@echo "  build        - Build the project"
+	@echo "  clean        - Clean generated files"
+
+# Format code
+format:
+	black --line-length 100 .
+	isort --profile black --multi-line 3 --trailing-comma --force-grid-wrap 0 --use-parentheses --line-width 100 .
+
+# Check formatting (CI/CD)
+format_check:
+	black --line-length 100 --check .
+	isort --profile black --multi-line 3 --trailing-comma --force-grid-wrap 0 --use-parentheses --line-width 100 . --check-only
+
+# Static analysis
+static:
+	flake8 --ignore E501,E203,W503 --max-line-length=100 --exclude models/
+	mypy --ignore-missing-imports --no-strict-optional --no-site-packages . --exclude models/
+
+# Run tests
+test:
+	pytest --cov=. --cov-report=term-missing --cov-report=html
+	@echo "Coverage report generated in htmlcov/index.html"
+
+# Build project
+build: format_check static test
+	@echo "Building project..."
+	python setup.py build
+
+# Clean generated files
+clean:
+	find . -type d -name "__pycache__" -exec rm -rf {} + 2>/dev/null || true
+	find . -type f -name "*.pyc" -delete
+	find . -type f -name "*.pyo" -delete
+	find . -type f -name "*.coverage" -delete
+	rm -rf htmlcov/
+	rm -rf build/
+	rm -rf dist/
+	rm -rf *.egg-info/
+
+# CI/CD Pipeline stages (for reference)
+ci: format_check static test
+
+# Development workflow
+dev: format test
+	@echo "Code formatted and tested - ready for commit!"
+
+# Pre-commit hook simulation
+pre-commit: format_check static
+	@echo "Pre-commit checks passed!"
+
+# Alternative Python tools configuration (if not using Makefile)
+# These would be detected from pyproject.toml or setup.cfg:
+#
+# [tool.black]
+# line-length = 100
+# target-version = ['py38', 'py39', 'py310']
+#
+# [tool.isort]
+# profile = "black"
+# multi_line_output = 3
+# line_length = 100
+#
+# [tool.flake8]
+# max-line-length = 100
+# ignore = E501,E203,W503
+# exclude = models/
+#
+# [tool.mypy]
+# ignore_missing_imports = true
+# no_strict_optional = true

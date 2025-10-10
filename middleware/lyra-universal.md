@@ -24,7 +24,8 @@ This middleware applies to ALL commands:
     files_loaded: number,
     token_count: number,
     project_type: string,
-    tech_stack: array
+    tech_stack: array,
+    build_config: object  // NEW: Detected build configuration rules
   }
 }
 ```
@@ -67,6 +68,7 @@ Apply command-specific optimizations:
 - Enhance with routing hints
 - Clarify scope for workflow selection
 - Add context indicators
+- **NEW:** Include build configuration requirements from detected rules
 
 **For /agetos (Agent OS)**
 - Focus on standards and patterns
@@ -147,6 +149,12 @@ Optimized: "Systematically refactor the entire [detected framework] application.
    - Add technical specifications
    - Include edge case considerations
 
+5. **Apply Build Configuration Rules** (NEW)
+   - Include detected formatter requirements (e.g., "follow black with line-length 100")
+   - Add linter compliance notes (e.g., "ensure flake8 compliance with ignore E501,E203")
+   - Specify type hint requirements (e.g., "include mypy-compatible type hints")
+   - Note excluded paths and patterns from configuration
+
 ## Complexity Scoring Algorithm
 
 ```python
@@ -182,25 +190,59 @@ Based on complexity scoring:
 - **7-8**: AI Dev Tasks (PRD-based approach)
 - **9-10**: Phase-based execution (context management)
 
+## Build Configuration Integration (NEW)
+
+When build configuration is detected, Lyra automatically enhances prompts with:
+
+### Python Projects with Makefile
+```
+Original: "create user authentication module"
+With Build Config: "Create user authentication module following project standards:
+- Format with black (line-length: 100)
+- Sort imports with isort (profile: black, multi-line: 3)
+- Ensure flake8 compliance (ignore: E501,E203,W503, max-line-length: 100)
+- Include type hints for mypy (ignore-missing-imports)
+- Exclude models/ directory from linting
+- Add comprehensive tests with pytest"
+```
+
+### JavaScript Projects with package.json
+```
+Original: "add API endpoint"
+With Build Config: "Add API endpoint following project standards:
+- Format with prettier (printWidth: 80, singleQuote: true)
+- Ensure ESLint compliance with existing rules
+- Include JSDoc documentation
+- Add unit tests with Jest
+- Update API documentation"
+```
+
 ## Integration Instructions
 
 All commands must:
 1. Call Lyra middleware before processing
-2. Use the optimized prompt for execution
-3. Consider metadata for routing decisions
-4. Pass through user's original intent
+2. Include build configuration in context (NEW)
+3. Use the optimized prompt for execution
+4. Consider metadata for routing decisions
+5. Pass through user's original intent
 
 Example implementation:
 ```python
 def any_command_handler(user_input):
-    # Step 1: Optimize with Lyra
+    # Step 1: Detect build configuration (NEW)
+    build_config = detect_build_configuration()
+
+    # Step 2: Optimize with Lyra including build config
     kase_result = kase_optimize({
         'command': 'current_command',
         'prompt': user_input,
-        'context': get_current_context()
+        'context': {
+            **get_current_context(),
+            'build_config': build_config  # NEW
+        }
     })
-    
-    # Step 2: Execute with optimized prompt
+
+    # Step 3: Execute with optimized prompt
     return execute_command(kase_result.optimized_prompt)
 ```
 

@@ -98,11 +98,13 @@ This is the Claude Agent System repository - a comprehensive multi-agent workflo
 
 **Claude automatically:**
 - Analyzes your project on first use (no manual `/analyze` needed!)
+- **NEW:** Detects build configuration (Makefile, CI/CD, linters, formatters)
 - Detects the right workflow for your task
 - Executes ALL agents in sequence
 - Shows progress in real-time
 - Only asks for input when making decisions
 - Completes everything end-to-end
+- **NEW:** Ensures all code follows your pipeline/build rules
 
 Example:
 ```bash
@@ -187,7 +189,8 @@ Claude: [Creates PRD, generates tasks, implements - all automatic]
 ### Core System Files
 - `CLAUDE-FILES-ORGANIZATION.md` - **MANDATORY file organization**
 - `middleware/lyra-universal.md` - Universal Lyra AI prompt optimization
-- `middleware/automated-workflow-executor.md` - **NEW: Automatic agent execution system**
+- `middleware/build-config-detector.md` - **NEW: Build configuration detection**
+- `middleware/automated-workflow-executor.md` - Automatic agent execution system
 
 ### Workflow Documentation
 - `workflows/agent-os/` - Project initialization system
@@ -218,6 +221,19 @@ See `CLAUDE-FILES-ORGANIZATION.md` for complete details.
 
 ## Development Guidelines
 
+### Build Configuration Auto-Detection (NEW)
+The system automatically detects and applies build configuration from:
+- **Makefile** - Extracts formatter/linter commands and flags
+- **CI/CD Files** - `.gitlab-ci.yml`, `.github/workflows/*.yml`
+- **Language Configs** - `pyproject.toml`, `package.json`, `setup.cfg`
+- **Tool Configs** - `.pre-commit-config.yaml`, `tox.ini`, `.eslintrc`
+
+When detected, all generated code automatically follows:
+- Formatting rules (black, prettier, etc.)
+- Linting standards (flake8, eslint, mypy)
+- Test requirements (pytest, jest)
+- Pipeline stage requirements
+
 ### Task Complexity Assessment
 Before starting any task, assess its complexity:
 - **Simple**: Single file changes, bug fixes, minor features → Use orchestrated workflow
@@ -225,6 +241,7 @@ Before starting any task, assess its complexity:
 
 ### Quality Standards
 - Always follow the agent patterns exactly as documented
+- **NEW:** Code automatically follows detected build configuration
 - Run appropriate validation for the task complexity
 - Document learnings and patterns discovered
 
@@ -254,13 +271,22 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    ```
    This message MUST appear IMMEDIATELY when /systemcc is detected.
 
-2. **Detect and Route Internally**:
+2. **BUILD CONFIGURATION DETECTION** (NEW - AUTOMATIC):
+   ```
+   📋 BUILD CONFIGURATION DETECTED
+   ✅ Python: black (line-length=100), isort (profile=black)
+   ✅ Linting: flake8 (ignore E501,E203), mypy
+   ✅ All code will follow these standards
+   ```
+   This runs automatically when Makefile/CI config is present.
+
+3. **Detect and Route Internally**:
    - Analyze task complexity
    - Choose appropriate workflow
    - Execute ALL agents automatically
    - NEVER ask user to run another command
 
-3. **Progress Updates**:
+4. **Progress Updates**:
    ```
    🚀 Analyzing your request...
    ✅ Workflow selected: [Type]
@@ -269,7 +295,7 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    🔄 Phase 2/6: Implementation...
    ```
 
-4. **User Interactions - ONLY for**:
+5. **User Interactions - ONLY for**:
    - **Specifications**: "Which authentication method do you prefer?"
    - **Clarifications**: "Should this work on mobile devices?"
    - **Decisions**: "Database choice: PostgreSQL or MySQL?"
@@ -277,7 +303,7 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    
    NEVER: "Run /planner to continue" or "Execute /verifier next"
 
-5. **Example - Proper Flow**:
+6. **Example - Proper Flow**:
    ```
    User: /systemcc "add search functionality"
    
@@ -310,7 +336,7 @@ When `/systemcc` is invoked (THIS IS MANDATORY - NEVER SKIP):
    - Frontend search components
    ```
 
-6. **CRITICAL Rules**:
+7. **CRITICAL Rules**:
    - User ONLY ever types: `/systemcc "task"` (that's it!)
    - ALL workflow execution is internal and automatic
    - NEVER expose agent commands to users
