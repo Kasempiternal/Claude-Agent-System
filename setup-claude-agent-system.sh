@@ -32,17 +32,46 @@ print_info() {
     echo -e "${YELLOW}ℹ${NC} $1"
 }
 
-# Check if we're in a git repository
-if git rev-parse --git-dir > /dev/null 2>&1; then
-    PROJECT_ROOT=$(git rev-parse --show-toplevel)
-    print_status "Detected git repository at: $PROJECT_ROOT"
+# Parse command line arguments
+GLOBAL_INSTALL=false
+for arg in "$@"; do
+    case $arg in
+        --global|-g)
+            GLOBAL_INSTALL=true
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --global, -g    Install globally to ~/.claude/ (available in all projects)"
+            echo "  --help, -h      Show this help message"
+            echo ""
+            echo "Without --global, installs to the current project's .claude/ directory"
+            exit 0
+            ;;
+    esac
+done
+
+# Determine installation directory
+if [ "$GLOBAL_INSTALL" = true ]; then
+    CLAUDE_DIR="$HOME/.claude"
+    PROJECT_ROOT="$HOME"
+    print_status "Global installation mode: Installing to $CLAUDE_DIR"
+    print_info "Commands will be available in ALL projects"
 else
-    PROJECT_ROOT=$(pwd)
-    print_info "Not in a git repository. Using current directory: $PROJECT_ROOT"
+    # Check if we're in a git repository
+    if git rev-parse --git-dir > /dev/null 2>&1; then
+        PROJECT_ROOT=$(git rev-parse --show-toplevel)
+        print_status "Detected git repository at: $PROJECT_ROOT"
+    else
+        PROJECT_ROOT=$(pwd)
+        print_info "Not in a git repository. Using current directory: $PROJECT_ROOT"
+    fi
+    CLAUDE_DIR="$PROJECT_ROOT/.claude"
 fi
 
 # Create .claude directory structure if it doesn't exist
-CLAUDE_DIR="$PROJECT_ROOT/.claude"
 if [ ! -d "$CLAUDE_DIR" ]; then
     mkdir -p "$CLAUDE_DIR"
     print_status "Created .claude directory"
@@ -129,6 +158,22 @@ cp "$TEMP_DIR/SYSTEMCC-OVERRIDE.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/commands/COMMAND-HOOKS.md" "$CLAUDE_DIR/commands/" 2>/dev/null || true
 
 print_status "All system components installed"
+
+# Update paths for global installation
+if [ "$GLOBAL_INSTALL" = true ]; then
+    print_info "Updating paths for global installation..."
+    find "$CLAUDE_DIR/commands" -name "*.md" -exec sed -i '' 's|`middleware/|`~/.claude/middleware/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/commands" -name "*.md" -exec sed -i '' 's|`workflows/|`~/.claude/workflows/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/commands" -name "*.md" -exec sed -i '' 's|`commands/systemcc/|`~/.claude/commands/systemcc/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/middleware" -name "*.md" -exec sed -i '' 's|`middleware/|`~/.claude/middleware/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/middleware" -name "*.md" -exec sed -i '' 's|`workflows/|`~/.claude/workflows/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/workflows" -name "*.md" -exec sed -i '' 's|`middleware/|`~/.claude/middleware/|g' {} \; 2>/dev/null || true
+    find "$CLAUDE_DIR/workflows" -name "*.md" -exec sed -i '' 's|`workflows/|`~/.claude/workflows/|g' {} \; 2>/dev/null || true
+    print_status "Paths updated for global access"
+fi
+
+# Skip project-specific setup for global installs
+if [ "$GLOBAL_INSTALL" = false ]; then
 
 # Setup .claude/files directory structure (hidden from git)
 print_info "Setting up .claude/files directory structure..."
@@ -415,6 +460,8 @@ else
     print_info "No .gitignore file found - consider adding .claude/ and .claude/files/ to version control exclusions"
 fi
 
+fi # End of project-specific setup (skipped for global install)
+
 # Create a quick reference file
 cat > "$CLAUDE_DIR/QUICK_START.md" << 'EOF'
 # Claude Agent System - Quick Start (10/10 Code Quality)
@@ -505,18 +552,32 @@ print_status "Cleaned up temporary files"
 echo ""
 echo -e "${GREEN}✨ Claude Agent System setup complete! (10/10 Code Quality)${NC}"
 echo ""
-echo -e "${BLUE}Next steps:${NC}"
-echo "1. Open your project in Claude Code"
-echo "2. Use ${GREEN}/systemcc \"your task\"${NC} to get started with intelligent workflow selection"
-echo "3. Use ${GREEN}/help${NC} to see all available commands"
-echo ""
-echo -e "${BLUE}Complete system installed:${NC}"
-echo "  - $CLAUDE_DIR/commands/ (intelligent command system)"
-echo "  - $CLAUDE_DIR/middleware/ (advanced decision engines, Lyra AI, quality systems)"
-echo "  - $CLAUDE_DIR/workflows/ (complete workflow system)"
-echo "  - $CLAUDE_MD_PATH (enhanced project configuration)"
-echo "  - .claude/files/memory/ (persistent learning system)"
-echo "  - .claude/files/ (organized output with quality validation)"
+if [ "$GLOBAL_INSTALL" = true ]; then
+    echo -e "${BLUE}🌐 GLOBAL INSTALLATION${NC}"
+    echo "   /systemcc is now available in ALL projects!"
+    echo ""
+    echo -e "${BLUE}Next steps:${NC}"
+    echo "1. Open ANY project in Claude Code"
+    echo "2. Use ${GREEN}/systemcc \"your task\"${NC} - works everywhere!"
+    echo ""
+    echo -e "${BLUE}Installed to:${NC}"
+    echo "  - ~/.claude/commands/ (commands available globally)"
+    echo "  - ~/.claude/middleware/ (decision engines, Lyra AI)"
+    echo "  - ~/.claude/workflows/ (workflow system)"
+else
+    echo -e "${BLUE}Next steps:${NC}"
+    echo "1. Open your project in Claude Code"
+    echo "2. Use ${GREEN}/systemcc \"your task\"${NC} to get started with intelligent workflow selection"
+    echo "3. Use ${GREEN}/help${NC} to see all available commands"
+    echo ""
+    echo -e "${BLUE}Complete system installed:${NC}"
+    echo "  - $CLAUDE_DIR/commands/ (intelligent command system)"
+    echo "  - $CLAUDE_DIR/middleware/ (advanced decision engines, Lyra AI, quality systems)"
+    echo "  - $CLAUDE_DIR/workflows/ (complete workflow system)"
+    echo "  - $CLAUDE_MD_PATH (enhanced project configuration)"
+    echo "  - .claude/files/memory/ (persistent learning system)"
+    echo "  - .claude/files/ (organized output with quality validation)"
+fi
 echo ""
 echo -e "${BLUE}Quality Features:${NC}"
 echo "  ✅ 8-dimensional decision engine with complexity analysis"

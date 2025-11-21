@@ -51,8 +51,24 @@ Upgraded from 5 to **8 dimensions**:
 **One command installs everything (macOS/Linux):**
 
 ```bash
+# Install for current project
 curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.sh | bash
+
+# Install GLOBALLY (available in ALL projects)
+curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.sh | bash -s -- --global
 ```
+
+### Global vs Local Installation
+
+| Feature | Local (default) | Global (`--global`) |
+|---------|----------------|---------------------|
+| Available in | Current project only | All projects |
+| Install location | `./.claude/` | `~/.claude/` |
+| CLAUDE.md created | Yes | No (use per-project) |
+| Memory bank | Per-project | Shared |
+| Use case | Project-specific config | Always-available commands |
+
+**Tip:** Use `--global` if you want `/systemcc` available everywhere, then add project-specific CLAUDE.md as needed.
 
 ## How It Works
 
