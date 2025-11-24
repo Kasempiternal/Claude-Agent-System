@@ -139,39 +139,7 @@ Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
 ✨ Task complete!
 ```
 
-## Example 5: CCPM Integration
-
-```
-User: /systemcc --pm "build e-commerce checkout"
-
-Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
-✅ Following SYSTEMCC workflow instructions from CLAUDE.md
-
-[Lyra optimization...]
-
-🚀 CCPM Mode Activated (--pm flag detected)
-
-🔍 Environment Detection:
-✅ GitHub repository detected
-✅ gh CLI available
-
-📋 Creating Epic: E-commerce Checkout
-├─ Issue #156 created
-├─ 6 parallel tasks identified
-└─ 4 agents ready
-
-🔄 Parallel Execution:
-Agent 1: Payment Processing 🔄
-Agent 2: Cart Management 🔄
-Agent 3: Order Validation ⏳
-Agent 4: Email System ⏳
-
-[Progress tracking...]
-
-✨ All tasks complete!
-```
-
-## Example 6: Agent OS Integration
+## Example 5: Agent OS Integration
 
 ```
 User: /systemcc "setup coding standards for Python project"
@@ -202,7 +170,7 @@ Claude: 🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
 ✨ Standards setup complete!
 ```
 
-## Example 7: Feature Development (AI Dev Tasks)
+## Example 6: Feature Development (AI Dev Tasks)
 
 ```
 User: /systemcc "build user dashboard with analytics"

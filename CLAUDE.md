@@ -125,7 +125,6 @@ Claude: 🔍 First time in this project - running analysis first...
   - `orchestrated-only/` - Streamlined three-agent workflow
   - `phase-based-workflow/` - Context-optimized execution
 - **Commands**: `commands/` - All command entry points
-- **Git Workflows**: `create-worktree.md` and `wt-alias-setup.md`
 
 ## Unified System Commands
 

@@ -123,29 +123,6 @@
 
 **Process:** Analyze → Implement → Review
 
-## CCPM Integration
-
-### When to Recommend CCPM
-```python
-def ccpm_would_be_beneficial(analysis):
-    return (
-        analysis.complexity_score > 6 AND 
-        analysis.estimated_time > 60_minutes AND
-        (
-            analysis.independent_components >= 3 OR
-            "parallel" in analysis.keywords OR
-            "concurrent" in analysis.keywords OR
-            "multiple systems" in analysis.description
-        )
-    )
-```
-
-### CCPM Triggers
-- Explicit --pm flag
-- Complex parallel tasks
-- Multiple independent components
-- Tasks benefiting from project management
-
 ## Workflow Selection Transparency
 
 Show this to user after selection:
@@ -181,9 +158,6 @@ Ready to proceed? (yes/adjust/explain more)
 IF web_detection.is_web_project:
     → Anti-YOLO Web Workflow
     → Check for batch opportunities in components
-ELIF user_confirmed_ccpm OR explicit_pm_flag:
-    → CCPM Integration
-    → Automatic task decomposition
 ELIF batch_potential == 'high' AND independent_components > 3:
     → Enable batch optimization for ANY workflow
     → Group similar operations together
@@ -207,5 +181,5 @@ ELSE:
 ## Next Steps
 
 After workflow selection:
-- Continue to `04-IMPLEMENTATION-STEPS.md`
+- Continue to `05-IMPLEMENTATION-STEPS.md`
 - Execute selected workflow automatically
