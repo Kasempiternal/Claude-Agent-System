@@ -36,11 +36,11 @@ The system now learns from every session automatically:
 - Updates after every task completion
 - No manual memory management needed
 
-### Enhanced Analysis Engine
-Upgraded from 5 to **8 dimensions**:
-- Added: Code Minimalism (modify vs create)
-- Added: Security Sensitivity (auth/database detection)
-- Added: Pattern Reusability (leverage existing code)
+### Simplified Analysis Engine
+Streamlined to **3 core dimensions**:
+- **Complexity**: simple / moderate / complex
+- **Risk**: low / high
+- **Scope**: single-file / multi-file / system-wide
 
 [See full changelog →](CHANGELOG.md)
 
@@ -110,12 +110,8 @@ The system uses multiple specialized workflows. You don't pick - it does:
 /systemcc "create contact form page"
 # ↳ Shows ASCII wireframe → You approve → Builds HTML/CSS/JS
 
-# Project management mode
-/systemcc --pm "build e-commerce checkout system"  
-# ↳ Creates GitHub/GitLab issues → Parallel development
-
-# Force batch optimization (NEW)
-/systemcc --batch "create CRUD for users, posts, comments"
+# Batch operations → Auto-detected
+/systemcc "create CRUD for users, posts, comments"
 # ↳ Groups operations → Reduced tool switching
 ```
 
@@ -155,15 +151,10 @@ For web projects, it creates an ASCII wireframe first:
 - Drastically reduces revision cycles
 
 ### Intelligent Workflow Selection
-The system analyzes your request across 8 dimensions:
-1. **Code Minimalism** - Can we modify existing code vs creating new?
-2. **Technical Complexity** - Algorithm sophistication, API integrations
-3. **Scope Impact** - Files affected, system-wide changes
-4. **Risk Assessment** - Breaking changes, security implications
-5. **Context Load** - Memory usage, token requirements
-6. **Time Pressure** - Urgency indicators, deadline sensitivity
-7. **Security Sensitivity** - Authentication, database, encoding operations
-8. **Pattern Reusability** - Existing patterns to leverage
+The system analyzes your request across 3 core dimensions:
+1. **Complexity** - Simple fix or complex architecture change?
+2. **Risk** - Low-risk styling or high-risk security changes?
+3. **Scope** - Single file, multiple files, or system-wide?
 
 Then automatically picks the right workflow. No manual selection needed.
 
@@ -174,7 +165,7 @@ Then automatically picks the right workflow. No manual selection needed.
 Here's what happens when you run `/systemcc`:
 
 ```
-User: /systemcc [--pm] [--debug] [--secure] "your request"
+User: /systemcc [--debug] [--secure] "your request"
          │
          ▼
 ┌─────────────────────────────────────┐
@@ -260,30 +251,6 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
              │
              ▼
 ┌─────────────────────────────────────┐
-│  🏃 EXPLICIT FLAG PROCESSING        │
-├─────────────────────────────────────┤
-│ Check command flags:                │
-│                                     │
-│ IF --pm flag explicitly provided:   │
-│   🚀 CCPM INTEGRATION MODE          │
-│   │                                 │
-│   ├─ Detect Git hosting:            │
-│   │  ├─ GitLab: glab CLI + native Epics │
-│   │  ├─ GitHub: gh CLI + extensions │
-│   │  └─ None: Local PM mode         │
-│   │                                 │
-│   ├─ Analyze parallel potential:    │
-│   │  • Independent task components  │
-│   │  • Estimated time savings      │
-│   │  • Resource requirements       │
-│   │                                 │
-│   └─ → Skip to CCPM Execution ✨   │
-│                                     │
-│ ELSE: Continue to standard analysis │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
 │  📊 CONTEXT SIZE ANALYSIS          │
 ├─────────────────────────────────────┤
 │ Analyze current project state:      │
@@ -336,76 +303,24 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
              │
              ▼
 ┌─────────────────────────────────────┐
-│  🧮 8-DIMENSIONAL ANALYSIS ENGINE   │
+│  🧮 3-DIMENSIONAL ANALYSIS          │
 ├─────────────────────────────────────┤
-│ Score task across eight dimensions: │
+│ Score task across three dimensions: │
 │                                     │
-│ 1️⃣ CODE MINIMALISM [0.0-1.0]:      │
-│    • Modify vs create analysis      │
-│    • Existing code leverage         │
-│    • Minimal change approach        │
-│    Keywords: "fix", "update",       │
-│             "modify", "change"      │
+│ 1️⃣ COMPLEXITY:                      │
+│    • Simple: fix, update, typo      │
+│    • Moderate: feature, add         │
+│    • Complex: architecture, refactor│
 │                                     │
-│ 2️⃣ TECHNICAL COMPLEXITY [0.0-1.0]: │
-│    • Algorithm sophistication       │
-│    • API integration requirements   │
-│    • Framework-specific patterns    │
-│    • Database schema changes        │
-│    • Security implementation        │
-│    Keywords: "algorithm", "API", "auth", │
-│             "security", "crypto"    │
+│ 2️⃣ RISK:                            │
+│    • Low: styling, docs, config     │
+│    • High: security, database, auth │
 │                                     │
-│ 3️⃣ SCOPE IMPACT [0.0-1.0]:         │
-│    • File modification prediction   │
-│    • Cross-service dependencies     │
-│    • Integration touchpoints        │
-│    • Breaking change potential      │
-│    Keywords: "refactor", "system",  │
-│             "architecture", "migrate"│
+│ 3️⃣ SCOPE:                           │
+│    • Single: one file mentioned     │
+│    • Multi: multiple files          │
+│    • System: "all", "entire", etc.  │
 │                                     │
-│ 4️⃣ RISK ASSESSMENT [0.0-1.0]:      │
-│    • Data integrity risks           │
-│    • Security vulnerability intro   │
-│    • Performance impact potential   │
-│    • Production stability risk      │
-│    Keywords: "critical", "production", │
-│             "database", "payment"   │
-│                                     │
-│ 5️⃣ CONTEXT LOAD [0.0-1.0]:         │
-│    • Token requirement estimation   │
-│    • Memory usage prediction        │
-│    • Processing complexity          │
-│    • Multi-file coordination needs  │
-│                                     │
-│ 6️⃣ TIME PRESSURE [0.0-1.0]:        │
-│    • Urgency keyword detection      │
-│    • Deadline sensitivity           │
-│    • Critical path identification   │
-│    Keywords: "urgent", "ASAP", "fix", │
-│             "broken", "down"        │
-│                                     │
-│ 7️⃣ SECURITY SENSITIVITY [0.0-1.0]: │
-│    • Authentication/authorization   │
-│    • Database operations            │
-│    • Data encoding/decoding         │
-│    • API security requirements      │
-│    Keywords: "auth", "login", "jwt", │
-│             "password", "encrypt"   │
-│                                     │
-│ 8️⃣ PATTERN REUSABILITY [0.0-1.0]:  │
-│    • Existing pattern detection     │
-│    • Code reuse opportunities       │
-│    • Historical success patterns    │
-│    • Team conventions leverage      │
-│                                     │
-│ Enhanced Pattern Recognition:       │
-│ • Historical success patterns       │
-│ • Tech stack-specific adjustments   │
-│ • User preference weighting         │
-│ • Error pattern avoidance           │
-│                                     │
-│ Final Composite Score: [0.0-1.0]    │
 │ Decision Confidence: [0.0-1.0]      │
 └────────────┬────────────────────────┘
              │
@@ -504,52 +419,12 @@ User: /systemcc [--pm] [--debug] [--secure] "your request"
 └────────────┬────────────────────────┘
              │
              ▼
-┌─────────────────────────────────────┐
-│  💡 CCPM SMART RECOMMENDATIONS     │
-├─────────────────────────────────────┤
-│ Post-selection parallel analysis:   │
-│                                     │
-│ Parallel Benefit Calculator:        │
-│ • Independent task components: [N]   │
-│ • Estimated serial time: [T] mins   │
-│ • Parallel potential: [P] factor    │
-│ • Resource availability check       │
-│                                     │
-│ Recommendation Triggers:            │
-│ ├─ Complexity score > 6 AND time > 60min │
-│ ├─ Independent components ≥ 3       │
-│ ├─ Keywords: "parallel", "concurrent" │
-│ └─ Multi-system integration detected│
-│                                     │
-│ IF parallel_benefit > 0.65:         │
-│ ┌─────────────────────────────────┐ │
-│ │ 💡 SHOW SMART RECOMMENDATION:   │ │
-│ │                                 │ │
-│ │ "This task has [N] independent  │ │
-│ │  components that could benefit  │ │
-│ │  from batch optimization.        │ │
-│ │                                 │ │
-│ │  Expected benefits:             │ │
-│ │  • Reduced tool switching      │ │
-│ │  • Better progress tracking     │ │
-│ │  • Parallel quality assurance  │ │
-│ │                                 │ │
-│ │  Switch to CCPM? (y/n)"         │ │
-│ │                                 │ │
-│ │  ├─ YES → 🚀 Switch to CCPM     │ │
-│ │  └─ NO → Continue selected      │ │
-│ └─────────────────────────────────┘ │
-│                                     │
-│ ELSE: Execute selected workflow     │
-└────────────┬────────────────────────┘
-             │
-             ▼
         🚀 WORKFLOW EXECUTION
              │
    ┌─────────┼─────────┐
    ▼         ▼         ▼
 ┌─────┐ ┌─────┐ ┌─────────┐
-│CCMP │ │ANTI │ │STANDARD │
+│BATCH│ │ANTI │ │STANDARD │
 │MODE │ │YOLO │ │WORKFLOWS│
 └─────┘ └─────┘ └─────────┘
 ```
@@ -588,29 +463,6 @@ User: yes
 - **90% fewer revisions** - Fix layout in wireframe stage (cheap) not code stage (expensive)
 - **Token efficient** - ASCII uses 10x fewer tokens than HTML mockups
 - **No surprises** - See exactly what you'll get before any code is written
-
-### 🚀 Project Management Integration (CCPM)
-
-For larger projects, use the `--pm` flag to activate Critical Chain Project Management:
-
-```bash
-/systemcc --pm "build e-commerce checkout system"
-
-🔍 Analyzing project scope...
-📋 Creating Epic: E-commerce Checkout System
-   ├─ Issue #1: Payment gateway integration
-   ├─ Issue #2: Shopping cart state management  
-   ├─ Issue #3: Checkout form validation
-   └─ Issue #4: Order confirmation system
-
-🚀 Deploying parallel agents to GitHub Issues...
-📈 Expected completion: More efficient with batch optimization
-```
-
-**Git Platform Support:**
-- **GitLab**: Native Epics + Issue Boards (best experience!)
-- **GitHub**: Issues + Epic extensions
-- **Local**: Built-in project management system
 
 ## 🏗️ What Workflows Are Available
 
@@ -655,26 +507,20 @@ The system automatically chooses from these battle-tested workflows:
 
 ## 🔬 Advanced Features
 
-### 🧠 8-Dimensional Task Analysis
-Behind the simple `/systemcc` command, the system evaluates every request across eight dimensions:
+### 🧠 3-Dimensional Task Analysis
+Behind the simple `/systemcc` command, the system evaluates every request across three dimensions:
 
 ```
 📊 ANALYSIS DIMENSIONS:
-├─ Code Minimalism: Modify vs create, minimal changes
-├─ Technical Complexity: Algorithm sophistication, API integrations
-├─ Scope Impact: Files affected, system-wide changes
-├─ Risk Assessment: Breaking changes, security implications
-├─ Context Load: Memory usage, token requirements
-├─ Time Pressure: Urgency indicators, deadline sensitivity
-├─ Security Sensitivity: Auth, database, encoding operations
-└─ Pattern Reusability: Existing patterns to leverage
+├─ Complexity: simple / moderate / complex
+├─ Risk: low / high
+└─ Scope: single-file / multi-file / system-wide
 ```
 
 **Smart Pattern Recognition:**
-- Learns from your past projects and preferences
-- Adapts to your tech stack conventions automatically
-- Improves workflow selection through usage feedback
-- Remembers your testing patterns and coding style
+- Simple keyword matching for fast decisions
+- Clear decision table for predictable routing
+- Learns from your preferences over time
 
 ### 🔍 Debug Mode - See the AI's Thinking
 
@@ -684,15 +530,13 @@ Want to understand how the system made its decision? Use debug mode:
 /systemcc --debug "add user authentication"
 
 🧠 ANALYSIS RESULTS:
-├─ Complexity Score: 8.2/10 (High - JWT, OAuth, password hashing)
-├─ Scope Impact: 7.5/10 (Multiple files: auth, middleware, database)
-├─ Risk Level: 6.8/10 (Security-critical functionality)
-├─ Context Load: 5.2/10 (Medium - manageable token usage)
-└─ Time Pressure: 3.0/10 (No urgency keywords detected)
+├─ Complexity: complex (auth, security keywords)
+├─ Risk: high (authentication detected)
+└─ Scope: multi (auth, middleware, database)
 
 🎯 DECISION: Complete 6-Agent System
-   Confidence: 94% (High complexity + security risk)
-   Alternative considered: AI Dev Tasks (72% confidence)
+   Confidence: 85% (High complexity + high risk)
+   Security scan: enabled
 
 🚀 Executing Complete System workflow...
 ```
@@ -735,7 +579,6 @@ your-project/
     │   ├── CLAUDE-troubleshooting.md
     │   └── CLAUDE-dont_dos.md     # NEW: User preferences
     ├── wireframes/           # ASCII wireframes (web projects)
-    ├── pm/                   # Project management (CCPM mode)
     └── documentation/        # Generated docs and reports
 ```
 
@@ -798,18 +641,14 @@ If any components are missing, the script shows exactly what needs to be fixed.
 
 **Primary Command:**
 - `/systemcc "your task"` - Does everything automatically (includes review + memory updates)
-- `/systemcc --pm "your task"` - Project management mode
 - `/systemcc --debug "your task"` - Show AI decision-making process
+- `/systemcc --secure "task"` - Enhanced security scanning
 
 **⚠️ Workflow Enforcement:** The `/systemcc` command's automated workflow (Lyra optimization → workflow selection → phase execution → review → memory update) is MANDATORY and cannot be skipped, ensuring consistent quality across all tasks.
 
 **Utility Commands:**
 - `/help` - Show all commands
 - `/analyzecc` - Manual project analysis (first run auto-triggers this)
-
-**Advanced Options:**
-- `/systemcc --secure "task"` - Enhanced security scanning
-- `/systemcc --pm --dashboard` - Refresh project management dashboard
 
 ## 🤝 Contributing
 

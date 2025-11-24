@@ -1,25 +1,35 @@
-# SYSTEMCC COMMAND - MODULAR DOCUMENTATION
+# SYSTEMCC COMMAND - MODULE INDEX
 
-⚠️ **CRITICAL: ALL MODULES MUST BE LOADED FOR PROPER OPERATION**
+**ALL MODULES MUST BE LOADED FOR PROPER OPERATION**
 
-## Module Loading Order (MANDATORY)
+## Module Loading Order
 
-### 🚨 LEVEL 0 - CRITICAL (Load First)
-1. **`01-CRITICAL-DETECTION.md`** - MUST show detection feedback
-2. **`02-LYRA-OPTIMIZATION.md`** - MUST show Lyra optimization
+### LEVEL 0 - CRITICAL (Load First)
+| Module | Purpose |
+|--------|---------|
+| `01-CRITICAL-DETECTION.md` | Detection feedback message |
+| `02-LYRA-OPTIMIZATION.md` | Lyra AI prompt optimization |
+| `03-BUILD-CONFIG.md` | Build/pipeline configuration |
 
-### 📋 LEVEL 1 - CORE WORKFLOW
-3. **`03-WORKFLOW-SELECTION.md`** - Decision matrix and indicators
-4. **`04-IMPLEMENTATION-STEPS.md`** - Execution flow and steps
+### LEVEL 1 - CORE WORKFLOW
+| Module | Purpose |
+|--------|---------|
+| `04-WORKFLOW-SELECTION.md` | Workflow decision matrix |
+| `05-IMPLEMENTATION-STEPS.md` | Execution flow and steps |
 
-### 📚 LEVEL 2 - REFERENCE
-5. **`05-EXAMPLES.md`** - Workflow examples (all types)
-6. **`06-DECISION-ENGINE.md`** - Advanced decision logic
-7. **`07-ERROR-HANDLING.md`** - Error recovery strategies
+### LEVEL 2 - REFERENCE
+| Module | Purpose |
+|--------|---------|
+| `06-EXAMPLES.md` | Workflow examples |
+| `07-DECISION-ENGINE.md` | 3-dimension decision logic |
+| `08-ERROR-HANDLING.md` | Error recovery strategies |
+| `09-PARALLEL.md` | Batch operations |
 
-### ⚡ LEVEL 3 - OPTIMIZATION (NEW)
-8. **`08-PARALLEL-OPTIMIZER.md`** - Batch optimization detection
-9. **`09-PARALLEL-EXECUTION.md`** - Batch execution engine
+### LEVEL 3 - POST-EXECUTION
+| Module | Purpose |
+|--------|---------|
+| `10-POST-REVIEW.md` | Triple code review system |
+| `11-MEMORY-UPDATE.md` | Memory bank updates |
 
 ## Quick Reference
 
@@ -29,125 +39,48 @@
 ```
 
 ### What Happens (In Order)
-1. **Detection** → "SYSTEMCC DETECTED" message
-2. **Lyra** → Optimize prompt with 4-D methodology
-3. **Analysis** → Context, complexity, risk assessment
-4. **Batch Check** → Identify grouping opportunities
-5. **Selection** → Choose best workflow + optimization
-6. **Execution** → Run with batch operations where beneficial
-7. **Completion** → Summary and results
+1. **Detection** - "SYSTEMCC DETECTED" message
+2. **Lyra** - Optimize prompt
+3. **Build Config** - Apply project rules
+4. **Analysis** - 3-dimension assessment
+5. **Selection** - Choose workflow
+6. **Execution** - Run with progress
+7. **Review** - Triple code review
+8. **Memory** - Update learnings
+9. **Summary** - Brief completion message
 
 ### Critical Rules
 - **ALWAYS** show detection feedback first
-- **ALWAYS** show Lyra optimization box
+- **ALWAYS** show Lyra optimization
 - **NEVER** ask user to run another command
 - **NEVER** expose agent commands to user
 - **COMPLETE** everything in one flow
 
-## Module Descriptions
+## Workflows Available
 
-### 01-CRITICAL-DETECTION.md
-- Immediate detection feedback
-- Enforcement levels
-- Cannot be overridden
+| Workflow | Use Case |
+|----------|----------|
+| `orchestrated` | Simple tasks (3-agent) |
+| `complete_system` | Complex tasks (6-agent) |
+| `taskit` | Large scope (phase-based) |
+| `aidevtasks` | Feature development (PRD) |
+| `anti-yolo-web` | Web app development |
+| `agetos` | Project initialization |
 
-### 02-LYRA-OPTIMIZATION.md
-- 4-D methodology (Deconstruct, Diagnose, Develop, Deliver)
-- Optimization display format
-- Complexity scoring
+## Integration
 
-### 03-WORKFLOW-SELECTION.md
-- All workflow indicators
-- Decision matrix
-- CCPM integration logic
-
-### 04-IMPLEMENTATION-STEPS.md
-- Step-by-step execution
-- Memory bank operations
-- Progress tracking
-
-### 05-EXAMPLES.md
-- Real workflow examples
-- All workflow types covered
-- User interaction patterns
-
-### 06-DECISION-ENGINE.md
-- Python decision functions
-- Fallback strategies
-- Confidence scoring
-
-### 07-ERROR-HANDLING.md
-- Error types and recovery
-- User communication
-- Fallback patterns
-
-### 08-PARALLEL-OPTIMIZER.md (NEW)
-- Batch detection logic
-- Grouping opportunities
-- Operation type analysis
-- Tool optimization strategies
-
-### 09-PARALLEL-EXECUTION.md (NEW)
-- MultiEdit usage
-- Background command execution
-- Batch tool calls
-- Error handling for batches
-
-## Enforcement Hierarchy
-
-### LEVEL 0 - ABSOLUTE (Cannot Override)
-- Detection feedback message
-- Lyra optimization display
-- Workflow phase execution
-- Progress reporting
-- End-to-end completion
-
-### LEVEL 1 - CORE (Required for Function)
-- Workflow selection logic
-- Implementation steps
-- Error handling
-
-### LEVEL 2 - REFERENCE (Supporting)
-- Examples for guidance
-- Decision engine details
-- Advanced patterns
-
-## Integration with Other Systems
-
-### Links to Parent Files
+Links to parent files:
 - `CLAUDE.md` - Project instructions
-- `SYSTEMCC-OVERRIDE.md` - Enforcement rules
-- `middleware/lyra-universal.md` - Lyra optimization
-- `middleware/workflow-enforcement.md` - Workflow rules
-
-### Workflow Destinations
-- `/agetos` - Agent OS workflows
-- `/aidevtasks` - PRD-based development
-- `/taskit` - Phase-based execution
-- `/orchestrated` - Streamlined 3-agent
-- Complete System - 6-agent validation
+- `middleware/lyra-universal.md` - Lyra system
+- `middleware/simplified-decision-engine.md` - Decision logic
 
 ## Troubleshooting
 
-### If SYSTEMCC is Being Ignored
+**If SYSTEMCC is being ignored:**
 1. Check detection message appears
-2. Verify all modules are loaded
-3. Check SYSTEMCC-OVERRIDE.md enforcement
-4. Ensure CLAUDE.md is being read
+2. Verify all modules loaded
+3. Check CLAUDE.md is being read
 
-### If Workflow Selection Fails
-1. Check 03-WORKFLOW-SELECTION.md
-2. Verify decision engine (06)
-3. Use fallback strategies (07)
-
-### If Execution Stalls
-1. Check 04-IMPLEMENTATION-STEPS.md
-2. Verify phase progression
-3. Check for user input needs
-
-## Remember
-
-**Users only type:** `/systemcc "task"`
-**Claude handles:** EVERYTHING else automatically
-
-No manual commands. No agent exposure. Complete automation.
+**If workflow selection fails:**
+1. Check 04-WORKFLOW-SELECTION.md
+2. Use fallback in 08-ERROR-HANDLING.md

@@ -1,57 +1,59 @@
 # /systemcc - Master Command Router
 
-⚠️ **CRITICAL: This is a modular command. ALL modules in `commands/systemcc/` MUST be loaded for proper operation.**
+**CRITICAL: ALL modules in `commands/systemcc/` MUST be loaded for proper operation.**
 
-## 🚨 MANDATORY MODULE LOADING
-
-**This file has been split into focused modules to prevent being ignored due to length.**
+## Module Loading Order
 
 ### Load ALL modules from `commands/systemcc/` directory:
 
-1. **`00-INDEX.md`** - Module overview and loading order
-2. **`01-CRITICAL-DETECTION.md`** - Detection feedback (LEVEL 0)
-3. **`02-LYRA-OPTIMIZATION.md`** - Lyra AI optimization (LEVEL 0)
-4. **`03-BUILD-CONFIG.md`** - Build/pipeline configuration detection (LEVEL 0) (NEW)
-5. **`04-WORKFLOW-SELECTION.md`** - Workflow decision matrix
-6. **`05-IMPLEMENTATION-STEPS.md`** - Execution flow
-7. **`06-EXAMPLES.md`** - All workflow examples
-8. **`07-DECISION-ENGINE.md`** - Decision logic
-9. **`08-ERROR-HANDLING.md`** - Error recovery
-10. **`09-PARALLEL-OPTIMIZER.md`** - Batch optimization
-11. **`10-PARALLEL-EXECUTION.md`** - Batch execution
+| # | Module | Purpose |
+|---|--------|---------|
+| 1 | `00-INDEX.md` | Module overview |
+| 2 | `01-CRITICAL-DETECTION.md` | Detection feedback (LEVEL 0) |
+| 3 | `02-LYRA-OPTIMIZATION.md` | Lyra AI optimization (LEVEL 0) |
+| 4 | `03-BUILD-CONFIG.md` | Build configuration (LEVEL 0) |
+| 5 | `04-WORKFLOW-SELECTION.md` | Workflow decision matrix |
+| 6 | `05-IMPLEMENTATION-STEPS.md` | Execution flow |
+| 7 | `06-EXAMPLES.md` | Workflow examples |
+| 8 | `07-DECISION-ENGINE.md` | 3-dimension decision logic |
+| 9 | `08-ERROR-HANDLING.md` | Error recovery |
+| 10 | `09-PARALLEL.md` | Batch operations |
+| 11 | `10-POST-REVIEW.md` | Code review system |
+| 12 | `11-MEMORY-UPDATE.md` | Memory bank updates |
 
 ## Quick Summary
 
 The `/systemcc` command is the ONLY command users need. It:
 - Shows immediate detection feedback
 - Optimizes requests with Lyra AI
-- **NEW:** Detects and applies build/pipeline configuration rules
-- **NEW:** Detects batch operation opportunities
-- Auto-selects the best workflow + optimization
-- Executes everything automatically with batching where beneficial
+- Detects and applies build/pipeline configuration rules
+- Auto-selects the best workflow using 3-dimension analysis
+- Executes everything automatically
 - Completes tasks end-to-end
 
-## Critical Execution Order
-
-When `/systemcc` is invoked:
+## Execution Order
 
 ```
-1. IMMEDIATE: Show detection message
-   🎯 SYSTEMCC DETECTED - Command acknowledged and workflow initiated
-   ✅ Following SYSTEMCC workflow instructions from CLAUDE.md
+1. IMMEDIATE: Detection message
+   "SYSTEMCC DETECTED - Command acknowledged"
 
-2. ALWAYS: Show Lyra optimization box
-   [Full formatted optimization display]
+2. ALWAYS: Lyra optimization
+   [Formatted optimization display]
 
-3. NEW: Detect and show build configuration (if present)
-   📋 BUILD CONFIGURATION DETECTED
-   [Display detected formatters, linters, and rules]
+3. AUTO: Build configuration (if present)
+   [Display detected formatters, linters, rules]
 
-4. AUTO: Select and execute workflow
-   [Progress through all phases automatically]
+4. AUTO: 3-dimension analysis
+   [Complexity, Risk, Scope assessment]
 
-5. COMPLETE: Finish entire task
-   ✨ Task complete!
+5. AUTO: Select and execute workflow
+   [Progress through all phases]
+
+6. AUTO: Code review
+   [Triple review system]
+
+7. COMPLETE: Summary
+   "Task complete!"
 ```
 
 ## Enforcement Levels
@@ -59,7 +61,7 @@ When `/systemcc` is invoked:
 ### LEVEL 0 - ABSOLUTE (Cannot be overridden)
 - Detection feedback
 - Lyra optimization display
-- Build configuration detection and application
+- Build configuration application
 - Automatic workflow execution
 - Complete end-to-end flow
 
@@ -78,26 +80,23 @@ When `/systemcc` is invoked:
 
 ## Module Details
 
-For complete implementation details, see:
-- **Detection**: `systemcc/01-CRITICAL-DETECTION.md`
-- **Optimization**: `systemcc/02-LYRA-OPTIMIZATION.md`
-- **Build Config**: `systemcc/03-BUILD-CONFIG.md`
-- **Selection**: `systemcc/04-WORKFLOW-SELECTION.md`
-- **Execution**: `systemcc/05-IMPLEMENTATION-STEPS.md`
-- **Examples**: `systemcc/06-EXAMPLES.md`
-- **Logic**: `systemcc/07-DECISION-ENGINE.md`
-- **Errors**: `systemcc/08-ERROR-HANDLING.md`
-- **Batch Opt**: `systemcc/09-PARALLEL-OPTIMIZER.md`
-- **Batch Exec**: `systemcc/10-PARALLEL-EXECUTION.md`
+| Category | Modules |
+|----------|---------|
+| Detection | `01-CRITICAL-DETECTION.md` |
+| Optimization | `02-LYRA-OPTIMIZATION.md` |
+| Build Config | `03-BUILD-CONFIG.md` |
+| Selection | `04-WORKFLOW-SELECTION.md`, `07-DECISION-ENGINE.md` |
+| Execution | `05-IMPLEMENTATION-STEPS.md`, `09-PARALLEL.md` |
+| Reference | `06-EXAMPLES.md`, `08-ERROR-HANDLING.md` |
+| Post-Execution | `10-POST-REVIEW.md`, `11-MEMORY-UPDATE.md` |
 
 ## Integration
 
 Links with:
 - `CLAUDE.md` - Core project instructions
-- `SYSTEMCC-OVERRIDE.md` - Enforcement rules
 - `middleware/lyra-universal.md` - Lyra system
-- `middleware/build-config-detector.md` - Build configuration detection
-- `middleware/workflow-enforcement.md` - Workflow rules
+- `middleware/simplified-decision-engine.md` - Decision logic
+- `middleware/build-config-detector.md` - Build detection
 
 ## Remember
 

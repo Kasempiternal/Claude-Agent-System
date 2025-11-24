@@ -12,7 +12,7 @@ Absolute enforcement mechanism for `/systemcc` command that operates at the pars
 ^\s*/systemcc\b.*$
 
 # With flags
-/systemcc\s+--?(pm|debug|secure|dashboard)\b
+/systemcc\s+--?(debug|secure)\b
 /systemcc\s+"[^"]*"
 /systemcc\s+'[^']*'
 
@@ -86,7 +86,7 @@ def execute_systemcc_workflow(task):
 ```
 ✅ /systemcc "fix bug"
 ✅ > /systemcc "add feature"
-✅ /systemcc --pm "build system"
+✅ /systemcc --debug "build system"
 ✅   /systemcc "test task"  [with leading spaces]
 ✅ /systemcc is running… review the code
 ✅ User: /systemcc "help me"
@@ -149,7 +149,7 @@ Proceeding with automated workflow while respecting your other preferences.
 > /systemcc is running… help me with authentication
 
 # With flags
-/systemcc --pm "big project"
+/systemcc --debug "big project"
 ```
 
 ### Expected Output Pattern Template
