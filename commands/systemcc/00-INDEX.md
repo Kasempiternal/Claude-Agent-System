@@ -4,6 +4,13 @@
 
 ## Module Loading Order
 
+### PROGRESSIVE LOADING INITIALIZATION
+**FIRST STEP**: Load progressive loading system to optimize context usage
+1. Load `middleware/progressive-loader.md` (FULL level - always)
+2. Load `12-PROGRESSIVE-DISCLOSURE.md` (FULL level - always)
+3. Determine loading level for all other modules based on task complexity
+4. Apply progressive loading markers during subsequent module reads
+
 ### LEVEL 0 - CRITICAL (Load First)
 | Module | Purpose |
 |--------|---------|
@@ -30,6 +37,11 @@
 |--------|---------|
 | `10-POST-REVIEW.md` | Triple code review system |
 | `11-MEMORY-UPDATE.md` | Memory bank updates |
+
+### LEVEL 4 - OPTIMIZATION
+| Module | Purpose |
+|--------|---------|
+| `12-PROGRESSIVE-DISCLOSURE.md` | Context optimization and loading levels |
 
 ## Quick Reference
 

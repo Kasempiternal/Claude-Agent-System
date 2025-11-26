@@ -1,22 +1,70 @@
 # WORKFLOW SELECTION MODULE
 
+## Pattern Detection Integration (NEW - Phase 1.3)
+
+**Input**: Pattern detection results from `01-CRITICAL-DETECTION.md`
+
+If pattern detection ran and found patterns:
+```javascript
+{
+  "detected_patterns": ["authentication", "security"],
+  "confidence": 0.85,
+  "suggested_workflow": "complete_system",
+  "enable_security_scan": true,
+  "hints": ["🔒 Authentication task detected"]
+}
+```
+
+### Using Pattern Hints
+
+1. **High Confidence (>0.7)**: Use suggested workflow directly
+   - Pattern: "authentication" → complete_system
+   - Pattern: "bugfix" → orchestrated
+   - Pattern: "security" → complete_system + security scan
+
+2. **Medium Confidence (0.4-0.7)**: Use as hint for decision engine
+   - Pattern suggestion influences decision
+   - Combined with other factors (context, complexity, risk)
+
+3. **Low Confidence (<0.4)**: Informational only
+   - Display pattern to user
+   - Decision engine proceeds normally
+
+4. **No Pattern Detected**: Standard decision process
+   - Use enhanced decision matrix below
+   - No pattern bias
+
+### Security Scan Auto-Enable
+
+If `enable_security_scan: true` in pattern results:
+- Automatically enable security scanning
+- Add security-focused code review
+- Check for vulnerabilities in changes
+- Validate input sanitization
+
 ## Enhanced Decision Matrix
 
 ### Priority Order for Workflow Selection
 
-1. **Code Minimalism Analysis** (HIGHEST PRIORITY - NEW)
+1. **Pattern Detection Results** (NEW - HIGHEST WHEN CONFIDENCE >0.7)
+   - Auto-detected workflow from user request patterns
+   - Keyword and file pattern matching
+   - Session history context
+   - Security feature auto-enabling
+
+2. **Code Minimalism Analysis** (HIGHEST PRIORITY)
    - Existing code reuse potential
    - Modification vs creation ratio
    - Configuration-based solutions
    - Surgical change opportunities
 
-2. **Context Size Analysis** (HIGH PRIORITY)
+3. **Context Size Analysis** (HIGH PRIORITY)
    - Current conversation token count
    - Number of files already loaded
    - Project size and complexity
    - Predicted context growth
 
-3. **Task Complexity Analysis**
+4. **Task Complexity Analysis**
    - Scope of changes (single file vs multi-file)
    - Type of task (bug fix, feature, architecture change)
    - Risk level and dependencies

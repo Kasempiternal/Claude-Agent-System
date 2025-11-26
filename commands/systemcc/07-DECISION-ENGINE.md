@@ -1,6 +1,39 @@
 # DECISION ENGINE MODULE
 
-Simplified workflow selection using 3 dimensions and clear decision tables.
+Simplified workflow selection using 3 dimensions, skill-rules, and clear decision tables.
+
+## Skill-Rules Integration (NEW - Phase 2.4)
+
+**Priority 1**: Check skill-rules.json for declarative matches
+
+```python
+# Before running decision engine
+skill_match = match_skill_rules(user_request, loaded_files, pattern_results)
+
+if skill_match:
+    priority = skill_match["priority"]
+
+    if priority == "critical":
+        # Critical priority - always use skill-rule preference
+        return skill_match["preferred_workflow"]
+
+    elif priority == "high" and skill_match["confidence"] > 0.7:
+        # High priority + high confidence - use skill-rule
+        return skill_match["preferred_workflow"]
+
+    elif priority in ["medium", "low"]:
+        # Lower priority - use as hint for decision engine
+        decision_hint = skill_match["preferred_workflow"]
+
+# Continue to standard decision engine...
+```
+
+**Skill-Rules Location**: `middleware/skill-rules/skill-rules.json`
+
+**Benefits**:
+- Project-specific workflow preferences
+- Declarative configuration (no code changes)
+- Override-able via priority system
 
 ## Three-Dimensional Analysis
 
