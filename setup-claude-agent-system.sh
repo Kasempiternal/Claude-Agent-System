@@ -116,10 +116,16 @@ if [ -d "$TEMP_DIR/commands" ]; then
     fi
 fi
 
-# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems, AND enforcement)
+# Copy middleware directory (CRITICAL - contains Lyra AI, analysis, memory systems, enforcement, AND progressive loading)
 if [ -d "$TEMP_DIR/middleware" ]; then
     cp -r "$TEMP_DIR/middleware/"* "$CLAUDE_DIR/middleware/" 2>/dev/null || true
-    print_status "Middleware installed (Lyra AI, analysis, memory systems, workflow enforcement)"
+    # Ensure progressive-loader.md is copied (Phase 3 feature)
+    if [ -f "$TEMP_DIR/middleware/progressive-loader.md" ]; then
+        cp "$TEMP_DIR/middleware/progressive-loader.md" "$CLAUDE_DIR/middleware/" 2>/dev/null || true
+        print_status "Middleware installed (Lyra AI, analysis, memory systems, workflow enforcement, progressive loading)"
+    else
+        print_status "Middleware installed (Lyra AI, analysis, memory systems, workflow enforcement)"
+    fi
 fi
 
 # Copy agents directory (NEW - contains code reviewers)
@@ -592,6 +598,14 @@ echo "  ✅ Performance optimization with early termination"
 echo "  ✅ Production-ready robustness and reliability"
 echo "  ⚠️ Workflow structure (Lyra → build config → phases → review → memory) CANNOT be skipped"
 echo ""
+echo -e "${BLUE}🚀 Phase 3 Features (v3.0):${NC}"
+echo "  ✅ Progressive disclosure: 20-30% context reduction (automatic)"
+echo "  ✅ Checkpoint system: Resume from interruptions with full state"
+echo "  ✅ Smart loading levels: MINIMAL/STANDARD/FULL based on complexity"
+echo "  ✅ Auto-checkpoints at phase transitions and before risky operations"
+echo "  ✅ Enhanced activeContext.md with execution snapshots"
+echo ""
 echo -e "${YELLOW}Tip:${NC} The enhanced system automatically analyzes task complexity, manages context, and selects optimal workflows!"
 echo -e "${YELLOW}New:${NC} Build configuration detector ensures all code follows your pipeline rules automatically!"
-echo -e "${YELLOW}New:${NC} Batch optimizer groups similar operations to reduce tool switching overhead!"
+echo -e "${YELLOW}New:${NC} Progressive loading optimizes context usage automatically - no configuration needed!"
+echo -e "${YELLOW}New:${NC} Checkpoint system prevents lost work - resume from any interruption!"

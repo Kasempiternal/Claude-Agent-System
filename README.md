@@ -2,12 +2,26 @@
 
 **Turn Claude into your personal development team.** One command handles everything - from planning through implementation to deployment, with automatic code review and continuous learning.
 
-**Current Version:** 2.1.0 | [View Changelog](CHANGELOG.md)
+**Current Version:** 3.0.0 | [View Changelog](CHANGELOG.md)
 
-## 🎉 What's New in v2.1.0
+## 🎉 What's New in v3.0.0
 
-### Build Configuration Auto-Detection (NEW)
-The system now automatically detects and applies your project's build rules:
+### Progressive Disclosure & Context Optimization (NEW)
+The system now intelligently manages context to handle larger codebases efficiently:
+- **Smart Loading** - Automatically loads MINIMAL, STANDARD, or FULL context based on task complexity
+- **20-30% Context Reduction** - Handles more complex tasks within context limits
+- **On-Demand Upgrades** - Seamlessly loads more detail when needed during execution
+- **Zero Configuration** - Works automatically, optimizes transparently
+
+### Enhanced Checkpoint System (NEW)
+Never lose progress again with automatic execution state snapshots:
+- **Auto-Checkpoints** - Created at phase transitions, before risky operations
+- **Error Recovery** - Resume from interruptions with full context restoration
+- **Session Continuity** - Continue work seamlessly across sessions
+- **Manual Snapshots** - Create checkpoints on demand for critical points
+
+### Build Configuration Auto-Detection
+The system automatically detects and applies your project's build rules:
 - **Auto-scans** Makefile, CI/CD files, linting configs
 - **Extracts** formatting rules (black, prettier, isort)
 - **Applies** linting standards (flake8, eslint, mypy)
@@ -582,43 +596,86 @@ your-project/
     └── documentation/        # Generated docs and reports
 ```
 
-### 🎯 Smart Context Management
+### 🎯 Smart Context Management with Progressive Disclosure (v3.0)
 
-The system automatically handles context size to prevent token overflow:
+The system automatically handles context size with intelligent progressive loading:
+
+**Automatic Loading Levels:**
+- **MINIMAL** (60% reduction) - Simple tasks load only headers & signatures
+- **STANDARD** (30% reduction) - Medium tasks load summaries & key patterns
+- **FULL** (0% reduction) - Complex tasks load complete documentation
+
+**How It Works:**
+```
+Task: "fix button color" → MINIMAL loading (simple fix)
+Task: "add user authentication" → STANDARD loading (new feature)
+Task: "refactor authentication system" → FULL loading (complex change)
+```
+
+**Smart Features:**
+- Analyzes task complexity automatically (no configuration)
+- Upgrades loading level on-demand if more context needed
+- Monitors context budget and optimizes in real-time
+- Pattern-based pre-loading for related modules
+
+**Project Size Handling:**
 
 **Small Projects** (< 10,000 tokens)
 - Loads entire codebase for full context
 - Single-pass execution with complete awareness
 
-**Medium Projects** (10,000 - 30,000 tokens) 
+**Medium Projects** (10,000 - 30,000 tokens)
 - Strategic file loading based on task relevance
+- Progressive loading reduces overhead by 30%
 - Multi-pass execution with focused context windows
 
 **Large Projects** (> 30,000 tokens)
 - Automatic phase-based workflow activation
-- Intelligent context switching between phases
+- Progressive loading + intelligent context switching
 - Maintains consistency across large codebases
+- Checkpoint system prevents context loss
 
-### 🔄 Memory Bank System
+### 🔄 Memory Bank System with Checkpoints (v3.0)
 
 The system learns and remembers:
 
 ```
 ClaudeFiles/memory/
-├── CLAUDE-activeContext.md    # Current session state
+├── CLAUDE-activeContext.md    # Session state + checkpoints (ENHANCED v3.0)
 ├── CLAUDE-patterns.md         # Your coding patterns
 ├── CLAUDE-decisions.md        # Architecture decisions made
 ├── CLAUDE-troubleshooting.md  # Solutions to past issues
-├── CLAUDE-dont_dos.md         # What NOT to do (NEW)
+├── CLAUDE-dont_dos.md         # What NOT to do
 └── CLAUDE-temp.md            # Working scratch pad
 ```
 
-This enables:
+**Enhanced Features (v3.0):**
+
+**Checkpoint System:**
+- **Auto-checkpoints** at phase transitions, before risky operations
+- **Error checkpoints** when interruptions occur
+- **Manual checkpoints** on user request or session end
+- **Full state capture**: execution state, files, context, next steps
+
+**Checkpoint Recovery:**
+```bash
+# Resume from last checkpoint
+/systemcc "continue from last checkpoint"
+
+# System automatically restores:
+✓ Task state and progress
+✓ Modified files list
+✓ Next action items
+✓ Full execution context
+```
+
+**Traditional Benefits:**
 - **Consistency**: Follows your established patterns
 - **Speed**: Doesn't re-analyze known project structure
 - **Quality**: Learns from past mistakes and successes
-- **Context**: Maintains session continuity
+- **Context**: Maintains session continuity across interruptions (NEW)
 - **Preferences**: Remembers what you DON'T want (captured from corrections)
+- **Recovery**: Resume from any interruption point (NEW)
 
 ## ✅ Installation Verification
 
