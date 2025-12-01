@@ -85,6 +85,28 @@ All workflows are accessed through `/systemcc` which automatically:
 - Runs all agents sequentially
 - No manual agent commands needed
 
+### 📝 Planning Command
+
+#### `/plan-opus` - Deep Planning with Parallel Exploration
+Creates detailed implementation plans using Claude Opus for complex tasks.
+- Spawns parallel Explore agents for thorough codebase analysis
+- Generates comprehensive plan files for user review
+- Requires explicit user approval before implementation
+- Perfect for complex features requiring careful analysis
+
+```bash
+/plan-opus "implement user authentication with OAuth2"
+/plan-opus "refactor database layer for better performance"
+```
+
+**Workflow:**
+1. Task Understanding - Clarify requirements
+2. Parallel Exploration - Multiple agents explore architecture, features, dependencies, tests
+3. Hypothesis Verification - Read and verify findings
+4. Plan Creation - Generate detailed plan in `~/.claude/plans/`
+5. User Confirmation - Wait for approval before implementing
+6. Plan Re-read - Respect user's edits, then implement
+
 ### 🔍 Utility Commands
 
 #### `/analyzecc` - Auto-Adapt to Your Stack

@@ -696,12 +696,15 @@ If any components are missing, the script shows exactly what needs to be fixed.
 
 ## 🛠️ Available Commands
 
-**Primary Command:**
+**Primary Commands:**
 - `/systemcc "your task"` - Does everything automatically (includes review + memory updates)
 - `/systemcc --debug "your task"` - Show AI decision-making process
 - `/systemcc --secure "task"` - Enhanced security scanning
 
 **⚠️ Workflow Enforcement:** The `/systemcc` command's automated workflow (Lyra optimization → workflow selection → phase execution → review → memory update) is MANDATORY and cannot be skipped, ensuring consistent quality across all tasks.
+
+**Planning Command:**
+- `/plan-opus "task description"` - Create a detailed implementation plan with parallel exploration before any code changes. Uses Claude Opus for deep analysis. Perfect for complex tasks that require thorough exploration and user approval before implementation.
 
 **Utility Commands:**
 - `/help` - Show all commands
