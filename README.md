@@ -38,7 +38,7 @@ That's it. The system handles everything automatically.
 
 When you run `/systemcc`, the system:
 
-1. **Analyzes your project** - Deep scan on first use, cached for future runs
+1. **Analyzes your project** - Scans structure, tech stack, and conventions (once per session)
 2. **Optimizes your request** - AI enhancement for clarity and completeness
 3. **Detects build configuration** - Auto-scans Makefile/CI/CD for code standards
 4. **Selects the best workflow** - Picks between 3-agent, 6-agent, or specialized flows
