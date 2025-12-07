@@ -386,26 +386,38 @@ class SolutionTemplates:
         return sorted(suggestions, key=lambda x: x['success_rate'], reverse=True)
 ```
 
-## Pattern Recognition Usage
+## Pattern Recognition with Persistent Caching
 
-The Pattern Recognition Engine detects patterns during analysis but does NOT automatically create documentation files in target repositories:
+The Pattern Recognition Engine detects patterns during analysis and caches them persistently in `~/.claude/cache/` for cross-session reuse:
 
 ```python
-def analyze_patterns(patterns):
-    """Analyze patterns without creating files"""
+def analyze_patterns(repo_path, patterns):
+    """Analyze patterns with persistent caching"""
 
-    # Store in temp location during workflow
-    temp_analysis = '~/.claude/temp/pattern-analysis.json'
+    # Check for cached patterns first
+    cached = read_cache(repo_path, 'patterns')
+    if cached and is_cache_valid(repo_path, cached):
+        print("✅ Loaded cached patterns")
+        return cached
 
-    # Return analysis for use in current workflow
-    return {
-        'detected_patterns': patterns,
+    # Extract fresh patterns
+    extracted_patterns = {
+        'naming_conventions': extract_naming_patterns(patterns),
+        'structural_patterns': extract_structural_patterns(patterns),
+        'code_patterns': extract_code_patterns(patterns),
+        'design_patterns': extract_design_patterns(patterns),
         'recommendations': generate_pattern_recommendations(patterns),
         'reusability_score': calculate_overall_confidence(patterns)
     }
 
-    # NOTE: No automatic file creation in target repository
-    # Documentation files only created when user explicitly requests
+    # Cache for future sessions
+    write_cache(repo_path, 'patterns', extracted_patterns)
+    print("💾 Patterns cached to ~/.claude/cache/")
+
+    return extracted_patterns
+
+    # NOTE: No files created in target repository
+    # Cache stored in ~/.claude/cache/{repo-hash}/patterns.json
 ```
 
 ## Usage in systemcc Workflow

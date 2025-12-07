@@ -1,179 +1,222 @@
 # Analysis Status Tracker
 
 ## Purpose
-This middleware tracks whether a project has been analyzed, eliminating the need for users to manually run `/analyze`. The system automatically detects first-time usage and runs analysis seamlessly.
+This middleware tracks whether a project has been analyzed, using persistent caching to avoid re-analyzing unchanged projects. The cache is stored in `~/.claude/cache/` - never in the target repository.
 
 ## How It Works
 
-1. **Session-Based Detection**: Analysis state tracked in conversation context
-2. **Automatic Detection**: When `/systemcc` runs, it checks if project was analyzed this session
-3. **First-Run Behavior**: If not analyzed, automatically runs analysis before proceeding
-4. **Subsequent Runs**: Uses cached analysis for faster execution
+1. **Cache Check**: On `/systemcc` start, check for cached analysis
+2. **Validation**: Verify cache is still valid (git HEAD, file count, age)
+3. **Cache Hit**: Use cached analysis for instant startup
+4. **Cache Miss**: Run analysis and cache results
+5. **Smart Refresh**: Auto-refresh when project changes significantly
 
-## Analysis Data Format
+## Cache Location
 
-```yaml
-# In-memory session data
-analyzed: true
-timestamp: 2024-01-30T10:00:00Z
-version: 1.0
-project_info:
-  type: "web-application"
-  language: "TypeScript"
-  framework: "React"
-  build_tool: "Vite"
-  test_framework: "Jest"
-  package_manager: "npm"
-analysis_results:
-  total_files: 156
-  source_files: 89
-  test_files: 34
-  config_files: 12
-  documentation_files: 21
-conventions_detected:
-  naming: "PascalCase components, camelCase functions"
-  structure: "feature-based organization"
-  testing: "test files alongside source"
-last_updated: 2024-01-30T10:00:00Z
 ```
+~/.claude/cache/{repo-hash}/
+├── analysis.json       # Project analysis results
+├── patterns.json       # Extracted code patterns
+└── conventions.json    # Detected conventions
+```
+
+See `persistent-cache.md` for full cache system documentation.
 
 ## Implementation Logic
 
 ```python
-def check_analysis_status():
-    # Check session context for cached analysis
-    if not session.has_analysis():
-        # First time in this session
-        print("🔍 First time in this project - running analysis first...")
+def check_analysis_status(repo_path):
+    """Check if project analysis exists and is valid"""
 
-        # Run lightweight analysis
-        analysis_results = run_project_analysis()
+    # Try to load cached analysis
+    cached = read_cache(repo_path, 'analysis')
 
-        # Cache in session context
-        session.cache_analysis(analysis_results)
+    if cached and is_cache_valid(repo_path, cached):
+        # Cache hit - use cached analysis
+        print("✅ Loaded cached analysis")
+        print(f"   Project: {cached['framework']} + {cached['language']}")
+        return cached
 
-        print("✅ Analysis complete! Now proceeding with your task...")
-        return True
-    else:
-        # Already analyzed this session
+    # Cache miss or invalid - run fresh analysis
+    print("🔍 Running project analysis...")
+    analysis_results = run_project_analysis(repo_path)
+
+    # Cache the results
+    write_cache(repo_path, 'analysis', analysis_results)
+    print("💾 Analysis cached for future sessions")
+
+    return analysis_results
+
+
+def is_cache_valid(repo_path, cached_data):
+    """Check if cached analysis is still valid"""
+
+    metadata = cached_data.get('_cache_metadata', {})
+
+    # 1. Age check (max 7 days)
+    cached_at = parse_datetime(metadata.get('cached_at'))
+    if days_since(cached_at) > 7:
+        print("⚠️ Cache expired (older than 7 days)")
         return False
+
+    # 2. Git HEAD check (new commits invalidate)
+    current_head = get_git_head(repo_path)
+    cached_head = metadata.get('git_head')
+    if current_head != cached_head:
+        print("⚠️ Cache invalidated (new commits detected)")
+        return False
+
+    # 3. File count check (>20% change invalidates)
+    current_count = count_source_files(repo_path)
+    cached_count = metadata.get('file_count', 0)
+    if cached_count > 0:
+        change = abs(current_count - cached_count) / cached_count
+        if change > 0.20:
+            print(f"⚠️ Cache invalidated (file count changed by {change:.0%})")
+            return False
+
+    return True
 ```
 
-## Lightweight Analysis Process
+## Analysis Data Format
 
-The first-run analysis is optimized for speed while gathering essential information:
-
-### 1. Quick File Scan
-```python
-def quick_scan():
-    return {
-        'file_types': count_file_extensions(),
-        'project_size': get_directory_size(),
-        'key_files': find_config_files(),
-        'source_directories': identify_source_dirs()
-    }
+```json
+{
+  "project_type": "web-application",
+  "language": "TypeScript",
+  "framework": "React",
+  "build_tool": "Vite",
+  "test_framework": "Jest",
+  "package_manager": "npm",
+  "metrics": {
+    "total_files": 156,
+    "source_files": 89,
+    "test_files": 34,
+    "config_files": 12
+  },
+  "tech_stack": {
+    "frontend": ["React", "TypeScript", "Tailwind"],
+    "backend": ["Node.js", "Express"],
+    "database": ["PostgreSQL"]
+  },
+  "conventions": {
+    "naming": "PascalCase components, camelCase functions",
+    "structure": "feature-based organization",
+    "testing": "test files alongside source"
+  },
+  "_cache_metadata": {
+    "repo_path": "/home/user/my-project",
+    "git_head": "abc123def456",
+    "file_count": 156,
+    "cached_at": "2024-01-30T10:00:00Z",
+    "version": "1.0"
+  }
+}
 ```
-
-### 2. Tech Stack Detection
-```python
-def detect_tech_stack():
-    # Check package.json, requirements.txt, Gemfile, etc.
-    package_files = find_package_files()
-    
-    # Identify primary language
-    language = detect_primary_language()
-    
-    # Detect frameworks
-    framework = detect_framework(package_files, language)
-    
-    return {
-        'language': language,
-        'framework': framework,
-        'dependencies': extract_key_dependencies(package_files)
-    }
-```
-
-### 3. Convention Detection
-```python
-def detect_conventions():
-    # Sample a few files to detect patterns
-    sample_files = get_sample_files(limit=10)
-    
-    return {
-        'naming': analyze_naming_patterns(sample_files),
-        'structure': analyze_directory_structure(),
-        'code_style': detect_code_style(sample_files)
-    }
-```
-
-## Re-analysis Triggers
-
-The system may suggest re-analysis when:
-- Major framework version changes detected
-- Significant file structure changes (>30% different)
-- New major dependencies added
-- Manual request via `/systemcc --reanalyze`
 
 ## User Experience
 
-### First Run
+### First Run (No Cache)
+
 ```
 User: /systemcc "add user authentication"
 
-Claude: 🔍 First time in this project - running analysis first...
-        
-        📊 Quick Analysis Results:
+Claude: 🔍 No cached analysis found
+        📊 Running project analysis...
+
+        📊 Analysis Results:
         - Language: TypeScript
         - Framework: React 18.2
         - Build Tool: Vite
         - Testing: Jest + React Testing Library
-        
-        ✅ Analysis complete! Now working on your authentication feature...
-        
-        [Continues with task execution]
+
+        💾 Cached to ~/.claude/cache/
+
+        ✅ Analysis complete! Now working on authentication...
 ```
 
-### Subsequent Runs
+### Subsequent Runs (Cache Hit)
+
 ```
 User: /systemcc "fix navigation menu"
 
-Claude: [Proceeds directly with task - no analysis message]
+Claude: ✅ Loaded cached analysis (2 days old)
+           Project: React + TypeScript
+
+        🚀 Proceeding with task...
 ```
 
-### Manual Re-analysis
-```
-User: /systemcc --reanalyze "update to new coding standards"
+### Cache Invalidation (New Commits)
 
-Claude: 🔄 Re-analyzing project...
-        
+```
+User: /systemcc "add new feature"
+
+Claude: ⚠️ Cache invalidated (new commits detected)
+        🔄 Refreshing analysis...
+           ✓ File count: 178 (+22 new)
+           ✓ New dependencies detected
+
+        💾 Cache updated
+
+        ✅ Proceeding with task...
+```
+
+### Force Re-analysis
+
+```
+User: /systemcc --reanalyze "update to new standards"
+
+Claude: 🔄 Force re-analyzing project...
+
         📊 Updated Analysis:
-        - New patterns detected
-        - Convention changes noted
+        - 15 new files detected
+        - 3 new patterns found
         - Dependencies updated
-        
-        ✅ Analysis updated! Now applying new coding standards...
+
+        💾 Cache refreshed
+
+        ✅ Applying new standards...
 ```
 
-## Benefits
+## Cache Bypass Options
 
-1. **Zero Learning Curve**: Users only need one command
-2. **Automatic Optimization**: Project-specific settings applied automatically
-3. **Fast Subsequent Runs**: Analysis cached for speed
-4. **Smart Updates**: Re-analyzes only when needed
-5. **Transparent Process**: Users see what's happening
+```bash
+# Force fresh analysis
+/systemcc --reanalyze "your task"
+
+# Clear cache for current repo
+/systemcc --clear-cache
+
+# Skip cache entirely (one-time)
+/systemcc --no-cache "your task"
+```
 
 ## Integration Points
 
-- **Project Memory**: Analysis results feed into project memory system
-- **Workflow Selection**: Analysis data improves workflow decisions
-- **Convention Application**: Detected patterns automatically applied
-- **Tool Detection**: Build/test commands auto-configured
+- **persistent-cache.md**: Uses cache read/write operations
+- **deep-project-analyzer.md**: Provides analysis results to cache
+- **pattern-recognition-engine.md**: Caches extracted patterns separately
+- **project-memory.md**: Caches learned conventions
 
-## Session-Based Storage
+## Benefits
 
-- Analysis cached in conversation context
-- Fresh analysis on new session
-- Never creates files in target project
-- No cleanup needed
+1. **Instant Startup**: Cached analysis loads in milliseconds
+2. **Cross-Session**: Analysis persists across Claude Code sessions
+3. **Smart Refresh**: Automatically updates when project changes
+4. **Zero Pollution**: No files created in target repository
+5. **Transparent**: Users see cache status in output
 
-Remember: This makes the Claude Agent System truly zero-configuration - just run `/systemcc` and everything else happens automatically!
+## Error Handling
+
+```python
+def safe_cache_operation(operation, fallback):
+    """Gracefully handle cache failures"""
+    try:
+        return operation()
+    except (IOError, json.JSONDecodeError, KeyError) as e:
+        print(f"⚠️ Cache operation failed: {e}")
+        print("   Continuing with fresh analysis...")
+        return fallback()
+```
+
+Cache operations are non-critical - if they fail, the system falls back to fresh analysis without interrupting the workflow.

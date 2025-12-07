@@ -84,11 +84,43 @@ dependency_map:
 
 ## Memory Storage
 
-Project memory is maintained during active sessions only. Memory files are NOT auto-created in target repositories. If a project requires persistent memory:
+Project memory uses a hybrid approach:
 
-- Users must explicitly request memory files to be created
-- Memory is stored in `~/.claude/temp/` during workflows
-- Permanent documentation should only be created when user explicitly asks
+### Persistent Cache (Automatic)
+Conventions and preferences are automatically cached in `~/.claude/cache/{repo-hash}/conventions.json`:
+- Detected coding conventions
+- User preferences (learned from interactions)
+- Technology choices
+- File structure patterns
+
+### Session Memory (Ephemeral)
+Active task context stays in conversation memory:
+- Current task details
+- Recent decisions
+- Temporary state
+
+### Target Repository (Never Automatic)
+No files are auto-created in target repositories. Documentation only created when user explicitly asks.
+
+```python
+def load_project_memory(repo_path):
+    """Load project memory from persistent cache"""
+
+    # Load cached conventions
+    conventions = read_cache(repo_path, 'conventions')
+    if conventions and is_cache_valid(repo_path, conventions):
+        print("✅ Loaded cached conventions")
+        return conventions
+
+    # No cache - return empty (will be populated during analysis)
+    return {}
+
+def save_project_memory(repo_path, conventions):
+    """Save project memory to persistent cache"""
+
+    write_cache(repo_path, 'conventions', conventions)
+    print("💾 Conventions cached to ~/.claude/cache/")
+```
 
 ## Intelligent Features
 
@@ -203,10 +235,12 @@ Claude: ✓ Updated file structure conventions.
 
 ## Privacy & Control
 
-- Memory is session-based (in conversation context)
-- No files created in target repository
-- Fresh session on new conversation
-- Never shared across projects
+- **Persistent cache** stored in `~/.claude/cache/` (user's home directory)
+- **No files** created in target repository
+- **Per-repo isolation** - each repo has its own cache
+- **Never shared** across different projects
+- **User control** - clear cache with `--clear-cache` flag
+- **Auto-cleanup** - stale caches removed after 30 days
 
 ## Example Memory Usage
 

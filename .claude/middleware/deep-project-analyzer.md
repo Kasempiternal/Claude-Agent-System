@@ -9,7 +9,7 @@ Unlike the lightweight analyzer that provides quick insights, this deep analyzer
 - Map complete dependency graphs
 - Identify security postures and vulnerabilities
 - Build comprehensive convention profiles
-- Cache insights in session context
+- **Cache results persistently** in `~/.claude/cache/` for cross-session use
 
 ## Analysis Phases (Parallel Execution)
 
@@ -191,36 +191,59 @@ def analyze_performance_patterns():
     }
 ```
 
-## Session Context Population
+## Persistent Cache Storage
 
-The deep analyzer caches discovered knowledge in session context for use during workflows:
+The deep analyzer caches discovered knowledge in `~/.claude/cache/{repo-hash}/` for cross-session persistence:
 
-### Patterns Discovered
-```markdown
-## Coding Conventions
-- **Naming**: [discovered patterns]
-- **File Structure**: [organization patterns]
-- **Component Patterns**: [common structures]
+### Cache Files Created
 
-## Design Patterns In Use
-- [List of identified patterns with examples]
+```
+~/.claude/cache/{repo-hash}/
+├── analysis.json       # Core analysis results
+├── patterns.json       # Extracted code patterns
+└── conventions.json    # Detected conventions
 ```
 
-### Architecture Insights
-```markdown
-## Technology Stack
-- **Language**: [detected]
-- **Framework**: [identified]
-- **Database**: [type and version]
-- **Key Libraries**: [list]
-
-## Architecture Patterns
-- **Style**: [microservices/monolith/etc]
-- **Layers**: [presentation/business/data]
-- **Communication**: [REST/GraphQL/gRPC]
+### Analysis Cache (`analysis.json`)
+```json
+{
+  "project_type": "web-application",
+  "language": "TypeScript",
+  "framework": "React",
+  "tech_stack": {...},
+  "metrics": {...},
+  "_cache_metadata": {
+    "git_head": "abc123",
+    "file_count": 156,
+    "cached_at": "2024-01-30T10:00:00Z"
+  }
+}
 ```
 
-All insights are cached in session context - no files created in target repo.
+### Patterns Cache (`patterns.json`)
+```json
+{
+  "naming_conventions": {...},
+  "structural_patterns": [...],
+  "code_patterns": [...],
+  "design_patterns": [...]
+}
+```
+
+### Conventions Cache (`conventions.json`)
+```json
+{
+  "file_structure": {...},
+  "coding_style": {...},
+  "preferences": {...}
+}
+```
+
+**Key Benefits**:
+- Persists across Claude Code sessions
+- Loads in milliseconds on subsequent runs
+- Auto-invalidates when project changes (git HEAD, file count)
+- Never creates files in target repository
 
 ## Enhanced Decision Support
 
@@ -261,9 +284,18 @@ def provide_decision_context(analysis_results):
 ## Integration with systemcc
 
 ```python
-def handle_deep_analysis():
-    """Execute deep analysis on first run"""
+def handle_deep_analysis(repo_path):
+    """Execute deep analysis with persistent caching"""
 
+    # Check for valid cached analysis first
+    cached = read_cache(repo_path, 'analysis')
+    if cached and is_cache_valid(repo_path, cached):
+        print("✅ Loaded cached analysis")
+        print(f"   Project: {cached['framework']} + {cached['language']}")
+        print(f"   Cached: {cached['_cache_metadata']['cached_at']}")
+        return cached
+
+    # No valid cache - run fresh analysis
     print("🔬 Performing deep project analysis...")
     print("━" * 50)
 
@@ -288,8 +320,11 @@ def handle_deep_analysis():
     # Consolidate results
     results = consolidate_analysis_results(futures)
 
-    # Cache in session context
-    session.cache_analysis(results)
+    # Cache to persistent storage
+    write_cache(repo_path, 'analysis', results['analysis'])
+    write_cache(repo_path, 'patterns', results['patterns'])
+    write_cache(repo_path, 'conventions', results['conventions'])
+    print("💾 Analysis cached to ~/.claude/cache/")
 
     # Generate insights
     insights = generate_project_insights(results)
@@ -360,7 +395,7 @@ Based on analysis, recommended approach:
 1. **Complete Understanding**: 30+ files analyzed vs 10
 2. **Pattern Extraction**: Discovers and stores reusable patterns
 3. **Security Awareness**: Deep vulnerability scanning
-4. **Memory Population**: Pre-fills knowledge base
+4. **Persistent Caching**: Results survive across sessions
 5. **Intelligent Recommendations**: Data-driven workflow selection
 6. **Dependency Mapping**: Full internal/external dependency graph
 7. **Performance Insights**: Identifies optimization opportunities
@@ -375,7 +410,24 @@ deep_analysis_config:
   timeout_seconds: 30  # Maximum analysis time
   security_scan: true  # Include security analysis
   performance_analysis: true  # Include performance patterns
-  cache_in_session: true  # Cache results in session context
+  cache_location: ~/.claude/cache/  # Persistent cache directory
+  cache_max_age_days: 7  # Max cache age before refresh
 ```
 
-This deep analyzer ensures Claude has comprehensive project understanding from the first interaction, leading to better decisions and more accurate implementations!
+## Cache Invalidation
+
+The cache auto-invalidates when:
+- Git HEAD changes (new commits)
+- File count changes by >20%
+- Cache is older than 7 days
+- User forces refresh with `--reanalyze`
+
+```bash
+# Force fresh analysis
+/systemcc --reanalyze "your task"
+
+# Clear cache entirely
+/systemcc --clear-cache
+```
+
+This deep analyzer ensures Claude has comprehensive project understanding from the first interaction, with persistent caching for instant subsequent sessions!

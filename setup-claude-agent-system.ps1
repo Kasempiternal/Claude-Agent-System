@@ -104,12 +104,17 @@ if (Test-Path (Join-Path $sourceClaude "agents")) {
 Copy-Item -Path (Join-Path $sourceClaude "SYSTEMCC-OVERRIDE.md") -Destination $CLAUDE_DIR -Force -ErrorAction SilentlyContinue
 Copy-Item -Path (Join-Path $sourceClaude "QUICK_START.md") -Destination $CLAUDE_DIR -Force -ErrorAction SilentlyContinue
 
-# Create temp directory for workflow files
+# Create directories for caching and temp files
+$cacheDir = Join-Path $env:USERPROFILE ".claude\cache"
+$checkpointsDir = Join-Path $env:USERPROFILE ".claude\checkpoints"
 $tempDir = Join-Path $env:USERPROFILE ".claude\temp"
-if (-not (Test-Path $tempDir)) {
-    New-Item -ItemType Directory -Path $tempDir -Force | Out-Null
+
+foreach ($dir in @($cacheDir, $checkpointsDir, $tempDir)) {
+    if (-not (Test-Path $dir)) {
+        New-Item -ItemType Directory -Path $dir -Force | Out-Null
+    }
 }
-Write-Success "Created temp directory for workflow files"
+Write-Success "Created cache, checkpoints, and temp directories"
 
 # Clean up
 Remove-Item -Path $TEMP_DIR -Recurse -Force -ErrorAction SilentlyContinue
@@ -137,7 +142,9 @@ Write-Host "   $CLAUDE_DIR\commands\"
 Write-Host "   $CLAUDE_DIR\middleware\"
 Write-Host "   $CLAUDE_DIR\workflows\"
 Write-Host ""
-Write-Host "Workflow temp files:" -ForegroundColor Blue
-Write-Host "   ~/.claude/temp/ (auto-deleted after workflow)"
+Write-Host "Data directories:" -ForegroundColor Blue
+Write-Host "   ~/.claude/cache/       (persistent analysis cache)"
+Write-Host "   ~/.claude/checkpoints/ (session resumption)"
+Write-Host "   ~/.claude/temp/        (auto-deleted after workflow)"
 Write-Host ""
-Write-Host "Tip: The system automatically handles everything - just use /systemcc!" -ForegroundColor Yellow
+Write-Host "Tip: The system caches analysis per-repo for instant startup!" -ForegroundColor Yellow

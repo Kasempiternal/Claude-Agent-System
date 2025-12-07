@@ -114,9 +114,11 @@ fi
 cp "$TEMP_DIR/.claude/SYSTEMCC-OVERRIDE.md" "$CLAUDE_DIR/" 2>/dev/null || true
 cp "$TEMP_DIR/.claude/QUICK_START.md" "$CLAUDE_DIR/" 2>/dev/null || true
 
-# Create ~/.claude/temp/ for workflow temporary files
+# Create ~/.claude/ directories for caching and temp files
+mkdir -p "$HOME/.claude/cache"
+mkdir -p "$HOME/.claude/checkpoints"
 mkdir -p "$HOME/.claude/temp"
-print_status "Created temp directory for workflow files"
+print_status "Created cache, checkpoints, and temp directories"
 
 # Clean up
 rm -rf "$TEMP_DIR"
@@ -142,7 +144,9 @@ echo "   $CLAUDE_DIR/commands/"
 echo "   $CLAUDE_DIR/middleware/"
 echo "   $CLAUDE_DIR/workflows/"
 echo ""
-echo -e "${BLUE}Workflow temp files:${NC}"
-echo "   ~/.claude/temp/ (auto-deleted after workflow)"
+echo -e "${BLUE}Data directories:${NC}"
+echo "   ~/.claude/cache/       (persistent analysis cache)"
+echo "   ~/.claude/checkpoints/ (session resumption)"
+echo "   ~/.claude/temp/        (auto-deleted after workflow)"
 echo ""
-echo -e "${YELLOW}Tip:${NC} The system automatically handles everything - just use /systemcc!"
+echo -e "${YELLOW}Tip:${NC} The system caches analysis per-repo for instant startup!"

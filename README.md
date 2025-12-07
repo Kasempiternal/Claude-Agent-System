@@ -38,7 +38,7 @@ That's it. The system handles everything automatically.
 
 When you run `/systemcc`, the system:
 
-1. **Analyzes your project** - Scans structure, tech stack, and conventions (once per session)
+1. **Analyzes your project** - Scans structure, tech stack, and conventions (cached for instant startup)
 2. **Optimizes your request** - AI enhancement for clarity and completeness
 3. **Detects build configuration** - Auto-scans Makefile/CI/CD for code standards
 4. **Selects the best workflow** - Picks between 3-agent, 6-agent, or specialized flows
@@ -95,6 +95,20 @@ After implementation, three specialized reviewers run in parallel:
 - **Architect** - Validates system integration, enterprise patterns
 
 All three run simultaneously (5 minutes max). Critical issues are auto-fixed immediately.
+
+### Persistent Analysis Cache
+
+Project analysis is cached in `~/.claude/cache/` for instant startup across sessions:
+- **First run** - Full analysis, cached to disk
+- **Subsequent runs** - Loads cache in milliseconds
+- **Auto-refresh** - Cache invalidates on git commits or major file changes
+- **Zero pollution** - No files created in your repository
+
+```
+First run:  🔍 Analyzing... (5-10 seconds) → 💾 Cached
+Next runs:  ✅ Loaded cache (instant)
+After git commit: 🔄 Refreshing cache...
+```
 
 ### Session-Based Learning
 
@@ -201,6 +215,12 @@ Best for: UI components, forms, dashboards, landing pages
 /systemcc --secure "task"          # Enhanced security scanning
 ```
 
+**Cache Control:**
+```bash
+/systemcc --reanalyze "task"       # Force fresh analysis (ignore cache)
+/systemcc --clear-cache            # Clear cache for current repo
+```
+
 **Planning:**
 ```bash
 /plan-opus "task description"      # Deep planning with parallel exploration
@@ -234,7 +254,14 @@ your-project/
     └── middleware/            # AI optimization systems
 ```
 
-Temporary workflow files are stored in `~/.claude/temp/` and automatically deleted after completion.
+Data is stored separately in your home directory (never in your project):
+
+```
+~/.claude/
+├── cache/                     # Persistent analysis cache (per-repo)
+├── checkpoints/               # Session resumption data
+└── temp/                      # Workflow temp files (auto-deleted)
+```
 
 ---
 
