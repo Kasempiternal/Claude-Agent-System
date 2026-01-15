@@ -2,42 +2,6 @@
 
 **Turn Claude into your personal development team.** Two powerful commands that handle everything - from deep planning through implementation to deployment, with automatic code review and continuous learning.
 
-## The Two Commands
-
-This system provides **two main commands** - both designed to prevent "vibe coding" (blindly trusting AI output):
-
-| Command | Purpose | Best For |
-|---------|---------|----------|
-| `/systemcc` | Structured automation with validation | Most tasks - automatic quality gates, triple review, learning |
-| `/plan-opus` | Deep planning with explicit control | Complex features where you want to review/edit the plan first |
-
-```bash
-# Structured automation - NOT vibe coding
-# (analyzes, validates, reviews, learns - all automatically)
-/systemcc "add user authentication"
-
-# Explicit control - review and edit plan before execution
-/plan-opus "refactor the entire payment system"
-```
-
-### Anti-Vibe Coding Philosophy
-
-**"Vibe coding"** = typing a prompt, accepting whatever the AI outputs, hoping it works.
-
-**This system is the opposite.** Both commands enforce structure:
-
-| What Vibe Coding Does | What This System Does |
-|-----------------------|-----------------------|
-| Blindly accepts AI output | Triple code review (3 parallel reviewers) |
-| No validation | Build config detection + linting enforcement |
-| No learning | Session memory - learns your patterns and mistakes |
-| No quality gates | Decision engine with complexity/risk/scope analysis |
-| Hope it works | Post-execution validation + auto-fix critical issues |
-
-Even `/systemcc` (the "automatic" one) runs your code through **Senior Engineer**, **Lead Engineer**, and **Architect** reviews before considering it done. Nothing ships without validation.
-
----
-
 ## Quick Start
 
 ### Installation
@@ -60,15 +24,31 @@ irm https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/set
 .\setup-claude-agent-system.ps1 -Global
 ```
 
-### Usage
+---
+
+## Anti-Vibe Coding Philosophy
+
+**"Vibe coding"** = typing a prompt, accepting whatever the AI outputs, hoping it works.
+
+**This system is the opposite.** Both commands enforce structure:
+
+| What Vibe Coding Does | What This System Does |
+|-----------------------|-----------------------|
+| Blindly accepts AI output | Triple code review (3 parallel reviewers) |
+| No validation | Build config detection + linting enforcement |
+| No learning | Session memory - learns your patterns and mistakes |
+| No quality gates | Decision engine with complexity/risk/scope analysis |
+| Hope it works | Post-execution validation + auto-fix critical issues |
+
+---
+
+# The `/systemcc` Command
+
+The main command. Handles everything automatically with built-in quality gates.
 
 ```bash
 /systemcc "what you want to do"
 ```
-
-That's it. The system handles everything automatically.
-
----
 
 ## How It Works
 
@@ -82,7 +62,7 @@ When you run `/systemcc`, the system:
 6. **Reviews the code** - 3 parallel reviewers check quality
 7. **Shows a brief summary** - What changed and why
 
-### Examples
+## Examples
 
 ```bash
 # Simple fixes - Fast 3-agent workflow
@@ -100,7 +80,15 @@ When you run `/systemcc`, the system:
 # Groups operations -> Reduced tool switching
 ```
 
----
+## Command Options
+
+```bash
+/systemcc "your task"              # Standard execution
+/systemcc --debug "your task"      # Show AI decision-making process
+/systemcc --secure "task"          # Enhanced security scanning
+/systemcc --reanalyze "task"       # Force fresh analysis (ignore cache)
+/systemcc --clear-cache            # Clear cache for current repo
+```
 
 ## Key Features
 
@@ -190,8 +178,6 @@ Type 'yes' to build HTML/CSS, or request changes.
 - Token efficient - ASCII uses 10x fewer tokens than HTML mockups
 - No surprises - See exactly what you'll get before any code is written
 
----
-
 ## Available Workflows
 
 The system automatically chooses from these workflows:
@@ -240,39 +226,90 @@ Best for: Product features, user stories, MVP development
 
 Best for: UI components, forms, dashboards, landing pages
 
+## The Decision Engine
+
+Here's what happens behind the scenes when you run `/systemcc`:
+
+```
+User: /systemcc "your request"
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  PROJECT ANALYSIS                   │
+│  Analyze structure, detect patterns │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  SECURITY PRE-SCAN (if needed)      │
+│  Check for injection, block threats │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  LYRA AI PROMPT OPTIMIZATION        │
+│  Deconstruct → Diagnose → Develop   │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  BUILD CONFIG DETECTION             │
+│  Makefile, CI/CD, linters           │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  3-DIMENSIONAL ANALYSIS             │
+│  Complexity × Risk × Scope          │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  WORKFLOW SELECTION                 │
+│  Pick best workflow for the task    │
+└────────────┬────────────────────────┘
+             │
+             ▼
+        EXECUTION
+             │
+   ┌─────────┼─────────┐
+   ▼         ▼         ▼
+┌─────┐ ┌─────┐ ┌─────────┐
+│BATCH│ │ANTI │ │STANDARD │
+│MODE │ │YOLO │ │WORKFLOWS│
+└─────┘ └─────┘ └─────────┘
+```
+
+## Debug Mode
+
+Want to see how the system makes decisions?
+
+```bash
+/systemcc --debug "add user authentication"
+
+ANALYSIS RESULTS:
+├─ Complexity: complex (auth, security keywords)
+├─ Risk: high (authentication detected)
+└─ Scope: multi (auth, middleware, database)
+
+DECISION: Complete 6-Agent System
+   Confidence: 85% (High complexity + high risk)
+   Security scan: enabled
+
+Executing Complete System workflow...
+```
+
 ---
 
-## Commands
+# The `/plan-opus` Command
 
-**Primary:**
+For when you want explicit control over the planning process.
+
 ```bash
-/systemcc "your task"              # Does everything automatically
-/systemcc --debug "your task"      # Show AI decision-making process
-/systemcc --secure "task"          # Enhanced security scanning
+/plan-opus "task description"
 ```
 
-**Cache Control:**
-```bash
-/systemcc --reanalyze "task"       # Force fresh analysis (ignore cache)
-/systemcc --clear-cache            # Clear cache for current repo
-```
-
-**Planning:**
-```bash
-/plan-opus "task description"      # Deep planning with parallel exploration
-```
-
-**Utility:**
-```bash
-/help                              # Show all commands
-/analyzecc                         # Manual project analysis
-```
-
----
-
-## The `/plan-opus` Command
-
-### Why We Built This
+## Why This Command Exists
 
 Claude Code has a native "plan mode" (`/plan`), but the community discovered a limitation: **it uses Haiku as the code scout**. While Haiku is efficient and fast, it's also the least capable model in the Claude family. For complex codebases, you may want smarter models doing the exploration.
 
@@ -287,7 +324,7 @@ Claude Code has a native "plan mode" (`/plan`), but the community discovered a l
 | Implementation | Sequential | 2-6 parallel Opus agents |
 | Post-Cleanup | None | 2-6 code simplifier agents |
 
-### Configurable Scout Model
+## Configurable Scout Model
 
 By default, scouts use **Sonnet** to balance intelligence and token cost. But if you want maximum exploration quality, you can switch scouts to **Opus**.
 
@@ -303,7 +340,7 @@ Edit `.claude/commands/plan-opus.md`, line 30:
 
 **Why Sonnet is the default**: Running 2-6 Opus scouts + 2-6 Opus implementers + 2-6 Opus simplifiers can consume significant tokens. Sonnet scouts are smart enough for exploration while keeping costs reasonable. Switch to Opus scouts only for particularly complex codebases.
 
-### How It Works
+## How It Works
 
 `/plan-opus` follows an orchestrator pattern - Opus coordinates everything but delegates actual work to specialized agents:
 
@@ -362,7 +399,7 @@ Edit `.claude/commands/plan-opus.md`, line 30:
 └─────────────────────────────────────┘
 ```
 
-### The Plan File
+## The Plan File
 
 Unlike automatic workflows, `/plan-opus` creates an actual file you can review and edit:
 
@@ -397,18 +434,7 @@ You can:
 - Adjust the parallelization strategy
 - Then confirm to execute
 
-### When to Use Each Command
-
-| Situation | Use This |
-|-----------|----------|
-| Quick fixes, bug fixes | `/systemcc` |
-| Simple features | `/systemcc` |
-| Complex refactors | `/plan-opus` |
-| Architecture changes | `/plan-opus` |
-| When you want to see the plan first | `/plan-opus` |
-| When you trust the AI to decide | `/systemcc` |
-
-### Example Usage
+## Example Usage
 
 ```bash
 # Complex feature - want to review the plan
@@ -423,6 +449,19 @@ You can:
 
 ---
 
+# When to Use Each Command
+
+| Situation | Use This |
+|-----------|----------|
+| Quick fixes, bug fixes | `/systemcc` |
+| Simple features | `/systemcc` |
+| Most everyday tasks | `/systemcc` |
+| Complex refactors | `/plan-opus` |
+| Architecture changes | `/plan-opus` |
+| When you want to see/edit the plan first | `/plan-opus` |
+
+---
+
 ## Project Structure
 
 When installed, the system adds this structure:
@@ -432,7 +471,7 @@ your-project/
 └── .claude/
     ├── commands/              # Command definitions
     │   └── systemcc/          # Modular systemcc modules
-    ├── agents/                # Code reviewers
+    ├── agents/                # Code reviewers and simplifiers
     ├── workflows/             # Workflow implementations
     │   ├── anti-yolo-web/
     │   ├── complete-system/
@@ -454,83 +493,6 @@ Data is stored separately in your home directory (never in your project):
 
 ---
 
-## The Decision Engine
-
-Here's what happens behind the scenes when you run `/systemcc`:
-
-```
-User: /systemcc "your request"
-         │
-         ▼
-┌─────────────────────────────────────┐
-│  PROJECT ANALYSIS                   │
-│  Analyze structure, detect patterns │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
-│  SECURITY PRE-SCAN (if needed)      │
-│  Check for injection, block threats │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
-│  LYRA AI PROMPT OPTIMIZATION        │
-│  Deconstruct → Diagnose → Develop   │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
-│  BUILD CONFIG DETECTION             │
-│  Makefile, CI/CD, linters           │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
-│  3-DIMENSIONAL ANALYSIS             │
-│  Complexity × Risk × Scope          │
-└────────────┬────────────────────────┘
-             │
-             ▼
-┌─────────────────────────────────────┐
-│  WORKFLOW SELECTION                 │
-│  Pick best workflow for the task    │
-└────────────┬────────────────────────┘
-             │
-             ▼
-        EXECUTION
-             │
-   ┌─────────┼─────────┐
-   ▼         ▼         ▼
-┌─────┐ ┌─────┐ ┌─────────┐
-│BATCH│ │ANTI │ │STANDARD │
-│MODE │ │YOLO │ │WORKFLOWS│
-└─────┘ └─────┘ └─────────┘
-```
-
----
-
-## Debug Mode
-
-Want to see how the system makes decisions?
-
-```bash
-/systemcc --debug "add user authentication"
-
-ANALYSIS RESULTS:
-├─ Complexity: complex (auth, security keywords)
-├─ Risk: high (authentication detected)
-└─ Scope: multi (auth, middleware, database)
-
-DECISION: Complete 6-Agent System
-   Confidence: 85% (High complexity + high risk)
-   Security scan: enabled
-
-Executing Complete System workflow...
-```
-
----
-
 ## Installation Options
 
 | Feature | Local (default) | Global (`--global`) |
@@ -540,6 +502,15 @@ Executing Complete System workflow...
 | Use case | Project-specific setup | Always-available commands |
 
 **Tip:** Use `--global` if you want `/systemcc` available everywhere.
+
+---
+
+## Other Commands
+
+```bash
+/help                              # Show all available commands
+/analyzecc                         # Manual project analysis
+```
 
 ---
 
@@ -563,9 +534,3 @@ Built from real-world experiences shared by developers:
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-
----
-
-**Made with love by the Claude AI Community**
-
-*Ship quality code on the first try, not the fifth.*
