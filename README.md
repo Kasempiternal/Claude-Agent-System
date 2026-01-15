@@ -1,6 +1,25 @@
 # Claude Agent System
 
-**Turn Claude into your personal development team.** One command handles everything - from planning through implementation to deployment, with automatic code review and continuous learning.
+**Turn Claude into your personal development team.** Two powerful commands that handle everything - from deep planning through implementation to deployment, with automatic code review and continuous learning.
+
+## The Two Commands
+
+This system provides **two main commands**, each designed for different workflows:
+
+| Command | Purpose | Best For |
+|---------|---------|----------|
+| `/systemcc` | Automatic everything | Most tasks - let the AI decide the approach |
+| `/plan-opus` | Deep planning with control | Complex features where you want to review the plan first |
+
+```bash
+# Let the system handle everything automatically
+/systemcc "add user authentication"
+
+# Get a detailed plan first, review it, then execute
+/plan-opus "refactor the entire payment system"
+```
+
+---
 
 ## Quick Start
 
@@ -230,6 +249,175 @@ Best for: UI components, forms, dashboards, landing pages
 ```bash
 /help                              # Show all commands
 /analyzecc                         # Manual project analysis
+```
+
+---
+
+## The `/plan-opus` Command
+
+### Why We Built This
+
+Claude Code has a native "plan mode" (`/plan`), but the community discovered a significant limitation: **it uses Haiku as the code scout**. While Haiku is efficient and fast, it's also the least capable model in the Claude family. For complex codebases, you want your smartest model doing the exploration, not the fastest.
+
+`/plan-opus` was created to give you **full control over the planning process** with your best models doing the heavy lifting:
+
+| Aspect | Native Plan Mode | `/plan-opus` |
+|--------|------------------|--------------|
+| Scout Model | Haiku (fast but limited) | Sonnet by default (configurable) |
+| Implementation | Single agent | 2-6 parallel Opus agents |
+| Plan Review | Implicit | Explicit file you can edit |
+| Parallelization | Limited | Maximum parallel execution |
+| Control | Automatic | You approve before execution |
+| Clarification | Proceeds anyway | Asks questions before proceeding |
+
+### Interactive Clarification
+
+When the task is unclear, `/plan-opus` will ask you questions before proceeding - no guessing:
+
+```
+/plan-opus "add authentication"
+
+🤔 I have some questions before planning:
+
+1. What authentication method? (JWT, session-based, OAuth)
+2. Should it include password reset flow?
+3. Any specific user roles needed?
+
+[Waits for your answers before exploring]
+```
+
+### Configurable Scout Model
+
+By default, scouts use **Sonnet** to balance intelligence and token cost. But if you want maximum exploration quality, you can switch scouts to **Opus**.
+
+Edit `.claude/commands/plan-opus.md`, line 30:
+
+```markdown
+# Default (token-efficient):
+...using the Task tool with `subagent_type='Explore'` and `model='sonnet'`
+
+# Maximum quality (change 'sonnet' to 'opus'):
+...using the Task tool with `subagent_type='Explore'` and `model='opus'`
+```
+
+**Why Sonnet is the default**: Running 2-6 Opus scouts + 2-6 Opus implementers + 2-6 Opus simplifiers can consume significant tokens. Sonnet scouts are smart enough for exploration while keeping costs reasonable. Switch to Opus scouts only for particularly complex codebases.
+
+### How It Works
+
+`/plan-opus` follows an orchestrator pattern - Opus coordinates everything but delegates actual work to specialized agents:
+
+```
+/plan-opus "your complex task"
+         │
+         ▼
+┌─────────────────────────────────────┐
+│  Phase 1: TASK UNDERSTANDING        │
+│  Clarify requirements if needed     │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 2: PARALLEL EXPLORATION      │
+│  2-6 Sonnet scouts explore codebase │
+│  (Architecture, Features, Tests...) │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 3: SYNTHESIS                 │
+│  Combine findings, verify key files │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 4: PLAN CREATION             │
+│  Write detailed plan to file        │
+│  .claude/plans/{task-slug}.md       │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 5: YOUR REVIEW               │
+│  ⏸️  STOPS HERE - You edit the plan │
+│  Confirm when ready to proceed      │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 6: PARALLEL IMPLEMENTATION   │
+│  2-6 Opus agents work in parallel   │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 7: VERIFICATION              │
+│  Tests + Code review                │
+└────────────┬────────────────────────┘
+             │
+             ▼
+┌─────────────────────────────────────┐
+│  Phase 8: SIMPLIFICATION            │
+│  2-6 agents clean up the code       │
+└─────────────────────────────────────┘
+```
+
+### The Plan File
+
+Unlike automatic workflows, `/plan-opus` creates an actual file you can review and edit:
+
+```markdown
+# Implementation Plan: Add User Authentication
+
+Created: 2024-01-15
+Status: PENDING APPROVAL
+
+## Summary
+Add JWT-based authentication with login, logout, and session management.
+
+## Parallelization Strategy
+
+| Stream | Focus | Files | Can Parallel With |
+|--------|-------|-------|-------------------|
+| Stream A | Database | migrations/, models/ | B, C |
+| Stream B | API Routes | routes/auth.ts | A, C |
+| Stream C | Middleware | middleware/auth.ts | A, B |
+
+## Implementation Phases
+...
+
+---
+**USER: Please review this plan. Edit any section directly, then confirm to proceed.**
+```
+
+You can:
+- Edit the plan directly in your editor
+- Add or remove phases
+- Change file assignments
+- Adjust the parallelization strategy
+- Then confirm to execute
+
+### When to Use Each Command
+
+| Situation | Use This |
+|-----------|----------|
+| Quick fixes, bug fixes | `/systemcc` |
+| Simple features | `/systemcc` |
+| Complex refactors | `/plan-opus` |
+| Architecture changes | `/plan-opus` |
+| When you want to see the plan first | `/plan-opus` |
+| When you trust the AI to decide | `/systemcc` |
+
+### Example Usage
+
+```bash
+# Complex feature - want to review the plan
+/plan-opus "add real-time notifications with WebSocket"
+
+# System creates plan at .claude/plans/add-real-time-notifications.md
+# You review, maybe edit the WebSocket library choice
+# You confirm
+# 4 Opus agents implement in parallel
+# Done!
 ```
 
 ---
