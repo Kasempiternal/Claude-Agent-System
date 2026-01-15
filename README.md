@@ -4,20 +4,37 @@
 
 ## The Two Commands
 
-This system provides **two main commands**, each designed for different workflows:
+This system provides **two main commands** - both designed to prevent "vibe coding" (blindly trusting AI output):
 
 | Command | Purpose | Best For |
 |---------|---------|----------|
-| `/systemcc` | Automatic everything | Most tasks - let the AI decide the approach |
-| `/plan-opus` | Deep planning with control | Complex features where you want to review the plan first |
+| `/systemcc` | Structured automation with validation | Most tasks - automatic quality gates, triple review, learning |
+| `/plan-opus` | Deep planning with explicit control | Complex features where you want to review/edit the plan first |
 
 ```bash
-# Let the system handle everything automatically
+# Structured automation - NOT vibe coding
+# (analyzes, validates, reviews, learns - all automatically)
 /systemcc "add user authentication"
 
-# Get a detailed plan first, review it, then execute
+# Explicit control - review and edit plan before execution
 /plan-opus "refactor the entire payment system"
 ```
+
+### Anti-Vibe Coding Philosophy
+
+**"Vibe coding"** = typing a prompt, accepting whatever the AI outputs, hoping it works.
+
+**This system is the opposite.** Both commands enforce structure:
+
+| What Vibe Coding Does | What This System Does |
+|-----------------------|-----------------------|
+| Blindly accepts AI output | Triple code review (3 parallel reviewers) |
+| No validation | Build config detection + linting enforcement |
+| No learning | Session memory - learns your patterns and mistakes |
+| No quality gates | Decision engine with complexity/risk/scope analysis |
+| Hope it works | Post-execution validation + auto-fix critical issues |
+
+Even `/systemcc` (the "automatic" one) runs your code through **Senior Engineer**, **Lead Engineer**, and **Architect** reviews before considering it done. Nothing ships without validation.
 
 ---
 
@@ -257,34 +274,18 @@ Best for: UI components, forms, dashboards, landing pages
 
 ### Why We Built This
 
-Claude Code has a native "plan mode" (`/plan`), but the community discovered a significant limitation: **it uses Haiku as the code scout**. While Haiku is efficient and fast, it's also the least capable model in the Claude family. For complex codebases, you want your smartest model doing the exploration, not the fastest.
+Claude Code has a native "plan mode" (`/plan`), but the community discovered a limitation: **it uses Haiku as the code scout**. While Haiku is efficient and fast, it's also the least capable model in the Claude family. For complex codebases, you may want smarter models doing the exploration.
 
-`/plan-opus` was created to give you **full control over the planning process** with your best models doing the heavy lifting:
+`/plan-opus` was created to give you **more control over the planning process** with configurable models:
 
 | Aspect | Native Plan Mode | `/plan-opus` |
 |--------|------------------|--------------|
-| Scout Model | Haiku (fast but limited) | Sonnet by default (configurable) |
-| Implementation | Single agent | 2-6 parallel Opus agents |
-| Plan Review | Implicit | Explicit file you can edit |
-| Parallelization | Limited | Maximum parallel execution |
-| Control | Automatic | You approve before execution |
-| Clarification | Proceeds anyway | Asks questions before proceeding |
-
-### Interactive Clarification
-
-When the task is unclear, `/plan-opus` will ask you questions before proceeding - no guessing:
-
-```
-/plan-opus "add authentication"
-
-🤔 I have some questions before planning:
-
-1. What authentication method? (JWT, session-based, OAuth)
-2. Should it include password reset flow?
-3. Any specific user roles needed?
-
-[Waits for your answers before exploring]
-```
+| Scout Model | Haiku (2-3 agents) | Sonnet by default (2-6 agents, configurable to Opus) |
+| Plan Visibility | Shown to user | Written to editable `.md` file |
+| User Approval | Yes, before execution | Yes, with ability to edit the plan first |
+| Parallelization | Limited (Claude Code rarely parallelizes) | Aggressive (multiple agents per phase) |
+| Implementation | Sequential | 2-6 parallel Opus agents |
+| Post-Cleanup | None | 2-6 code simplifier agents |
 
 ### Configurable Scout Model
 
