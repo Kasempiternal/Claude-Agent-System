@@ -99,9 +99,101 @@ After ALL Explore agents return:
 
 ---
 
-## Phase 4: Plan Creation
+## Phase 3.5: Clarification & Questions
 
-Create a detailed plan file at `.claude/plans/{task-slug}.md` with this structure:
+After synthesizing all exploration findings, **STOP and formulate questions** before creating the plan.
+
+### When to Ask Questions
+
+You SHOULD ask questions if:
+- Multiple valid implementation approaches exist (user preference needed)
+- Exploration revealed ambiguities or unclear requirements
+- You're making assumptions about business logic or priorities
+- Design decisions would benefit from user input
+- Testing/deployment strategy is unclear
+
+You MAY SKIP if:
+- Task is completely clear from exploration and original request
+- Only one reasonable approach exists
+- All assumptions are safe and verifiable
+- Questions would be purely cosmetic
+
+### Question Formulation Process
+
+1. **List uncertainties** from exploration:
+   - What did exploration reveal that's ambiguous?
+   - What assumptions am I making?
+   - What choices would benefit from user input?
+
+2. **Prioritize questions**:
+   - Which answers most affect the plan?
+   - Group related questions together
+   - Maximum 4 questions per AskUserQuestion call
+
+3. **Craft clear questions**:
+   - Reference specific findings from exploration
+   - Explain why the answer matters for the plan
+   - Provide concrete options when possible
+   - Use "Other" option for flexibility
+
+### Using AskUserQuestion Tool
+
+```javascript
+AskUserQuestion({
+  questions: [
+    {
+      question: "I found two authentication patterns in the codebase (JWT in /api and sessions in /auth). Which should the new feature use?",
+      header: "Auth Pattern",
+      options: [
+        {
+          label: "JWT tokens (like /api)",
+          description: "Stateless, used in most API endpoints, better for scaling"
+        },
+        {
+          label: "Sessions (like /auth)",
+          description: "Stateful, used in auth flows, simpler for traditional web"
+        }
+      ],
+      multiSelect: false
+    },
+    {
+      question: "Should this feature be behind a feature flag for gradual rollout?",
+      header: "Feature Flag",
+      options: [
+        {
+          label: "Yes, add feature flag",
+          description: "Safer rollout, can disable if issues arise"
+        },
+        {
+          label: "No, deploy directly",
+          description: "Simpler, faster to ship"
+        }
+      ],
+      multiSelect: false
+    }
+  ]
+})
+```
+
+4. **WAIT for user answers** before proceeding to plan creation
+
+### Example Decision Points
+
+Common situations requiring clarification:
+- Multiple existing patterns (which to follow?)
+- Architecture choices (new service vs extend existing?)
+- Testing strategy (unit vs integration vs e2e?)
+- Backward compatibility (breaking changes OK?)
+- Performance vs simplicity tradeoffs
+- Feature flag strategy
+- Database migration approach
+- API design choices (REST vs GraphQL, sync vs async)
+
+---
+
+## Phase 5: Plan Creation
+
+**After receiving answers from Phase 3.5** (if questions were asked), create a detailed plan file at `.claude/plans/{task-slug}.md` with this structure:
 
 ```markdown
 # Implementation Plan: [Task Title]
@@ -184,7 +276,7 @@ This plan is designed for maximum parallel execution. The orchestrator (Opus) wi
 
 ---
 
-## Phase 5: User Confirmation
+## Phase 6: User Confirmation
 
 After writing the plan file:
 
@@ -196,7 +288,7 @@ After writing the plan file:
 
 ---
 
-## Phase 6: Parallel Implementation (Opus Agents)
+## Phase 7: Parallel Implementation (Opus Agents)
 
 Once the user confirms:
 
@@ -277,7 +369,7 @@ Report back with:
 
 ---
 
-## Phase 7: Verification & Completion
+## Phase 8: Verification & Completion
 
 After all implementation agents complete:
 
@@ -287,7 +379,7 @@ After all implementation agents complete:
 
 ---
 
-## Phase 8: Parallel Code Simplification (2-6 Agents)
+## Phase 9: Parallel Code Simplification (2-6 Agents)
 
 After verification passes, spawn **2 to 6 code-simplifier agents in parallel** to clean up the implementation.
 
@@ -351,7 +443,7 @@ Launch all simplifier agents simultaneously for maximum speed.
 
 ---
 
-## Phase 9: Final Report
+## Phase 10: Final Report
 
 After all simplification agents complete:
 
