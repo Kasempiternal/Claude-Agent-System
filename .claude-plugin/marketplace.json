@@ -1,7 +1,11 @@
 {
-  "name": "Claude Agent System",
+  "name": "claude-agent-system",
   "version": "1.0.0",
   "description": "Parallel Claude Coordinator plugins for orchestrated multi-agent development",
+  "owner": {
+    "name": "Kasempiternal",
+    "url": "https://github.com/Kasempiternal"
+  },
   "plugins": [
     {
       "name": "pcc",
