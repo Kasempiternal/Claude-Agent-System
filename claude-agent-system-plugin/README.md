@@ -1,38 +1,48 @@
-# PCC - Parallel Claude Coordinator
+# Claude Agent System Plugin
 
-A Claude Code plugin that orchestrates complex development tasks using parallel agent exploration and implementation.
+A Claude Code plugin with intelligent workflow orchestration and parallel agent coordination.
 
 ## Skills
 
-### `/pcc` - Standard Mode
-Uses **Sonnet scouts** for fast, cost-efficient exploration and **Opus agents** for implementation.
+### `/systemcc` - Intelligent Workflow Router
+The **only command you need**. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
+
+```bash
+/systemcc fix the login bug
+/systemcc refactor the authentication system
+/systemcc migrate all models to new ORM
+```
+
+Features:
+- 3-dimensional task analysis (complexity, risk, scope)
+- Automatic workflow selection
+- Security scan auto-detection
+- Triple code review
+- Complete end-to-end execution
+
+### `/pcc` - Parallel Claude Coordinator
+Uses **Sonnet scouts** for fast exploration and **Opus agents** for implementation.
+
+```bash
+/pcc implement user authentication with JWT tokens
+```
 
 Best for:
 - Most development tasks
-- When exploration speed matters
 - Cost-conscious workflows
+- When exploration speed matters
 
-### `/pcc-opus` - Opus Edition
-Uses **Opus scouts** AND **Opus implementers** for maximum quality at every stage.
+### `/pcc-opus` - PCC Opus Edition
+Uses **Opus scouts** AND **Opus implementers** for maximum quality.
+
+```bash
+/pcc-opus refactor the entire payment processing system
+```
 
 Best for:
 - Critical production systems
 - Complex architectural changes
-- Unfamiliar or poorly-documented codebases
-- Tasks where exploration quality directly impacts success
-
-## How It Works
-
-1. **Task Understanding** - Clarifies the task with you
-2. **Parallel Exploration** - Spawns 2-6 scout agents to explore the codebase
-3. **Synthesis** - Combines findings into a unified understanding
-4. **Clarification** - Asks targeted questions if needed
-5. **Plan Creation** - Creates a detailed implementation plan
-6. **User Review** - You edit and approve the plan
-7. **Parallel Implementation** - Spawns 2-6 Opus agents to implement
-8. **Verification** - Runs tests and code review
-9. **Simplification** - Cleans up the code
-10. **Final Report** - Summarizes everything
+- Unfamiliar codebases
 
 ## Installation
 
@@ -41,32 +51,33 @@ Best for:
 /plugin install pcc
 ```
 
-## Usage
+## Skill Comparison
 
-```bash
-# Standard mode (Sonnet scouts)
-/pcc implement user authentication with JWT tokens
+| Skill | Use Case | Exploration | Implementation |
+|-------|----------|-------------|----------------|
+| `/systemcc` | Any task - auto-routes | Auto-selected | Auto-selected |
+| `/pcc` | Parallel orchestration | Sonnet (2-6) | Opus (2-6) |
+| `/pcc-opus` | Max quality orchestration | Opus (2-6) | Opus (2-6) |
 
-# Opus edition (Opus scouts)
-/pcc-opus refactor the entire payment processing system
-```
+## How PCC Works
 
-## Key Principles
+1. **Task Understanding** - Clarifies the task with you
+2. **Parallel Exploration** - Spawns 2-6 scout agents
+3. **Synthesis** - Combines findings
+4. **Plan Creation** - Creates detailed implementation plan
+5. **User Review** - You edit and approve
+6. **Parallel Implementation** - Spawns 2-6 Opus agents
+7. **Verification** - Tests and code review
+8. **Simplification** - Cleans up code
+9. **Final Report** - Summarizes everything
 
-- **Orchestrator, not implementer** - The main agent coordinates, never codes directly
-- **Maximum parallelism** - Independent work streams run simultaneously
-- **User control** - You review and edit the plan before implementation
-- **Quality through delegation** - Specialized agents handle each concern
+## How SystemCC Works
 
-## Agent Summary
-
-| Phase | pcc | pcc-opus |
-|-------|-----|----------|
-| Exploration | Sonnet (2-6) | Opus (2-6) |
-| Implementation | Opus (2-6) | Opus (2-6) |
-| Testing | Auto | Auto |
-| Review | Auto | Auto |
-| Simplification | Auto (2-6) | Auto (2-6) |
+1. **Analysis** - Analyzes complexity, risk, scope
+2. **Selection** - Auto-selects optimal workflow
+3. **Execution** - Runs all phases automatically
+4. **Review** - Triple code review
+5. **Complete** - Brief summary
 
 ## License
 
