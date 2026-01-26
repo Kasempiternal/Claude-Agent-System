@@ -4,7 +4,23 @@
 
 ## Quick Start
 
-### Installation
+Choose your installation method:
+
+| Method | Best For | Commands You Get |
+|--------|----------|------------------|
+| **Plugin** | Quick install, easy updates | `/systemcc`, `/pcc`, `/pcc-opus` |
+| **Script** | Full system with all modules | `/systemcc`, `/plan-opus`, + workflows |
+
+### Option 1: Plugin Install (Recommended)
+
+```bash
+/plugin marketplace add Kasempiternal/Claude-Agent-System
+/plugin install pcc
+```
+
+Done! You now have `/systemcc`, `/pcc`, and `/pcc-opus`.
+
+### Option 2: Script Install (Full System)
 
 **macOS/Linux:**
 ```bash
@@ -23,6 +39,8 @@ irm https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/set
 # Install globally
 .\setup-claude-agent-system.ps1 -Global
 ```
+
+This installs the full system with all 13 systemcc modules, workflows, and middleware.
 
 ---
 
