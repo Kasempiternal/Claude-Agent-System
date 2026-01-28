@@ -25,9 +25,11 @@ If the task is unclear, use AskUserQuestion to clarify before proceeding.
 
 ---
 
-## Phase 2: Parallel Exploration (2-6 Sonnet Agents)
+## Phase 2: Organized Exploration (2-6 Sonnet Agents)
 
-**DYNAMIC AGENT COUNT**: Based on task complexity, spawn **2 to 6 Explore agents in parallel** using the Task tool with `subagent_type='Explore'` and `model='sonnet'`.
+**DYNAMIC AGENT COUNT**: Based on task complexity, spawn **2 to 6 Explore agents** using the Task tool with `subagent_type='Explore'` and `model='sonnet'`.
+
+> **Note**: Agents execute sequentially but provide value through **isolation** (focused scope), **specialization** (different search areas), and **synthesis** (orchestrator combines results).
 
 ### Determining Agent Count
 
@@ -41,7 +43,7 @@ Assess the task and decide how many scouts are needed:
 | High | 5 | Cross-module changes, complex features |
 | Very High | 6 | Architecture changes, major refactors, system-wide impact |
 
-**CRITICAL**: Launch ALL chosen agents in a SINGLE message with multiple Task tool calls.
+**CRITICAL**: Launch all chosen agents in a SINGLE message with multiple Task tool calls for organized dispatch.
 
 ### Available Exploration Roles
 
@@ -360,12 +362,12 @@ Report back with:
 6. **Handle issues** - if any agent encountered problems, spawn a fix agent
 7. **Move to next phase** - repeat for each implementation phase
 
-### Maximizing Parallelism
+### Maximizing Efficiency
 
-- Launch ALL independent agents in a SINGLE message with multiple Task tool calls
-- Only wait for dependencies when absolutely necessary
-- If one agent is blocked, continue with others
-- Spawn verification agents in parallel with implementation when possible
+- Launch all independent agents in a SINGLE message with multiple Task tool calls
+- Agents execute sequentially but with focused, isolated scopes
+- Each agent completes its work before the next begins
+- Results are synthesized by the orchestrator after all complete
 
 ---
 
@@ -379,11 +381,11 @@ After all implementation agents complete:
 
 ---
 
-## Phase 8: Parallel Code Simplification (2-6 Agents)
+## Phase 8: Code Simplification (2-6 Agents)
 
-After verification passes, spawn **2 to 6 code-simplifier agents in parallel** to clean up the implementation.
+After verification passes, spawn **2 to 6 code-simplifier agents** to clean up the implementation.
 
-**CRITICAL**: Launch ALL simplifier agents in a SINGLE message with multiple Task tool calls.
+**CRITICAL**: Launch all simplifier agents in a SINGLE message for organized dispatch.
 
 ### Determining Simplifier Agent Count (2-6)
 
@@ -430,7 +432,7 @@ Report back with:
 - Files that were already clean (no changes needed)
 ```
 
-### Parallel Deployment
+### Agent Assignment
 
 | Simplifier Agent | Files/Area |
 |------------------|------------|
@@ -439,7 +441,7 @@ Report back with:
 | Simplifier 3 | [Module C files] |
 | Simplifier 4 | [Test files] |
 
-Launch all simplifier agents simultaneously for maximum speed.
+Launch all simplifier agents in a single dispatch for organized execution.
 
 ---
 

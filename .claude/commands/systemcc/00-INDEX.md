@@ -1,15 +1,20 @@
 # SYSTEMCC COMMAND - MODULE INDEX
 
-**ALL MODULES MUST BE LOADED FOR PROPER OPERATION**
+Modules load **progressively** based on task complexity to optimize context usage.
 
 ## Module Loading Order
 
-### PROGRESSIVE LOADING INITIALIZATION
-**FIRST STEP**: Load progressive loading system to optimize context usage
-1. Load `middleware/progressive-loader.md` (FULL level - always)
-2. Load `12-PROGRESSIVE-DISCLOSURE.md` (FULL level - always)
-3. Determine loading level for all other modules based on task complexity
-4. Apply progressive loading markers during subsequent module reads
+### PROGRESSIVE LOADING
+**Loading levels**:
+- **MINIMAL**: Simple tasks - load headers/summaries only
+- **STANDARD**: Moderate tasks - load core sections
+- **FULL**: Complex tasks - load complete documentation
+
+**Process**:
+1. Assess task complexity from user request
+2. Load `middleware/progressive-loader.md` for loading logic
+3. Load modules at appropriate detail level
+4. Apply progressive loading markers during reads
 
 ### LEVEL 0 - CRITICAL (Load First)
 | Module | Purpose |

@@ -1,297 +1,214 @@
 # /security-audit
 
 ## Purpose
-Perform comprehensive security audit of the codebase, identifying vulnerabilities using OWASP guidelines and providing specific remediation steps.
+Perform a real security audit of the codebase using Claude's Grep and Glob tools to find actual vulnerabilities.
 
 ## Usage
 ```bash
 /security-audit
 ```
 
-## Features
-- Identifies potential vulnerabilities using OWASP guidelines
-- Checks authentication, input validation, data protection, and API security
-- Categorizes issues by severity (Critical, High, Medium, Low)
-- Provides specific remediation steps with code examples
-- Generates detailed security report
+## What This Command Actually Does
 
-## Implementation Instructions
+When `/security-audit` runs, Claude executes **real file scans** using Grep and Glob tools - not pseudocode.
 
-When this command is invoked:
+---
 
-1. **Initialize Security Audit**
-   ```python
-   audit_categories = [
-       'authentication',
-       'authorization',
-       'input_validation',
-       'data_protection',
-       'api_security',
-       'dependency_vulnerabilities',
-       'configuration_security',
-       'logging_monitoring',
-       'session_management',
-       'cryptography'
-   ]
-   
-   findings = []
-   ```
+## Phase 1: File Discovery
 
-2. **Scan for Security Issues**
+Use Glob to find security-relevant files:
 
-   ### Authentication Checks
-   ```python
-   def audit_authentication():
-       checks = [
-           'password_complexity_requirements',
-           'multi_factor_authentication',
-           'account_lockout_mechanisms',
-           'password_reset_security',
-           'credential_storage'
-       ]
-       
-       # Search for auth-related files
-       auth_files = glob("**/auth*", "**/login*", "**/password*")
-       
-       for file in auth_files:
-           # Check for hardcoded credentials
-           if contains_hardcoded_secrets(file):
-               add_finding("CRITICAL", "Hardcoded credentials", file)
-           
-           # Check for weak password policies
-           if has_weak_password_policy(file):
-               add_finding("HIGH", "Weak password requirements", file)
-   ```
+```
+Glob: **/auth*
+Glob: **/login*
+Glob: **/password*
+Glob: **/.env*
+Glob: **/secret*
+Glob: **/config*
+Glob: **/api*
+Glob: **/*controller*
+Glob: **/*service*
+```
 
-   ### Input Validation
-   ```python
-   def audit_input_validation():
-       # Check for SQL injection vulnerabilities
-       sql_patterns = [
-           r'query\s*\(\s*["\'].*\+.*["\']',  # String concatenation in queries
-           r'exec\s*\(\s*["\'].*\%s.*["\']',   # Unparameterized queries
-       ]
-       
-       # Check for XSS vulnerabilities
-       xss_patterns = [
-           r'innerHTML\s*=',                    # Direct HTML injection
-           r'document\.write\(',                 # Unsafe document writes
-           r'eval\(',                           # Code evaluation
-       ]
-       
-       # Check for command injection
-       cmd_patterns = [
-           r'exec\s*\([^)]*\+',                # String concat in exec
-           r'system\s*\([^)]*\$',              # Variable in system calls
-       ]
-   ```
+---
 
-   ### API Security
-   ```python
-   def audit_api_security():
-       checks = [
-           'rate_limiting',
-           'api_authentication',
-           'cors_configuration',
-           'api_versioning',
-           'input_sanitization'
-       ]
-       
-       # Find API endpoints
-       api_files = glob("**/api*", "**/routes*", "**/controllers*")
-       
-       for file in api_files:
-           # Check for missing rate limiting
-           if not has_rate_limiting(file):
-               add_finding("MEDIUM", "No rate limiting", file)
-           
-           # Check for open CORS
-           if has_permissive_cors(file):
-               add_finding("HIGH", "Permissive CORS policy", file)
-   ```
+## Phase 2: Vulnerability Scanning
 
-   ### Data Protection
-   ```python
-   def audit_data_protection():
-       # Check for sensitive data exposure
-       sensitive_patterns = [
-           r'(api[_-]?key|apikey)',
-           r'(secret|token|password)',
-           r'(ssn|social.?security)',
-           r'(credit.?card|cc.?number)'
-       ]
-       
-       # Check encryption usage
-       encryption_checks = [
-           'tls_configuration',
-           'data_at_rest_encryption',
-           'key_management'
-       ]
-   ```
+Use Grep to search for common vulnerability patterns:
 
-3. **Generate Security Report**
-   ```markdown
-   # Security Audit Report
-   
-   **Date**: [timestamp]
-   **Total Issues Found**: [count]
-   **Critical**: [N] | **High**: [N] | **Medium**: [N] | **Low**: [N]
-   
-   ## Executive Summary
-   [Overview of security posture and main concerns]
-   
-   ## Critical Findings
-   
-   ### CRIT-001: [Issue Title]
-   **Severity**: Critical
-   **Category**: [Authentication/Input Validation/etc]
-   **File(s)**: [affected files]
-   **Line(s)**: [specific lines]
-   
-   **Description**:
-   [Detailed description of the vulnerability]
-   
-   **Impact**:
-   [Potential impact if exploited]
-   
-   **Remediation**:
-   [Step-by-step fix with code examples]
-   
-   ```[language]
-   // Before (vulnerable)
-   [vulnerable code]
-   
-   // After (secure)
-   [fixed code]
-   ```
-   
-   ## Recommendations
-   
-   ### Immediate Actions
-   1. [Critical fixes needed now]
-   2. [High priority remediations]
-   
-   ### Short-term Improvements
-   1. [Medium priority fixes]
-   2. [Security enhancements]
-   
-   ### Long-term Strategy
-   1. [Security architecture improvements]
-   2. [Process and training recommendations]
-   ```
+### Hardcoded Secrets
+```
+Grep: (api[_-]?key|apikey)\s*[:=]\s*['"][^'"]+
+Grep: (secret|token|password)\s*[:=]\s*['"][^'"]+
+Grep: (aws_access_key|aws_secret)
+Grep: Bearer\s+[A-Za-z0-9\-_]+
+```
 
-4. **Report Results**
+### SQL Injection
+```
+Grep: query\s*\(\s*['"`].*\+
+Grep: execute\s*\(\s*['"`].*\+
+Grep: raw\s*\(\s*['"`].*\$
+Grep: (SELECT|INSERT|UPDATE|DELETE).*\+.*variable
+```
 
-   Display audit results directly in the conversation. Only save to file if user explicitly requests:
-   ```python
-   # Display in conversation (default)
-   display_audit_report(audit_report)
+### XSS Vulnerabilities
+```
+Grep: innerHTML\s*=
+Grep: document\.write\(
+Grep: dangerouslySetInnerHTML
+Grep: \$\(.*\)\.html\(
+Grep: v-html\s*=
+```
 
-   # Save to file only if requested
-   if user_requested_file_output:
-       report_path = "~/.claude/temp/security-audit.md"
-       save_report(report_path, audit_report)
-       # Note: temp files are deleted after workflow
-   ```
+### Command Injection
+```
+Grep: exec\s*\(.*\+
+Grep: system\s*\(.*\$
+Grep: shell_exec\s*\(
+Grep: subprocess\..*shell\s*=\s*True
+Grep: child_process\.exec\(
+```
 
-## Security Categories
+### Insecure Authentication
+```
+Grep: password.*plain
+Grep: md5\s*\(.*password
+Grep: sha1\s*\(.*password
+Grep: NoAuth|no.?auth|skip.?auth
+```
 
-### OWASP Top 10 Coverage
-1. **Injection** - SQL, NoSQL, Command, LDAP
-2. **Broken Authentication** - Weak passwords, session issues
-3. **Sensitive Data Exposure** - Unencrypted data, weak crypto
-4. **XML External Entities (XXE)** - XML parser issues
-5. **Broken Access Control** - Authorization flaws
-6. **Security Misconfiguration** - Default configs, verbose errors
-7. **XSS** - Reflected, Stored, DOM-based
-8. **Insecure Deserialization** - Object injection
-9. **Using Components with Known Vulnerabilities** - Outdated deps
-10. **Insufficient Logging & Monitoring** - Audit trail gaps
+### CORS Issues
+```
+Grep: Access-Control-Allow-Origin.*\*
+Grep: cors.*origin.*\*
+Grep: AllowAllOrigins
+```
+
+---
+
+## Phase 3: File Analysis
+
+For each file flagged by Grep, Claude:
+
+1. **Reads the file** using the Read tool
+2. **Identifies the specific vulnerable line(s)**
+3. **Assesses the severity** (Critical/High/Medium/Low)
+4. **Provides remediation** with code example
+
+---
+
+## Phase 4: Report Generation
+
+Display findings directly in conversation:
+
+```
+🔍 SECURITY AUDIT COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Files Scanned: [N]
+Issues Found: [N]
+
+🔴 Critical: [N]  🟠 High: [N]  🟡 Medium: [N]  🟢 Low: [N]
+
+## Critical Issues
+
+### CRIT-001: Hardcoded API Key
+📁 File: src/config/api.js:42
+⚠️ Issue: API key stored in source code
+🔧 Fix: Move to environment variable
+
+Before:
+const API_KEY = "sk-abc123..."
+
+After:
+const API_KEY = process.env.API_KEY
+
+---
+
+### CRIT-002: SQL Injection
+📁 File: src/db/users.js:87
+⚠️ Issue: String concatenation in query
+🔧 Fix: Use parameterized queries
+
+Before:
+db.query("SELECT * FROM users WHERE id = " + userId)
+
+After:
+db.query("SELECT * FROM users WHERE id = ?", [userId])
+
+---
+
+## High Issues
+[Similar format...]
+
+## Recommendations
+
+1. **Immediate**: Fix all Critical and High issues
+2. **Short-term**: Address Medium issues
+3. **Long-term**: Implement security linting in CI
+```
+
+---
 
 ## Severity Definitions
 
-### Critical
-- Remote code execution
-- Authentication bypass
-- Hardcoded credentials
-- Unencrypted sensitive data transmission
+| Severity | Definition | Examples |
+|----------|------------|----------|
+| **Critical** | Immediate exploitation risk | Hardcoded secrets, auth bypass, RCE |
+| **High** | Serious vulnerability | SQL injection, XSS, broken auth |
+| **Medium** | Moderate risk | Missing rate limiting, weak CORS |
+| **Low** | Minor issues | Missing headers, verbose errors |
 
-### High
-- SQL injection
-- Cross-site scripting (XSS)
-- Broken authentication
-- Sensitive data exposure
+---
 
-### Medium
-- Missing rate limiting
-- Weak password policies
-- Permissive CORS
-- Information disclosure
+## What This Command Does NOT Do
 
-### Low
-- Missing security headers
-- Verbose error messages
-- Outdated dependencies
-- Code quality issues
+- ❌ Does not use external tools (semgrep, ast-grep, etc.)
+- ❌ Does not require any installation
+- ❌ Does not run pseudocode or fake scans
+- ❌ Does not make up findings
 
-## Integration with CI/CD
+---
 
-```yaml
-# GitHub Actions example
-- name: Security Audit
-  run: |
-    claude code --command "/security-audit"
-    # Check exit code for security issues
-```
+## Example Run
 
-## Examples
-
-### Example Output
 ```bash
 /security-audit
 
 🔍 Starting Security Audit...
-Scanning authentication systems...
-Checking input validation...
-Analyzing API security...
-Reviewing data protection...
 
-⚠️ Security Audit Complete
+Phase 1: Discovering files...
+  Found 23 security-relevant files
 
-**Issues Found**: 12
-🔴 Critical: 2 | 🟠 High: 3 | 🟡 Medium: 4 | 🟢 Low: 3
+Phase 2: Scanning for vulnerabilities...
+  Checking hardcoded secrets... 2 matches
+  Checking SQL injection... 1 match
+  Checking XSS... 0 matches
+  Checking command injection... 0 matches
 
-## Critical Issues Requiring Immediate Action:
+Phase 3: Analyzing findings...
 
-1. **Hardcoded API Key** in config/api.js:42
-   Fix: Move to environment variables
-   
-2. **SQL Injection** in controllers/user.js:156
-   Fix: Use parameterized queries
+🔍 SECURITY AUDIT COMPLETE
+━━━━━━━━━━━━━━━━━━━━━━━━━
 
-Use `/secure-prompts` to validate any suspicious findings.
-```
+Files Scanned: 23
+Issues Found: 3
 
-## Best Practices
+🔴 Critical: 1  🟠 High: 2  🟡 Medium: 0  🟢 Low: 0
 
-1. **Run Regularly** - Weekly in development, before each release
-2. **Fix Critical First** - Address critical/high issues immediately
-3. **Track Progress** - Monitor security posture over time
-4. **Automate Checks** - Integrate into CI/CD pipeline
-5. **Review Dependencies** - Check for known vulnerabilities
-
-## Configuration
-
-```json
-{
-  "scan_depth": "comprehensive",
-  "include_dependencies": true,
-  "check_configurations": true,
-  "owasp_version": "2021",
-  "custom_rules": [],
-  "exclude_paths": ["node_modules", "vendor", "test"]
-}
+[Detailed findings follow...]
 ```
 
 ---
-*Comprehensive security analysis following industry best practices*
+
+## Integration
+
+Works with:
+- `/secure-prompts` - Validate suspicious patterns
+- Post-execution review - Security check in review phase
+- CI/CD - Can be run as part of pipeline
+
+---
+
+*Real scans. Real findings. Real fixes.*

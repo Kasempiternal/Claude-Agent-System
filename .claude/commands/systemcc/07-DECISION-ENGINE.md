@@ -1,144 +1,160 @@
 # DECISION ENGINE MODULE
 
-Simplified workflow selection using 3 dimensions, skill-rules, and clear decision tables.
+Semantic AI analysis for workflow selection using 3-dimensional assessment.
 
-## Skill-Rules Integration (NEW - Phase 2.4)
+## Semantic Analysis (Not Keyword Matching)
 
-**Priority 1**: Check skill-rules.json for declarative matches
+**Critical**: Claude performs genuine semantic analysis of the task, not keyword pattern matching.
 
-```python
-# Before running decision engine
-skill_match = match_skill_rules(user_request, loaded_files, pattern_results)
+### How It Works
 
-if skill_match:
-    priority = skill_match["priority"]
+When evaluating a task, Claude:
+1. **Understands** the full context and intent
+2. **Rates** each dimension on a 1-5 scale with reasoning
+3. **Calculates** combined score
+4. **Selects** appropriate workflow
 
-    if priority == "critical":
-        # Critical priority - always use skill-rule preference
-        return skill_match["preferred_workflow"]
+### The Three Dimensions
 
-    elif priority == "high" and skill_match["confidence"] > 0.7:
-        # High priority + high confidence - use skill-rule
-        return skill_match["preferred_workflow"]
+| Dimension | What to Assess | Scale |
+|-----------|----------------|-------|
+| **Complexity** | How intricate is the implementation? | 1 (trivial) to 5 (very complex) |
+| **Risk** | What could go wrong? Data loss? Breaking changes? | 1 (safe) to 5 (high stakes) |
+| **Scope** | How much of the codebase is affected? | 1 (single file) to 5 (system-wide) |
 
-    elif priority in ["medium", "low"]:
-        # Lower priority - use as hint for decision engine
-        decision_hint = skill_match["preferred_workflow"]
+## Assessment Template
 
-# Continue to standard decision engine...
+For each task, Claude performs this analysis inline (no agent spawn needed):
+
+```
+SEMANTIC ASSESSMENT
+━━━━━━━━━━━━━━━━━━━
+
+Task: "[user's request]"
+
+Complexity: [1-5] - [one sentence explaining why]
+Risk: [1-5] - [one sentence explaining why]
+Scope: [1-5] - [one sentence explaining why]
+
+Combined Score: (C + R + S) / 3 = [X.X]
+
+Workflow: [selected workflow based on score]
 ```
 
-**Skill-Rules Location**: `middleware/skill-rules/skill-rules.json`
+## Workflow Selection Matrix
 
-**Benefits**:
-- Project-specific workflow preferences
-- Declarative configuration (no code changes)
-- Override-able via priority system
+| Combined Score | Workflow | Rationale |
+|----------------|----------|-----------|
+| 1.0 - 2.0 | `orchestrated` | Simple, low-risk, focused changes |
+| 2.1 - 3.5 | `complete_system` | Moderate complexity, needs validation |
+| 3.6 - 5.0 | `plan-opus` | Complex, requires planning and phased execution |
 
-## Three-Dimensional Analysis
+### Special Overrides
 
-| Dimension | Description | Values |
-|-----------|-------------|--------|
-| **Complexity** | How complex is the task? | simple / moderate / complex |
-| **Risk** | What's the risk level? | low / high |
-| **Scope** | How many files affected? | single / multi / system |
+Regardless of score, use specific workflows when:
 
-## Workflow Decision Table
+| Condition | Workflow | Why |
+|-----------|----------|-----|
+| Web app development intent | `anti-yolo-web` | Specialized for web |
+| PRD/feature development | `aidevtasks` | Structured feature flow |
+| Project initialization | `agetos` | Setup-specific |
+| Security concerns detected | Add security scan | Always validate security |
 
-| Complexity | Risk | Scope | Workflow | Confidence |
-|------------|------|-------|----------|------------|
-| simple | low | single | orchestrated | 0.9 |
-| simple | low | multi | orchestrated | 0.85 |
-| simple | high | any | complete_system | 0.85 |
-| moderate | low | single | orchestrated | 0.8 |
-| moderate | low | multi | complete_system | 0.75 |
-| moderate | high | any | complete_system | 0.85 |
-| complex | any | any | complete_system | 0.8 |
-| any | any | system | complete_system | 0.9 |
+## Example Assessments
 
-## Priority Order
-
-1. **Context Size** - If >30k tokens, use `complete_system` with phase-based planning
-2. **Security Keywords** - If detected, enable security scan
-3. **Web Detection** - If web app intent, use `anti-yolo-web`
-4. **Risk Level** - High risk always uses `complete_system`
-5. **Complexity** - Complex tasks use `complete_system`
-6. **Default** - Simple/moderate tasks use `orchestrated`
-
-## Complexity Detection
-
-**Simple indicators** (any match = simple):
-- fix, update, change, small, simple, typo, rename, style
-
-**Complex indicators** (2+ matches = complex):
-- architecture, refactor, system, integration, migration, security, database
-
-**Moderate**: anything else
-
-## Risk Detection
-
-**High risk indicators**:
-- critical, production, breaking, delete, remove, security
-- database, authentication, payment, encryption
-
-## Scope Detection
-
-**System scope** (triggers `complete_system` with phase-based planning):
-- "entire", "all files", "across", "throughout", "migrate all"
-- Token count >30k
-- More than 10 files mentioned
-
-**Multi-file scope**:
-- "multiple", "several", "files", specific file list
-
-**Single scope**:
-- Specific file mentioned, "this file", "the function"
-
-## Security Scan Triggers
-
-Auto-enable security scanning when task mentions:
-
-| Category | Keywords |
-|----------|----------|
-| Database | sql, query, database, migration, schema |
-| Auth | auth, login, password, token, jwt, session |
-| Security | encrypt, decrypt, permission, role, certificate |
-
-## Fallback Logic
-
-If decision engine fails:
-1. Check task for "fix/update/simple" → `orchestrated`
-2. Check for "complex/system/architecture" → `complete_system`
-3. Default → `complete_system` with 0.7 confidence
-
-## Example Decisions
-
+### Example 1: Simple Fix
 ```
 Task: "fix typo in readme"
-→ Complexity: simple (fix, typo)
-→ Risk: low
-→ Scope: single
-→ Workflow: orchestrated (0.9)
 
-Task: "refactor authentication system"
-→ Complexity: complex (refactor, system)
-→ Risk: high (authentication)
-→ Scope: multi
-→ Workflow: complete_system (0.85)
-→ Security scan: enabled
+Complexity: 1 - Single character/word change, no logic
+Risk: 1 - Documentation only, cannot break anything
+Scope: 1 - One file
 
-Task: "migrate all models to new ORM"
-→ Complexity: complex (migrate)
-→ Risk: high (database)
-→ Scope: system (all)
-→ Workflow: complete_system (0.9)
-→ Security scan: enabled
+Combined: 1.0 → orchestrated
 ```
+
+### Example 2: Moderate Feature
+```
+Task: "add pagination to the user list API"
+
+Complexity: 2 - Standard pattern, well-understood
+Risk: 2 - Could affect existing API consumers
+Scope: 2 - API endpoint + frontend component
+
+Combined: 2.0 → orchestrated
+```
+
+### Example 3: Complex Refactor
+```
+Task: "refactor authentication to use OAuth2"
+
+Complexity: 4 - Multiple integration points, new protocol
+Risk: 4 - Authentication is critical, could lock users out
+Scope: 4 - Auth module, middleware, tests, config
+
+Combined: 4.0 → plan-opus
+```
+
+### Example 4: System Migration
+```
+Task: "migrate from REST to GraphQL"
+
+Complexity: 5 - Complete API paradigm shift
+Risk: 4 - Breaking change for all clients
+Scope: 5 - Entire API layer
+
+Combined: 4.7 → plan-opus
+```
+
+## Display Format
+
+Show the assessment to the user for transparency:
+
+```
+🧠 DECISION ENGINE
+━━━━━━━━━━━━━━━━━━
+
+Task: "add user profile page"
+
+Assessment:
+• Complexity: 2/5 - Standard CRUD with form
+• Risk: 1/5 - New feature, nothing to break
+• Scope: 2/5 - Route, component, API call
+
+Combined: 1.7 → Using **orchestrated** workflow
+```
+
+## Why Semantic Over Keywords
+
+**Old approach (keyword matching)**:
+- `"fix"` in task → always simple
+- `"refactor"` in task → always complex
+- **Problem**: "fix critical security vulnerability" was treated as simple
+
+**New approach (semantic analysis)**:
+- Claude understands "fix security vulnerability" is high-risk
+- Claude recognizes "refactor CSS" is low-risk
+- **Benefit**: Accurate assessment based on meaning, not words
 
 ## Integration
 
-Links to:
-- `02-LYRA-OPTIMIZATION.md` - Prompt optimization
-- `04-WORKFLOW-SELECTION.md` - Workflow indicators
+This module integrates with:
+- `02-LYRA-OPTIMIZATION.md` - Task understanding
+- `04-WORKFLOW-SELECTION.md` - Workflow options
 - `05-IMPLEMENTATION-STEPS.md` - Execution flow
-- `08-ERROR-HANDLING.md` - Fallback strategies
+
+## Confidence Reporting
+
+After assessment, Claude can report confidence:
+
+| Confidence | Meaning |
+|------------|---------|
+| **High** (0.9+) | Clear task, obvious workflow choice |
+| **Medium** (0.7-0.9) | Some ambiguity, but reasonable selection |
+| **Low** (<0.7) | Task unclear, may want to ask user |
+
+If confidence is low, Claude should ask clarifying questions before proceeding.
+
+---
+
+*Genuine understanding beats pattern matching.*
