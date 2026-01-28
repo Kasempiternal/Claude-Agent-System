@@ -1,10 +1,13 @@
 # /systemcc - Master Command Router
 
-**CRITICAL: ALL modules in `commands/systemcc/` MUST be loaded for proper operation.**
+Modules load progressively based on task complexity:
+- **MINIMAL**: Simple tasks (headers only)
+- **STANDARD**: Moderate tasks (summaries)
+- **FULL**: Complex tasks (complete docs)
 
 ## Module Loading Order
 
-### Load ALL modules from `commands/systemcc/` directory:
+### Available modules in `commands/systemcc/` directory:
 
 | # | Module | Purpose |
 |---|--------|---------|

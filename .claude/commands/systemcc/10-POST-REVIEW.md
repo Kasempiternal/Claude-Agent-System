@@ -1,7 +1,7 @@
 # POST-REVIEW MODULE - Triple Code Review System
 
 ## 🎯 Purpose
-Execute three parallel code reviews after main workflow completion for ultra-fast quality validation.
+Execute three parallel code reviews after main workflow completion for fast quality validation.
 
 ## ⚡ LEVEL 1 ENFORCEMENT
 This review phase is **MANDATORY** for all code changes unless:
@@ -30,7 +30,7 @@ def should_trigger_review(task_context):
 ```
 🔍 POST-EXECUTION REVIEW INITIATED
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-⚡ Running 3 parallel reviews (5 min max)...
+⚡ Running 3 parallel reviews...
 
 [PARALLEL EXECUTION]
 ├─ 👨‍💻 Senior Engineer → Code quality
@@ -211,7 +211,7 @@ Track for improvement:
 
 ```python
 async def execute_reviews_parallel():
-    # Launch all three simultaneously
+    # Launch all three simultaneously via Task tool
     reviews = await asyncio.gather(
         senior_engineer_review(),
         lead_engineer_review(),

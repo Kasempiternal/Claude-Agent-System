@@ -1,15 +1,38 @@
 # Simplified Decision Engine
 
-Workflow selection using 3 core dimensions and clear decision tables.
+Two-phase workflow selection: Domain Detection first, then Complexity Scoring fallback.
 
 ## Core Philosophy
 
-- **Minimal complexity** - 3 dimensions instead of 8
+- **Domain-first** - Specialized workflows for matching domains
+- **All 6 workflows available** - Not just 3
 - **Clear rules** - Decision tables, not algorithms
-- **Fast decisions** - Keyword matching, no calculations
 - **Predictable routing** - Same input = same workflow
 
-## Three-Dimensional Analysis
+---
+
+## Phase 1: Domain Detection (CHECK FIRST)
+
+Before scoring, detect if task matches a specialized domain:
+
+| Domain | Workflow | Detection Signals |
+|--------|----------|-------------------|
+| **Web Development** | `anti-yolo-web` | HTML, CSS, JavaScript, React, Vue, Angular, frontend, UI, dashboard, component, web app |
+| **Feature Development** | `aidevtasks` | "build feature", "create system", product requirements, user stories, multi-component features |
+| **Project Setup** | `agetos` | Setup, initialize, standards, conventions, new project, project structure |
+| **Deep Planning** | `plan-opus` | Architecture design, major refactor, migration, "plan first", many unknowns |
+
+**Decision**:
+- Domain match with HIGH confidence → Use specialized workflow (skip Phase 2)
+- No domain match → Proceed to Phase 2
+
+---
+
+## Phase 2: Complexity Scoring (FALLBACK)
+
+Only when no specialized domain detected.
+
+### Three-Dimensional Analysis
 
 ### 1. Complexity
 
@@ -53,14 +76,17 @@ Workflow selection using 3 core dimensions and clear decision tables.
 | complex | any | any | complete_system | 0.8 |
 | any | any | system | complete_system | 0.9 |
 
-## Priority Overrides
+## Phase 1 Priority Overrides
 
-These override the decision table:
+These domain matches ALWAYS override the complexity decision table:
 
-1. **Context >30k tokens** → `complete_system` with phase-based planning (via plan-opus)
-2. **Web project detected** → `anti-yolo-web`
-3. **Setup/initialize keywords** → `agetos`
-4. **Feature development** → `aidevtasks`
+| Priority | Domain | Workflow |
+|----------|--------|----------|
+| 1 | Web Development | `anti-yolo-web` |
+| 2 | Feature Development | `aidevtasks` |
+| 3 | Project Setup | `agetos` |
+| 4 | Deep Planning / Architecture | `plan-opus` |
+| 5 | Context >30k tokens | `plan-opus` (phase-based) |
 
 ## Security Scan Triggers
 
@@ -75,26 +101,42 @@ Auto-enable security scanning for these keywords:
 
 ## Example Decisions
 
+### Phase 1 Match (Domain Detected)
+```
+Task: "create a React dashboard with charts"
+→ Phase 1: Web Development detected (React, dashboard, frontend)
+→ Workflow: anti-yolo-web (0.95)
+
+Task: "build a complete user authentication feature"
+→ Phase 1: Feature Development detected (build feature, multi-component)
+→ Workflow: aidevtasks (0.9)
+
+Task: "setup a new TypeScript project with standards"
+→ Phase 1: Project Setup detected (setup, standards)
+→ Workflow: agetos (0.9)
+
+Task: "plan the migration from REST to GraphQL"
+→ Phase 1: Deep Planning detected (migration, architecture)
+→ Workflow: plan-opus (0.95)
+```
+
+### Phase 2 Fallback (No Domain Match)
 ```
 Task: "fix typo in config"
-→ Complexity: simple (fix, typo)
-→ Risk: low (config)
-→ Scope: single
+→ Phase 1: No domain match
+→ Phase 2: Complexity=simple, Risk=low, Scope=single
 → Workflow: orchestrated (0.9)
 
-Task: "refactor authentication"
-→ Complexity: complex (refactor)
-→ Risk: high (authentication)
-→ Scope: multi
+Task: "refactor the payment module"
+→ Phase 1: No domain match (internal refactor)
+→ Phase 2: Complexity=complex, Risk=high, Scope=multi
 → Workflow: complete_system (0.85)
 → Security scan: enabled
 
-Task: "migrate all database models"
-→ Complexity: complex (migrate)
-→ Risk: high (database)
-→ Scope: system (all)
-→ Workflow: complete_system (0.9)
-→ Security scan: enabled
+Task: "add pagination to user list API"
+→ Phase 1: No domain match (general backend)
+→ Phase 2: Complexity=moderate, Risk=low, Scope=single
+→ Workflow: orchestrated (0.8)
 ```
 
 ## Code Minimalism Standards
@@ -105,10 +147,21 @@ Always prefer:
 3. **Compose existing** - Combine utilities
 4. **Create minimal** - Only when necessary
 
+## All Available Workflows
+
+| Workflow | Type | Best For |
+|----------|------|----------|
+| `anti-yolo-web` | Phase 1 | Web/frontend development |
+| `aidevtasks` | Phase 1 | PRD-based feature development |
+| `agetos` | Phase 1 | Project setup and standards |
+| `plan-opus` | Phase 1 + Phase 2 | Planning, architecture, complex tasks |
+| `complete_system` | Phase 2 | Moderate features with validation |
+| `orchestrated` | Phase 2 | Simple fixes and changes |
+
 ## Integration
 
 This engine is used by:
-- `commands/systemcc/07-DECISION-ENGINE.md` - Module documentation
+- `commands/systemcc/07-DECISION-ENGINE.md` - Two-phase decision logic
 - `middleware/lyra-universal.md` - Prompt optimization
 - `middleware/workflow-enforcement.md` - Execution rules
 

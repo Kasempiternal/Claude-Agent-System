@@ -1,144 +1,269 @@
 # DECISION ENGINE MODULE
 
-Simplified workflow selection using 3 dimensions, skill-rules, and clear decision tables.
+Two-phase workflow selection: Domain Detection first, then Complexity Scoring fallback.
 
-## Skill-Rules Integration (NEW - Phase 2.4)
+## Two-Phase Decision System
 
-**Priority 1**: Check skill-rules.json for declarative matches
+**Critical**: This engine uses ALL 6 available workflows, not just 3.
 
-```python
-# Before running decision engine
-skill_match = match_skill_rules(user_request, loaded_files, pattern_results)
+### Available Workflows
 
-if skill_match:
-    priority = skill_match["priority"]
+| Workflow | Purpose | Best For |
+|----------|---------|----------|
+| `anti-yolo-web` | Web app development specialist | Frontend, React, Vue, dashboards, UI components |
+| `aidevtasks` | PRD-based feature development | New features requiring product specs |
+| `agetos` | Project initialization/standards | Setup, conventions, new projects |
+| `plan-opus` | Deep planning with parallel exploration | Architecture, migrations, complex unknowns |
+| `complete_system` | Full 6-agent validation pipeline | Moderate features, refactoring with validation |
+| `orchestrated` | Streamlined 3-agent workflow | Simple fixes, config changes, quick tasks |
 
-    if priority == "critical":
-        # Critical priority - always use skill-rule preference
-        return skill_match["preferred_workflow"]
+---
 
-    elif priority == "high" and skill_match["confidence"] > 0.7:
-        # High priority + high confidence - use skill-rule
-        return skill_match["preferred_workflow"]
+## Phase 1: Domain Detection (CHECK FIRST)
 
-    elif priority in ["medium", "low"]:
-        # Lower priority - use as hint for decision engine
-        decision_hint = skill_match["preferred_workflow"]
+Before any scoring, Claude semantically analyzes if the task matches a specialized domain.
 
-# Continue to standard decision engine...
+### Domain Detection Matrix
+
+| Domain | Workflow | Detection Signals (Semantic, Not Keywords) |
+|--------|----------|-------------------------------------------|
+| **Web Development** | `anti-yolo-web` | Building/modifying web interfaces, React/Vue/Angular components, HTML/CSS/JavaScript, dashboards, forms, buttons, frontend UI, responsive design, web apps |
+| **Feature Development** | `aidevtasks` | "build feature", "create system", product requirements needed, user stories, new functionality with multiple components, detailed specs beneficial |
+| **Project Setup** | `agetos` | Initialize project, setup standards, establish conventions, new project structure, team coding standards, project configuration |
+| **Deep Planning** | `plan-opus` | Architecture design, major refactoring, system migration, "plan first" requests, exploration needed, multiple valid approaches, significant unknowns |
+
+### Phase 1 Decision Logic
+
+```
+IF task clearly matches a specialized domain with HIGH confidence:
+   → Use that specialized workflow directly
+   → Skip Phase 2
+
+IF no domain matches OR confidence is LOW:
+   → Proceed to Phase 2 (Complexity Scoring)
 ```
 
-**Skill-Rules Location**: `middleware/skill-rules/skill-rules.json`
+---
 
-**Benefits**:
-- Project-specific workflow preferences
-- Declarative configuration (no code changes)
-- Override-able via priority system
+## Phase 2: Complexity Scoring (FALLBACK)
 
-## Three-Dimensional Analysis
+Only when NO specialized domain is detected, use 3-dimensional assessment.
 
-| Dimension | Description | Values |
-|-----------|-------------|--------|
-| **Complexity** | How complex is the task? | simple / moderate / complex |
-| **Risk** | What's the risk level? | low / high |
-| **Scope** | How many files affected? | single / multi / system |
+### The Three Dimensions
 
-## Workflow Decision Table
+| Dimension | What to Assess | Scale |
+|-----------|----------------|-------|
+| **Complexity** | How intricate is the implementation? | 1 (trivial) to 5 (very complex) |
+| **Risk** | What could go wrong? Data loss? Breaking changes? | 1 (safe) to 5 (high stakes) |
+| **Scope** | How much of the codebase is affected? | 1 (single file) to 5 (system-wide) |
 
-| Complexity | Risk | Scope | Workflow | Confidence |
-|------------|------|-------|----------|------------|
-| simple | low | single | orchestrated | 0.9 |
-| simple | low | multi | orchestrated | 0.85 |
-| simple | high | any | complete_system | 0.85 |
-| moderate | low | single | orchestrated | 0.8 |
-| moderate | low | multi | complete_system | 0.75 |
-| moderate | high | any | complete_system | 0.85 |
-| complex | any | any | complete_system | 0.8 |
-| any | any | system | complete_system | 0.9 |
+### Complexity-Based Workflow Selection
 
-## Priority Order
+| Combined Score | Workflow | Use Case |
+|----------------|----------|----------|
+| 1.0 - 2.0 | `orchestrated` | Bug fixes, small changes, config updates, typos |
+| 2.1 - 3.5 | `complete_system` | Moderate features, refactoring, validation needed |
+| 3.6 - 5.0 | `plan-opus` | Complex multi-system changes, high risk |
 
-1. **Context Size** - If >30k tokens, use `complete_system` with phase-based planning
-2. **Security Keywords** - If detected, enable security scan
-3. **Web Detection** - If web app intent, use `anti-yolo-web`
-4. **Risk Level** - High risk always uses `complete_system`
-5. **Complexity** - Complex tasks use `complete_system`
-6. **Default** - Simple/moderate tasks use `orchestrated`
+## Display Format
 
-## Complexity Detection
+Always show the decision transparently with phase indication:
 
-**Simple indicators** (any match = simple):
-- fix, update, change, small, simple, typo, rename, style
+### Phase 1 Match (Domain Detected)
 
-**Complex indicators** (2+ matches = complex):
-- architecture, refactor, system, integration, migration, security, database
+```
+🧠 DECISION ENGINE
+━━━━━━━━━━━━━━━━━━
 
-**Moderate**: anything else
+Task: "create a React dashboard with charts"
 
-## Risk Detection
+Phase 1 - Domain Detection:
+✓ Web Development detected
+  → React components, dashboard UI, frontend work
 
-**High risk indicators**:
-- critical, production, breaking, delete, remove, security
-- database, authentication, payment, encryption
+→ Using **anti-yolo-web** workflow
+```
 
-## Scope Detection
+### Phase 2 Fallback (No Domain Match)
 
-**System scope** (triggers `complete_system` with phase-based planning):
-- "entire", "all files", "across", "throughout", "migrate all"
-- Token count >30k
-- More than 10 files mentioned
+```
+🧠 DECISION ENGINE
+━━━━━━━━━━━━━━━━━━
 
-**Multi-file scope**:
-- "multiple", "several", "files", specific file list
+Task: "fix the login button color"
 
-**Single scope**:
-- Specific file mentioned, "this file", "the function"
+Phase 1 - Domain Detection:
+✗ No specialized domain detected (simple CSS fix)
 
-## Security Scan Triggers
+Phase 2 - Complexity Assessment:
+• Complexity: 1/5 - Single CSS property change
+• Risk: 1/5 - UI only, no logic affected
+• Scope: 1/5 - One file
 
-Auto-enable security scanning when task mentions:
+Combined: 1.0 → Using **orchestrated** workflow
+```
 
-| Category | Keywords |
-|----------|----------|
-| Database | sql, query, database, migration, schema |
-| Auth | auth, login, password, token, jwt, session |
-| Security | encrypt, decrypt, permission, role, certificate |
+---
 
-## Fallback Logic
+## Example Assessments
 
-If decision engine fails:
-1. Check task for "fix/update/simple" → `orchestrated`
-2. Check for "complex/system/architecture" → `complete_system`
-3. Default → `complete_system` with 0.7 confidence
+### Example 1: Web Development → anti-yolo-web
+```
+Task: "build a React admin dashboard with user management"
 
-## Example Decisions
+Phase 1 - Domain Detection:
+✓ Web Development detected
+  → React, dashboard, user management UI
 
+→ Using **anti-yolo-web** workflow
+```
+
+### Example 2: Feature Development → aidevtasks
+```
+Task: "build a complete user authentication feature with login, registration, and password reset"
+
+Phase 1 - Domain Detection:
+✓ Feature Development detected
+  → Multi-component feature needing product specs
+
+→ Using **aidevtasks** workflow
+```
+
+### Example 3: Project Setup → agetos
+```
+Task: "setup a new TypeScript project with proper standards and conventions"
+
+Phase 1 - Domain Detection:
+✓ Project Setup detected
+  → New project, standards, conventions
+
+→ Using **agetos** workflow
+```
+
+### Example 4: Deep Planning → plan-opus
+```
+Task: "plan the migration from REST API to GraphQL"
+
+Phase 1 - Domain Detection:
+✓ Deep Planning detected
+  → Major migration, architecture shift, many unknowns
+
+→ Using **plan-opus** workflow
+```
+
+### Example 5: No Domain → Complexity Fallback
 ```
 Task: "fix typo in readme"
-→ Complexity: simple (fix, typo)
-→ Risk: low
-→ Scope: single
-→ Workflow: orchestrated (0.9)
 
-Task: "refactor authentication system"
-→ Complexity: complex (refactor, system)
-→ Risk: high (authentication)
-→ Scope: multi
-→ Workflow: complete_system (0.85)
-→ Security scan: enabled
+Phase 1 - Domain Detection:
+✗ No specialized domain detected
 
-Task: "migrate all models to new ORM"
-→ Complexity: complex (migrate)
-→ Risk: high (database)
-→ Scope: system (all)
-→ Workflow: complete_system (0.9)
-→ Security scan: enabled
+Phase 2 - Complexity Assessment:
+• Complexity: 1/5 - Single character change
+• Risk: 1/5 - Documentation only
+• Scope: 1/5 - One file
+
+Combined: 1.0 → Using **orchestrated** workflow
 ```
+
+### Example 6: No Domain → Moderate Complexity
+```
+Task: "add pagination to the user list API"
+
+Phase 1 - Domain Detection:
+✗ No specialized domain (general backend work)
+
+Phase 2 - Complexity Assessment:
+• Complexity: 2/5 - Standard pagination pattern
+• Risk: 2/5 - Could affect API consumers
+• Scope: 2/5 - API endpoint + tests
+
+Combined: 2.0 → Using **orchestrated** workflow
+```
+
+### Example 7: No Domain → Higher Complexity
+```
+Task: "refactor the payment processing module"
+
+Phase 1 - Domain Detection:
+✗ No specialized domain (internal refactor)
+
+Phase 2 - Complexity Assessment:
+• Complexity: 3/5 - Multiple interconnected functions
+• Risk: 4/5 - Payment is business-critical
+• Scope: 3/5 - Payment module + integrations
+
+Combined: 3.3 → Using **complete_system** workflow
+```
+
+---
+
+## Why Two-Phase Over Single Scoring
+
+**Old approach (score-only)**:
+- All tasks scored 1-5 on complexity/risk/scope
+- Only 3 workflows available based on score
+- **Problem**: Specialized workflows like `anti-yolo-web` were never selected
+
+**New approach (domain-first)**:
+- Phase 1 detects if task matches a specialized domain
+- Specialized workflows get used when appropriate
+- Phase 2 handles general tasks that don't fit domains
+- **Benefit**: Full utilization of all 6 powerful workflows
+
+## Semantic Analysis (Not Keyword Matching)
+
+**Critical**: Both phases use genuine semantic understanding, not keyword detection.
+
+Claude understands:
+- "fix security vulnerability" is high-risk (not just "fix")
+- "refactor CSS" is low-risk (not just "refactor")
+- "create dashboard" is web development (semantic domain match)
+- "build feature" may need PRD flow (semantic intent detection)
 
 ## Integration
 
-Links to:
-- `02-LYRA-OPTIMIZATION.md` - Prompt optimization
-- `04-WORKFLOW-SELECTION.md` - Workflow indicators
-- `05-IMPLEMENTATION-STEPS.md` - Execution flow
-- `08-ERROR-HANDLING.md` - Fallback strategies
+This module integrates with:
+- `02-LYRA-OPTIMIZATION.md` - Task understanding before decision
+- `04-WORKFLOW-SELECTION.md` - Available workflow definitions
+- `05-IMPLEMENTATION-STEPS.md` - Execution after selection
+
+## Confidence Reporting
+
+After assessment, Claude reports confidence:
+
+| Confidence | Meaning | Action |
+|------------|---------|--------|
+| **High** (0.9+) | Clear domain match or obvious scoring | Proceed immediately |
+| **Medium** (0.7-0.9) | Reasonable selection with some ambiguity | Proceed with note |
+| **Low** (<0.7) | Task unclear, multiple workflows possible | Ask clarifying questions |
+
+## Quick Reference
+
+```
+Task comes in
+    │
+    ▼
+┌─────────────────────────┐
+│  PHASE 1: Domain Check  │
+│                         │
+│  Web Dev? → anti-yolo   │
+│  Feature? → aidevtasks  │
+│  Setup?   → agetos      │
+│  Planning? → plan-opus  │
+└─────────────────────────┘
+    │
+    │ No domain match?
+    ▼
+┌─────────────────────────┐
+│  PHASE 2: Score Tasks   │
+│                         │
+│  1.0-2.0 → orchestrated │
+│  2.1-3.5 → complete_sys │
+│  3.6-5.0 → plan-opus    │
+└─────────────────────────┘
+```
+
+---
+
+*Domain detection first, complexity scoring as fallback. All 6 workflows available.*

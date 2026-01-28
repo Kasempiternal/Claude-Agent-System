@@ -41,7 +41,7 @@ Assess the task and decide how many scouts are needed:
 | High | 5 | Cross-module changes, complex features |
 | Very High | 6 | Architecture changes, major refactors, system-wide impact |
 
-**CRITICAL**: Launch ALL chosen agents in a SINGLE message with multiple Task tool calls.
+**CRITICAL**: Launch ALL chosen agents in a SINGLE message with multiple Task tool calls for parallel execution.
 
 ### Available Exploration Roles
 
