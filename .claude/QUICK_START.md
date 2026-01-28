@@ -5,9 +5,9 @@
 Just use: `/systemcc "describe what you want to do"`
 
 The enhanced system automatically:
-1. **8-Dimensional Analysis** - Evaluates technical complexity, scope impact, risk factors, context load, time pressure, code minimalism, security, and pattern reusability
+1. **3-Dimensional Analysis** - Evaluates complexity, risk, and scope for optimal workflow selection
 2. **Build Configuration Detection** - Automatically detects and applies Makefile, CI/CD, and linting rules
-3. **Intelligent Routing** - Selects optimal workflow based on sophisticated decision algorithms
+3. **Intelligent Routing** - Selects optimal workflow based on decision algorithms
 4. **Quality Assurance** - Validates all inputs, handles errors gracefully, and maintains production standards
 5. **Performance Optimization** - Uses early termination, caching, and efficient pattern matching
 6. **Transparent Reasoning** - Provides detailed decision explanations and alternative suggestions
@@ -31,7 +31,7 @@ The enhanced system automatically:
 ## Intelligent Features
 
 ### Decision Engine Transparency
-- Real-time scoring across 8 dimensions
+- Real-time scoring across 3 dimensions (Complexity/Risk/Scope)
 - Build configuration auto-detection and application
 - Confidence levels and alternative workflow suggestions
 - Performance metrics and optimization feedback
@@ -52,7 +52,7 @@ The enhanced system automatically:
 
 ## Manual Commands (Power Users)
 
-- `/taskit` - Force phase-based execution with quality validation
+- `/plan-opus` - Deep planning with parallel exploration for complex tasks
 - `/orchestrated` - Force streamlined workflow with error handling
 - `/planner` - Start complete system with comprehensive validation
 - `/help` - Show enhanced command system

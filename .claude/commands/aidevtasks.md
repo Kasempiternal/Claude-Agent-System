@@ -76,7 +76,7 @@ Uses `workflows/ai-dev-tasks/create-prd.md`:
 1. Receive feature request
 2. Ask clarifying questions **[User Input Required]**
 3. Generate comprehensive PRD automatically
-4. Save temporarily to `~/.claude/temp/`
+4. Save temporarily to `.claude/temp/`
 
 ### Phase 2: Task Generation (Semi-Automatic)
 Uses `workflows/ai-dev-tasks/generate-tasks.md`:
@@ -202,9 +202,9 @@ When invoked, the automated executor will:
 
 ## Output Structure
 
-PRDs and task files are stored temporarily in `~/.claude/temp/` during workflow execution:
-- `~/.claude/temp/prd-[feature].md` - Product requirement documents
-- `~/.claude/temp/tasks-[feature].md` - Task lists
+PRDs and task files are stored temporarily in `.claude/temp/` during workflow execution:
+- `.claude/temp/prd-[feature].md` - Product requirement documents
+- `.claude/temp/tasks-[feature].md` - Task lists
 
 These temporary files are automatically cleaned up after workflow completion unless user explicitly requests to keep them.
 

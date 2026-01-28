@@ -43,7 +43,7 @@ When this command is invoked:
 
    Recommendations:
    - Consider starting fresh session for unrelated task
-   - Use /taskit for large multi-phase work
+   - Use /plan-opus for large multi-phase work
    ```
 
 3. **Provide Options**
@@ -53,7 +53,7 @@ When this command is invoked:
 
 ## Integration with /systemcc
 
-The `/systemcc` command automatically uses phase-based execution (`/taskit`) when:
+The `/systemcc` command automatically uses phase-based execution (via `/plan-opus`) when:
 - Current context > 30k tokens
 - Project has 100+ files
 - Task touches 5+ modules
@@ -63,7 +63,7 @@ This prevents context overflow automatically.
 ## Tips
 
 1. **Start fresh for new topics** - Don't carry over context from unrelated work
-2. **Use /taskit for big tasks** - Phase-based execution manages context automatically
+2. **Use /plan-opus for big tasks** - Phase-based execution manages context automatically
 3. **Close unused files** - Don't keep files open "just in case"
 4. **Focus on one concern** - Complete one task before starting another
 

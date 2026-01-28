@@ -54,23 +54,23 @@ Phases build incrementally:
 ## Workflow Structure
 
 ```
-/taskit "complex task description"
+/plan-opus "complex task description"
     │
-    ├── Creates TASK-PLAN.md
-    │   └── Breaks task into phases
+    ├── Creates implementation plan
+    │   └── Breaks task into phases with parallel exploration
     │
     ├── Executes Phase 1
     │   ├── Loads minimal context
     │   ├── Implements phase objective
-    │   └── Saves phase-1-outcome.md
+    │   └── Documents outcomes
     │
     ├── Executes Phase 2
     │   ├── Loads Phase 1 summary + new context
     │   ├── Implements phase objective
-    │   └── Saves phase-2-outcome.md
+    │   └── Documents outcomes
     │
     └── ... continues through all phases
-        └── Creates TASK-SUMMARY.md
+        └── Creates final summary
 ```
 
 ## Benefits Demonstrated
@@ -185,14 +185,14 @@ Phase-based development typically achieves:
 
 ## Getting Started
 
-1. Install the workflow:
+1. Use the phase-based planning command:
    ```bash
-   # Already installed in commands/taskit.md
+   /plan-opus "implement complete search functionality with filters"
    ```
 
-2. Try a complex task:
+2. Or let `/systemcc` automatically route to phase-based execution:
    ```bash
-   /taskit "implement complete search functionality with filters"
+   /systemcc "refactor entire API layer"
    ```
 
 3. Watch phases execute with focused precision
@@ -215,9 +215,9 @@ Blocks: Phase 6
 ```
 
 ### Checkpoint Recovery
-Resume from specific phase:
+Resume from specific phase by referencing the plan file:
 ```bash
-/taskit --resume-from-phase 3
+/plan-opus --resume "continue from phase 3"
 ```
 
 ## Troubleshooting
@@ -246,4 +246,4 @@ Resume from specific phase:
 
 ## Conclusion
 
-Phase-based development transforms how Claude Code handles complex tasks. By breaking work into focused phases, we achieve higher quality, better documentation, and more reliable results. Start using `/taskit` today for your complex development tasks.
+Phase-based development transforms how Claude Code handles complex tasks. By breaking work into focused phases, we achieve higher quality, better documentation, and more reliable results. Start using `/plan-opus` today for your complex development tasks.

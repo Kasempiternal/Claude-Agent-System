@@ -390,8 +390,8 @@
       "agents": 6,
       "duration_estimate": "30-60 minutes"
     },
-    "taskit": {
-      "description": "Phase-based context-optimized workflow",
+    "plan-opus": {
+      "description": "Phase-based context-optimized workflow with parallel exploration",
       "use_for": ["large codebases", "migrations", "system-wide changes"],
       "trigger": "context_size > 30000 tokens",
       "duration_estimate": "60+ minutes"
