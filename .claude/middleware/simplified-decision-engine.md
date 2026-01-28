@@ -51,13 +51,13 @@ Workflow selection using 3 core dimensions and clear decision tables.
 | moderate | low | multi | complete_system | 0.75 |
 | moderate | high | any | complete_system | 0.85 |
 | complex | any | any | complete_system | 0.8 |
-| any | any | system | taskit | 0.9 |
+| any | any | system | complete_system | 0.9 |
 
 ## Priority Overrides
 
 These override the decision table:
 
-1. **Context >30k tokens** → `taskit` (phase-based)
+1. **Context >30k tokens** → `complete_system` with phase-based planning (via plan-opus)
 2. **Web project detected** → `anti-yolo-web`
 3. **Setup/initialize keywords** → `agetos`
 4. **Feature development** → `aidevtasks`
@@ -93,7 +93,7 @@ Task: "migrate all database models"
 → Complexity: complex (migrate)
 → Risk: high (database)
 → Scope: system (all)
-→ Workflow: taskit (0.9)
+→ Workflow: complete_system (0.9)
 → Security scan: enabled
 ```
 

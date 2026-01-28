@@ -8,7 +8,7 @@ This middleware applies to ALL commands:
 - `/systemcc` - Master router
 - `/agetos` - Agent OS workflow
 - `/aidevtasks` - PRD-based development
-- `/taskit` - Phase-based execution
+- `/plan-opus` - Phase-based planning and execution
 - `/planner`, `/executer`, etc. - Individual agents
 - `/orchestrated` - Streamlined workflow
 - Any future commands
@@ -80,7 +80,7 @@ Apply command-specific optimizations:
 - Include user story elements
 - Add acceptance criteria hints
 
-**For /taskit (Phase-based)**
+**For /plan-opus (Phase-based)**
 - Emphasize decomposition needs
 - Include phase boundaries
 - Add context preservation notes
@@ -121,7 +121,7 @@ Original: "chat feature"
 Optimized: "Create a real-time chat feature for [user type]. Core requirements: 1-on-1 messaging, group chats, message persistence, typing indicators, read receipts, file sharing. Target platforms: web and mobile. Performance: <100ms message delivery. Security: end-to-end encryption."
 ```
 
-### Phase-Based (/taskit)
+### Phase-Based (/plan-opus)
 ```
 Original: "refactor everything"
 Optimized: "Systematically refactor the entire [detected framework] application. Phase 1: Analyze current architecture and identify problem areas. Phase 2: Create refactoring plan with risk assessment. Phase 3: Implement core structure changes. Phase 4: Migrate components. Phase 5: Update tests and documentation."

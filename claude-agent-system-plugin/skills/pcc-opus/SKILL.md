@@ -178,7 +178,7 @@ AskUserQuestion({
 
 ---
 
-## Phase 5: Plan Creation
+## Phase 4: Plan Creation
 
 **After receiving answers from Phase 3.5** (if questions were asked), create a detailed plan file at `.claude/plans/{task-slug}.md` with this structure:
 
@@ -253,7 +253,7 @@ This plan is designed for maximum parallel execution with Opus-quality agents.
 
 ---
 
-## Phase 6: User Confirmation
+## Phase 5: User Confirmation
 
 After writing the plan file:
 
@@ -266,7 +266,7 @@ After writing the plan file:
 
 ---
 
-## Phase 7: Parallel Implementation (Opus Agents)
+## Phase 6: Parallel Implementation (Opus Agents)
 
 Once the user confirms:
 
@@ -324,17 +324,17 @@ Report back with:
 
 ---
 
-## Phase 8: Verification & Completion
+## Phase 7: Verification & Completion
 
 After all implementation agents complete:
 
 1. **Spawn test runner agent** to verify all tests pass
-2. **Spawn code review agent** to check for issues
+2. **Spawn code review agent** (using `model='opus'`) to check for issues
 3. **Synthesize results** and prepare for simplification
 
 ---
 
-## Phase 9: Parallel Code Simplification (2-6 Agents)
+## Phase 8: Parallel Code Simplification (2-6 Agents)
 
 After verification passes, spawn **2 to 6 code-simplifier agents in parallel** to clean up the implementation.
 
@@ -369,7 +369,7 @@ Commit your changes with message: "Simplify: [brief description]"
 
 ---
 
-## Phase 10: Final Report
+## Phase 9: Final Report
 
 After all simplification agents complete:
 
@@ -404,10 +404,10 @@ After all simplification agents complete:
 | Phase | Agent Type | Model | Count | Purpose |
 |-------|------------|-------|-------|---------|
 | Exploration | Explore | **Opus** | 2-6 | Deep codebase analysis |
-| Implementation | General-purpose | Opus | 2-6 | Write code |
+| Implementation | General-purpose | **Opus** | 2-6 | Write code |
 | Testing | Test-runner | - | 1+ | Verify changes |
-| Review | Code-reviewer | - | 1 | Quality check |
-| Simplification | code-simplifier | - | 2-6 | Clean & simplify |
+| Review | Code-reviewer | **Opus** | 1 | Quality check |
+| Simplification | code-simplifier | **Opus** | 2-6 | Clean & simplify |
 
 **OPUS EDITION**: This variant uses Opus for BOTH exploration and implementation, providing maximum quality at every stage. Use this for:
 - Critical production systems

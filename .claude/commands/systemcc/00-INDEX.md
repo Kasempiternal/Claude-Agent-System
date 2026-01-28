@@ -74,7 +74,7 @@
 |----------|----------|
 | `orchestrated` | Simple tasks (3-agent) |
 | `complete_system` | Complex tasks (6-agent) |
-| `taskit` | Large scope (phase-based) |
+| `plan-opus` | Large scope (phase-based) |
 | `aidevtasks` | Feature development (PRD) |
 | `anti-yolo-web` | Web app development |
 | `agetos` | Project initialization |

@@ -1,3 +1,8 @@
+---
+name: code-reviewer
+model: opus
+---
+
 # code-reviewer
 
 ## Purpose

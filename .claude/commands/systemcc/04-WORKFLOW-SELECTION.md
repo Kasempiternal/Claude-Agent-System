@@ -134,7 +134,7 @@ If `enable_security_scan: true` in pattern results:
 
 **Process:** Create PRD → Generate Tasks → Implement
 
-### Phase-Based (/taskit)
+### Phase-Based (via /plan-opus)
 **Triggers:**
 - Context already > 30,000 tokens
 - More than 10 files loaded
@@ -143,7 +143,7 @@ If `enable_security_scan: true` in pattern results:
 - Estimated time > 60 minutes
 - Keywords: "entire", "all", "across", "throughout", "migrate"
 
-**Process:** Decompose → Execute Phases → Integrate
+**Process:** Plan → Explore → Execute Phases → Verify
 
 ### Complete System (Standard)
 **Keywords:**

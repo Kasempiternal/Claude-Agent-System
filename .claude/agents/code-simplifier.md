@@ -1,3 +1,8 @@
+---
+name: code-simplifier
+model: opus
+---
+
 # code-simplifier
 
 ## Purpose

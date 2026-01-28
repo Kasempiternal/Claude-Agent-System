@@ -21,17 +21,6 @@ Intelligent router with Lyra AI optimization that selects the best workflow:
 /systemcc --workflow=agetos "setup project"  # Force specific workflow
 ```
 
-#### `/taskit` - Phase-Based Execution
-Breaks complex tasks into focused phases for optimal context management.
-- Best for tasks > 1 hour or large codebases
-- Reduces context by 60-80%
-- Maintains quality across all phases
-- See `workflows/phase-based-workflow/taskit.md` for details
-
-```bash
-/taskit "refactor entire payment system"
-```
-
 ### 🚀 Specialized Workflows
 
 #### `/agetos` - Agent OS Project Standards
@@ -119,12 +108,6 @@ Analyzes your project and adapts the agent system to your tech stack.
 /analyzecc
 ```
 
-#### `/epct` - Explore, Plan, Code, Test
-For tasks requiring research and exploration.
-
-#### `/create-worktree` - Git Worktree
-Creates new branch in separate worktree.
-
 ## Decision Guide
 
 ```
@@ -134,18 +117,18 @@ Use /systemcc - it intelligently routes for you!
 
 Automatic routing:
 - Project setup → Agent OS (/agetos)
-- Feature building → AI Dev Tasks (/aidevtasks) 
-- Large context → Phase-based (/taskit)
+- Feature building → AI Dev Tasks (/aidevtasks)
+- Large context → Phase-based via plan-opus
 - Complex validation → Complete system
 - Quick fixes → Orchestrated
 
 Manual override:
-/systemcc --workflow=[agetos|aidevtasks|taskit|complete|orchestrated]
+/systemcc --workflow=[agetos|aidevtasks|complete|orchestrated]
 ```
 
 ## Context Management
 
-`/systemcc` automatically uses `/taskit` when:
+`/systemcc` automatically uses phase-based execution (via `/plan-opus`) when:
 - Current context > 30k tokens
 - Project has 100+ files
 - Task touches 5+ modules

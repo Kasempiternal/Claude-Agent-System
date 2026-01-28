@@ -1,12 +1,14 @@
-# /taskit - Phase-Based Task Execution System
+# Phase-Based Task Execution System
+
+> **Note**: This phase-based approach is now accessed via `/plan-opus` or automatically through `/systemcc` routing for large-scope tasks.
 
 ## ⚠️ File Policy
-Temporary phase files go to `~/.claude/temp/` and are deleted after workflow completion.
+Temporary phase files go to `.claude/temp/` and are deleted after workflow completion.
 Do NOT create files in the target repo unless user explicitly requests.
 
 ## Overview
 
-The `/taskit` command implements a phase-based development approach that breaks complex tasks into focused phases, optimizing context usage and improving quality by allowing deep focus on each phase independently.
+Phase-based development breaks complex tasks into focused phases, optimizing context usage and improving quality by allowing deep focus on each phase independently. Access this workflow via `/plan-opus` for explicit phase planning.
 
 ### Critical for Large Codebases
 When working in projects with hundreds of files or when context accumulates during long sessions, Claude's context window can become compressed, leading to:
@@ -15,11 +17,11 @@ When working in projects with hundreds of files or when context accumulates duri
 - Superficial implementations
 - Errors from forgotten context
 
-`/taskit` solves this by resetting context between phases while maintaining continuity through documentation.
+Phase-based execution solves this by resetting context between phases while maintaining continuity through documentation.
 
 ## Core Concept
 
-Instead of attempting to complete an entire complex task in one go (which can overwhelm context and reduce quality), `/taskit`:
+Instead of attempting to complete an entire complex task in one go (which can overwhelm context and reduce quality), phase-based execution:
 
 1. **Decomposes** the task into logical phases
 2. **Documents** each phase in a structured plan
@@ -35,17 +37,17 @@ Instead of attempting to complete an entire complex task in one go (which can ov
 ## How It Works
 
 ### 1. Task Analysis & Planning
-When invoked with `/taskit "your complex task"`, the system:
+When invoked with `/plan-opus "your complex task"`, the system:
 - Analyzes the task requirements
 - Breaks it into 3-7 logical phases
-- Creates a `~/.claude/temp/TASK-PLAN.md` file with detailed phase descriptions
+- Creates a `.claude/plans/{task-slug}.md` file with detailed phase descriptions
 - Estimates complexity and time for each phase
 
 ### 2. Phase Execution
 For each phase:
 - Loads only relevant context for that phase
 - Executes with full focus on phase objectives
-- Documents outcomes in ~/.claude/temp/
+- Documents outcomes in .claude/temp/
 - Prepares handoff for next phase
 
 ### 3. Context Optimization
@@ -73,7 +75,7 @@ Total: 43k tokens with consistent quality
 ## Usage
 
 ```bash
-/taskit "build a complete user dashboard with analytics, notifications, and settings"
+/plan-opus "build a complete user dashboard with analytics, notifications, and settings"
 ```
 
 This creates a phase plan and begins execution:
@@ -90,13 +92,13 @@ Phase 5: Integration & Testing
 
 ### Files Created
 
-All phase-based workflow files are created in `~/.claude/temp/` (and deleted after completion):
+All phase-based workflow files are created in `.claude/` directories:
 
-1. **~/.claude/temp/TASK-PLAN.md** - Master plan with all phases
-2. **~/.claude/temp/phase-1-outcome.md** - Results from Phase 1
-3. **~/.claude/temp/phase-2-outcome.md** - Results from Phase 2
+1. **`.claude/plans/{task-slug}.md`** - Master plan with all phases
+2. **`.claude/temp/phase-1-outcome.md`** - Results from Phase 1
+3. **`.claude/temp/phase-2-outcome.md`** - Results from Phase 2
 4. **...continuing for each phase**
-5. **~/.claude/temp/TASK-SUMMARY.md** - Final summary and handoff
+5. **Final summary** in the plan file or conversation
 
 ### Phase Plan Template
 
@@ -192,7 +194,7 @@ def execute_taskit(task_description):
 ## Integration with Existing Workflows
 
 ### Automatic Selection via /systemcc
-`/systemcc` will automatically route to `/taskit` when:
+`/systemcc` will automatically use phase-based execution (via plan-opus patterns) when:
 - Current context exceeds 30,000 tokens
 - More than 10 files are loaded in context
 - Working in a project with 100+ files and broad changes
@@ -200,7 +202,7 @@ def execute_taskit(task_description):
 - Multiple system integrations are involved
 
 ### Manual Usage
-`/taskit` can also be used directly for:
+`/plan-opus` can be used directly for:
 - **Planning** complex features before implementation
 - **Large tasks** that would overwhelm single-context execution
 - **Refactoring** that touches many files
@@ -209,7 +211,7 @@ def execute_taskit(task_description):
 ## Example: Complex Feature Implementation
 
 ```bash
-User: /taskit "implement complete authentication system with OAuth, 2FA, and session management"
+User: /plan-opus "implement complete authentication system with OAuth, 2FA, and session management"
 ```
 
 Generated Plan:
@@ -263,9 +265,9 @@ Explicit dependency declaration:
 ```
 
 ### Checkpoint Recovery
-If execution fails, resume from last completed phase:
+If execution fails, resume from last completed phase by referencing the plan:
 ```bash
-/taskit --resume-from-phase 3
+/plan-opus --resume "continue from phase 3"
 ```
 
 ## Best Practices
@@ -285,7 +287,7 @@ If execution fails, resume from last completed phase:
 
 ## Success Metrics
 
-Typical improvements with `/taskit`:
+Typical improvements with phase-based execution:
 - 60-80% reduction in context usage
 - 2-3x improvement in code quality
 - 90% reduction in context-related errors

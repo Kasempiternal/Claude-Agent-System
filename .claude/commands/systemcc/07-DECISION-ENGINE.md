@@ -54,11 +54,11 @@ if skill_match:
 | moderate | low | multi | complete_system | 0.75 |
 | moderate | high | any | complete_system | 0.85 |
 | complex | any | any | complete_system | 0.8 |
-| any | any | system | taskit | 0.9 |
+| any | any | system | complete_system | 0.9 |
 
 ## Priority Order
 
-1. **Context Size** - If >30k tokens, use `taskit` (phase-based)
+1. **Context Size** - If >30k tokens, use `complete_system` with phase-based planning
 2. **Security Keywords** - If detected, enable security scan
 3. **Web Detection** - If web app intent, use `anti-yolo-web`
 4. **Risk Level** - High risk always uses `complete_system`
@@ -83,7 +83,7 @@ if skill_match:
 
 ## Scope Detection
 
-**System scope** (triggers `taskit`):
+**System scope** (triggers `complete_system` with phase-based planning):
 - "entire", "all files", "across", "throughout", "migrate all"
 - Token count >30k
 - More than 10 files mentioned
@@ -131,7 +131,7 @@ Task: "migrate all models to new ORM"
 → Complexity: complex (migrate)
 → Risk: high (database)
 → Scope: system (all)
-→ Workflow: taskit (0.9)
+→ Workflow: complete_system (0.9)
 → Security scan: enabled
 ```
 
