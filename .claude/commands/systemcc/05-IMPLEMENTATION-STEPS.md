@@ -39,20 +39,21 @@ After detection and Lyra optimization, follow these steps:
 - Predict context growth for the task
 ```
 
-### 5. Task Analysis (8-Dimensional Analysis)
+### 5. Task Analysis (3-Dimensional Analysis)
 ```
 - Parse the optimized task description
-- Run 8-dimensional analysis:
-  1. Code Minimalism Score (can we modify vs create?)
-  2. Technical Complexity (simple fix vs architecture change)
+- Run 3-dimensional analysis for workflow selection:
+  1. Technical Complexity (simple fix vs architecture change)
+  2. Risk Factor (breaking changes, production impact)
   3. Scope Impact (single file vs entire system)
-  4. Risk Factor (breaking changes, production impact)
-  5. Context Load (current token usage)
-  6. Time Pressure (urgency indicators)
-  7. Security Sensitivity (auth, database, encoding) 🔐
-  8. Pattern Reusability (existing patterns to leverage) ♻️
+- Additional factors considered internally:
+  - Code Minimalism Score (can we modify vs create?)
+  - Context Load (current token usage)
+  - Time Pressure (urgency indicators)
+  - Security Sensitivity (auth, database, encoding) 🔐
+  - Pattern Reusability (existing patterns to leverage) ♻️
 - Display analysis scores to user
-- Select workflow based on highest priority dimensions
+- Select workflow based on complexity × risk × scope
 ```
 
 ### 5a. Batch Optimization Analysis (NEW)
