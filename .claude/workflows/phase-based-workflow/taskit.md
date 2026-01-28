@@ -159,10 +159,10 @@ Critical information for Phase [X+1]:
 ## Execution Flow
 
 ```python
-def execute_taskit(task_description):
+def execute_plan_opus(task_description):
     # 1. Analyze and Plan
     phases = analyze_task_complexity(task_description)
-    create_task_plan(phases)  # Creates in ~/.claude/temp/
+    create_task_plan(phases)  # Creates in .claude/temp/
 
     # 2. Execute Each Phase
     for phase in phases:
@@ -172,7 +172,7 @@ def execute_taskit(task_description):
         # Focused execution
         results = execute_phase(phase, context)
 
-        # Document outcomes in ~/.claude/temp/
+        # Document outcomes in .claude/temp/
         save_phase_outcome(phase, results)
 
         # Prepare handoff
@@ -180,7 +180,7 @@ def execute_taskit(task_description):
 
     # 3. Final Summary and Cleanup
     create_task_summary(all_phase_outcomes)
-    cleanup_temp_files()  # Delete ~/.claude/temp/ files
+    cleanup_temp_files()  # Delete .claude/temp/ files
 ```
 
 ## Benefits
