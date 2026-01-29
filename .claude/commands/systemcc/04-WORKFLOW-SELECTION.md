@@ -134,16 +134,16 @@ If `enable_security_scan: true` in pattern results:
 
 **Process:** Create PRD → Generate Tasks → Implement
 
-### Phase-Based (/taskit)
+### Phase-Based (/plan-opus)
 **Triggers:**
 - Context already > 30,000 tokens
 - More than 10 files loaded
 - Project has 100+ files
 - Task touches 5+ modules
-- Estimated time > 60 minutes
+- Architecture design or major refactoring
 - Keywords: "entire", "all", "across", "throughout", "migrate"
 
-**Process:** Decompose → Execute Phases → Integrate
+**Process:** Plan → Explore → Execute Phases → Verify
 
 ### Complete System (Standard)
 **Keywords:**
@@ -199,32 +199,43 @@ Show this to user after selection:
 Ready to proceed? (yes/adjust/explain more)
 ```
 
-## Decision Logic Flow
+## Decision Logic Flow (Two-Phase System)
 
-```python
-# Priority order for selection
-IF web_detection.is_web_project:
-    → Anti-YOLO Web Workflow
-    → Check for batch opportunities in components
-ELIF batch_potential == 'high' AND independent_components > 3:
-    → Enable batch optimization for ANY workflow
-    → Group similar operations together
-ELIF detected_type == 'agent_os_integration':
-    → Complete System with Agent OS
-    → Check for batch setup tasks
-ELIF detected_type == 'feature_development':
-    → AI Dev Tasks
-    → Analyze for batch component creation
-ELIF context_size > 30000:
-    → Phase-based workflow
-    → Use batch operations within phases
-ELIF complexity_score > 5:
-    → Complete 6-agent workflow
-    → Optimize with batched phases
-ELSE:
-    → Streamlined 3-agent workflow
-    → Still check for batch opportunities
+**See `07-DECISION-ENGINE.md` for complete two-phase workflow selection.**
+
+### Quick Reference
+
 ```
+PHASE 1: Domain Detection (CHECK FIRST)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+If task matches specialized domain with HIGH confidence:
+
+  Web Development    → anti-yolo-web
+  Feature Dev        → aidevtasks
+  Project Setup      → agetos
+  Deep Planning      → plan-opus
+
+If no domain match → proceed to Phase 2
+
+PHASE 2: Complexity Scoring (FALLBACK)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+Score = (Complexity + Risk + Scope) / 3
+
+  1.0 - 2.0  → orchestrated (simple)
+  2.1 - 3.5  → complete_system (moderate)
+  3.6 - 5.0  → plan-opus (complex)
+```
+
+### All Available Workflows
+
+| Workflow | Type | Best For |
+|----------|------|----------|
+| `anti-yolo-web` | Domain-specific | Web/frontend development |
+| `aidevtasks` | Domain-specific | PRD-based feature development |
+| `agetos` | Domain-specific | Project setup and standards |
+| `plan-opus` | Domain + Fallback | Planning, architecture, complex tasks |
+| `complete_system` | Fallback | Moderate features with validation |
+| `orchestrated` | Fallback | Simple fixes and changes |
 
 ## Next Steps
 

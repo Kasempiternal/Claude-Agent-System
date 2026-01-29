@@ -28,7 +28,7 @@
 | Module | Purpose |
 |--------|---------|
 | `06-EXAMPLES.md` | Workflow examples |
-| `07-DECISION-ENGINE.md` | 3-dimension decision logic |
+| `07-DECISION-ENGINE.md` | Two-phase workflow selection (domain + complexity) |
 | `08-ERROR-HANDLING.md` | Error recovery strategies |
 | `09-PARALLEL.md` | Batch operations |
 
@@ -54,8 +54,10 @@
 1. **Detection** - "SYSTEMCC DETECTED" message
 2. **Lyra** - Optimize prompt
 3. **Build Config** - Apply project rules
-4. **Analysis** - 3-dimension assessment
-5. **Selection** - Choose workflow
+4. **Analysis** - Two-phase workflow selection:
+   - Phase 1: Domain detection (web, feature, setup, planning)
+   - Phase 2: Complexity scoring (if no domain match)
+5. **Selection** - Choose from all 6 workflows
 6. **Execution** - Run with progress
 7. **Review** - Triple code review
 8. **Memory** - Update learnings
@@ -74,7 +76,7 @@
 |----------|----------|
 | `orchestrated` | Simple tasks (3-agent) |
 | `complete_system` | Complex tasks (6-agent) |
-| `taskit` | Large scope (phase-based) |
+| `plan-opus` | Large scope (phase-based) |
 | `aidevtasks` | Feature development (PRD) |
 | `anti-yolo-web` | Web app development |
 | `agetos` | Project initialization |
