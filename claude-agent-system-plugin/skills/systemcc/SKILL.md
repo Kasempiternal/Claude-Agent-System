@@ -133,11 +133,45 @@ Source: [Makefile/CI config/etc.]
 
 ---
 
-## Phase 4: TASK ANALYSIS (3-Dimensional)
+## Phase 4: TWO-PHASE WORKFLOW SELECTION
 
-Analyze the task across three dimensions:
+**Critical**: This engine uses ALL 6 available workflows via two-phase selection.
 
-### Dimension 1: Complexity
+### Available Workflows
+
+| Workflow | Purpose | Best For |
+|----------|---------|----------|
+| `anti-yolo-web` | Web app development specialist | Frontend, React, Vue, dashboards, UI components |
+| `aidevtasks` | PRD-based feature development | New features requiring product specs |
+| `agetos` | Project initialization/standards | Setup, conventions, new projects |
+| `plan-opus` | Deep planning with parallel exploration | Architecture, migrations, complex unknowns |
+| `complete_system` | Full 6-agent validation pipeline | Moderate features, refactoring with validation |
+| `orchestrated` | Streamlined 3-agent workflow | Simple fixes, config changes, quick tasks |
+
+---
+
+### PHASE 1: Domain Detection (CHECK FIRST)
+
+Before any scoring, semantically analyze if the task matches a specialized domain:
+
+| Domain | Workflow | Detection Signals |
+|--------|----------|-------------------|
+| **Web Development** | `anti-yolo-web` | HTML, CSS, JavaScript, React, Vue, Angular, frontend, UI, dashboard, component, web app |
+| **Feature Development** | `aidevtasks` | "build feature", "create system", product requirements, user stories, multi-component features |
+| **Project Setup** | `agetos` | Setup, initialize, standards, conventions, new project, project structure |
+| **Deep Planning** | `plan-opus` | Architecture design, major refactor, migration, "plan first", many unknowns |
+
+**Decision Logic**:
+- Domain match with HIGH confidence → Use specialized workflow (skip Phase 2)
+- No domain match → Proceed to Phase 2
+
+---
+
+### PHASE 2: Complexity Scoring (FALLBACK)
+
+Only when NO specialized domain is detected, use 3-dimensional assessment:
+
+#### Dimension 1: Complexity
 
 | Level | Indicators |
 |-------|------------|
@@ -145,14 +179,14 @@ Analyze the task across three dimensions:
 | **Moderate** | feature, add, create, implement, modify, improve |
 | **Complex** | architecture, refactor, system, integration, migration, security, database |
 
-### Dimension 2: Risk
+#### Dimension 2: Risk
 
 | Level | Indicators |
 |-------|------------|
 | **Low** | docs, style, test, config (non-production), UI text |
 | **High** | critical, production, breaking, delete, security, database, auth, payment, encryption |
 
-### Dimension 3: Scope
+#### Dimension 3: Scope
 
 | Level | Indicators |
 |-------|------------|
@@ -160,43 +194,53 @@ Analyze the task across three dimensions:
 | **Multi** | "multiple", "several files", specific file list, 3-10 files |
 | **System** | "entire", "all files", "across", "throughout", "migrate all", >10 files |
 
-### Display Analysis:
+#### Complexity-Based Workflow Selection
 
+| Combined Score | Workflow | Use Case |
+|----------------|----------|----------|
+| 1.0 - 2.0 | `orchestrated` | Bug fixes, small changes, config updates, typos |
+| 2.1 - 3.5 | `complete_system` | Moderate features, refactoring, validation needed |
+| 3.6 - 5.0 | `plan-opus` | Complex multi-system changes, high risk |
+
+---
+
+### Display Decision:
+
+#### Phase 1 Match (Domain Detected)
 ```
-📊 Task Analysis:
-   - Complexity: [Simple/Moderate/Complex] ([score]/1.0)
-   - Risk: [Low/High] ([score]/1.0)
-   - Scope: [Single/Multi/System]
-   - Context Load: [current tokens/30k]
+🧠 DECISION ENGINE
+━━━━━━━━━━━━━━━━━━
 
-📋 Selected Workflow: [Workflow Name]
-   ↳ Reason: [Brief explanation]
-   ↳ Security Scan: [Enabled/Disabled]
+Task: "[task description]"
+
+Phase 1 - Domain Detection:
+✓ [Domain] detected
+  → [Reasons]
+
+→ Using **[workflow]** workflow
+```
+
+#### Phase 2 Fallback (No Domain Match)
+```
+🧠 DECISION ENGINE
+━━━━━━━━━━━━━━━━━━
+
+Task: "[task description]"
+
+Phase 1 - Domain Detection:
+✗ No specialized domain detected
+
+Phase 2 - Complexity Assessment:
+• Complexity: [1-5]/5 - [reason]
+• Risk: [1-5]/5 - [reason]
+• Scope: [1-5]/5 - [reason]
+
+Combined: [score] → Using **[workflow]** workflow
 ```
 
 ---
 
-## Phase 5: WORKFLOW SELECTION
-
-### Decision Table
-
-| Complexity | Risk | Scope | Workflow | Confidence |
-|------------|------|-------|----------|------------|
-| Simple | Low | Single | **Quick Fix (3-agent)** | 0.9 |
-| Simple | Low | Multi | **Quick Fix (3-agent)** | 0.85 |
-| Simple | High | Any | **Full Validation (6-agent)** | 0.85 |
-| Moderate | Low | Single | **Standard (3-agent)** | 0.8 |
-| Moderate | Low | Multi | **Full Validation (6-agent)** | 0.75 |
-| Moderate | High | Any | **Full Validation (6-agent)** | 0.85 |
-| Complex | Any | Any | **Full Validation (6-agent)** | 0.8 |
-| Any | Any | System | **Phased Execution** | 0.9 |
-
-### Priority Overrides
-
-1. **Context >30k tokens** → Phased Execution
-2. **Security keywords detected** → Enable security scan + Full Validation
-3. **Web/UI task detected** → Include wireframe phase (Anti-YOLO)
-4. **Batch potential detected** → Enable batch optimization
+## Phase 5: SECURITY & SPECIAL HANDLING
 
 ### Security Auto-Detection
 
@@ -204,10 +248,10 @@ Enable security scanning when task mentions:
 
 | Category | Keywords |
 |----------|----------|
-| Database | sql, query, database, migration, schema |
-| Auth | auth, login, password, token, jwt, session, permission |
-| Security | encrypt, decrypt, certificate, credentials, secrets |
-| Encoding | base64, serialize, deserialize, decode |
+| Database | sql, query, database, migration, schema, orm |
+| Auth | auth, login, password, token, jwt, session, oauth |
+| Security | encrypt, decrypt, permission, role, certificate, hash |
+| Encoding | base64, serialize, sanitize, injection |
 
 When triggered:
 ```
@@ -220,7 +264,7 @@ When triggered:
 
 **CRITICAL: Execute ALL phases automatically. NEVER ask user to run commands.**
 
-### Quick Fix Workflow (3-Agent)
+### Orchestrated Workflow (3-Agent)
 
 ```
 🔄 Phase 1/3: Analysis
@@ -232,7 +276,7 @@ When triggered:
 ✅ Complete!
 ```
 
-### Full Validation Workflow (6-Agent)
+### Complete System Workflow (6-Agent)
 
 ```
 🔄 Phase 1/6: Strategic Analysis
@@ -250,7 +294,7 @@ When triggered:
 ✅ Implementation complete! Starting review...
 ```
 
-### Phased Execution (Large Tasks)
+### Plan-Opus Workflow (Phased Execution)
 
 For system-wide changes, decompose into phases:
 
@@ -434,17 +478,47 @@ If something fails:
 
 ## Available Workflows Summary
 
-| Workflow | Agents | Best For |
-|----------|--------|----------|
-| Quick Fix | 3 | Bug fixes, simple features, config changes |
-| Full Validation | 6 | New features, complex changes, security-sensitive |
-| Phased | Variable | Enterprise codebases, migrations, system-wide |
-| Anti-YOLO Web | 3 + wireframe | UI components, forms, dashboards |
+| Workflow | Type | Agents | Best For |
+|----------|------|--------|----------|
+| `anti-yolo-web` | Phase 1 | 3 + wireframe | Web/frontend, React, Vue, dashboards |
+| `aidevtasks` | Phase 1 | PRD-based | Features requiring product specs |
+| `agetos` | Phase 1 | Setup | Project initialization, standards |
+| `plan-opus` | Phase 1 + 2 | Variable | Architecture, migrations, complex tasks |
+| `complete_system` | Phase 2 | 6 | Moderate features, validation needed |
+| `orchestrated` | Phase 2 | 3 | Simple fixes, config changes |
+
+---
+
+## Quick Reference: Two-Phase Flow
+
+```
+Task comes in
+    │
+    ▼
+┌─────────────────────────┐
+│  PHASE 1: Domain Check  │
+│                         │
+│  Web Dev? → anti-yolo   │
+│  Feature? → aidevtasks  │
+│  Setup?   → agetos      │
+│  Planning? → plan-opus  │
+└─────────────────────────┘
+    │
+    │ No domain match?
+    ▼
+┌─────────────────────────┐
+│  PHASE 2: Score Tasks   │
+│                         │
+│  1.0-2.0 → orchestrated │
+│  2.1-3.5 → complete_sys │
+│  3.6-5.0 → plan-opus    │
+└─────────────────────────┘
+```
 
 ---
 
 **Remember**: SystemCC is the ONLY command users need.
 
-Detection → Lyra → Build Config → Analysis → Workflow → Execute → Review → Complete
+Detection → Lyra → Build Config → Two-Phase Analysis → Workflow → Execute → Review → Complete
 
 All automatic. All quality-gated. All in one command.
