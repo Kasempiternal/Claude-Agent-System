@@ -44,6 +44,29 @@ Best for:
 - Complex architectural changes
 - Unfamiliar codebases
 
+### `/review` - Code Review Swarm
+Deploys **6 parallel Anthropic review agents** to analyze code without modifying it. Opt-in simplification phase.
+
+```bash
+/review                  # Review all uncommitted changes
+/review staged           # Review only staged changes
+/review src/auth.ts      # Review specific file(s)
+```
+
+Agents deployed:
+- Bug & Logic Reviewer (security, crashes, logic errors)
+- Project Guidelines Reviewer (style, CLAUDE.md standards)
+- Silent Failure Hunter (swallowed errors, bad fallbacks)
+- Comment Analyzer (stale docs, misleading comments)
+- Type Design Analyzer (encapsulation, invariants)
+- Test Coverage Analyzer (gaps, edge cases)
+
+Features:
+- Health score (0-10) with severity breakdown
+- Cross-agent correlation (related findings grouped)
+- Deduplicated, prioritized consolidated report
+- Opt-in simplification phase (user must confirm)
+
 ## Installation
 
 ```bash
@@ -53,11 +76,12 @@ Best for:
 
 ## Skill Comparison
 
-| Skill | Use Case | Exploration | Implementation |
-|-------|----------|-------------|----------------|
-| `/systemcc` | Any task - auto-routes | Auto-selected | Auto-selected |
-| `/pcc` | Parallel orchestration | Sonnet (2-6) | Opus (2-6) |
-| `/pcc-opus` | Max quality orchestration | Opus (2-6) | Opus (2-6) |
+| Skill | Use Case | Agents | Modifies Code? |
+|-------|----------|--------|----------------|
+| `/systemcc` | Any task - auto-routes | Auto-selected | Yes |
+| `/pcc` | Parallel orchestration | Sonnet scouts + Opus implementers (2-6 each) | Yes |
+| `/pcc-opus` | Max quality orchestration | Opus scouts + Opus implementers (2-6 each) | Yes |
+| `/review` | Code review & analysis | 6 parallel review agents + 2 optional simplifiers | Only if opted in |
 
 ## How PCC Works
 
