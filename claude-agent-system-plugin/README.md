@@ -46,7 +46,7 @@ Best for:
 - Unfamiliar codebases
 
 ### `/review` - Code Review Swarm
-Deploys **6 parallel Anthropic review agents** to analyze code without modifying it. The only skill focused purely on analysis - no implementation.
+Deploys **6 parallel review agents** to analyze code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Fully self-contained - no external plugin dependencies.
 
 ```bash
 /review                  # Review all uncommitted changes (default)
@@ -59,7 +59,7 @@ Review agents deployed (all 6 run in parallel):
 
 | Agent | Focus |
 |-------|-------|
-| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, code quality |
+| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, resource leaks |
 | Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
 | Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
 | Comment Analyzer | Stale docs, misleading comments, missing documentation |
@@ -67,11 +67,12 @@ Review agents deployed (all 6 run in parallel):
 | Test Coverage Analyzer | Test gaps, missing edge cases, test quality |
 
 Features:
+- **Self-contained agents** - all 6 agents defined as `.md` files in `.claude/agents/`, no external plugins needed
 - **Health score** (0-10) with severity-weighted formula
 - **Cross-agent correlation** - related findings from different agents grouped together
 - **Deduplicated report** - orchestrator merges overlapping findings
 - **Agent verdicts table** - quick pass/fail per agent
-- **Opt-in simplification** - 2 parallel simplification agents (only if you approve)
+- **Opt-in fix phase** - parallel fix agents resolve CRITICAL and MAJOR findings (you choose: fix critical+major, fix all, or report only)
 
 ## Installation
 
@@ -87,7 +88,7 @@ Features:
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
-| `/review` | Code review & analysis | 6 review agents + 2 optional simplifiers | Only if opted in |
+| `/review` | Code review & analysis + fix | 6 review agents + 1-4 fix agents | Only if opted in |
 
 ## How It Works
 
@@ -116,10 +117,11 @@ Features:
 ### `/review` Flow
 
 1. **Scope Detection** - Determines what to review (uncommitted changes, staged, files, or description)
-2. **Review Swarm** - 6 specialized agents launch in parallel (same wall-clock time as 1)
-3. **Synthesis** - Orchestrator deduplicates, cross-references, and scores findings
-4. **Report** - Consolidated findings by severity (CRITICAL > MAJOR > MINOR) with health score
-5. **Simplification** (opt-in) - If issues found, offers 2 parallel simplification agents
+2. **Load Agents** - Reads 6 agent definition files from `.claude/agents/review-*.md`
+3. **Review Swarm** - 6 specialized agents launch in parallel (same wall-clock time as 1)
+4. **Synthesis** - Orchestrator deduplicates, cross-references, and scores findings
+5. **Report** - Consolidated findings by severity (CRITICAL > MAJOR > MINOR) with health score
+6. **Fix Findings** (opt-in) - Parallel fix agents resolve CRITICAL/MAJOR issues (grouped by file, exclusive ownership)
 
 ## License
 
