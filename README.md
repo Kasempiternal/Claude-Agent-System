@@ -1,6 +1,6 @@
 # Claude Agent System
 
-**Turn Claude into your personal development team.** Two powerful commands that handle everything - from deep planning through implementation to deployment, with automatic code review and continuous learning.
+**Turn Claude into your personal development team.** Powerful commands that handle everything - from deep planning through implementation to code review, with automatic quality gates and continuous learning.
 
 ## Quick Start
 
@@ -8,7 +8,7 @@ Choose your installation method:
 
 | Method | Best For | Commands You Get |
 |--------|----------|------------------|
-| **Plugin** | Quick install, easy updates | `/systemcc`, `/pcc`, `/pcc-opus` |
+| **Plugin** | Quick install, easy updates | `/systemcc`, `/pcc`, `/pcc-opus`, `/review` |
 | **Script** | Full system with all modules | `/systemcc`, `/plan-opus`, + workflows |
 
 ### Option 1: Plugin Install (Recommended)
@@ -18,7 +18,7 @@ Choose your installation method:
 /plugin install pcc
 ```
 
-Done! You now have `/systemcc`, `/pcc`, and `/pcc-opus`.
+Done! You now have `/systemcc`, `/pcc`, `/pcc-opus`, and `/review`.
 
 ### Option 2: Script Install (Full System)
 
@@ -467,6 +467,79 @@ You can:
 
 ---
 
+# The `/pcc` and `/pcc-opus` Commands (Plugin)
+
+Parallel Claude Coordinator - an orchestrator that spawns agent swarms for exploration and implementation.
+
+```bash
+/pcc "implement user authentication with JWT tokens"
+/pcc-opus "refactor the entire payment processing system"
+```
+
+## Two Variants
+
+| Variant | Scouts | Implementers | Best For |
+|---------|--------|-------------|----------|
+| `/pcc` | **Sonnet** (fast, cost-efficient) | **Opus** (high quality) | Most tasks |
+| `/pcc-opus` | **Opus** (maximum depth) | **Opus** (high quality) | Critical systems, unfamiliar codebases |
+
+## How PCC Works
+
+1. **Task Understanding** - Clarifies the task with you
+2. **Parallel Exploration** - Spawns 2-6 scout agents to map the codebase
+3. **Synthesis** - Combines findings into unified understanding
+4. **Clarification** - Asks questions if multiple valid approaches exist
+5. **Plan Creation** - Creates editable plan at `.claude/plans/{task}.md`
+6. **User Review** - You edit and approve the plan before any code is written
+7. **Parallel Implementation** - Spawns 2-6 Opus agents working simultaneously
+8. **Verification** - Tests and code review
+9. **Simplification** - 2-6 parallel agents clean up the code
+10. **Final Report** - Summarizes everything
+
+**Key difference from `/plan-opus`**: PCC is a plugin skill with dynamic agent counts (2-6 based on complexity), while `/plan-opus` is a script-install command with similar capabilities.
+
+---
+
+# The `/review` Command (Plugin)
+
+The only command focused purely on **analysis, not implementation**. Deploys 6 parallel Anthropic review agents to analyze your code.
+
+```bash
+/review                  # Review all uncommitted changes (default)
+/review staged           # Review only staged changes
+/review src/auth.ts      # Review specific file(s)
+/review "auth module"    # Review files matching a description
+```
+
+## Review Agents
+
+All 6 agents run in parallel (same wall-clock time as running one):
+
+| Agent | What It Checks |
+|-------|---------------|
+| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, code quality |
+| Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
+| Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
+| Comment Analyzer | Stale docs, misleading comments, missing documentation |
+| Type Design Analyzer | Encapsulation, invariant expression, type safety |
+| Test Coverage Analyzer | Test gaps, missing edge cases, test quality |
+
+## What You Get
+
+The orchestrator synthesizes all 6 agent reports into a consolidated review:
+
+- **Health score** (0-10) with severity-weighted formula
+- **Agent verdicts table** - quick pass/fail per agent
+- **Deduplicated findings** - overlapping issues merged, multi-agent flags boost confidence
+- **Cross-agent correlation** - related findings from different agents grouped together
+- **Severity-prioritized** - CRITICAL > MAJOR > MINOR
+
+## Optional Simplification
+
+If issues are found (health score < 9), the system asks if you want to deploy 2 simplification agents to clean up the code. You must explicitly approve - `/review` never modifies code without consent.
+
+---
+
 # When to Use Each Command
 
 | Situation | Use This |
@@ -474,9 +547,12 @@ You can:
 | Quick fixes, bug fixes | `/systemcc` |
 | Simple features | `/systemcc` |
 | Most everyday tasks | `/systemcc` |
-| Complex refactors | `/plan-opus` |
-| Architecture changes | `/plan-opus` |
-| When you want to see/edit the plan first | `/plan-opus` |
+| Complex refactors | `/plan-opus` or `/pcc` |
+| Architecture changes | `/plan-opus` or `/pcc-opus` |
+| When you want to see/edit the plan first | `/plan-opus` or `/pcc` |
+| Code review before committing | `/review` |
+| Audit code quality without changing anything | `/review` |
+| Pre-PR review with health scoring | `/review` |
 
 ---
 
