@@ -1,19 +1,21 @@
 ---
 name: review
-description: "Code Review Swarm - Deploys 6 parallel Anthropic review agents to analyze code for bugs, style, silent failures, comment accuracy, type design, and test coverage. Opt-in simplification phase."
+description: "Code Review Swarm - Deploys 6 parallel review agents to analyze code for bugs, style, silent failures, comment accuracy, type design, and test coverage. Automatically fixes CRITICAL and MAJOR findings."
 model: opus
 argument-hint: "[staged | file paths | description of scope]"
 ---
 
-You are entering ORCHESTRATOR MODE for code review. Your role is to detect scope, spawn review agents in parallel, and synthesize their findings into a consolidated report. You do NOT implement fixes - you only analyze and report.
+You are entering ORCHESTRATOR MODE for code review. Your role is to detect scope, load agent definitions, spawn review agents in parallel, synthesize their findings, and coordinate fix agents to resolve issues.
 
 ## Your Role: Review Orchestrator
 
 - You DETECT the review scope (what code to review)
-- You SPAWN 6 specialized review agents in parallel
+- You LOAD the 6 agent definition files from `.claude/agents/review-*.md`
+- You SPAWN 6 review agents in parallel using `subagent_type: "general-purpose"`
 - You SYNTHESIZE their findings into a deduplicated, prioritized report
-- You NEVER fix code yourself - you only report findings
-- You optionally offer a simplification phase (user must confirm)
+- You ASK the user whether to fix findings
+- You SPAWN fix agents to resolve CRITICAL and MAJOR issues
+- You SUMMARIZE the fixes and updated health score
 
 ---
 
@@ -64,14 +66,41 @@ Store the diff content and file list - you will pass these to the review agents.
 
 ---
 
+## Pre-Phase 1: Load Agent Definitions
+
+Before spawning agents, read ALL 6 agent definition files using the Read tool. Launch all 6 reads in a single parallel message:
+
+1. `.claude/agents/review-bug-logic.md`
+2. `.claude/agents/review-guidelines.md`
+3. `.claude/agents/review-silent-failures.md`
+4. `.claude/agents/review-comments.md`
+5. `.claude/agents/review-type-design.md`
+6. `.claude/agents/review-test-coverage.md`
+
+These files contain the review instructions for each agent. You will combine each agent's instructions with the review context (diff + file list) to create the prompt for each Task call.
+
+---
+
 ## Phase 1: Review Swarm (6 Parallel Agents)
 
 **CRITICAL**: Launch ALL 6 agents in a SINGLE message with 6 Task tool calls for maximum parallelism. They all run concurrently - same wall-clock time as running one.
 
-Each agent receives:
-1. The list of files being reviewed
-2. The diff or file content
-3. Their specific review focus
+**CRITICAL**: ALL agents use `subagent_type: "general-purpose"` and `model: "opus"`. Do NOT use any other subagent_type. This skill has zero external plugin dependencies.
+
+Each agent receives a prompt constructed as:
+
+```
+[Full content of the agent's .md definition file]
+
+---
+
+## Review Context
+
+**Files under review**: [file list]
+
+**Changes**:
+[diff content or file contents]
+```
 
 ### The 6 Review Agents
 
@@ -79,39 +108,45 @@ Launch all of these simultaneously:
 
 #### Agent 1: Bug & Logic Reviewer
 ```
-subagent_type: "feature-dev:code-reviewer"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Review the following code changes for bugs, logic errors, security vulnerabilities, and code quality issues. Focus on high-confidence findings. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-bug-logic.md] + review context
 
 #### Agent 2: Project Guidelines Reviewer
 ```
-subagent_type: "pr-review-toolkit:code-reviewer"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Review the following code changes for adherence to project guidelines, style conventions, and best practices. Check CLAUDE.md and any project config for standards. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-guidelines.md] + review context
 
 #### Agent 3: Silent Failure Hunter
 ```
-subagent_type: "pr-review-toolkit:silent-failure-hunter"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Review the following code changes for silent failures, inadequate error handling, swallowed exceptions, and inappropriate fallback behavior. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-silent-failures.md] + review context
 
 #### Agent 4: Comment Analyzer
 ```
-subagent_type: "pr-review-toolkit:comment-analyzer"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Review comments and documentation in the following code changes for accuracy, completeness, and long-term maintainability. Flag stale, misleading, or missing comments. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-comments.md] + review context
 
 #### Agent 5: Type Design Analyzer
 ```
-subagent_type: "pr-review-toolkit:type-design-analyzer"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Analyze types introduced or modified in the following code changes. Evaluate encapsulation, invariant expression, usefulness, and enforcement. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-type-design.md] + review context
 
 #### Agent 6: Test Coverage Analyzer
 ```
-subagent_type: "pr-review-toolkit:pr-test-analyzer"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Review test coverage for the following code changes. Identify gaps in edge case coverage, missing test scenarios, and test quality issues. Files: [file list]. Changes: [diff content]
+Prompt: [Contents of review-test-coverage.md] + review context
 
 ---
 
@@ -142,7 +177,7 @@ Assign severity to each finding:
 |----------|----------|
 | CRITICAL | Security vulnerability, data loss risk, crash potential, logic error that produces wrong results |
 | MAJOR | Missing error handling, type safety gap, significant test gap, performance issue |
-| MINOR | Style inconsistency, comment accuracy, naming, minor simplification opportunity |
+| MINOR | Style inconsistency, comment accuracy, naming, minor improvement |
 
 ### Step 5: Calculate Health Score
 
@@ -177,19 +212,22 @@ Present the report in this format:
 ## Findings
 
 ### CRITICAL (if any)
-1. **[Title]** - [file:line]
+1. **[Title]** - `file:line`
    [Description]
    Flagged by: [agent(s)]
+   Suggested fix: [brief fix description]
 
 ### MAJOR (if any)
-1. **[Title]** - [file:line]
+1. **[Title]** - `file:line`
    [Description]
    Flagged by: [agent(s)]
+   Suggested fix: [brief fix description]
 
 ### MINOR (if any)
-1. **[Title]** - [file:line]
+1. **[Title]** - `file:line`
    [Description]
    Flagged by: [agent(s)]
+   Suggested fix: [brief fix description]
 
 ## Cross-References (if any)
 - [Grouped related findings from multiple agents]
@@ -202,26 +240,28 @@ All 6 review agents passed with no findings. Code looks clean.
 
 ---
 
-## Phase 2: Simplification Swarm (Opt-In)
+## Phase 2: Fix Findings
 
 ### Skip Condition
 
-If health score >= 9 AND zero CRITICAL/MAJOR findings:
+If there are ZERO CRITICAL or MAJOR findings:
 ```
-Health score [X]/10 - code is clean. No simplification needed.
+No CRITICAL or MAJOR findings to fix. Review complete.
 ```
-STOP here. Do not prompt for simplification.
+STOP here. Do not prompt for fixes.
 
 ### Prompt User
 
 Otherwise, use AskUserQuestion:
 
 ```
-question: "Deploy simplification agents to clean up the reviewed code?"
-header: "Simplify?"
+question: "Fix the [N] CRITICAL and [M] MAJOR findings?"
+header: "Fix issues?"
 options:
-  - label: "Yes, simplify"
-    description: "2 parallel agents will simplify and refine the reviewed files (preserves functionality)"
+  - label: "Yes, fix CRITICAL and MAJOR"
+    description: "Fix agents will resolve the [N+M] high-severity findings (minimum changes, no refactoring)"
+  - label: "Yes, fix ALL findings"
+    description: "Fix agents will also address [K] MINOR findings (style, comments, naming)"
   - label: "No, report only"
     description: "Keep the review report without modifying any code"
 ```
@@ -230,43 +270,110 @@ options:
 
 End with the review report. Do not modify any code.
 
-### If User Accepts
+### If User Accepts: Fix Agent Spawning
 
-Launch 2 simplification agents in parallel in a SINGLE message:
+Group all findings to fix by file path. No file should be owned by more than one fix agent (prevents merge conflicts).
 
-#### Simplifier 1: General Code Simplifier
+**Grouping rules**:
+- 1 file group = 1 fix agent
+- 2-3 file groups = 2 fix agents
+- 4-5 file groups = 3 fix agents
+- 6+ file groups = 4 fix agents maximum
+
+**Merge smaller groups** to reach the target agent count (combine files that are in the same directory or module).
+
+Each fix agent:
 ```
-subagent_type: "code-simplifier:code-simplifier"
+subagent_type: "general-purpose"
+model: "opus"
 ```
-Prompt: Simplify and refine the following files for clarity, consistency, and maintainability while preserving all functionality. Focus on the issues identified in the review. Files: [file list]. Key findings to address: [CRITICAL and MAJOR findings summary]
 
-#### Simplifier 2: PR-Focused Simplifier
-```
-subagent_type: "pr-review-toolkit:code-simplifier"
-```
-Prompt: Simplify recently modified code in the following files for clarity and consistency while preserving all functionality. Files: [file list]. Focus on recently modified code and the review findings.
-
-### After Simplification
-
-Briefly summarize what the simplification agents changed:
+Each fix agent prompt:
 
 ```
-## Simplification Summary
+You are a CODE FIX AGENT. Your job is to make the MINIMUM changes necessary to resolve the specific findings listed below. You have EXCLUSIVE ownership of the files assigned to you - no other agent will touch these files.
 
-- [Agent 1]: [what was simplified]
-- [Agent 2]: [what was simplified]
+## Fix Rules
+1. Fix ONLY the listed findings - do not refactor, do not improve code beyond the fix
+2. Fix CRITICAL findings first, then MAJOR, then MINOR (if included)
+3. Make the SMALLEST change that resolves each issue
+4. If a fix is uncertain, add a protective measure (null check, error handler, type guard) rather than restructuring
+5. Do NOT add new features, refactor surrounding code, or "clean up while you're there"
+6. After making fixes, briefly report what you changed for each finding
 
-Review complete.
+## Your Files (EXCLUSIVE OWNERSHIP)
+[list of files this agent owns]
+
+## Findings to Fix
+
+[For each finding assigned to this agent:]
+### [SEVERITY]: [Title]
+- **File**: `path/to/file.ext:line_number`
+- **Issue**: [description]
+- **Suggested Fix**: [from the review report]
+
+## Output
+
+After making all fixes, report:
+
+```
+## Fixes Applied
+1. **[Finding title]** - `file:line` - [What was changed]
+2. **[Finding title]** - `file:line` - [What was changed]
+
+## Skipped (if any)
+1. **[Finding title]** - `file:line` - [Why it was skipped - e.g., requires architectural change, needs user input]
+```
+```
+
+Launch all fix agents in a SINGLE message for maximum parallelism.
+
+### Severity Handling
+
+| Severity | Action |
+|----------|--------|
+| CRITICAL | Must fix. Add protective measures (null checks, error handlers, input validation) if uncertain about root cause. |
+| MAJOR | Should fix. Tighten types, add error handling, close resource leaks, add missing validation. |
+| MINOR | Only if user chose "fix ALL". Style corrections, comment updates, naming improvements. |
+
+### Fix Verification Summary
+
+After all fix agents return, present:
+
+```
+## Fix Summary
+
+**Issues Resolved**: [N] of [total]
+
+| Severity | Found | Fixed | Skipped |
+|----------|-------|-------|---------|
+| CRITICAL | N | N | N |
+| MAJOR | N | N | N |
+| MINOR | N | N | N |
+
+### Fixed
+1. `file:line` - [What was fixed]
+2. `file:line` - [What was fixed]
+
+### Skipped (if any)
+1. `file:line` - [Why] (e.g., requires architectural change, needs user decision)
+
+**Updated Health Score**: [X]/10 (was [Y]/10)
+
+Review complete. Consider running `/review` again to verify fixes, or use a code-simplifier for broader cleanup.
 ```
 
 ---
 
 ## Critical Rules
 
-- **YOU ARE A REVIEW ORCHESTRATOR** - analyze, don't fix (unless Phase 2 is approved)
+- **ALL agents use `subagent_type: "general-purpose"`** - no external plugin dependencies
+- **LOAD agent definitions via Read tool** before spawning agents
 - **LAUNCH ALL 6 REVIEW AGENTS IN ONE MESSAGE** - maximize parallelism
 - **DEDUPLICATE** - raw agent output is redundant; your synthesis adds value
 - **NEVER modify code without user consent** - Phase 2 is opt-in
+- **FIX AGENTS OWN FILES EXCLUSIVELY** - no two agents edit the same file
+- **MINIMUM CHANGES ONLY** - fix agents resolve findings, they don't refactor
 - **RESPECT scope** - only review what was specified
 - **EMPTY SCOPE = HELP** - show usage, don't review nothing
 - **HEALTH SCORE IS DETERMINISTIC** - use the formula exactly

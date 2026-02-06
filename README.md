@@ -502,7 +502,7 @@ Parallel Claude Coordinator - an orchestrator that spawns agent swarms for explo
 
 # The `/review` Command (Plugin)
 
-The only command focused purely on **analysis, not implementation**. Deploys 6 parallel Anthropic review agents to analyze your code.
+Deploys 6 parallel review agents to analyze your code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Fully self-contained - no external plugin dependencies.
 
 ```bash
 /review                  # Review all uncommitted changes (default)
@@ -513,11 +513,11 @@ The only command focused purely on **analysis, not implementation**. Deploys 6 p
 
 ## Review Agents
 
-All 6 agents run in parallel (same wall-clock time as running one):
+All 6 agents run in parallel (same wall-clock time as running one), defined as `.md` files in `.claude/agents/`:
 
 | Agent | What It Checks |
 |-------|---------------|
-| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, code quality |
+| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, resource leaks |
 | Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
 | Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
 | Comment Analyzer | Stale docs, misleading comments, missing documentation |
@@ -534,9 +534,15 @@ The orchestrator synthesizes all 6 agent reports into a consolidated review:
 - **Cross-agent correlation** - related findings from different agents grouped together
 - **Severity-prioritized** - CRITICAL > MAJOR > MINOR
 
-## Optional Simplification
+## Fix Phase (Opt-In)
 
-If issues are found (health score < 9), the system asks if you want to deploy 2 simplification agents to clean up the code. You must explicitly approve - `/review` never modifies code without consent.
+If CRITICAL or MAJOR findings are found, the system asks how you want to proceed:
+
+- **Fix CRITICAL and MAJOR** (default) - parallel fix agents resolve high-severity findings
+- **Fix ALL** - also addresses MINOR findings (style, comments, naming)
+- **Report only** - keep the report without modifying code
+
+Fix agents are grouped by file (exclusive ownership, no conflicts) and make minimum changes to resolve each finding. `/review` never modifies code without your explicit consent.
 
 ---
 
