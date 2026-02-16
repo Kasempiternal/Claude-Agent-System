@@ -4,6 +4,21 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 
 ## Skills
 
+### `/zk` - Intelligent Router
+Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/pcc`, `/pcc-opus`, and `/hydra`.
+
+```bash
+/zk add a button to the settings page          # → PCC (simple, clear scope)
+/zk refactor the payment processing system      # → PCC-Opus (keyword + risk domain)
+/zk fix auth; add dashboard; update API         # → Hydra (3 independent tasks)
+```
+
+Best for:
+- When you don't want to think about which skill to use
+- Any implementation task — ZK picks the right mode for you
+
+> **Escape hatch**: You can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly.
+
 ### `/hydra` - Multi-Task Parallel Swarm Coordinator
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
 
@@ -111,6 +126,7 @@ Features:
 
 | Skill | Use Case | Agents | Modifies Code? |
 |-------|----------|--------|----------------|
+| `/zk` | Auto-routes to best mode | Router only (delegates to pcc/pcc-opus/hydra) | Via delegated skill |
 | `/hydra` | Multi-task parallel swarms | Opus scouts + analyst teammates + wave-based Opus implementers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
@@ -118,6 +134,16 @@ Features:
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |
 
 ## How It Works
+
+### `/zk` Flow
+
+1. **Analyze** - Walks a 4-step decision tree against the user's request
+2. **Route** - First matching rule wins:
+   - **Step 1**: Multiple independent deliverables? → Hydra
+   - **Step 2**: Scale word + broad noun ("entire codebase")? → Hydra
+   - **Step 3**: High-stakes keyword + qualifying signal? → PCC-Opus
+   - **Step 4**: Everything else → PCC (default)
+3. **Delegate** - Invokes the selected skill with the original task unchanged
 
 ### `/hydra` Flow
 
