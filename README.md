@@ -8,7 +8,7 @@ Choose your installation method:
 
 | Method | Best For | Commands You Get |
 |--------|----------|------------------|
-| **Plugin** | Quick install, easy updates | `/systemcc`, `/pcc`, `/pcc-opus`, `/review` |
+| **Plugin** | Quick install, easy updates | `/zk`, `/systemcc`, `/pcc`, `/pcc-opus`, `/hydra`, `/review` |
 | **Script** | Full system with all modules | `/systemcc`, `/plan-opus`, + workflows |
 
 ### Option 1: Plugin Install (Recommended)
@@ -18,7 +18,7 @@ Choose your installation method:
 /plugin install pcc
 ```
 
-Done! You now have `/systemcc`, `/pcc`, `/pcc-opus`, and `/review`.
+Done! You now have `/zk`, `/systemcc`, `/pcc`, `/pcc-opus`, `/hydra`, and `/review`.
 
 ### Option 2: Script Install (Full System)
 
@@ -57,6 +57,39 @@ This installs the full system with all 13 systemcc modules, workflows, and middl
 | No learning | Session memory - learns your patterns and mistakes |
 | No quality gates | Decision engine with complexity/risk/scope analysis |
 | Hope it works | Post-execution validation + auto-fix critical issues |
+
+---
+
+# The `/zk` Command (Plugin)
+
+The smart entry point. Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed.
+
+```bash
+/zk "what you want to do"
+```
+
+## How It Works
+
+ZK walks a deterministic 4-step decision tree:
+
+| Step | Condition | Routes To |
+|------|-----------|-----------|
+| 1 | Multiple independent deliverables? | `/hydra` |
+| 2 | Scale word + broad noun ("entire codebase")? | `/hydra` |
+| 3 | High-stakes keyword + qualifying signal? | `/pcc-opus` |
+| 4 | Everything else (default) | `/pcc` |
+
+## Examples
+
+```bash
+/zk add a button to the settings page          # → PCC (simple, clear scope)
+/zk refactor the payment processing system      # → PCC-Opus (keyword + risk domain)
+/zk migrate all models to SwiftData             # → PCC-Opus ("migrate" always qualifies)
+/zk fix auth; add dashboard; update API         # → Hydra (3 independent tasks)
+/zk modernize the entire codebase               # → Hydra (scale + broad scope)
+```
+
+**Escape hatch**: You can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly.
 
 ---
 
@@ -550,10 +583,12 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 | Situation | Use This |
 |-----------|----------|
+| **Don't want to choose** — let the system pick | `/zk` |
 | Quick fixes, bug fixes | `/systemcc` |
-| Simple features | `/systemcc` |
-| Most everyday tasks | `/systemcc` |
-| Complex refactors | `/plan-opus` or `/pcc` |
+| Simple features | `/systemcc` or `/pcc` |
+| Most everyday tasks | `/zk` or `/systemcc` |
+| Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
+| Complex refactors | `/pcc-opus` (or `/zk` auto-detects) |
 | Architecture changes | `/plan-opus` or `/pcc-opus` |
 | When you want to see/edit the plan first | `/plan-opus` or `/pcc` |
 | Code review before committing | `/review` |
