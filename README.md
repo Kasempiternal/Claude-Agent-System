@@ -254,12 +254,14 @@ Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines
 
 ## Community
 
-Built from real-world experiences shared by developers:
+The `/systemcc` skill was partially inspired by ideas shared in the community:
 
 - [Anti-YOLO Method](https://www.reddit.com/r/ClaudeAI/comments/1n1941k/the_antiyolo_method_why_i_make_claude_draw_ascii/) - ASCII wireframing for web projects
 - [Phase-based development](https://www.reddit.com/r/ClaudeAI/comments/1lw5oie/how_phasebased_development_made_claude_code_10x/) - Large codebase handling
 - [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
 - [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
+
+All other skills (`/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
 
 ---
 
