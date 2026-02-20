@@ -5,6 +5,44 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.0.0] - 2026-02-20
+
+### Plugin-Only Distribution
+
+The Claude Agent System is now distributed exclusively as a Claude Code plugin. The legacy script-based command system has been fully retired.
+
+### Breaking Changes
+- **Plugin renamed** from `pcc` to `cas` — existing users must uninstall and reinstall: `/plugin install cas`
+- **Legacy system removed** — all `.claude/commands/`, `.claude/workflows/`, `.claude/middleware/`, `.claude/agents/`, and setup scripts have been deleted (99 files, ~25,000 lines)
+- **Script install path removed** — `setup-claude-agent-system.sh` and `setup-claude-agent-system.ps1` are gone
+
+### What's Preserved
+All 6 plugin skills remain fully functional and unchanged:
+- `/zk` — Intelligent router (auto-picks pcc/pcc-opus/hydra)
+- `/pcc` — Parallel Claude Coordinator (Sonnet scouts + Opus implementers)
+- `/pcc-opus` — PCC with Opus scouts for maximum exploration quality
+- `/hydra` — Multi-task parallel swarm (Agent Teams, wave-based execution)
+- `/review` — 7-agent code review swarm with opt-in auto-fix
+- `/systemcc` — Auto-routing workflow with Lyra AI optimization and triple review
+
+### Updated
+- `/review` documentation updated to reflect 7 agents (was 6)
+- `/review` now mentions official Anthropic review plugin agents with bundled fallback
+- `/systemcc` documented as a full plugin skill (was only a legacy command)
+- README rewritten for plugin-only architecture with migration notice
+- CONTRIBUTING.md updated for plugin skill/agent structure
+- Plugin README updated with new install command and agent count
+
+### Migration
+From script install to plugin:
+```bash
+rm -rf .claude/commands .claude/workflows .claude/middleware .claude/agents
+/plugin marketplace add Kasempiternal/Claude-Agent-System
+/plugin install cas
+```
+
+---
+
 ## [3.0.0] - 2025-11-26
 
 ### 🚀 Major Release - Complete Enhancement Integration (Phases 1-3)
@@ -448,12 +486,12 @@ The first public release of the Claude Agent System.
 
 ## Version History Summary
 
-- **v2.1.0** (2025-01-10) - Build Configuration Auto-Detection
-- **v2.0.0** (2025-01-10) - Enhanced Review & Memory System
-- **v1.0.0** (2025-01-18) - Initial Public Release
+- **v7.0.0** (2026-02-20) - Plugin-only distribution, plugin renamed to `cas`
+- **v3.0.0** (2025-11-26) - Progressive disclosure, hook infrastructure, checkpoint system (legacy script)
+- **v2.1.0** (2025-01-10) - Build configuration auto-detection (legacy script)
+- **v2.0.0** (2025-01-10) - Enhanced review & memory system (legacy script)
+- **v1.0.0** (2025-01-18) - Initial public release (legacy script)
 
 ---
-
-For upgrade instructions, see [UPGRADING.md](UPGRADING.md) (if you're maintaining backward compatibility).
 
 For the latest changes, always check the top of this file.

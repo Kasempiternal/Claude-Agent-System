@@ -2,6 +2,17 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
+> **v4.0.0 — Plugin-Only Distribution**
+>
+> The Claude Agent System is now distributed exclusively as a **Claude Code plugin**. The legacy script-based command system (`.claude/commands/`, `.claude/workflows/`, `.claude/middleware/`, setup scripts) has been fully retired. All functionality is preserved through 6 plugin skills listed below.
+>
+> If you previously installed via the setup script, uninstall the old files and switch to the plugin:
+> ```bash
+> rm -rf .claude/commands .claude/workflows .claude/middleware .claude/agents
+> /plugin marketplace add Kasempiternal/Claude-Agent-System
+> /plugin install cas
+> ```
+
 ## Quick Start
 
 ```bash
@@ -9,7 +20,7 @@
 /plugin install cas
 ```
 
-Done! You now have `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
+Done! You now have 6 skills: `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
 
 ---
 
