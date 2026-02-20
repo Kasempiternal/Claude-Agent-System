@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v4.0.0 — Plugin-Only Distribution**
+> **v7.0.0 — Plugin-Only Distribution**
 >
 > The Claude Agent System is now distributed exclusively as a **Claude Code plugin**. The legacy script-based command system (`.claude/commands/`, `.claude/workflows/`, `.claude/middleware/`, setup scripts) has been fully retired. All functionality is preserved through 6 plugin skills listed below.
 >
@@ -193,6 +193,15 @@ If CRITICAL or MAJOR findings are found, the system asks how you want to proceed
 - **Report only** - keep the report without modifying code
 
 Fix agents are grouped by file (exclusive ownership, no conflicts) and make minimum changes to resolve each finding. `/review` never modifies code without your explicit consent.
+
+### Optional: Official Anthropic Agents
+
+`/review` works standalone with bundled agents, but installing these official plugins enhances the analysis:
+
+```bash
+/install pr-review-toolkit
+/install code-simplifier
+```
 
 ---
 

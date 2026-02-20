@@ -144,7 +144,13 @@ The official plugin handles model selection and review methodology automatically
 
 When you launch agents 3-7 with Pattern B and any of them **return an error** (e.g., unknown `subagent_type`, plugin not found), immediately re-spawn the failed agents using Pattern A with their corresponding `.md` file content (already loaded from Step 1). Do NOT re-spawn agents that succeeded.
 
-If **all 5** official agents fail (plugins not installed at all), this is expected — the skill works fully with all 7 agents running as Pattern A custom agents.
+If **all 5** official agents fail (plugins not installed at all), this is expected — the skill works fully with all 7 agents running as Pattern A custom agents. After the fallback agents complete successfully, include this note in the review report:
+
+```
+**Tip**: Running with bundled review agents. For enhanced analysis with official Anthropic agents:
+/install pr-review-toolkit
+/install code-simplifier
+```
 
 ### Concrete Examples
 

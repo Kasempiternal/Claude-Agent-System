@@ -43,6 +43,58 @@ rm -rf .claude/commands .claude/workflows .claude/middleware .claude/agents
 
 ---
 
+## [6.1.0] - 2026-02-06
+
+### /review v2: Self-Contained Agents + Fix Phase
+
+- All 6 review agents now defined as `.md` files in `.claude/agents/` — no external plugin dependencies
+- Fix phase replaces simplification: parallel fix agents resolve CRITICAL/MAJOR findings with file-exclusive ownership
+- Enhanced agent prompts with swarm awareness, de-overlapped responsibilities, and standardized `file:line` output
+
+---
+
+## [6.0.0] - 2026-02-06
+
+### Plugin System & Code Review Swarm
+
+- Transformed into a proper Claude Code plugin (`claude-agent-system-plugin/`) with 4 skills
+- New `/review` skill: 6 parallel Anthropic review agents with health score (0-10) and cross-agent correlation
+- New `/pcc` and `/pcc-opus` skills: Parallel Claude Coordinator with dynamic 2-6 agent count and editable plan files
+- Decision engine overhaul
+
+---
+
+## [5.1.0] - 2026-02-16
+
+### /zk Intelligent Router + Hydra Optimization
+
+- New `/zk` skill: deterministic 4-step decision tree auto-routes to `/pcc`, `/pcc-opus`, or `/hydra`
+- Hydra orchestrator reduced from 951 to 371 lines (61% reduction) by delegating synthesis to analyst teammates
+- README reorganized: plugin skills first, script commands after
+
+---
+
+## [5.0.0] - 2026-01-15
+
+### Plan Opus Command & Agent Updates
+
+- New `/plan-opus` command for explicit planning control with configurable scout model
+- New `code-reviewer.md` and `code-simplifier.md` agents
+- Reorganized README and documentation
+
+---
+
+## [4.0.0] - 2025-12-07
+
+### Persistent Caching & Major Cleanup
+
+- Project analysis cached in `~/.claude/cache/` for instant startup with smart invalidation
+- Consolidated to `.claude/` as single source of truth
+- Deleted legacy ClaudeFiles system and removed ~32,000 lines of dead code
+- New cache commands: `--reanalyze` and `--clear-cache`
+
+---
+
 ## [3.0.0] - 2025-11-26
 
 ### 🚀 Major Release - Complete Enhancement Integration (Phases 1-3)
@@ -487,6 +539,11 @@ The first public release of the Claude Agent System.
 ## Version History Summary
 
 - **v7.0.0** (2026-02-20) - Plugin-only distribution, plugin renamed to `cas`
+- **v6.1.0** (2026-02-06) - /review v2: self-contained agents + fix phase
+- **v6.0.0** (2026-02-06) - Plugin system, /review skill, decision engine overhaul
+- **v5.1.0** (2026-02-16) - /zk intelligent router + Hydra optimization
+- **v5.0.0** (2026-01-15) - /plan-opus command + new agents
+- **v4.0.0** (2025-12-07) - Persistent caching + major cleanup
 - **v3.0.0** (2025-11-26) - Progressive disclosure, hook infrastructure, checkpoint system (legacy script)
 - **v2.1.0** (2025-01-10) - Build configuration auto-detection (legacy script)
 - **v2.0.0** (2025-01-10) - Enhanced review & memory system (legacy script)
