@@ -51,6 +51,21 @@ Usage:
 
 Then STOP. Do not proceed further.
 
+### Platform Detection
+
+After detecting scope, determine the git hosting platform by running:
+
+```bash
+git remote get-url origin
+```
+
+Classify the result:
+- Contains `github.com` → `GIT_PLATFORM=github`
+- Contains `gitlab.com` or `gitlab` → `GIT_PLATFORM=gitlab`
+- Anything else → `GIT_PLATFORM=other`
+
+Store `GIT_PLATFORM` — it determines whether Pattern B (official plugin agents) can be used in Phase 1.
+
 ### Scope Output
 
 After detecting scope, briefly state what will be reviewed:
@@ -58,6 +73,7 @@ After detecting scope, briefly state what will be reviewed:
 ```
 Review scope: [N] files with uncommitted changes
 Files: [list of file paths]
+Platform: [github/gitlab/other]
 ```
 
 Then collect the actual diff/content:
@@ -114,7 +130,9 @@ Task({
 
 **IMPORTANT**: Paste the ENTIRE content of each agent's `.md` file into the `prompt` field. NEVER summarize or abbreviate the agent definition.
 
-#### Pattern B: Official Plugin Agents (agents 3-7) — preferred when plugins are installed
+#### Pattern B: Official Plugin Agents (agents 3-7) — GitHub repos only, preferred when plugins are installed
+
+**IMPORTANT**: Pattern B uses `pr-review-toolkit` agents that depend on the `gh` CLI, which only works on GitHub-hosted repos. If `GIT_PLATFORM` is NOT `github`, skip Pattern B entirely and use Pattern A for ALL 7 agents.
 
 Use the plugin-qualified `subagent_type` and pass only the review context:
 
@@ -134,23 +152,27 @@ The official plugin handles model selection and review methodology automatically
 |---|------------|---------------------------|---------------------|-------|
 | 1 | Bug & Logic | `general-purpose` | `review-bug-logic.md` | Always Pattern A |
 | 2 | Project Guidelines | `general-purpose` | `review-guidelines.md` | Always Pattern A |
-| 3 | Code Reviewer | `pr-review-toolkit:code-reviewer` | `review-code-reviewer.md` | Pattern B, fallback A |
-| 4 | Silent Failure Hunter | `pr-review-toolkit:silent-failure-hunter` | `review-silent-failures.md` | Pattern B, fallback A |
-| 5 | Comment Analyzer | `pr-review-toolkit:comment-analyzer` | `review-comments.md` | Pattern B, fallback A |
-| 6 | Type Design Analyzer | `pr-review-toolkit:type-design-analyzer` | `review-type-design.md` | Pattern B, fallback A |
-| 7 | Test Coverage Analyzer | `pr-review-toolkit:pr-test-analyzer` | `review-test-coverage.md` | Pattern B, fallback A |
+| 3 | Code Reviewer | `pr-review-toolkit:code-reviewer` | `review-code-reviewer.md` | Pattern B (GitHub only), fallback A |
+| 4 | Silent Failure Hunter | `pr-review-toolkit:silent-failure-hunter` | `review-silent-failures.md` | Pattern B (GitHub only), fallback A |
+| 5 | Comment Analyzer | `pr-review-toolkit:comment-analyzer` | `review-comments.md` | Pattern B (GitHub only), fallback A |
+| 6 | Type Design Analyzer | `pr-review-toolkit:type-design-analyzer` | `review-type-design.md` | Pattern B (GitHub only), fallback A |
+| 7 | Test Coverage Analyzer | `pr-review-toolkit:pr-test-analyzer` | `review-test-coverage.md` | Pattern B (GitHub only), fallback A |
 
 ### Fallback Handling
 
-When you launch agents 3-7 with Pattern B and any of them **return an error** (e.g., unknown `subagent_type`, plugin not found), immediately re-spawn the failed agents using Pattern A with their corresponding `.md` file content (already loaded from Step 1). Do NOT re-spawn agents that succeeded.
+**Non-GitHub repos (`GIT_PLATFORM` is `gitlab` or `other`):** Pattern B is skipped entirely — all 7 agents use Pattern A. No fallback is needed since Pattern B was never attempted.
 
-If **all 5** official agents fail (plugins not installed at all), this is expected — the skill works fully with all 7 agents running as Pattern A custom agents. After the fallback agents complete successfully, include this note in the review report:
+**GitHub repos (`GIT_PLATFORM` is `github`):** When you launch agents 3-7 with Pattern B and any of them **return an error** (e.g., unknown `subagent_type`, plugin not found), immediately re-spawn the failed agents using Pattern A with their corresponding `.md` file content (already loaded from Step 1). Do NOT re-spawn agents that succeeded.
+
+If **all 5** official agents fail on a GitHub repo (plugins not installed at all), this is expected — the skill works fully with all 7 agents running as Pattern A custom agents. After the fallback agents complete successfully, include this note in the review report:
 
 ```
 **Tip**: Running with bundled review agents. For enhanced analysis with official Anthropic agents:
 /plugin install pr-review-toolkit@claude-plugins-official
 /plugin install code-simplifier@claude-plugins-official
 ```
+
+Only show this tip when `GIT_PLATFORM` is `github`, since the official plugin agents require `gh` CLI which only works with GitHub repos.
 
 ### Concrete Examples
 
@@ -437,7 +459,7 @@ Review complete.
 ## Critical Rules
 
 - **YOU ARE AN ORCHESTRATOR** - delegate ALL review work to agents via the Task tool. You NEVER review code yourself. If you catch yourself analyzing code for bugs/style/etc, STOP and spawn an agent instead.
-- **TWO AGENT PATTERNS** - Custom agents (1-2) always use `subagent_type: "general-purpose"` with `model: "opus"` and embedded `.md` prompts. Official plugin agents (3-7) prefer their plugin-qualified `subagent_type` (e.g. `pr-review-toolkit:code-reviewer`) but fall back to Pattern A with their `.md` file if the plugin isn't installed.
+- **TWO AGENT PATTERNS** - Custom agents (1-2) always use `subagent_type: "general-purpose"` with `model: "opus"` and embedded `.md` prompts. Official plugin agents (3-7) prefer their plugin-qualified `subagent_type` (e.g. `pr-review-toolkit:code-reviewer`) but fall back to Pattern A with their `.md` file if the plugin isn't installed. **Pattern B is GitHub-only** — on non-GitHub repos (`GIT_PLATFORM` is `gitlab` or `other`), skip Pattern B entirely and use Pattern A for all 7 agents.
 - **SELF-CONTAINED** - This skill works with zero external plugins. All 7 agents have `.md` fallback definitions bundled in the plugin's `agents/` directory. Plugins (`pr-review-toolkit`, `code-simplifier`) enhance the experience but are NOT required.
 - **EMBED FULL FILE CONTENTS** - paste the ENTIRE agent definition `.md` file content into the Task `prompt` field for Pattern A agents. NEVER summarize, abbreviate, or paraphrase the agent definitions.
 - **DISCOVER THEN READ THEN SPAWN** - Step 0: Glob to find the plugin's agents directory. Step 1: Read all 7 agent definition files (one message, 7 parallel Read calls). Step 2: Launch all 7 Task calls (next message, 7 parallel Task calls). Steps 0-1 can be one message, but Step 2 must be separate. Reading all 7 upfront ensures fallback data is ready.
