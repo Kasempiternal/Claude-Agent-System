@@ -1,0 +1,977 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Agent System — Parallel AI Agent Swarms</title>
+<meta name="description" content="Deploy parallel agent swarms for planning, implementation, and code review. A Claude Code plugin.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg-deep:#060a10;
+  --bg:#0a1018;
+  --bg-card:#0d1520;
+  --bg-card-hover:#111d2d;
+  --cyan:#00e5c7;
+  --cyan-dim:#00e5c740;
+  --cyan-glow:#00e5c720;
+  --teal:#0a7e6e;
+  --amber:#e5a000;
+  --amber-dim:#e5a00030;
+  --text:#d0dce8;
+  --text-dim:#607890;
+  --text-bright:#f0f6fc;
+  --border:#1a2535;
+  --border-glow:#00e5c715;
+  --mono:'DM Mono',monospace;
+  --display:'Syne',sans-serif;
+  --body:'Newsreader',Georgia,serif;
+}
+html{scroll-behavior:smooth;font-size:16px}
+body{
+  background:var(--bg-deep);
+  color:var(--text);
+  font-family:var(--body);
+  line-height:1.7;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--cyan);color:var(--bg-deep)}
+
+/* ═══ GRID BACKGROUND ═══ */
+.grid-bg{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:
+    linear-gradient(var(--border-glow) 1px,transparent 1px),
+    linear-gradient(90deg,var(--border-glow) 1px,transparent 1px);
+  background-size:60px 60px;
+  mask-image:radial-gradient(ellipse 80% 60% at 50% 30%,black 20%,transparent 70%);
+}
+.grid-bg::after{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 600px 400px at 50% 20%,var(--cyan-glow),transparent);
+}
+
+/* ═══ LAYOUT ═══ */
+.container{max-width:1100px;margin:0 auto;padding:0 2rem}
+section{position:relative;z-index:1}
+
+/* ═══ NAV ═══ */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  padding:1.25rem 2rem;
+  background:linear-gradient(180deg,var(--bg-deep) 60%,transparent);
+  display:flex;justify-content:space-between;align-items:center;
+}
+.nav-logo{
+  font-family:var(--display);font-weight:800;font-size:1rem;
+  color:var(--text-bright);letter-spacing:-.02em;
+  display:flex;align-items:center;gap:.6rem;
+}
+.nav-logo .dot{
+  width:8px;height:8px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan),0 0 4px var(--cyan);
+  animation:pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.8)}}
+.nav-links{display:flex;gap:2rem;align-items:center}
+.nav-links a{
+  font-family:var(--mono);font-size:.75rem;letter-spacing:.06em;text-transform:uppercase;
+  color:var(--text-dim);text-decoration:none;transition:color .3s;
+}
+.nav-links a:hover{color:var(--cyan)}
+.nav-cta{
+  font-family:var(--mono)!important;font-size:.72rem!important;
+  background:var(--cyan)!important;color:var(--bg-deep)!important;
+  padding:.5rem 1.1rem;border-radius:4px;font-weight:500;
+  transition:box-shadow .3s,transform .15s!important;
+}
+.nav-cta:hover{
+  box-shadow:0 0 20px var(--cyan-dim),0 0 6px var(--cyan)!important;
+  transform:translateY(-1px);
+}
+
+/* ═══ HERO ═══ */
+.hero{
+  min-height:100vh;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  padding:8rem 2rem 4rem;position:relative;
+}
+.hero-badge{
+  font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cyan);border:1px solid var(--cyan-dim);
+  padding:.4rem 1.2rem;border-radius:100px;margin-bottom:2.5rem;
+  display:inline-flex;align-items:center;gap:.6rem;
+  animation:fade-up .8s ease-out both;
+}
+.hero-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;background:var(--cyan);
+  box-shadow:0 0 8px var(--cyan);animation:pulse-dot 2s ease-in-out infinite;
+}
+.hero h1{
+  font-family:var(--display);font-weight:800;
+  font-size:clamp(2.8rem,7vw,5.5rem);line-height:1.05;
+  letter-spacing:-.04em;color:var(--text-bright);
+  max-width:800px;margin-bottom:1.5rem;
+  animation:fade-up .8s ease-out .1s both;
+}
+.hero h1 .accent{
+  background:linear-gradient(135deg,var(--cyan),var(--teal),var(--cyan));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+.hero-sub{
+  font-family:var(--body);font-size:clamp(1.05rem,2vw,1.25rem);
+  color:var(--text-dim);max-width:520px;line-height:1.7;
+  margin-bottom:3rem;font-style:italic;
+  animation:fade-up .8s ease-out .2s both;
+}
+.hero-install{
+  animation:fade-up .8s ease-out .3s both;
+  display:flex;flex-direction:column;align-items:center;gap:.6rem;
+}
+.install-box{
+  font-family:var(--mono);font-size:.95rem;
+  background:var(--bg-card);border:1px solid var(--border);
+  padding:.9rem 2rem;border-radius:8px;color:var(--text-bright);
+  display:flex;align-items:center;gap:1rem;
+  cursor:pointer;transition:border-color .3s,box-shadow .3s;
+  position:relative;
+}
+.install-box:hover{border-color:var(--cyan-dim);box-shadow:0 0 30px var(--cyan-glow)}
+.install-box .prompt{color:var(--cyan)}
+.install-box .copy-hint{
+  font-size:.65rem;color:var(--text-dim);letter-spacing:.05em;
+  text-transform:uppercase;position:absolute;right:-4.5rem;
+  opacity:0;transition:opacity .3s;
+}
+.install-box:hover .copy-hint{opacity:1}
+.install-box.copied .copy-hint{color:var(--cyan);opacity:1}
+.hero-note{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);letter-spacing:.02em}
+.scroll-hint{
+  position:absolute;bottom:2.5rem;left:50%;transform:translateX(-50%);
+  display:flex;flex-direction:column;align-items:center;gap:.5rem;
+  animation:fade-up .8s ease-out .6s both;
+}
+.scroll-hint span{font-family:var(--mono);font-size:.6rem;color:var(--text-dim);letter-spacing:.1em;text-transform:uppercase}
+.scroll-line{width:1px;height:32px;background:linear-gradient(180deg,var(--cyan),transparent);animation:scroll-pulse 2s ease-in-out infinite}
+@keyframes scroll-pulse{0%,100%{opacity:1;transform:scaleY(1)}50%{opacity:.3;transform:scaleY(.6)}}
+@keyframes fade-up{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+/* ═══ SECTION HEADERS ═══ */
+.section-label{
+  font-family:var(--mono);font-size:.65rem;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--cyan);margin-bottom:1rem;
+  display:flex;align-items:center;gap:1rem;
+}
+.section-label::after{content:'';flex:1;height:1px;background:var(--border)}
+.section-title{
+  font-family:var(--display);font-weight:700;font-size:clamp(1.8rem,4vw,2.6rem);
+  color:var(--text-bright);letter-spacing:-.03em;line-height:1.15;margin-bottom:1rem;
+}
+.section-desc{
+  font-family:var(--body);font-size:1.05rem;color:var(--text-dim);
+  max-width:560px;line-height:1.8;margin-bottom:3.5rem;font-style:italic;
+}
+
+/* ═══ SKILLS GRID ═══ */
+.skills{padding:6rem 0 8rem}
+.skills-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--border);border:1px solid var(--border);border-radius:12px;overflow:hidden;
+}
+.skill-card{
+  background:var(--bg-card);padding:2rem 1.8rem;
+  position:relative;transition:background .4s;cursor:default;
+}
+.skill-card:hover{background:var(--bg-card-hover)}
+.skill-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,transparent,var(--cyan),transparent);
+  opacity:0;transition:opacity .4s;
+}
+.skill-card:hover::before{opacity:1}
+.skill-cmd{
+  font-family:var(--mono);font-size:.85rem;font-weight:500;
+  color:var(--cyan);margin-bottom:.75rem;
+  display:flex;align-items:center;gap:.5rem;
+}
+.skill-cmd::before{content:'/';color:var(--text-dim);font-weight:300}
+.skill-name{
+  font-family:var(--display);font-weight:600;font-size:1.05rem;
+  color:var(--text-bright);margin-bottom:.5rem;letter-spacing:-.01em;
+}
+.skill-desc{font-size:.9rem;color:var(--text-dim);line-height:1.65}
+.skill-tag{
+  display:inline-block;margin-top:1rem;
+  font-family:var(--mono);font-size:.6rem;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--amber);background:var(--amber-dim);
+  padding:.25rem .7rem;border-radius:3px;
+}
+
+/* ═══ HOW IT WORKS ═══ */
+.how{padding:4rem 0 8rem}
+.how-flow{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;
+  position:relative;
+}
+.how-flow::before{
+  content:'';position:absolute;top:2.5rem;left:10%;right:10%;
+  height:1px;background:repeating-linear-gradient(90deg,var(--cyan-dim) 0 8px,transparent 8px 16px);
+  z-index:0;
+}
+.how-step{
+  text-align:center;position:relative;z-index:1;
+  display:flex;flex-direction:column;align-items:center;
+}
+.step-num{
+  width:48px;height:48px;border-radius:50%;
+  background:var(--bg-card);border:2px solid var(--cyan-dim);
+  display:flex;align-items:center;justify-content:center;
+  font-family:var(--mono);font-size:.85rem;font-weight:500;color:var(--cyan);
+  margin-bottom:1.2rem;transition:border-color .3s,box-shadow .3s;
+}
+.how-step:hover .step-num{border-color:var(--cyan);box-shadow:0 0 20px var(--cyan-glow)}
+.step-title{
+  font-family:var(--display);font-weight:600;font-size:.95rem;
+  color:var(--text-bright);margin-bottom:.4rem;
+}
+.step-desc{font-size:.85rem;color:var(--text-dim);line-height:1.6;max-width:200px}
+
+/* ═══ ARCHITECTURE ═══ */
+.arch{padding:4rem 0 8rem}
+.arch-canvas{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:12px;
+  padding:3rem 2.5rem 2rem;position:relative;overflow:hidden;
+}
+.arch-canvas::before{
+  content:'HYDRA SWARM TOPOLOGY';position:absolute;top:1rem;right:1.5rem;
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.15em;color:var(--text-dim);z-index:3;
+}
+/* Ambient glow behind the diagram */
+.arch-canvas::after{
+  content:'';position:absolute;inset:0;
+  background:
+    radial-gradient(ellipse 50% 20% at 50% 12%,rgba(0,229,199,.07),transparent),
+    radial-gradient(ellipse 40% 15% at 50% 55%,rgba(229,160,0,.04),transparent),
+    radial-gradient(ellipse 60% 30% at 50% 90%,rgba(0,229,199,.04),transparent);
+  pointer-events:none;z-index:0;
+}
+
+/* SVG connection layer */
+.hydra-svg{
+  position:absolute;inset:0;width:100%;height:100%;z-index:0;pointer-events:none;
+}
+.hydra-svg .conn-path{
+  stroke:var(--border);stroke-width:1;fill:none;
+  opacity:0;transition:opacity .6s ease-out;
+}
+.hydra-svg.active .conn-path{opacity:1}
+.hydra-svg .conn-path.glow{
+  stroke:var(--cyan);stroke-width:1;opacity:0;
+  filter:blur(3px);
+}
+.hydra-svg.active .conn-path.glow{opacity:.3}
+/* Animated particles */
+.hydra-svg .particle{
+  fill:var(--cyan);opacity:0;
+  filter:drop-shadow(0 0 3px var(--cyan));
+}
+.hydra-svg.active .particle{opacity:1}
+.hydra-svg .particle.amber{fill:var(--amber);filter:drop-shadow(0 0 3px var(--amber))}
+.hydra-svg .particle.green{fill:#4ade80;filter:drop-shadow(0 0 3px #4ade80)}
+.hydra-svg .particle.blue{fill:#60a5fa;filter:drop-shadow(0 0 3px #60a5fa)}
+/* Inter-agent comm lines (horizontal dashed) */
+.hydra-svg .comm-path{
+  stroke:var(--amber);stroke-width:.75;fill:none;
+  stroke-dasharray:4 3;opacity:0;transition:opacity .6s ease-out;
+}
+.hydra-svg.active .comm-path{opacity:.5}
+.hydra-svg .comm-particle{
+  fill:var(--amber);opacity:0;
+  filter:drop-shadow(0 0 2px var(--amber));
+}
+.hydra-svg.active .comm-particle{opacity:.8}
+
+/* Hydra layout */
+.hydra-graph{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:0}
+
+/* Tier — each row of nodes */
+.hydra-tier{
+  display:flex;align-items:center;justify-content:center;gap:.75rem;
+  padding:1rem 0;width:100%;flex-wrap:wrap;position:relative;
+  /* stagger reveal */
+  opacity:0;transform:translateY(16px);
+  transition:opacity .5s ease-out,transform .5s ease-out;
+}
+.arch-canvas.in-view .hydra-tier{opacity:1;transform:translateY(0)}
+.arch-canvas.in-view .hydra-tier:nth-child(1){transition-delay:0s}
+.arch-canvas.in-view .hydra-tier:nth-child(2){transition-delay:.12s}
+.arch-canvas.in-view .hydra-tier:nth-child(3){transition-delay:.24s}
+.arch-canvas.in-view .hydra-tier:nth-child(4){transition-delay:.36s}
+.arch-canvas.in-view .hydra-tier:nth-child(5){transition-delay:.48s}
+.arch-canvas.in-view .hydra-tier:nth-child(6){transition-delay:.6s}
+.arch-canvas.in-view .hydra-tier:nth-child(7){transition-delay:.72s}
+.arch-canvas.in-view .hydra-tier:nth-child(8){transition-delay:.84s}
+.arch-canvas.in-view .hydra-tier:nth-child(9){transition-delay:.96s}
+
+/* Node base */
+.h-node{
+  font-family:var(--mono);font-size:.72rem;
+  padding:.5rem 1rem;border-radius:6px;white-space:nowrap;
+  transition:transform .25s,box-shadow .25s,border-color .3s;
+  position:relative;text-align:center;
+}
+.h-node:hover{transform:translateY(-3px)}
+.h-node .h-sub{display:block;font-size:.55rem;color:var(--text-dim);margin-top:2px;font-weight:300}
+
+/* Status LED on each node */
+.h-node::after{
+  content:'';position:absolute;top:5px;right:5px;
+  width:5px;height:5px;border-radius:50%;
+  background:var(--cyan);opacity:0;
+  transition:opacity .4s;
+}
+.arch-canvas.in-view .h-node::after{
+  opacity:.6;
+  animation:led-blink 2.5s ease-in-out infinite;
+}
+@keyframes led-blink{0%,100%{opacity:.6}50%{opacity:.15}}
+
+/* Node variants */
+.h-you{background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber);font-weight:500}
+.h-you:hover{box-shadow:0 0 20px var(--amber-dim)}
+.h-you::after{background:var(--amber)}
+
+.h-orchestrator{
+  background:#00e5c70a;color:var(--cyan);border:2px solid var(--cyan);
+  font-weight:500;padding:.65rem 1.5rem;
+  box-shadow:0 0 0 0 rgba(0,229,199,0);
+}
+.arch-canvas.in-view .h-orchestrator{
+  animation:orch-pulse 3s ease-in-out infinite;
+}
+@keyframes orch-pulse{
+  0%,100%{box-shadow:0 0 0 0 rgba(0,229,199,.15)}
+  50%{box-shadow:0 0 24px 4px rgba(0,229,199,.12),0 0 60px 8px rgba(0,229,199,.05)}
+}
+.h-orchestrator:hover{box-shadow:0 0 30px rgba(0,229,199,.2)!important}
+.h-orchestrator::after{display:none}
+
+.h-scout{background:rgba(26,37,53,.3);color:var(--text);border:1px solid var(--border)}
+.h-scout:hover{border-color:var(--cyan-dim);box-shadow:0 0 16px rgba(0,229,199,.08)}
+
+.h-analyst{background:rgba(229,160,0,.06);color:var(--amber);border:1px solid rgba(229,160,0,.3)}
+.h-analyst:hover{box-shadow:0 0 16px var(--amber-dim)}
+.h-analyst::after{background:var(--amber)}
+
+.h-impl{background:var(--bg-card-hover);color:var(--text-bright);border:1px solid var(--border);font-weight:400}
+.h-impl:hover{border-color:var(--cyan-dim);box-shadow:0 0 16px var(--cyan-glow)}
+
+.h-verify{background:rgba(34,197,94,.06);color:#4ade80;border:1px solid rgba(34,197,94,.25)}
+.h-verify:hover{box-shadow:0 0 16px rgba(34,197,94,.12)}
+.h-verify::after{background:#4ade80}
+
+.h-simplify{background:rgba(96,165,250,.06);color:#60a5fa;border:1px solid rgba(96,165,250,.25)}
+.h-simplify:hover{box-shadow:0 0 16px rgba(96,165,250,.12)}
+.h-simplify::after{background:#60a5fa}
+
+/* Connector labels between tiers */
+.hydra-conn-label{
+  font-family:var(--mono);font-size:.58rem;color:var(--text-dim);
+  letter-spacing:.06em;text-transform:uppercase;
+  padding:.35rem 0;text-align:center;
+  opacity:0;transform:translateY(8px);
+  transition:opacity .4s ease-out,transform .4s ease-out;
+}
+.arch-canvas.in-view .hydra-conn-label{opacity:1;transform:translateY(0)}
+.hydra-conn-label.c-active{color:var(--cyan)}
+.hydra-conn-label .conn-icon{
+  display:inline-block;margin:0 .3rem;
+  color:var(--cyan);font-size:.65rem;
+  animation:arrow-bounce 2s ease-in-out infinite;
+}
+@keyframes arrow-bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(2px)}}
+
+/* Wave badge */
+.wave-badge{
+  font-family:var(--mono);font-size:.55rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--cyan);background:var(--bg-deep);border:1px solid var(--cyan-dim);
+  padding:.25rem .8rem;border-radius:100px;
+  position:absolute;left:0;top:50%;transform:translateY(-50%);z-index:3;
+}
+.wave-badge::before{
+  content:'';position:absolute;inset:-2px;border-radius:100px;
+  background:var(--cyan);opacity:.08;filter:blur(6px);
+}
+.wave-badge.w2{color:var(--amber);border-color:rgba(229,160,0,.3)}
+.wave-badge.w2::before{background:var(--amber)}
+
+/* Parallel bracket group */
+.parallel-bracket{
+  display:flex;align-items:center;gap:.5rem;
+  padding:.65rem 1rem;
+  border:1px solid var(--border);border-radius:8px;
+  position:relative;
+  background:
+    linear-gradient(135deg,rgba(0,229,199,.02) 0%,transparent 50%),
+    linear-gradient(var(--bg-card),var(--bg-card));
+}
+.parallel-bracket::before{
+  content:'';position:absolute;inset:-1px;border-radius:8px;
+  background:linear-gradient(180deg,var(--cyan-dim),transparent 60%);
+  z-index:-1;opacity:.3;
+}
+.parallel-bracket .p-label{
+  position:absolute;top:-8px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:.5rem;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text-dim);background:var(--bg-card);padding:0 .6rem;
+  white-space:nowrap;
+}
+
+/* Legend */
+.hydra-legend{
+  display:flex;gap:1.5rem;justify-content:center;flex-wrap:wrap;
+  margin-top:1.5rem;padding-top:1rem;border-top:1px solid var(--border);
+  position:relative;z-index:2;
+}
+.legend-item{display:flex;align-items:center;gap:.4rem;font-family:var(--mono);font-size:.6rem;color:var(--text-dim)}
+.legend-dot{width:8px;height:8px;border-radius:2px;position:relative}
+.legend-dot::after{content:'';position:absolute;inset:-2px;border-radius:3px;opacity:.3;filter:blur(3px)}
+.legend-dot.l-scout{background:var(--border)}
+.legend-dot.l-analyst{background:rgba(229,160,0,.5);border:1px solid var(--amber)}.legend-dot.l-analyst::after{background:var(--amber)}
+.legend-dot.l-impl{background:var(--bg-card-hover);border:1px solid var(--border)}
+.legend-dot.l-verify{background:rgba(34,197,94,.4);border:1px solid #4ade80}.legend-dot.l-verify::after{background:#4ade80}
+.legend-dot.l-simplify{background:rgba(96,165,250,.4);border:1px solid #60a5fa}.legend-dot.l-simplify::after{background:#60a5fa}
+.legend-dot.l-comm{background:transparent;border:1px dashed var(--amber);border-radius:0;width:18px;height:2px}.legend-dot.l-comm::after{display:none}
+
+/* ═══ CTA SECTION ═══ */
+.cta{padding:6rem 0 4rem;text-align:center}
+.cta-box{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:16px;
+  padding:4rem 3rem;position:relative;overflow:hidden;
+}
+.cta-box::before{
+  content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;
+  background:radial-gradient(circle at 50% 80%,var(--cyan-glow),transparent 50%);
+  pointer-events:none;
+}
+.cta-box .section-title{margin-bottom:.75rem}
+.cta-box .section-desc{margin:0 auto 2.5rem;text-align:center}
+.cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+.btn{
+  font-family:var(--mono);font-size:.8rem;letter-spacing:.04em;
+  padding:.85rem 2rem;border-radius:8px;text-decoration:none;
+  display:inline-flex;align-items:center;gap:.6rem;
+  transition:all .3s;cursor:pointer;border:none;
+}
+.btn-primary{
+  background:var(--cyan);color:var(--bg-deep);font-weight:500;
+}
+.btn-primary:hover{box-shadow:0 0 30px var(--cyan-dim),0 4px 12px var(--cyan-glow);transform:translateY(-2px)}
+.btn-secondary{
+  background:transparent;color:var(--text);border:1px solid var(--border);
+}
+.btn-secondary:hover{border-color:var(--text-dim);color:var(--text-bright)}
+.btn svg{width:16px;height:16px;fill:currentColor}
+
+/* ═══ FOOTER ═══ */
+footer{
+  padding:3rem 2rem;text-align:center;
+  border-top:1px solid var(--border);
+}
+footer p{font-family:var(--mono);font-size:.7rem;color:var(--text-dim);letter-spacing:.03em}
+footer a{color:var(--text-dim);text-decoration:none;transition:color .3s}
+footer a:hover{color:var(--cyan)}
+
+/* ═══ SCROLL ANIMATIONS ═══ */
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease-out,transform .7s ease-out}
+.reveal.visible{opacity:1;transform:translateY(0)}
+.reveal-delay-1{transition-delay:.1s}
+.reveal-delay-2{transition-delay:.2s}
+.reveal-delay-3{transition-delay:.3s}
+
+/* ═══ RESPONSIVE ═══ */
+@media(max-width:900px){
+  .skills-grid{grid-template-columns:repeat(2,1fr)}
+  .how-flow{grid-template-columns:repeat(2,1fr);gap:2.5rem}
+  .how-flow::before{display:none}
+  .nav-links{gap:1rem}
+  .nav-links a:not(.nav-cta){display:none}
+  .parallel-bracket{flex-wrap:wrap;justify-content:center}
+  .hydra-tier{flex-wrap:wrap}
+  .hydra-svg{display:none}
+}
+@media(max-width:600px){
+  .skills-grid{grid-template-columns:1fr}
+  .how-flow{grid-template-columns:1fr}
+  .container{padding:0 1.25rem}
+  nav{padding:1rem 1.25rem}
+  .hero{padding:7rem 1.25rem 4rem}
+  .cta-box{padding:3rem 1.5rem}
+  .arch-canvas{padding:2rem 1rem 1.5rem}
+  .install-box .copy-hint{display:none}
+  .h-node{font-size:.65rem;padding:.4rem .7rem}
+  .h-node .h-sub{font-size:.5rem}
+  .parallel-bracket{padding:.4rem .5rem;gap:.3rem}
+  .hydra-legend{gap:.8rem}
+  .legend-item{font-size:.55rem}
+  .hydra-svg{display:none}
+  .hydra-conn-label{font-size:.5rem}
+}
+</style>
+</head>
+<body>
+
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <div class="nav-logo">
+    <span class="dot"></span>
+    CAS
+  </div>
+  <div class="nav-links">
+    <a href="#skills">Skills</a>
+    <a href="#how">How It Works</a>
+    <a href="#architecture">Architecture</a>
+    <a href="https://github.com/Kasempiternal/Claude-Agent-System" class="nav-cta">GitHub</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge">Claude Code Plugin</div>
+  <h1>Parallel <span class="accent">Agent Swarms</span> for Code</h1>
+  <p class="hero-sub">
+    Deploy fleets of specialized AI agents that scout, plan, implement, and review your code&mdash;all running in parallel.
+  </p>
+  <div class="hero-install">
+    <div class="install-box" onclick="copyInstall(this)" title="Click to copy">
+      <span class="prompt">$</span> /plugin install cas
+      <span class="copy-hint">click to copy</span>
+    </div>
+    <span class="hero-note">Works with Claude Code &mdash; zero config required</span>
+  </div>
+  <div class="scroll-hint">
+    <span>Explore</span>
+    <div class="scroll-line"></div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section class="skills" id="skills">
+  <div class="container">
+    <div class="section-label reveal">01 &mdash; Skills</div>
+    <h2 class="section-title reveal reveal-delay-1">Six commands.<br>Infinite leverage.</h2>
+    <p class="section-desc reveal reveal-delay-2">Each skill orchestrates a different swarm topology&mdash;from intelligent routing to full multi-task parallel execution.</p>
+
+    <div class="skills-grid reveal reveal-delay-3">
+      <div class="skill-card">
+        <div class="skill-cmd">zk</div>
+        <div class="skill-name">Intelligent Router</div>
+        <p class="skill-desc">Analyzes your task and automatically picks the best skill&mdash;PCC, PCC-Opus, or Hydra&mdash;so you don't have to.</p>
+        <span class="skill-tag">auto-routing</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">pcc</div>
+        <div class="skill-name">Parallel Claude Coordinator</div>
+        <p class="skill-desc">Sonnet scouts explore the codebase in parallel, then Opus implementers execute the plan with precision.</p>
+        <span class="skill-tag">scout + implement</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">pcc-opus</div>
+        <div class="skill-name">PCC Opus Edition</div>
+        <p class="skill-desc">Maximum exploration quality. Opus-powered scouts for when the codebase is complex and nuance matters.</p>
+        <span class="skill-tag">max quality</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">hydra</div>
+        <div class="skill-name">Multi-Task Swarm</div>
+        <p class="skill-desc">Submit N tasks at once. Wave-based execution with agent teams that work in parallel across all of them.</p>
+        <span class="skill-tag">n-task parallel</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">review</div>
+        <div class="skill-name">7-Agent Code Review</div>
+        <p class="skill-desc">Seven specialized review agents analyze bugs, style, silent failures, comments, types, and test coverage simultaneously.</p>
+        <span class="skill-tag">7 agents</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">systemcc</div>
+        <div class="skill-name">Auto-Routing Workflow</div>
+        <p class="skill-desc">Lyra AI optimization with triple review gates. The full pipeline&mdash;routing, implementation, and validation.</p>
+        <span class="skill-tag">full pipeline</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-label reveal">02 &mdash; How It Works</div>
+    <h2 class="section-title reveal reveal-delay-1">Orchestrate, don't operate.</h2>
+    <p class="section-desc reveal reveal-delay-2">You give the task. CAS splits it into parallel workstreams, assigns specialized agents, and synthesizes their output.</p>
+
+    <div class="how-flow reveal reveal-delay-3">
+      <div class="how-step">
+        <div class="step-num">1</div>
+        <div class="step-title">You Command</div>
+        <p class="step-desc">Run a skill like <code style="color:var(--cyan);font-family:var(--mono);font-size:.8rem">/pcc</code> with your task description.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">2</div>
+        <div class="step-title">Scouts Explore</div>
+        <p class="step-desc">Parallel scout agents map the codebase, finding patterns and relevant files.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">3</div>
+        <div class="step-title">Agents Execute</div>
+        <p class="step-desc">Implementer agents work concurrently, each owning their file set exclusively.</p>
+      </div>
+      <div class="how-step">
+        <div class="step-num">4</div>
+        <div class="step-title">Output Synthesized</div>
+        <p class="step-desc">Results are deduplicated, cross-referenced, and presented as one cohesive deliverable.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ARCHITECTURE: HYDRA SWARM -->
+<section class="arch" id="architecture">
+  <div class="container">
+    <div class="section-label reveal">03 &mdash; Architecture</div>
+    <h2 class="section-title reveal reveal-delay-1">Hydra swarm topology.</h2>
+    <p class="section-desc reveal reveal-delay-2">The multi-headed orchestrator uses Claude Teams&mdash;a shared task list, message passing, and wave-based execution to run N tasks with zero file conflicts.</p>
+
+    <div class="arch-canvas" id="hydra-diagram">
+      <!-- SVG connection layer — drawn by JS -->
+      <svg class="hydra-svg" id="hydra-svg" preserveAspectRatio="none"></svg>
+
+      <div class="hydra-graph" id="hydra-graph">
+
+        <!-- Tier 0: User -->
+        <div class="hydra-tier" data-tier="0">
+          <div class="h-node h-you" data-node="user">you<span class="h-sub">/hydra task1; task2; task3</span></div>
+        </div>
+
+        <div class="hydra-conn-label c-active" data-label="0-1"><span class="conn-icon">&#9662;</span> TeamCreate</div>
+
+        <!-- Tier 1: Orchestrator -->
+        <div class="hydra-tier" data-tier="1">
+          <div class="h-node h-orchestrator" data-node="orch">Hydra Orchestrator<span class="h-sub">Opus &mdash; brain, not hands</span></div>
+        </div>
+
+        <div class="hydra-conn-label c-active" data-label="1-2"><span class="conn-icon">&#9662;</span> spawns in parallel</div>
+
+        <!-- Tier 2: Scouts -->
+        <div class="hydra-tier" data-tier="2">
+          <div class="parallel-bracket" data-group="scouts">
+            <span class="p-label">parallel &mdash; all at once</span>
+            <div class="h-node h-scout" data-node="s1">scout<span class="h-sub">architecture</span></div>
+            <div class="h-node h-scout" data-node="s2">scout<span class="h-sub">feature</span></div>
+            <div class="h-node h-scout" data-node="s3">scout<span class="h-sub">dependency</span></div>
+            <div class="h-node h-scout" data-node="s4">scout<span class="h-sub">test</span></div>
+            <div class="h-node h-scout" data-node="s5">scout<span class="h-sub">integration</span></div>
+          </div>
+        </div>
+
+        <div class="hydra-conn-label" data-label="2-3"><span class="conn-icon">&#9662;</span> SendMessage &rarr; findings</div>
+
+        <!-- Tier 3: Analyst -->
+        <div class="hydra-tier" data-tier="3">
+          <div class="h-node h-analyst" data-node="analyst">analyst-synthesis<span class="h-sub">reads all scouts &rarr; plans + conflict DAG</span></div>
+        </div>
+
+        <div class="hydra-conn-label" data-label="3-4"><span class="conn-icon">&#9662;</span> wave schedule computed</div>
+
+        <!-- Tier 4: Wave 1 -->
+        <div class="hydra-tier" data-tier="4">
+          <span class="wave-badge">wave 1</span>
+          <div class="parallel-bracket" data-group="wave1">
+            <span class="p-label">parallel &mdash; exclusive file ownership</span>
+            <div class="h-node h-impl" data-node="i1">impl-task1<span class="h-sub">stream-a</span></div>
+            <div class="h-node h-impl" data-node="i2">impl-task1<span class="h-sub">stream-b</span></div>
+            <div class="h-node h-impl" data-node="i3">impl-task2<span class="h-sub">stream-a</span></div>
+            <div class="h-node h-impl" data-node="i4">impl-task2<span class="h-sub">stream-b</span></div>
+          </div>
+        </div>
+
+        <div class="hydra-conn-label" data-label="4-5"><span class="conn-icon">&#9662;</span> verify &rarr; pass &rarr; next wave</div>
+
+        <!-- Tier 5: Wave 2 -->
+        <div class="hydra-tier" data-tier="5">
+          <span class="wave-badge w2">wave 2</span>
+          <div class="parallel-bracket" data-group="wave2">
+            <span class="p-label">blocked until wave 1 verified</span>
+            <div class="h-node h-impl" data-node="i5">impl-task3<span class="h-sub">stream-a</span></div>
+            <div class="h-node h-impl" data-node="i6">impl-task3<span class="h-sub">stream-b</span></div>
+          </div>
+        </div>
+
+        <div class="hydra-conn-label" data-label="5-6"><span class="conn-icon">&#9662;</span> all waves complete</div>
+
+        <!-- Tier 6: Verify + Simplify -->
+        <div class="hydra-tier" data-tier="6" style="gap:1.5rem">
+          <div class="h-node h-verify" data-node="v1">verify-global<span class="h-sub">integration tests</span></div>
+          <div class="h-node h-simplify" data-node="sim1">simplify-module-a<span class="h-sub">cross-task cleanup</span></div>
+          <div class="h-node h-simplify" data-node="sim2">simplify-module-b<span class="h-sub">cross-task cleanup</span></div>
+        </div>
+
+        <div class="hydra-conn-label c-active" data-label="6-7"><span class="conn-icon">&#9662;</span> TeamDelete &rarr; done</div>
+
+        <!-- Tier 7: Final -->
+        <div class="hydra-tier" data-tier="7">
+          <div class="h-node h-orchestrator" data-node="final" style="border-width:1px">Final Report<span class="h-sub">N tasks &bull; W waves &bull; ~25 teammates</span></div>
+        </div>
+
+      </div>
+
+      <!-- Legend -->
+      <div class="hydra-legend">
+        <div class="legend-item"><span class="legend-dot l-scout"></span>Explore agents</div>
+        <div class="legend-item"><span class="legend-dot l-analyst"></span>Analyst</div>
+        <div class="legend-item"><span class="legend-dot l-impl"></span>Implementers</div>
+        <div class="legend-item"><span class="legend-dot l-verify"></span>Verifier</div>
+        <div class="legend-item"><span class="legend-dot l-simplify"></span>Simplifiers</div>
+        <div class="legend-item"><span class="legend-dot l-comm"></span>SendMessage (inter-agent)</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+  <div class="container">
+    <div class="cta-box reveal">
+      <h2 class="section-title">Ready to deploy the swarm?</h2>
+      <p class="section-desc">Install in one command. No configuration needed.</p>
+      <div class="cta-buttons">
+        <button class="btn btn-primary" onclick="copyInstall(this)">
+          <svg viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.623-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+          /plugin install cas
+        </button>
+        <a href="https://github.com/Kasempiternal/Claude-Agent-System" class="btn btn-secondary" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>Claude Agent System &middot; Built for <a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank" rel="noopener">Claude Code</a> &middot; <a href="https://github.com/Kasempiternal/Claude-Agent-System" target="_blank" rel="noopener">GitHub</a></p>
+</footer>
+
+<script>
+// ─── Copy install command ───
+function copyInstall(el){
+  navigator.clipboard.writeText('/plugin install cas').then(()=>{
+    el.classList.add('copied');
+    const hint=el.querySelector('.copy-hint');
+    if(hint){const orig=hint.textContent;hint.textContent='copied!';setTimeout(()=>{hint.textContent=orig;el.classList.remove('copied')},2000)}
+  });
+}
+
+// ─── Scroll reveal (general) ───
+const reveals=document.querySelectorAll('.reveal');
+const observer=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}});
+},{threshold:0.15,rootMargin:'0px 0px -40px 0px'});
+reveals.forEach(r=>observer.observe(r));
+
+// ─── Hydra Diagram: SVG connections + particles ───
+(function(){
+  const diagram=document.getElementById('hydra-diagram');
+  const svg=document.getElementById('hydra-svg');
+  const graph=document.getElementById('hydra-graph');
+  if(!diagram||!svg||!graph) return;
+
+  // Connection definitions: [fromSelector, toSelector, color]
+  const connections=[
+    ['[data-node="user"]','[data-node="orch"]','cyan'],
+    ['[data-node="orch"]','[data-group="scouts"]','cyan'],
+    ['[data-group="scouts"]','[data-node="analyst"]','amber'],
+    ['[data-node="analyst"]','[data-group="wave1"]','cyan'],
+    ['[data-group="wave1"]','[data-group="wave2"]','cyan'],
+    ['[data-group="wave2"]','[data-node="v1"]','green'],
+    ['[data-group="wave2"]','[data-node="sim1"]','blue'],
+    ['[data-group="wave2"]','[data-node="sim2"]','blue'],
+    ['[data-node="v1"]','[data-node="final"]','cyan'],
+    ['[data-node="sim1"]','[data-node="final"]','cyan'],
+    ['[data-node="sim2"]','[data-node="final"]','cyan'],
+  ];
+
+  const NS='http://www.w3.org/2000/svg';
+  let particles=[];
+  let paths=[];
+  let animId=null;
+  let isActive=false;
+
+  function getBottom(el){
+    const dr=diagram.getBoundingClientRect();
+    const er=el.getBoundingClientRect();
+    return{x:er.left+er.width/2-dr.left,y:er.bottom-dr.top};
+  }
+  function getTop(el){
+    const dr=diagram.getBoundingClientRect();
+    const er=el.getBoundingClientRect();
+    return{x:er.left+er.width/2-dr.left,y:er.top-dr.top};
+  }
+
+  function colorHex(c){
+    return c==='amber'?'#e5a000':c==='green'?'#4ade80':c==='blue'?'#60a5fa':'#00e5c7';
+  }
+
+  function buildSVG(){
+    // Clear existing elements safely
+    while(svg.firstChild) svg.removeChild(svg.firstChild);
+
+    const dr=diagram.getBoundingClientRect();
+    svg.setAttribute('viewBox','0 0 '+dr.width+' '+dr.height);
+    svg.style.width=dr.width+'px';
+    svg.style.height=dr.height+'px';
+
+    paths=[];
+    particles=[];
+
+    connections.forEach(function(conn){
+      var fromSel=conn[0],toSel=conn[1],color=conn[2];
+      var fromEl=graph.querySelector(fromSel);
+      var toEl=graph.querySelector(toSel);
+      if(!fromEl||!toEl) return;
+
+      var from=getBottom(fromEl);
+      var to=getTop(toEl);
+      var midY=(from.y+to.y)/2;
+      var d='M'+from.x+','+from.y+' C'+from.x+','+midY+' '+to.x+','+midY+' '+to.x+','+to.y;
+      var hex=colorHex(color);
+
+      // Glow layer
+      var glow=document.createElementNS(NS,'path');
+      glow.setAttribute('d',d);
+      glow.classList.add('conn-path','glow');
+      glow.style.stroke=hex;
+      svg.appendChild(glow);
+
+      // Main path
+      var path=document.createElementNS(NS,'path');
+      path.setAttribute('d',d);
+      path.classList.add('conn-path');
+      svg.appendChild(path);
+
+      var pathLen=path.getTotalLength();
+      paths.push({path:path,pathLen:pathLen,color:color});
+
+      // Create 2 particles per path
+      for(var i=0;i<2;i++){
+        var circ=document.createElementNS(NS,'circle');
+        circ.setAttribute('r','2.5');
+        circ.classList.add('particle');
+        if(color==='amber') circ.classList.add('amber');
+        if(color==='green') circ.classList.add('green');
+        if(color==='blue') circ.classList.add('blue');
+        svg.appendChild(circ);
+        particles.push({
+          el:circ,
+          pathIdx:paths.length-1,
+          offset:i*0.5,
+          speed:0.003+Math.random()*0.002
+        });
+      }
+    });
+
+    // ─── Inter-agent communication (horizontal dashed) ───
+    var commGroups=[
+      {sel:'[data-group="scouts"]',nodes:'[data-node^="s"]'},
+      {sel:'[data-group="wave1"]',nodes:'[data-node^="i"]'}
+    ];
+    commGroups.forEach(function(cg){
+      var container=graph.querySelector(cg.sel);
+      if(!container) return;
+      var nodes=Array.from(container.querySelectorAll('.h-node'));
+      for(var i=0;i<nodes.length-1;i++){
+        var a=nodes[i],b=nodes[i+1];
+        var dr=diagram.getBoundingClientRect();
+        var ar=a.getBoundingClientRect();
+        var br=b.getBoundingClientRect();
+        var ax=ar.right-dr.left, ay=ar.top+ar.height/2-dr.top;
+        var bx=br.left-dr.left, by=br.top+br.height/2-dr.top;
+        var midX=(ax+bx)/2;
+        var d='M'+ax+','+ay+' C'+midX+','+ay+' '+midX+','+by+' '+bx+','+by;
+
+        // Dashed path
+        var cp=document.createElementNS(NS,'path');
+        cp.setAttribute('d',d);
+        cp.classList.add('comm-path');
+        svg.appendChild(cp);
+
+        var cpLen=cp.getTotalLength();
+        paths.push({path:cp,pathLen:cpLen,color:'comm'});
+
+        // One small particle per comm line, bouncing back and forth
+        var circ=document.createElementNS(NS,'circle');
+        circ.setAttribute('r','1.5');
+        circ.classList.add('comm-particle');
+        svg.appendChild(circ);
+        particles.push({
+          el:circ,
+          pathIdx:paths.length-1,
+          offset:Math.random(),
+          speed:0.004+Math.random()*0.002,
+          bounce:true
+        });
+      }
+    });
+  }
+
+  var time=0;
+  function animate(){
+    time+=1;
+    particles.forEach(function(p){
+      var info=paths[p.pathIdx];
+      if(!info) return;
+      var raw=(time*p.speed+p.offset)%2;
+      var t=p.bounce?(raw>1?2-raw:raw):raw%1;
+      var pt=info.path.getPointAtLength(t*info.pathLen);
+      p.el.setAttribute('cx',pt.x);
+      p.el.setAttribute('cy',pt.y);
+    });
+    animId=requestAnimationFrame(animate);
+  }
+
+  function activate(){
+    if(isActive) return;
+    isActive=true;
+    diagram.classList.add('in-view');
+    svg.classList.add('active');
+    buildSVG();
+    animate();
+  }
+
+  // Trigger on scroll
+  var archObs=new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(e.isIntersecting) activate();
+    });
+  },{threshold:0.15});
+  archObs.observe(diagram);
+
+  // Rebuild on resize
+  var resizeTimer;
+  window.addEventListener('resize',function(){
+    clearTimeout(resizeTimer);
+    resizeTimer=setTimeout(function(){if(isActive) buildSVG()},200);
+  });
+})();
+</script>
+
+</body>
+</html>
