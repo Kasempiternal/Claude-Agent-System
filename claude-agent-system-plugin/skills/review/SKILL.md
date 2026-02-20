@@ -1,6 +1,6 @@
 ---
 name: review
-description: "Code Review Swarm - Deploys 6 parallel review agents to analyze code for bugs, style, silent failures, comment accuracy, type design, and test coverage. Automatically fixes CRITICAL and MAJOR findings."
+description: "Code Review Swarm - Deploys 7 parallel review agents (2 custom + 5 official Anthropic plugin agents, with built-in fallbacks) to analyze code for bugs, style, silent failures, comment accuracy, type design, and test coverage. Automatically fixes CRITICAL and MAJOR findings, with optional code simplification pass."
 model: opus
 argument-hint: "[staged | file paths | description of scope]"
 ---
@@ -10,12 +10,15 @@ You are entering ORCHESTRATOR MODE for code review. Your role is to detect scope
 ## Your Role: Review Orchestrator
 
 - You DETECT the review scope (what code to review)
-- You LOAD the 6 agent definition files from `.claude/agents/review-*.md`
-- You SPAWN 6 review agents in parallel using `subagent_type: "general-purpose"`
+- You READ all 7 agent definition files using the Read tool (7 parallel Read calls in one message)
+- You SPAWN 7 review agents using the Task tool (7 parallel Task calls in one message): 2 custom agents with embedded `.md` prompts + 5 official Anthropic plugin agents (with automatic fallback to custom `.md` agents if plugins aren't installed)
 - You SYNTHESIZE their findings into a deduplicated, prioritized report
 - You ASK the user whether to fix findings
-- You SPAWN fix agents to resolve CRITICAL and MAJOR issues
+- You SPAWN fix agents using the Task tool to resolve CRITICAL and MAJOR issues
+- You OFFER an optional code simplification pass on fixed files
 - You SUMMARIZE the fixes and updated health score
+
+**You are an orchestrator. You delegate ALL review work to agents via the Task tool. You NEVER review code yourself.**
 
 ---
 
@@ -66,93 +69,122 @@ Store the diff content and file list - you will pass these to the review agents.
 
 ---
 
-## Pre-Phase 1: Load Agent Definitions
+## Phase 1: Review Swarm (7 Parallel Agents)
 
-Before spawning agents, read ALL 6 agent definition files using the Read tool. Launch all 6 reads in a single parallel message:
+Phase 1 has two steps: first READ all agent definitions (for fallback capability), then SPAWN all agents. These MUST be two separate messages because the Task prompts depend on the Read results.
 
-1. `.claude/agents/review-bug-logic.md`
-2. `.claude/agents/review-guidelines.md`
-3. `.claude/agents/review-silent-failures.md`
-4. `.claude/agents/review-comments.md`
-5. `.claude/agents/review-type-design.md`
-6. `.claude/agents/review-test-coverage.md`
+### Step 1: Read ALL Agent Definitions
 
-These files contain the review instructions for each agent. You will combine each agent's instructions with the review context (diff + file list) to create the prompt for each Task call.
+Read ALL 7 agent definition files in a SINGLE message with 7 parallel Read tool calls:
 
----
+| # | Agent Name | Definition File |
+|---|------------|----------------|
+| 1 | Bug & Logic | `.claude/agents/review-bug-logic.md` |
+| 2 | Project Guidelines | `.claude/agents/review-guidelines.md` |
+| 3 | Code Reviewer | `.claude/agents/review-code-reviewer.md` |
+| 4 | Silent Failures | `.claude/agents/review-silent-failures.md` |
+| 5 | Comment Quality | `.claude/agents/review-comments.md` |
+| 6 | Type Design | `.claude/agents/review-type-design.md` |
+| 7 | Test Coverage | `.claude/agents/review-test-coverage.md` |
 
-## Phase 1: Review Swarm (6 Parallel Agents)
+**Why read all 7?** Agents 1-2 always use their `.md` files. Agents 3-7 prefer official plugin agents, but the `.md` files serve as automatic fallbacks if the plugins aren't installed. Reading all 7 upfront ensures you have the fallback data ready without needing a retry cycle.
 
-**CRITICAL**: Launch ALL 6 agents in a SINGLE message with 6 Task tool calls for maximum parallelism. They all run concurrently - same wall-clock time as running one.
+### Step 2: Spawn 7 Review Agents
 
-**CRITICAL**: ALL agents use `subagent_type: "general-purpose"` and `model: "opus"`. Do NOT use any other subagent_type. This skill has zero external plugin dependencies.
+**CRITICAL**: Launch ALL 7 agents in a SINGLE message with 7 parallel Task tool calls. They all run concurrently - same wall-clock time as running one.
 
-Each agent receives a prompt constructed as:
+There are TWO agent patterns:
 
+#### Pattern A: Custom Agents (agents 1-2) — always used
+
+Use `subagent_type: "general-purpose"` and embed the full `.md` file content:
+
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: "<FULL CONTENTS OF THE AGENT .md FILE>\n\n---\n\n## Review Context\n\n**Files under review**: <FILE_LIST>\n\n**Changes**:\n<DIFF_CONTENT>",
+  description: "Review agent: <AGENT_NAME>"
+})
 ```
-[Full content of the agent's .md definition file]
 
----
+**IMPORTANT**: Paste the ENTIRE content of each agent's `.md` file into the `prompt` field. NEVER summarize or abbreviate the agent definition.
 
-## Review Context
+#### Pattern B: Official Plugin Agents (agents 3-7) — preferred when plugins are installed
 
-**Files under review**: [file list]
+Use the plugin-qualified `subagent_type` and pass only the review context:
 
-**Changes**:
-[diff content or file contents]
+```javascript
+Task({
+  subagent_type: "<PLUGIN_AGENT_TYPE>",
+  prompt: "Review the following code changes. Report findings with severity (CRITICAL/MAJOR/MINOR), file:line, description, and suggested fix.\n\n**Files under review**: <FILE_LIST>\n\n**Changes**:\n<DIFF_CONTENT>",
+  description: "Review agent: <AGENT_NAME>"
+})
 ```
 
-### The 6 Review Agents
+The official plugin handles model selection and review methodology automatically — do NOT set `model` for plugin agents.
 
-Launch all of these simultaneously:
+### Agent-to-Type Mapping
 
-#### Agent 1: Bug & Logic Reviewer
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
-Prompt: [Contents of review-bug-logic.md] + review context
+| # | Agent Name | subagent_type (preferred) | Fallback `.md` file | Notes |
+|---|------------|---------------------------|---------------------|-------|
+| 1 | Bug & Logic | `general-purpose` | `review-bug-logic.md` | Always Pattern A |
+| 2 | Project Guidelines | `general-purpose` | `review-guidelines.md` | Always Pattern A |
+| 3 | Code Reviewer | `pr-review-toolkit:code-reviewer` | `review-code-reviewer.md` | Pattern B, fallback A |
+| 4 | Silent Failure Hunter | `pr-review-toolkit:silent-failure-hunter` | `review-silent-failures.md` | Pattern B, fallback A |
+| 5 | Comment Analyzer | `pr-review-toolkit:comment-analyzer` | `review-comments.md` | Pattern B, fallback A |
+| 6 | Type Design Analyzer | `pr-review-toolkit:type-design-analyzer` | `review-type-design.md` | Pattern B, fallback A |
+| 7 | Test Coverage Analyzer | `pr-review-toolkit:pr-test-analyzer` | `review-test-coverage.md` | Pattern B, fallback A |
 
-#### Agent 2: Project Guidelines Reviewer
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
-Prompt: [Contents of review-guidelines.md] + review context
+### Fallback Handling
 
-#### Agent 3: Silent Failure Hunter
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
-Prompt: [Contents of review-silent-failures.md] + review context
+When you launch agents 3-7 with Pattern B and any of them **return an error** (e.g., unknown `subagent_type`, plugin not found), immediately re-spawn the failed agents using Pattern A with their corresponding `.md` file content (already loaded from Step 1). Do NOT re-spawn agents that succeeded.
 
-#### Agent 4: Comment Analyzer
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
-Prompt: [Contents of review-comments.md] + review context
+If **all 5** official agents fail (plugins not installed at all), this is expected — the skill works fully with all 7 agents running as Pattern A custom agents.
 
-#### Agent 5: Type Design Analyzer
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
-Prompt: [Contents of review-type-design.md] + review context
+### Concrete Examples
 
-#### Agent 6: Test Coverage Analyzer
+**Agent 1 (Custom - Pattern A):**
+
+If `review-bug-logic.md` contains the text `"You are an expert code reviewer specializing in bug detection..."` and the review scope is `src/auth.ts` with a diff:
+
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: "---\nname: review-bug-logic\nmodel: opus\n---\n\nYou are an expert code reviewer specializing in bug detection, security vulnerabilities, and correctness analysis. Your primary goal is high precision...\n[...entire file content...]\n\n---\n\n## Review Context\n\n**Files under review**: src/auth.ts\n\n**Changes**:\ndiff --git a/src/auth.ts b/src/auth.ts\n...[full diff]...",
+  description: "Review agent: Bug & Logic"
+})
 ```
-subagent_type: "general-purpose"
-model: "opus"
+
+**Agent 3 (Official - Pattern B):**
+
+```javascript
+Task({
+  subagent_type: "pr-review-toolkit:code-reviewer",
+  prompt: "Review the following code changes. Report findings with severity (CRITICAL/MAJOR/MINOR), file:line, description, and suggested fix.\n\n**Files under review**: src/auth.ts\n\n**Changes**:\ndiff --git a/src/auth.ts b/src/auth.ts\n...[full diff]...",
+  description: "Review agent: Code Reviewer"
+})
 ```
-Prompt: [Contents of review-test-coverage.md] + review context
+
+**Agent 3 (Fallback - if Plugin B fails, re-spawn as Pattern A):**
+
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: "<FULL CONTENTS OF review-code-reviewer.md>\n\n---\n\n## Review Context\n\n**Files under review**: src/auth.ts\n\n**Changes**:\ndiff --git a/src/auth.ts b/src/auth.ts\n...[full diff]...",
+  description: "Review agent: Code Reviewer (fallback)"
+})
+```
+
+Launch all 7 agents in ONE message. Re-spawn any failures as fallback agents.
 
 ---
 
 ## Orchestrator Synthesis
 
-After ALL 6 agents return, synthesize their findings:
+After ALL 7 agents return, synthesize their findings:
 
 ### Step 1: Collect All Findings
 
@@ -165,9 +197,10 @@ If multiple agents flag the same issue (same file, same line, same concern), mer
 ### Step 3: Cross-Reference
 
 Look for correlated findings:
-- Bug Hunter + Silent Failure Hunter flag the same area -> group as "Error handling gap"
-- Type Analyzer + Bug Hunter flag the same type -> group as "Type safety concern"
+- Bug & Logic + Silent Failure Hunter flag the same area -> group as "Error handling gap"
+- Type Design Analyzer + Bug & Logic flag the same type -> group as "Type safety concern"
 - Comment Analyzer + any other agent -> "Documentation mismatch"
+- Code Reviewer + Project Guidelines flag the same area -> group as "Standards violation"
 
 ### Step 4: Classify Severity
 
@@ -204,10 +237,11 @@ Present the report in this format:
 |-------|---------|----------|
 | Bug & Logic | PASS/FAIL | N issues |
 | Project Guidelines | PASS/FAIL | N issues |
-| Silent Failures | PASS/FAIL | N issues |
-| Comment Quality | PASS/FAIL | N issues |
-| Type Design | PASS/FAIL | N issues |
-| Test Coverage | PASS/FAIL | N issues |
+| Code Reviewer | PASS/FAIL | N issues |
+| Silent Failure Hunter | PASS/FAIL | N issues |
+| Comment Analyzer | PASS/FAIL | N issues |
+| Type Design Analyzer | PASS/FAIL | N issues |
+| Test Coverage Analyzer | PASS/FAIL | N issues |
 
 ## Findings
 
@@ -235,7 +269,7 @@ Present the report in this format:
 
 If there are ZERO findings across all agents:
 ```
-All 6 review agents passed with no findings. Code looks clean.
+All 7 review agents passed with no findings. Code looks clean.
 ```
 
 ---
@@ -282,51 +316,18 @@ Group all findings to fix by file path. No file should be owned by more than one
 
 **Merge smaller groups** to reach the target agent count (combine files that are in the same directory or module).
 
-Each fix agent:
-```
-subagent_type: "general-purpose"
-model: "opus"
-```
+For EACH fix agent group, construct a Task call using this exact pattern:
 
-Each fix agent prompt:
-
-```
-You are a CODE FIX AGENT. Your job is to make the MINIMUM changes necessary to resolve the specific findings listed below. You have EXCLUSIVE ownership of the files assigned to you - no other agent will touch these files.
-
-## Fix Rules
-1. Fix ONLY the listed findings - do not refactor, do not improve code beyond the fix
-2. Fix CRITICAL findings first, then MAJOR, then MINOR (if included)
-3. Make the SMALLEST change that resolves each issue
-4. If a fix is uncertain, add a protective measure (null check, error handler, type guard) rather than restructuring
-5. Do NOT add new features, refactor surrounding code, or "clean up while you're there"
-6. After making fixes, briefly report what you changed for each finding
-
-## Your Files (EXCLUSIVE OWNERSHIP)
-[list of files this agent owns]
-
-## Findings to Fix
-
-[For each finding assigned to this agent:]
-### [SEVERITY]: [Title]
-- **File**: `path/to/file.ext:line_number`
-- **Issue**: [description]
-- **Suggested Fix**: [from the review report]
-
-## Output
-
-After making all fixes, report:
-
-```
-## Fixes Applied
-1. **[Finding title]** - `file:line` - [What was changed]
-2. **[Finding title]** - `file:line` - [What was changed]
-
-## Skipped (if any)
-1. **[Finding title]** - `file:line` - [Why it was skipped - e.g., requires architectural change, needs user input]
-```
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: "You are a CODE FIX AGENT. Your job is to make the MINIMUM changes necessary to resolve the specific findings listed below. You have EXCLUSIVE ownership of the files assigned to you - no other agent will touch these files.\n\n## Fix Rules\n1. Fix ONLY the listed findings - do not refactor, do not improve code beyond the fix\n2. Fix CRITICAL findings first, then MAJOR, then MINOR (if included)\n3. Make the SMALLEST change that resolves each issue\n4. If a fix is uncertain, add a protective measure (null check, error handler, type guard) rather than restructuring\n5. Do NOT add new features, refactor surrounding code, or \"clean up while you're there\"\n6. After making fixes, briefly report what you changed for each finding\n\n## Your Files (EXCLUSIVE OWNERSHIP)\n<LIST_OF_FILES>\n\n## Findings to Fix\n\n<FOR_EACH_FINDING>\n### [SEVERITY]: [Title]\n- **File**: `path/to/file.ext:line_number`\n- **Issue**: [description]\n- **Suggested Fix**: [from the review report]\n</FOR_EACH_FINDING>\n\n## Output\n\nAfter making all fixes, report:\n\n## Fixes Applied\n1. **[Finding title]** - `file:line` - [What was changed]\n\n## Skipped (if any)\n1. **[Finding title]** - `file:line` - [Why it was skipped]",
+  description: "Fix agent: <FILE_GROUP_DESCRIPTION>"
+})
 ```
 
-Launch all fix agents in a SINGLE message for maximum parallelism.
+**Launch ALL fix agents in a SINGLE message** for maximum parallelism.
 
 ### Severity Handling
 
@@ -359,19 +360,81 @@ After all fix agents return, present:
 1. `file:line` - [Why] (e.g., requires architectural change, needs user decision)
 
 **Updated Health Score**: [X]/10 (was [Y]/10)
+```
 
-Review complete. Consider running `/review` again to verify fixes, or use a code-simplifier for broader cleanup.
+Then proceed to Phase 3.
+
+---
+
+## Phase 3: Code Simplification (Optional)
+
+After Phase 2 fixes are applied, offer the user a code simplification pass. Skip this phase entirely if no fixes were applied in Phase 2.
+
+### Prompt User
+
+```
+question: "Run code simplifier on the fixed files?"
+header: "Simplify?"
+options:
+  - label: "Yes, simplify"
+    description: "Code simplifier will refine the [N] fixed files for clarity and consistency"
+  - label: "No, skip"
+    description: "Keep fixes as-is without additional refinement"
+```
+
+### If User Accepts
+
+Spawn the code simplifier on the fixed files. Try the official plugin first, fall back to `general-purpose` if not installed:
+
+**Preferred (official plugin):**
+```javascript
+Task({
+  subagent_type: "code-simplifier:code-simplifier",
+  prompt: "Simplify and refine the following recently modified files for clarity, consistency, and maintainability while preserving all functionality. Focus only on these files:\n\n<LIST_OF_FIXED_FILES>",
+  description: "Simplify fixed files"
+})
+```
+
+**Fallback (if plugin not installed):**
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  prompt: "You are a code simplifier. Simplify and refine the following recently modified files for clarity, consistency, and maintainability while preserving ALL functionality. Make code easier to read and maintain without changing behavior. Focus on: removing unnecessary complexity, improving naming, simplifying conditionals, extracting unclear expressions into named variables, and ensuring consistent style. Focus only on these files:\n\n<LIST_OF_FIXED_FILES>",
+  description: "Simplify fixed files (fallback)"
+})
+```
+
+After the simplifier returns, present:
+
+```
+## Simplification Summary
+
+Code simplifier refined [N] files for clarity and consistency.
+Changes: [brief description of simplifications made]
+
+Review complete.
+```
+
+### If User Declines
+
+```
+Review complete.
 ```
 
 ---
 
 ## Critical Rules
 
-- **ALL agents use `subagent_type: "general-purpose"`** - no external plugin dependencies
-- **LOAD agent definitions via Read tool** before spawning agents
-- **LAUNCH ALL 6 REVIEW AGENTS IN ONE MESSAGE** - maximize parallelism
+- **YOU ARE AN ORCHESTRATOR** - delegate ALL review work to agents via the Task tool. You NEVER review code yourself. If you catch yourself analyzing code for bugs/style/etc, STOP and spawn an agent instead.
+- **TWO AGENT PATTERNS** - Custom agents (1-2) always use `subagent_type: "general-purpose"` with `model: "opus"` and embedded `.md` prompts. Official plugin agents (3-7) prefer their plugin-qualified `subagent_type` (e.g. `pr-review-toolkit:code-reviewer`) but fall back to Pattern A with their `.md` file if the plugin isn't installed.
+- **SELF-CONTAINED** - This skill works with zero external plugins. All 7 agents have `.md` fallback definitions in `.claude/agents/`. Plugins (`pr-review-toolkit`, `code-simplifier`) enhance the experience but are NOT required.
+- **EMBED FULL FILE CONTENTS** - paste the ENTIRE agent definition `.md` file content into the Task `prompt` field for Pattern A agents. NEVER summarize, abbreviate, or paraphrase the agent definitions.
+- **READ ALL 7 THEN SPAWN** - Step 1: Read all 7 agent definition files (one message, 7 parallel Read calls). Step 2: Launch all 7 Task calls (next message, 7 parallel Task calls). These are always two separate messages. Reading all 7 upfront ensures fallback data is ready.
+- **FALLBACK ON ERROR** - If an official plugin agent (Pattern B) returns an error, immediately re-spawn it as Pattern A using the already-loaded `.md` file content. Do NOT re-prompt the user or abandon the agent.
+- **LAUNCH ALL 7 REVIEW AGENTS IN ONE MESSAGE** - maximize parallelism
 - **DEDUPLICATE** - raw agent output is redundant; your synthesis adds value
-- **NEVER modify code without user consent** - Phase 2 is opt-in
+- **NEVER modify code without user consent** - Phase 2 and Phase 3 are opt-in
 - **FIX AGENTS OWN FILES EXCLUSIVELY** - no two agents edit the same file
 - **MINIMUM CHANGES ONLY** - fix agents resolve findings, they don't refactor
 - **RESPECT scope** - only review what was specified
