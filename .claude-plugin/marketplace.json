@@ -1,16 +1,16 @@
 {
   "name": "claude-agent-system",
   "version": "1.0.0",
-  "description": "Parallel Claude Coordinator plugins for orchestrated multi-agent development",
+  "description": "Claude Agent System - Parallel agent swarms for planning, implementation, and code review",
   "owner": {
     "name": "Kasempiternal",
     "url": "https://github.com/Kasempiternal"
   },
   "plugins": [
     {
-      "name": "pcc",
-      "version": "1.0.0",
-      "description": "Parallel Claude Coordinator - Orchestrate tasks with Sonnet scouts and Opus implementers",
+      "name": "cas",
+      "version": "3.0.0",
+      "description": "Claude Agent System - Parallel agent swarms for planning, implementation, and code review",
       "source": "./claude-agent-system-plugin"
     }
   ]

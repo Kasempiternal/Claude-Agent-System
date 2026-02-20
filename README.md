@@ -1,46 +1,15 @@
 # Claude Agent System
 
-**Turn Claude into your personal development team.** Powerful commands that handle everything - from deep planning through implementation to code review, with automatic quality gates and continuous learning.
+**Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
 ## Quick Start
 
-Choose your installation method:
-
-| Method | Best For | Commands You Get |
-|--------|----------|------------------|
-| **Plugin** | Quick install, easy updates | `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review` |
-| **Script** | Full system with all modules | `/systemcc`, `/plan-opus`, + workflows |
-
-### Option 1: Plugin Install (Recommended)
-
 ```bash
 /plugin marketplace add Kasempiternal/Claude-Agent-System
-/plugin install pcc
+/plugin install cas
 ```
 
-Done! You now have `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, and `/review`.
-
-### Option 2: Script Install (Full System)
-
-**macOS/Linux:**
-```bash
-# Install for current project
-curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.sh | bash
-
-# Install globally (available in ALL projects)
-curl -sSL https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.sh | bash -s -- --global
-```
-
-**Windows (PowerShell):**
-```powershell
-# Install for current project
-irm https://raw.githubusercontent.com/Kasempiternal/Claude-Agent-System/main/setup-claude-agent-system.ps1 | iex
-
-# Install globally
-.\setup-claude-agent-system.ps1 -Global
-```
-
-This installs the full system with all 13 systemcc modules, workflows, and middleware.
+Done! You now have `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
 
 ---
 
@@ -48,19 +17,19 @@ This installs the full system with all 13 systemcc modules, workflows, and middl
 
 **"Vibe coding"** = typing a prompt, accepting whatever the AI outputs, hoping it works.
 
-**This system is the opposite.** Every command enforces structure:
+**This system is the opposite.** Every skill enforces structure:
 
 | What Vibe Coding Does | What This System Does |
 |-----------------------|-----------------------|
-| Blindly accepts AI output | Triple code review (3 parallel reviewers) |
+| Blindly accepts AI output | Parallel code review agents |
 | No validation | Build config detection + linting enforcement |
 | No learning | Session memory - learns your patterns and mistakes |
-| No quality gates | Decision engine with complexity/risk/scope analysis |
+| No quality gates | Decision engines with complexity/risk/scope analysis |
 | Hope it works | Post-execution validation + auto-fix critical issues |
 
 ---
 
-# Plugin Skills
+# Skills
 
 ## `/zk` - Intelligent Router
 
@@ -84,11 +53,11 @@ ZK walks a deterministic 4-step decision tree:
 ### Examples
 
 ```bash
-/zk add a button to the settings page          # → PCC (simple, clear scope)
-/zk refactor the payment processing system      # → PCC-Opus (keyword + risk domain)
-/zk migrate all models to SwiftData             # → PCC-Opus ("migrate" always qualifies)
-/zk fix auth; add dashboard; update API         # → Hydra (3 independent tasks)
-/zk modernize the entire codebase               # → Hydra (scale + broad scope)
+/zk add a button to the settings page          # -> PCC (simple, clear scope)
+/zk refactor the payment processing system      # -> PCC-Opus (keyword + risk domain)
+/zk migrate all models to SwiftData             # -> PCC-Opus ("migrate" always qualifies)
+/zk fix auth; add dashboard; update API         # -> Hydra (3 independent tasks)
+/zk modernize the entire codebase               # -> Hydra (scale + broad scope)
 ```
 
 **Escape hatch**: You can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly.
@@ -171,7 +140,7 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 
 ## `/review` - Code Review Swarm
 
-Deploys **6 parallel review agents** to analyze your code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Fully self-contained - no external plugin dependencies.
+Deploys **7 parallel review agents** to analyze your code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Uses official Anthropic review plugin agents when available, with bundled fallback agents for standalone use.
 
 ```bash
 /review                  # Review all uncommitted changes (default)
@@ -182,11 +151,12 @@ Deploys **6 parallel review agents** to analyze your code, then **automatically 
 
 ### Review Agents
 
-All 6 agents run in parallel (same wall-clock time as running one), defined as `.md` files in `.claude/agents/`:
+All 7 agents run in parallel (same wall-clock time as running one):
 
 | Agent | What It Checks |
 |-------|---------------|
 | Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, resource leaks |
+| Code Reviewer | Code quality, readability, maintainability, best practices |
 | Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
 | Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
 | Comment Analyzer | Stale docs, misleading comments, missing documentation |
@@ -195,7 +165,7 @@ All 6 agents run in parallel (same wall-clock time as running one), defined as `
 
 ### What You Get
 
-The orchestrator synthesizes all 6 agent reports into a consolidated review:
+The orchestrator synthesizes all 7 agent reports into a consolidated review:
 
 - **Health score** (0-10) with severity-weighted formula
 - **Agent verdicts table** - quick pass/fail per agent
@@ -215,159 +185,9 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
-# Script Commands
-
-## `/plan-opus` - Explicit Planning Control
-
-For when you want explicit control over the planning process.
-
-```bash
-/plan-opus "task description"
-```
-
-### Why This Command Exists
-
-Claude Code has a native "plan mode" (`/plan`), but the community discovered a limitation: **it uses Haiku as the code scout**. While Haiku is efficient and fast, it's also the least capable model in the Claude family. For complex codebases, you may want smarter models doing the exploration.
-
-`/plan-opus` was created to give you **more control over the planning process** with configurable models:
-
-| Aspect | Native Plan Mode | `/plan-opus` |
-|--------|------------------|--------------|
-| Scout Model | Haiku (2-3 agents) | Sonnet by default (2-6 agents, configurable to Opus) |
-| Plan Visibility | Shown to user | Written to editable `.md` file |
-| User Approval | Yes, before execution | Yes, with ability to edit the plan first |
-| Parallelization | Limited (Claude Code rarely parallelizes) | Aggressive (multiple agents per phase) |
-| Implementation | Sequential | 2-6 parallel Opus agents |
-| Post-Cleanup | None | 2-6 code simplifier agents |
-
-### Configurable Scout Model
-
-By default, scouts use **Sonnet** to balance intelligence and token cost. But if you want maximum exploration quality, you can switch scouts to **Opus**.
-
-Edit `.claude/commands/plan-opus.md`, line 30:
-
-```markdown
-# Default (token-efficient):
-...using the Task tool with `subagent_type='Explore'` and `model='sonnet'`
-
-# Maximum quality (change 'sonnet' to 'opus'):
-...using the Task tool with `subagent_type='Explore'` and `model='opus'`
-```
-
-**Why Sonnet is the default**: Running 2-6 Opus scouts + 2-6 Opus implementers + 2-6 Opus simplifiers can consume significant tokens. Sonnet scouts are smart enough for exploration while keeping costs reasonable. Switch to Opus scouts only for particularly complex codebases.
-
-### How It Works
-
-`/plan-opus` follows an orchestrator pattern - Opus coordinates everything but delegates actual work to specialized agents:
-
-```
-/plan-opus "your complex task"
-         |
-         v
-+-----------------------------------------+
-|  Phase 1: TASK UNDERSTANDING            |
-|  Clarify requirements if needed         |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 2: PARALLEL EXPLORATION          |
-|  2-6 Sonnet scouts explore codebase     |
-|  (Architecture, Features, Tests...)     |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 3: SYNTHESIS                     |
-|  Combine findings, verify key files     |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 4: PLAN CREATION                 |
-|  Write detailed plan to file            |
-|  .claude/plans/{task-slug}.md           |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 5: YOUR REVIEW                   |
-|  STOPS HERE - You edit the plan         |
-|  Confirm when ready to proceed          |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 6: PARALLEL IMPLEMENTATION       |
-|  2-6 Opus agents work in parallel       |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 7: VERIFICATION                  |
-|  Tests + Code review                    |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  Phase 8: SIMPLIFICATION                |
-|  2-6 agents clean up the code           |
-+-----------------------------------------+
-```
-
-### The Plan File
-
-Unlike automatic workflows, `/plan-opus` creates an actual file you can review and edit:
-
-```markdown
-# Implementation Plan: Add User Authentication
-
-Created: 2024-01-15
-Status: PENDING APPROVAL
-
-## Summary
-Add JWT-based authentication with login, logout, and session management.
-
-## Parallelization Strategy
-
-| Stream | Focus | Files | Can Parallel With |
-|--------|-------|-------|-------------------|
-| Stream A | Database | migrations/, models/ | B, C |
-| Stream B | API Routes | routes/auth.ts | A, C |
-| Stream C | Middleware | middleware/auth.ts | A, B |
-
-## Implementation Phases
-...
-
----
-**USER: Please review this plan. Edit any section directly, then confirm to proceed.**
-```
-
-You can:
-- Edit the plan directly in your editor
-- Add or remove phases
-- Change file assignments
-- Adjust the parallelization strategy
-- Then confirm to execute
-
-### Example Usage
-
-```bash
-# Complex feature - want to review the plan
-/plan-opus "add real-time notifications with WebSocket"
-
-# System creates plan at .claude/plans/add-real-time-notifications.md
-# You review, maybe edit the WebSocket library choice
-# You confirm
-# 4 Opus agents implement in parallel
-# Done!
-```
-
----
-
 ## `/systemcc` - Auto-Routing Workflow Selector
 
-The catch-all convenience command for the script install. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
+The catch-all convenience command. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
 
 ```bash
 /systemcc "what you want to do"
@@ -375,256 +195,25 @@ The catch-all convenience command for the script install. Auto-analyzes task com
 
 ### How It Works
 
-When you run `/systemcc`, the system:
+1. **Lyra AI Optimization** - Enhances your request with the 4-D methodology
+2. **Build Config Detection** - Scans Makefile, CI/CD, linters and applies rules
+3. **Two-Phase Decision Engine** - Domain detection first, then complexity scoring
+4. **Automatic Execution** - Runs all phases without manual intervention
+5. **Triple Code Review** - 3 parallel reviewers check quality
+6. **Summary** - What changed and why
 
-1. **Analyzes your project** - Scans structure, tech stack, and conventions (cached for instant startup)
-2. **Optimizes your request** - AI enhancement for clarity and completeness
-3. **Detects build configuration** - Auto-scans Makefile/CI/CD for code standards
-4. **Selects the best workflow** - Picks between 3-agent, 6-agent, or specialized flows
-5. **Executes automatically** - All phases run without manual intervention
-6. **Reviews the code** - 3 parallel reviewers check quality
-7. **Shows a brief summary** - What changed and why
+### Features
 
-### Examples
-
-```bash
-# Simple fixes - Fast 3-agent workflow
-/systemcc "fix the login button color"
-
-# Complex features - Full 6-agent system
-/systemcc "add user authentication with JWT"
-
-# Web projects - Automatic wireframing first
-/systemcc "create contact form page"
-# Shows ASCII wireframe -> You approve -> Builds HTML/CSS/JS
-
-# Batch operations - Auto-detected
-/systemcc "create CRUD for users, posts, comments"
-# Groups operations -> Reduced tool switching
-```
-
-### Command Options
-
-```bash
-/systemcc "your task"              # Standard execution
-/systemcc --debug "your task"      # Show AI decision-making process
-/systemcc --secure "task"          # Enhanced security scanning
-/systemcc --reanalyze "task"       # Force fresh analysis (ignore cache)
-/systemcc --clear-cache            # Clear cache for current repo
-```
-
-### Key Features
-
-#### Intelligent Workflow Selection
-
-The system analyzes your request across three dimensions:
-- **Complexity** - Simple fix or complex architecture change?
-- **Risk** - Low-risk styling or high-risk security changes?
-- **Scope** - Single file, multiple files, or system-wide?
-
-Then automatically picks the right workflow. No manual selection needed.
-
-#### Build Configuration Auto-Detection
-
-The system automatically detects and applies your project's build rules:
-- **Scans** Makefile, CI/CD files, linting configs
-- **Extracts** formatting rules (black, prettier, isort)
-- **Applies** linting standards (flake8, eslint, mypy)
-- **Ensures** all generated code passes your pipeline on first commit
-
-If your Makefile has `black --line-length 100`, all Python code automatically uses 100-character lines.
-
-#### Triple Code Review
-
-After implementation, three specialized reviewers run in parallel:
-- **Senior Engineer** - Checks code quality, best practices, clean code
-- **Lead Engineer** - Reviews architecture, technical debt, scalability
-- **Architect** - Validates system integration, enterprise patterns
-
-All three run simultaneously (5 minutes max). Critical issues are auto-fixed immediately.
-
-#### Persistent Analysis Cache
-
-Project analysis is cached in `~/.claude/cache/` for instant startup across sessions:
-- **First run** - Full analysis, cached to disk
-- **Subsequent runs** - Loads cache in milliseconds
-- **Auto-refresh** - Cache invalidates on git commits or major file changes
-- **Zero pollution** - No files created in your repository
-
-```
-First run:  Analyzing... (5-10 seconds) -> Cached
-Next runs:  Loaded cache (instant)
-After git commit: Refreshing cache...
-```
-
-#### Session-Based Learning
-
-Within each session, the system learns:
-- **Your patterns** - Coding style, naming conventions, preferences
-- **Your decisions** - Architecture choices, technology selections
-- **Your corrections** - What you DON'T want (captured when you say "no" or "stop")
-
-#### Progressive Context Management
-
-The system intelligently manages context to handle larger codebases:
-- **MINIMAL loading** (60% reduction) - Simple tasks load only headers & signatures
-- **STANDARD loading** (30% reduction) - Medium tasks load summaries & key patterns
-- **FULL loading** - Complex tasks load complete documentation
-- **Auto-checkpoints** - Never lose progress, resume from interruptions
-
-#### Anti-YOLO Web Development
-
-For web projects, the system creates an ASCII wireframe first:
-
-```
-/systemcc "create a contact form"
-
-Creating ASCII Wireframe:
-+-- Contact Us ------------------------------------+
-| Get in touch with our team                       |
-+--------------------------------------------------+
-| Name:     [________________]                     |
-| Email:    [________________]                     |
-| Subject:  [v General Inquiry]                    |
-| Message:  [________________]                     |
-|           [________________]                     |
-| ------------------------------------------------ |
-| [Submit Message] [Clear Form]                    |
-+--------------------------------------------------+
-
-Does this layout look right?
-Type 'yes' to build HTML/CSS, or request changes.
-```
-
-**Why this works:**
-- 90% fewer revisions - Fix layout in wireframe stage (cheap) not code stage (expensive)
-- Token efficient - ASCII uses 10x fewer tokens than HTML mockups
-- No surprises - See exactly what you'll get before any code is written
-
-### Available Workflows
-
-The system automatically chooses from these workflows:
-
-#### Orchestrated (3-Agent System)
-- **Orchestrator** - Plans and coordinates
-- **Developer** - Implements the solution
-- **Reviewer** - Quality checks and testing
-
-Best for: Bug fixes, simple features, refactoring
-
-#### Complete System (6-Agent Validation)
-- **Planner** - Strategic analysis and architecture
-- **Executer** - Implementation and coding
-- **Verifier** - Logic and integration testing
-- **Tester** - Quality assurance and edge cases
-- **Documenter** - Code documentation and guides
-- **Updater** - Version control and deployment
-
-Best for: New features, complex changes, critical systems
-
-#### Phase-Based (Large Codebase Handler)
-- Breaks massive tasks into focused phases
-- Maintains context quality across large projects
-- Checkpoint system prevents context loss
-
-Best for: Enterprise codebases, major refactors, system migrations
-
-#### Agent OS (Project Setup)
-- **Analyzer** - Assesses current project state
-- **Architect** - Designs standards and structure
-- **Builder** - Implements foundation
-- **Documenter** - Creates project documentation
-
-Best for: New project setup, standards implementation
-
-#### AI Dev Tasks (PRD-Based Development)
-- **PRD Creation** - Requirements and specifications
-- **Task Generation** - Detailed work breakdown
-- **Implementation** - Feature building with validation
-
-Best for: Product features, user stories, MVP development
-
-#### Anti-YOLO Web
-- ASCII wireframe creation -> approval -> HTML implementation
-
-Best for: UI components, forms, dashboards, landing pages
-
-### The Decision Engine
-
-Here's what happens behind the scenes when you run `/systemcc`:
-
-```
-User: /systemcc "your request"
-         |
-         v
-+-----------------------------------------+
-|  PROJECT ANALYSIS                       |
-|  Analyze structure, detect patterns     |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  SECURITY PRE-SCAN (if needed)          |
-|  Check for injection, block threats     |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  LYRA AI PROMPT OPTIMIZATION            |
-|  Deconstruct -> Diagnose -> Develop     |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  BUILD CONFIG DETECTION                 |
-|  Makefile, CI/CD, linters               |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  3-DIMENSIONAL ANALYSIS                 |
-|  Complexity x Risk x Scope              |
-+--------------------+--------------------+
-                     |
-                     v
-+-----------------------------------------+
-|  WORKFLOW SELECTION                     |
-|  Pick best workflow for the task        |
-+--------------------+--------------------+
-                     |
-                     v
-              EXECUTION
-                     |
-         +-----------+-----------+
-         v           v           v
-    +---------+ +---------+ +-----------+
-    | BATCH   | | ANTI    | | STANDARD  |
-    | MODE    | | YOLO    | | WORKFLOWS |
-    +---------+ +---------+ +-----------+
-```
-
-### Debug Mode
-
-Want to see how the system makes decisions?
-
-```bash
-/systemcc --debug "add user authentication"
-
-ANALYSIS RESULTS:
-|- Complexity: complex (auth, security keywords)
-|- Risk: high (authentication detected)
-\- Scope: multi (auth, middleware, database)
-
-DECISION: Complete 6-Agent System
-   Confidence: 85% (High complexity + high risk)
-   Security scan: enabled
-
-Executing Complete System workflow...
-```
+- 3-dimensional task analysis (complexity, risk, scope)
+- Two-phase decision engine with confidence scoring
+- Lyra AI prompt optimization (4-D methodology)
+- Build configuration auto-detection and enforcement
+- Automatic workflow selection and execution
+- Triple code review (Senior Engineer, Lead Engineer, Architect)
 
 ---
 
-# When to Use Each Command
+# When to Use Each Skill
 
 | Situation | Use This |
 |-----------|----------|
@@ -633,60 +222,7 @@ Executing Complete System workflow...
 | Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
-| Want to see/edit the plan first (script install) | `/plan-opus` |
-| Quick fixes, everyday tasks (script install) | `/systemcc` |
-
----
-
-## Project Structure
-
-When installed, the system adds this structure:
-
-```
-your-project/
-+-- .claude/
-    |-- commands/              # Command definitions
-    |   \-- systemcc/          # Modular systemcc modules
-    |-- agents/                # Code reviewers and simplifiers
-    |-- workflows/             # Workflow implementations
-    |   |-- anti-yolo-web/
-    |   |-- complete-system/
-    |   |-- orchestrated-only/
-    |   |-- phase-based-workflow/
-    |   |-- agent-os/
-    |   \-- ai-dev-tasks/
-    \-- middleware/            # AI optimization systems
-```
-
-Data is stored separately in your home directory (never in your project):
-
-```
-~/.claude/
-|-- cache/                     # Persistent analysis cache (per-repo)
-|-- checkpoints/               # Session resumption data
-\-- temp/                      # Workflow temp files (auto-deleted)
-```
-
----
-
-## Installation Options
-
-| Feature | Local (default) | Global (`--global`) |
-|---------|----------------|---------------------|
-| Available in | Current project only | All projects |
-| Install location | `./.claude/` | `~/.claude/` |
-| Use case | Project-specific setup | Always-available commands |
-
-**Tip:** Use `--global` if you want `/systemcc` available everywhere.
-
----
-
-## Other Commands
-
-```bash
-/help                              # Show all available commands
-/analyzecc                         # Manual project analysis
-```
+| Want auto-routing with Lyra AI optimization | `/systemcc` |
 
 ---
 

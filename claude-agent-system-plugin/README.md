@@ -8,9 +8,9 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/pcc`, `/pcc-opus`, and `/hydra`.
 
 ```bash
-/zk add a button to the settings page          # → PCC (simple, clear scope)
-/zk refactor the payment processing system      # → PCC-Opus (keyword + risk domain)
-/zk fix auth; add dashboard; update API         # → Hydra (3 independent tasks)
+/zk add a button to the settings page          # -> PCC (simple, clear scope)
+/zk refactor the payment processing system      # -> PCC-Opus (keyword + risk domain)
+/zk fix auth; add dashboard; update API         # -> Hydra (3 independent tasks)
 ```
 
 Best for:
@@ -24,7 +24,7 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 
 > **Requires Agent Teams**: Hydra uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
 
-> **⚠️ High Token Usage Warning**: Hydra uses Anthropic's **Agent Teams** feature (currently in beta). It spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
+> **High Token Usage Warning**: Hydra uses Anthropic's **Agent Teams** feature (currently in beta). It spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
 
 ```bash
 /hydra add auth; build dashboard; fix payments
@@ -70,7 +70,7 @@ Best for:
 - When exploration speed matters
 
 ### `/review` - Code Review Swarm
-Deploys **6 parallel review agents** to analyze code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Fully self-contained - no external plugin dependencies.
+Deploys **7 parallel review agents** to analyze code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Uses official Anthropic review plugin agents when available, with bundled fallback agents for standalone use.
 
 ```bash
 /review                  # Review all uncommitted changes (default)
@@ -79,11 +79,12 @@ Deploys **6 parallel review agents** to analyze code, then **automatically fixes
 /review "auth module"    # Review files matching a description
 ```
 
-Review agents deployed (all 6 run in parallel):
+Review agents deployed (all 7 run in parallel):
 
 | Agent | Focus |
 |-------|-------|
 | Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, resource leaks |
+| Code Reviewer | Code quality, readability, maintainability, best practices |
 | Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
 | Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
 | Comment Analyzer | Stale docs, misleading comments, missing documentation |
@@ -91,7 +92,7 @@ Review agents deployed (all 6 run in parallel):
 | Test Coverage Analyzer | Test gaps, missing edge cases, test quality |
 
 Features:
-- **Self-contained agents** - all 6 agents defined as `.md` files in `.claude/agents/`, no external plugins needed
+- **7 review agents** — bundled as `.md` files, with official Anthropic plugin fallback
 - **Health score** (0-10) with severity-weighted formula
 - **Cross-agent correlation** - related findings from different agents grouped together
 - **Deduplicated report** - orchestrator merges overlapping findings
@@ -111,15 +112,15 @@ Features:
 - 3-dimensional task analysis (complexity, risk, scope)
 - Two-phase decision engine with confidence scoring
 - Lyra AI prompt optimization
-- Automatic workflow selection (streamlined, full validation, phase-based, PRD-based)
-- Triple code review
-- Complete end-to-end execution
+- Build configuration auto-detection and enforcement
+- Automatic workflow selection and execution
+- Triple code review (Senior Engineer, Lead Engineer, Architect)
 
 ## Installation
 
 ```bash
 /plugin marketplace add Kasempiternal/Claude-Agent-System
-/plugin install pcc
+/plugin install cas
 ```
 
 ## Skill Comparison
@@ -130,7 +131,7 @@ Features:
 | `/hydra` | Multi-task parallel swarms | Opus scouts + analyst teammates + wave-based Opus implementers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
-| `/review` | Code review & analysis + fix | 6 review agents + 1-4 fix agents | Only if opted in |
+| `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |
 
 ## How It Works
@@ -139,10 +140,10 @@ Features:
 
 1. **Analyze** - Walks a 4-step decision tree against the user's request
 2. **Route** - First matching rule wins:
-   - **Step 1**: Multiple independent deliverables? → Hydra
-   - **Step 2**: Scale word + broad noun ("entire codebase")? → Hydra
-   - **Step 3**: High-stakes keyword + qualifying signal? → PCC-Opus
-   - **Step 4**: Everything else → PCC (default)
+   - **Step 1**: Multiple independent deliverables? -> Hydra
+   - **Step 2**: Scale word + broad noun ("entire codebase")? -> Hydra
+   - **Step 3**: High-stakes keyword + qualifying signal? -> PCC-Opus
+   - **Step 4**: Everything else -> PCC (default)
 3. **Delegate** - Invokes the selected skill with the original task unchanged
 
 ### `/hydra` Flow
@@ -175,8 +176,8 @@ Features:
 ### `/review` Flow
 
 1. **Scope Detection** - Determines what to review (uncommitted changes, staged, files, or description)
-2. **Load Agents** - Reads 6 agent definition files from `.claude/agents/review-*.md`
-3. **Review Swarm** - 6 specialized agents launch in parallel (same wall-clock time as 1)
+2. **Load Agents** - Reads 7 agent definition files (official Anthropic plugin agents preferred, bundled fallbacks available)
+3. **Review Swarm** - 7 specialized agents launch in parallel (same wall-clock time as 1)
 4. **Synthesis** - Orchestrator deduplicates, cross-references, and scores findings
 5. **Report** - Consolidated findings by severity (CRITICAL > MAJOR > MINOR) with health score
 6. **Fix Findings** (opt-in) - Parallel fix agents resolve CRITICAL/MAJOR issues (grouped by file, exclusive ownership)
