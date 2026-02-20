@@ -199,8 +199,8 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 `/review` works standalone with bundled agents, but installing these official plugins enhances the analysis:
 
 ```bash
-/install pr-review-toolkit
-/install code-simplifier
+/plugin install pr-review-toolkit@claude-plugins-official
+/plugin install code-simplifier@claude-plugins-official
 ```
 
 ---

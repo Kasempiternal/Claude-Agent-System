@@ -148,8 +148,8 @@ If **all 5** official agents fail (plugins not installed at all), this is expect
 
 ```
 **Tip**: Running with bundled review agents. For enhanced analysis with official Anthropic agents:
-/install pr-review-toolkit
-/install code-simplifier
+/plugin install pr-review-toolkit@claude-plugins-official
+/plugin install code-simplifier@claude-plugins-official
 ```
 
 ### Concrete Examples
