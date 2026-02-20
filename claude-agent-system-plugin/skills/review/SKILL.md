@@ -71,7 +71,11 @@ Store the diff content and file list - you will pass these to the review agents.
 
 ## Phase 1: Review Swarm (7 Parallel Agents)
 
-Phase 1 has two steps: first READ all agent definitions (for fallback capability), then SPAWN all agents. These MUST be two separate messages because the Task prompts depend on the Read results.
+Phase 1 has three steps: DISCOVER the plugin agents directory, READ all agent definitions, then SPAWN all agents. Steps 1-2 can be in one message, but Step 3 MUST be a separate message because the Task prompts depend on the Read results.
+
+### Step 0: Discover Plugin Agents Directory
+
+Use Glob to find the plugin's bundled agents: `Glob("**/skills/review/SKILL.md")`. Extract the parent path (everything before `/skills/review/SKILL.md`) — this is the plugin root. The agents are at `{PLUGIN_ROOT}/agents/`. Store this as `REVIEW_AGENTS_DIR`.
 
 ### Step 1: Read ALL Agent Definitions
 
@@ -79,13 +83,13 @@ Read ALL 7 agent definition files in a SINGLE message with 7 parallel Read tool 
 
 | # | Agent Name | Definition File |
 |---|------------|----------------|
-| 1 | Bug & Logic | `.claude/agents/review-bug-logic.md` |
-| 2 | Project Guidelines | `.claude/agents/review-guidelines.md` |
-| 3 | Code Reviewer | `.claude/agents/review-code-reviewer.md` |
-| 4 | Silent Failures | `.claude/agents/review-silent-failures.md` |
-| 5 | Comment Quality | `.claude/agents/review-comments.md` |
-| 6 | Type Design | `.claude/agents/review-type-design.md` |
-| 7 | Test Coverage | `.claude/agents/review-test-coverage.md` |
+| 1 | Bug & Logic | `{REVIEW_AGENTS_DIR}/review-bug-logic.md` |
+| 2 | Project Guidelines | `{REVIEW_AGENTS_DIR}/review-guidelines.md` |
+| 3 | Code Reviewer | `{REVIEW_AGENTS_DIR}/review-code-reviewer.md` |
+| 4 | Silent Failures | `{REVIEW_AGENTS_DIR}/review-silent-failures.md` |
+| 5 | Comment Quality | `{REVIEW_AGENTS_DIR}/review-comments.md` |
+| 6 | Type Design | `{REVIEW_AGENTS_DIR}/review-type-design.md` |
+| 7 | Test Coverage | `{REVIEW_AGENTS_DIR}/review-test-coverage.md` |
 
 **Why read all 7?** Agents 1-2 always use their `.md` files. Agents 3-7 prefer official plugin agents, but the `.md` files serve as automatic fallbacks if the plugins aren't installed. Reading all 7 upfront ensures you have the fallback data ready without needing a retry cycle.
 
@@ -428,9 +432,9 @@ Review complete.
 
 - **YOU ARE AN ORCHESTRATOR** - delegate ALL review work to agents via the Task tool. You NEVER review code yourself. If you catch yourself analyzing code for bugs/style/etc, STOP and spawn an agent instead.
 - **TWO AGENT PATTERNS** - Custom agents (1-2) always use `subagent_type: "general-purpose"` with `model: "opus"` and embedded `.md` prompts. Official plugin agents (3-7) prefer their plugin-qualified `subagent_type` (e.g. `pr-review-toolkit:code-reviewer`) but fall back to Pattern A with their `.md` file if the plugin isn't installed.
-- **SELF-CONTAINED** - This skill works with zero external plugins. All 7 agents have `.md` fallback definitions in `.claude/agents/`. Plugins (`pr-review-toolkit`, `code-simplifier`) enhance the experience but are NOT required.
+- **SELF-CONTAINED** - This skill works with zero external plugins. All 7 agents have `.md` fallback definitions bundled in the plugin's `agents/` directory. Plugins (`pr-review-toolkit`, `code-simplifier`) enhance the experience but are NOT required.
 - **EMBED FULL FILE CONTENTS** - paste the ENTIRE agent definition `.md` file content into the Task `prompt` field for Pattern A agents. NEVER summarize, abbreviate, or paraphrase the agent definitions.
-- **READ ALL 7 THEN SPAWN** - Step 1: Read all 7 agent definition files (one message, 7 parallel Read calls). Step 2: Launch all 7 Task calls (next message, 7 parallel Task calls). These are always two separate messages. Reading all 7 upfront ensures fallback data is ready.
+- **DISCOVER THEN READ THEN SPAWN** - Step 0: Glob to find the plugin's agents directory. Step 1: Read all 7 agent definition files (one message, 7 parallel Read calls). Step 2: Launch all 7 Task calls (next message, 7 parallel Task calls). Steps 0-1 can be one message, but Step 2 must be separate. Reading all 7 upfront ensures fallback data is ready.
 - **FALLBACK ON ERROR** - If an official plugin agent (Pattern B) returns an error, immediately re-spawn it as Pattern A using the already-loaded `.md` file content. Do NOT re-prompt the user or abandon the agent.
 - **LAUNCH ALL 7 REVIEW AGENTS IN ONE MESSAGE** - maximize parallelism
 - **DEDUPLICATE** - raw agent output is redundant; your synthesis adds value

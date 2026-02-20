@@ -1,5 +1,5 @@
 name: pcc
-version: "2.1.0"
+version: "2.2.0"
 description: "Parallel Claude Coordinator - Orchestrate complex tasks with parallel agent exploration and implementation"
 author: "Kasempiternal"
 repository: "https://github.com/Kasempiternal/Claude-Agent-System"
