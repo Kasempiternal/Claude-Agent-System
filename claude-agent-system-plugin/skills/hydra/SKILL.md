@@ -106,14 +106,29 @@ The analyst will:
 3. Write N plan files (using `{HYDRA_SKILL_DIR}/templates/plan-template.md`)
 4. Build dependency DAG, compute waves, write coordination.md (using `{HYDRA_SKILL_DIR}/templates/coordination-template.md`)
 5. Update the task list with dependencies
-6. Send you a **compressed summary** (~200 tokens):
+6. Send you an **enriched summary** (~500 tokens):
 
 ```
 SYNTHESIS COMPLETE
 Tasks: {N} | Waves: {W} | Conflicts: {C}
-PER-TASK: T1: {name} | Wave 1 | Creates: 2 | Modifies: 3 | Depends: none
-CONFLICTS: 1. src/auth/middleware.ts: T1(MODIFY) vs T3(MODIFY) -> Sequential
-WAVE DIAGRAM: Wave 1: T1,T2 | Wave 2: T3
+
+PER-TASK:
+  T1: Add auth middleware
+    Approach: Express middleware with JWT validation — simplest for existing route structure
+    Wave: 1 | Depends: none
+    Files:
+      + src/auth/middleware.ts — JWT validation middleware
+      ~ src/routes/index.ts — attach middleware to protected routes
+      ~ src/config/env.ts — add JWT_SECRET env var
+    Risk: Low — straightforward changes
+
+CONFLICTS:
+  1. src/auth/middleware.ts: T1(MODIFY) vs T3(MODIFY) -> Sequential: T1 creates the file, T3 must wait
+
+WAVE DIAGRAM:
+  Wave 1: T1,T2 — no shared files, fully independent
+  Wave 2: T3 — blocked by T1's middleware creation
+
 NEEDS USER INPUT: {none | specific question}
 Plans + coordination.md written. Task list updated.
 ```
@@ -138,35 +153,57 @@ You MAY SKIP if: all tasks are clear, no conflicts, only one reasonable approach
 
 ## Phase 7: User Confirmation
 
-Present a **detailed** consolidated summary. The summary must give enough context that the user can approve or reject WITHOUT opening plan files:
+Present a **decision-ready briefing** using the analyst's enriched summary. The briefing must give enough context that the user can approve or reject WITHOUT opening plan files — including approach rationale, specific file paths, risks, and wave reasoning:
 
 ```
-HYDRA PLAN COMPLETE
+HYDRA PLAN BRIEFING
 
   Team: hydra-{slug}
   Tasks: {N} | Waves: {W} | Conflicts: {C} resolved
-  Total agents: ~{estimate}
+  Agents: ~{estimate} Opus teammates
 
-  -- Per-Task Summaries --
-  Task 1: {name}
-    Summary: {2-3 sentences}
-    Wave: {W} | Creates: {files} | Modifies: {files} | Depends on: {deps or "—"}
+  ══════════════════════════════════════
+  TASK 1: {name}
+  ══════════════════════════════════════
+  Approach: {strategy and why}
+  Wave: {W} | Depends on: {deps or "none"}
 
-  ... (all N tasks)
+  Key files:
+    + {path} — {purpose}
+    ~ {path} — {what changes}
 
-  -- Wave Execution Strategy --
-  Wave 1 (parallel): {tasks} -> {agent count} Opus implementers
-  Wave 2: {tasks} -> Blocked by: {what}
-  ...
+  Risk: {top risk}
 
-  -- Conflict Resolutions --
-  1. {file}: {TaskX} {op} (Wave A) -> {TaskY} {op} (Wave B). Reason: {why}
-  ...
+  ... (repeat for all N tasks)
 
-  -- Key Decisions --
-  - {decisions from clarification phase}
+  ──────────────────────────────────────
+  WAVE EXECUTION ORDER
+  ──────────────────────────────────────
+  Wave 1 (parallel): {tasks}
+    Why parallel: {reason}
+    Agents: {count} Opus implementers
 
-  -- Plan Files --
+  Wave 2: {tasks}
+    Blocked by: {what and why}
+    Agents: {count} Opus implementers
+
+  ──────────────────────────────────────
+  CONFLICT RESOLUTIONS
+  ──────────────────────────────────────
+  1. {file}:
+     {TaskX} {op} (Wave A) vs {TaskY} {op} (Wave B)
+     Resolution: {strategy} — {reason}
+
+  {or "No conflicts — all tasks operate on independent files."}
+
+  ──────────────────────────────────────
+  KEY DECISIONS
+  ──────────────────────────────────────
+  - {decisions from clarification phase, or "No decisions — all tasks were unambiguous."}
+
+  ──────────────────────────────────────
+  PLAN FILES
+  ──────────────────────────────────────
   .claude/plans/hydra-{slug}/task-*.md
   .claude/plans/hydra-{slug}/coordination.md
 ```

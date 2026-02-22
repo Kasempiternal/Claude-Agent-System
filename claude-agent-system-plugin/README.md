@@ -5,10 +5,11 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 ## Skills
 
 ### `/zk` - Intelligent Router
-Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/pcc`, `/pcc-opus`, and `/hydra`.
+Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
 
 ```bash
-/zk add a button to the settings page          # -> PCC (simple, clear scope)
+/zk build a complete todo app from scratch      # -> Legion (holistic project, iterative)
+/zk add a button to the settings page           # -> PCC (simple, clear scope)
 /zk refactor the payment processing system      # -> PCC-Opus (keyword + risk domain)
 /zk fix auth; add dashboard; update API         # -> Hydra (3 independent tasks)
 ```
@@ -17,7 +18,34 @@ Best for:
 - When you don't want to think about which skill to use
 - Any implementation task — ZK picks the right mode for you
 
-> **Escape hatch**: You can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly.
+> **Escape hatch**: You can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly.
+
+### `/legion` - Iterative Swarm Loop `BETA`
+Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
+
+> **Requires Agent Teams**: Legion uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+
+> **Very High Token Usage Warning**: Legion runs **multiple iterations** of agent swarms. Each iteration spawns 5-30 Opus agents. Recommended only for **MAX plan** subscribers.
+
+```bash
+/legion build a complete todo app with local storage from scratch
+/legion create an e-commerce platform with auth, cart, and checkout --max-iterations 8
+/legion implement the full API layer end to end --checkpoint
+```
+
+Best for:
+- Building complete features or applications from scratch
+- Projects that need multiple rounds of build-test-fix
+- When you want autonomous completion without manual re-runs
+
+Features:
+- **Autonomous iteration loop** — keeps deploying swarms until the project is done
+- **Master task list** — living checkbox document, updated each iteration by the CTO analyst
+- **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ is light (5-12 agents)
+- **Circuit breaker** — stops after 2 consecutive iterations with no progress
+- **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
+- **Configurable max iterations** (`--max-iterations N`, default 5)
+- **Post-loop simplification** — module-grouped code cleanup after project completion
 
 ### `/hydra` - Multi-Task Parallel Swarm Coordinator
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
@@ -127,7 +155,8 @@ Features:
 
 | Skill | Use Case | Agents | Modifies Code? |
 |-------|----------|--------|----------------|
-| `/zk` | Auto-routes to best mode | Router only (delegates to pcc/pcc-opus/hydra) | Via delegated skill |
+| `/zk` | Auto-routes to best mode | Router only (delegates to legion/hydra/pcc-opus/pcc) | Via delegated skill |
+| `/legion` `BETA` | Iterative project completion | Opus scouts + CTO + wave-based Opus implementers, looped (Agent Teams) | Yes |
 | `/hydra` | Multi-task parallel swarms | Opus scouts + analyst teammates + wave-based Opus implementers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
@@ -138,13 +167,30 @@ Features:
 
 ### `/zk` Flow
 
-1. **Analyze** - Walks a 4-step decision tree against the user's request
+1. **Analyze** - Walks a 5-step decision tree against the user's request
 2. **Route** - First matching rule wins:
+   - **Step 0**: Holistic project needing iterative completion? -> Legion
    - **Step 1**: Multiple independent deliverables? -> Hydra
    - **Step 2**: Scale word + broad noun ("entire codebase")? -> Hydra
    - **Step 3**: High-stakes keyword + qualifying signal? -> PCC-Opus
    - **Step 4**: Everything else -> PCC (default)
 3. **Delegate** - Invokes the selected skill with the original task unchanged
+
+### `/legion` Flow
+
+0. **Prerequisites Check** - Reads `~/.claude/settings.json`, verifies `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+1. **Project Parse** - Parses holistic project description, extracts `--max-iterations` and `--checkpoint` flags
+2. **Team Init** - `TeamCreate` + `TaskCreate` for structural phases
+3. **Full Exploration** - Opus scout teammates explore the entire project scope (once)
+4. **CTO Analysis** - CTO analyst creates master task list, decomposes project into modules and waves
+5. **User Confirmation** - You review the CTO's plan, then confirm
+6. **Iteration Loop** - The core autonomous loop:
+   - Iteration 1: full wave-based implementation (Hydra-scale)
+   - Iteration 2+: delta scouts -> CTO updates task list -> targeted implementation
+   - Each iteration: verify -> assess completion -> loop or exit
+   - Exit: all P1 tasks done + tests pass, OR max iterations, OR stall detected
+7. **Simplification** - Module-grouped cleanup (only if project completed)
+8. **Final Report & Cleanup** - Iteration log, final task status, shutdown, `TeamDelete`
 
 ### `/hydra` Flow
 

@@ -56,25 +56,36 @@ Mark the conflict analysis task as `completed` using TaskUpdate.
 
 ### Step 4: Send Summary to Orchestrator
 
-When all work is done, use `SendMessage` to send the orchestrator a compressed summary in EXACTLY this format:
+When all work is done, use `SendMessage` to send the orchestrator an enriched summary in EXACTLY this format:
 
 ```
 SYNTHESIS COMPLETE
 Tasks: {N} | Waves: {W} | Conflicts: {C}
+
 PER-TASK:
-  T{id}: {name} | Wave {W} | Creates: {count} | Modifies: {count} | Depends: {deps or "none"}
-  ...
+  T{id}: {name}
+    Approach: {1 sentence: strategy chosen and why}
+    Wave: {W} | Depends: {deps or "none"}
+    Files:
+      + {path} — {purpose of new file}
+      ~ {path} — {what changes and why}
+    Risk: {top risk in 1 sentence, or "Low — straightforward changes"}
+
 CONFLICTS:
-  {number}. {file}: T{X}({OP}) vs T{Y}({OP}) -> {Resolution}
-  ...
+  {number}. {file}: T{X}({OP}) vs T{Y}({OP}) -> {Resolution}: {reason}
+
 WAVE DIAGRAM:
-  Wave 1: {task list} | Wave 2: {task list} | ...
+  Wave 1: {tasks} — {why parallel}
+  Wave 2: {tasks} — {why blocked}
+
 NEEDS USER INPUT: {none | specific question about "both CREATE" conflicts}
 Plans + coordination.md written. Task list updated.
 ```
 
+**File list rules**: Show up to 5 key files per task. If N > 4 tasks, compress to max 3 files per task. Use `+` for CREATE and `~` for MODIFY. Each file entry must include a short purpose/reason.
+
 ## Critical Rules
 - You have FULL autonomy to make conflict resolution decisions EXCEPT "both CREATE" — flag those for the orchestrator
 - Write ALL plan files and coordination.md yourself — the orchestrator should NOT need to read them
-- Keep the summary under 300 tokens — the orchestrator works from this summary, not the raw files
+- Keep the summary under 600 tokens — the orchestrator works from this summary, not the raw files
 - Use TaskUpdate to track your progress (mark conflict analysis task in_progress then completed)

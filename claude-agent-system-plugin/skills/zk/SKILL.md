@@ -15,6 +15,24 @@ Task: $ARGUMENTS
 
 Walk through these steps IN ORDER. Stop at the first match.
 
+### Step 0: LEGION — Large holistic project needing iterative completion?
+
+Check if the input describes a **single large project** (not a list of independent tasks) with:
+- Build/create/implement keywords + scope qualifiers: "entire", "full", "complete", "from scratch", "end to end", "whole"
+- AND the scope suggests **multi-iteration work** — not a single deliverable but a project that will need exploration, planning, implementation, testing, and refinement cycles
+
+**Key test**: "Would this take multiple rounds of build-test-fix to get right?" If YES, it's a Legion project.
+
+Examples:
+- "build a complete todo app with local storage from scratch" → **LEGION** (full project, iterative)
+- "create an entire e-commerce platform with auth, cart, and checkout" → **LEGION** (holistic project, multi-iteration)
+- "implement the full API layer end to end with tests" → **LEGION** (broad scope, needs iteration)
+- "add a settings page" → **NOT matched** (single deliverable) → continue to Step 1
+- "fix auth; add dashboard; update API" → **NOT matched** (independent tasks, not a project) → continue to Step 1
+- "refactor the payment system" → **NOT matched** (refactor, not build from scratch) → continue to Step 3
+
+If matched → Route to **Legion**.
+
 ### Step 1: HYDRA — Multiple independent deliverables?
 
 Check if the input contains N >= 2 **independent** tasks. Look for:
@@ -100,6 +118,11 @@ Routing: [one-line reason]
 
 Examples:
 ```
+ZK > LEGION
+Routing: holistic project, needs iterative build-test-fix cycles
+```
+
+```
 ZK > PCC
 Routing: standard single task, clear scope
 ```
@@ -118,12 +141,13 @@ Routing: 3 independent deliverables detected
 
 After displaying the routing decision, immediately invoke the selected skill using the `Skill` tool, passing the original task unchanged:
 
-- PCC → `Skill(skill: "pcc:pcc", args: "$ARGUMENTS")`
-- PCC-Opus → `Skill(skill: "pcc:pcc-opus", args: "$ARGUMENTS")`
-- Hydra → `Skill(skill: "pcc:hydra", args: "$ARGUMENTS")`
+- Legion → `Skill(skill: "cas:legion", args: "$ARGUMENTS")`
+- PCC → `Skill(skill: "cas:pcc", args: "$ARGUMENTS")`
+- PCC-Opus → `Skill(skill: "cas:pcc-opus", args: "$ARGUMENTS")`
+- Hydra → `Skill(skill: "cas:hydra", args: "$ARGUMENTS")`
 
 Do NOT modify, rewrite, or "optimize" the user's original task text. Pass `$ARGUMENTS` as-is.
 
 ## Escape Hatch
 
-Users can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
+Users can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
