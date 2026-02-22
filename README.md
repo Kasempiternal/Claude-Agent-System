@@ -2,11 +2,11 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.0.0 — Plugin-Only Distribution**
+> **v7.2.0 — Legion + Enriched Hydra Briefings**
 >
-> The Claude Agent System is now distributed exclusively as a **Claude Code plugin**. The legacy script-based command system (`.claude/commands/`, `.claude/workflows/`, `.claude/middleware/`, setup scripts) has been fully retired. All functionality is preserved through 6 plugin skills listed below.
+> New `/legion` skill (BETA): an iterative swarm loop that keeps sprinting until your project is complete. Hydra's plan summary now shows per-task approach, specific file paths, risks, and wave reasoning instead of opaque file counts.
 >
-> If you previously installed via the setup script, uninstall the old files and switch to the plugin:
+> The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
 > rm -rf .claude/commands .claude/workflows .claude/middleware .claude/agents
 > /plugin marketplace add Kasempiternal/Claude-Agent-System
@@ -20,7 +20,7 @@
 /plugin install cas
 ```
 
-Done! You now have 6 skills: `/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
+Done! You now have 7 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
 
 ---
 
@@ -52,10 +52,11 @@ The smart entry point. Analyzes your request and **auto-routes** to the best exe
 
 ### How It Works
 
-ZK walks a deterministic 4-step decision tree:
+ZK walks a deterministic 5-step decision tree:
 
 | Step | Condition | Routes To |
 |------|-----------|-----------|
+| 0 | Holistic project needing iterative completion? | `/legion` |
 | 1 | Multiple independent deliverables? | `/hydra` |
 | 2 | Scale word + broad noun ("entire codebase")? | `/hydra` |
 | 3 | High-stakes keyword + qualifying signal? | `/pcc-opus` |
@@ -64,14 +65,15 @@ ZK walks a deterministic 4-step decision tree:
 ### Examples
 
 ```bash
-/zk add a button to the settings page          # -> PCC (simple, clear scope)
+/zk build a complete todo app from scratch      # -> Legion (holistic project, iterative)
+/zk add a button to the settings page           # -> PCC (simple, clear scope)
 /zk refactor the payment processing system      # -> PCC-Opus (keyword + risk domain)
 /zk migrate all models to SwiftData             # -> PCC-Opus ("migrate" always qualifies)
 /zk fix auth; add dashboard; update API         # -> Hydra (3 independent tasks)
 /zk modernize the entire codebase               # -> Hydra (scale + broad scope)
 ```
 
-**Escape hatch**: You can always bypass ZK and invoke `/pcc`, `/pcc-opus`, or `/hydra` directly.
+**Escape hatch**: You can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly.
 
 ---
 
@@ -103,6 +105,54 @@ An orchestrator that spawns agent swarms for exploration and implementation.
 8. **Verification** - Tests and code review
 9. **Simplification** - 2-6 parallel agents clean up the code
 10. **Final Report** - Summarizes everything
+
+---
+
+## `/legion` - Iterative Swarm Loop `BETA`
+
+Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
+
+> **Requires Agent Teams**: Legion uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+
+> **Very High Token Usage Warning**: Legion runs **multiple iterations** of agent swarms. Each iteration spawns 5-30 Opus agents. Recommended only for **MAX plan** subscribers.
+
+```bash
+/legion build a complete todo app with local storage from scratch
+/legion create an e-commerce platform with auth, cart, and checkout --max-iterations 8
+/legion implement the full API layer end to end --checkpoint
+```
+
+### Best For
+
+- Building complete features or applications from scratch
+- Projects that need multiple rounds of build-test-fix
+- When you want autonomous completion without manual re-runs
+
+### How Legion Works
+
+0. **Prerequisites Check** - Verifies `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+1. **Project Parse** - Parses holistic project description, extracts `--max-iterations` and `--checkpoint` flags
+2. **Team Init** - Creates team + structural phase tasks
+3. **Full Exploration** - Opus scout teammates explore the entire project scope
+4. **CTO Analysis** - CTO analyst creates master task list, decomposes project into modules and waves
+5. **User Confirmation** - You review the CTO's plan, then confirm
+6. **Iteration Loop** - The core autonomous loop:
+   - Iteration 1: full wave-based implementation (Hydra-scale)
+   - Iteration 2+: delta scouts -> CTO updates task list -> targeted implementation
+   - Each iteration: verify -> assess completion -> loop or exit
+   - Exit: all P1 tasks done + tests pass, OR max iterations, OR stall detected
+7. **Simplification** - Module-grouped cleanup (only if project completed)
+8. **Final Report & Cleanup** - Iteration log, final task status, shutdown, clean up
+
+### Features
+
+- **Autonomous iteration loop** — keeps deploying swarms until the project is done
+- **Master task list** — living checkbox document, updated each iteration by the CTO analyst
+- **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ is light (5-12 agents)
+- **Circuit breaker** — stops after 2 consecutive iterations with no progress
+- **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
+- **Configurable max iterations** (`--max-iterations N`, default 5)
+- **Post-loop simplification** — module-grouped code cleanup after project completion
 
 ---
 
@@ -238,6 +288,7 @@ The catch-all convenience command. Auto-analyzes task complexity, risk, and scop
 | Situation | Use This |
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
+| Build a complete project from scratch | `/legion` |
 | Single well-defined task | `/pcc` |
 | Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
@@ -261,7 +312,7 @@ The `/systemcc` skill was partially inspired by ideas shared in the community:
 - [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
 - [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
 
-All other skills (`/zk`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
+All other skills (`/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
 
 ---
 
