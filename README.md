@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.2.0 — Legion + Enriched Hydra Briefings**
+> **v7.3.0 — Shared Governance: Risk Tiers, Anti-Patterns & Recovery**
 >
-> New `/legion` skill (BETA): an iterative swarm loop that keeps sprinting until your project is complete. Hydra's plan summary now shows per-task approach, specific file paths, risks, and wave reasoning instead of opaque file counts.
+> Hydra and Legion now share a governance layer (`skills/shared/`) with risk tier classification (T0-T3), multi-agent anti-pattern rules, and recovery procedures for stuck agents, partial rollbacks, budget overruns, and context pressure. Analysts assign tiers, verifiers scale depth by tier, and orchestrators follow recovery procedures instead of abandoning failed work.
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -148,6 +148,9 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 
 - **Autonomous iteration loop** — keeps deploying swarms until the project is done
 - **Master task list** — living checkbox document, updated each iteration by the CTO analyst
+- **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
+- **Recovery procedures** — stuck agent replacement, partial rollback, budget overrun protection, context pressure conservation
+- **Anti-pattern validation** — catches coordinator-implements-code, redundant agents, file overlap, scope drift
 - **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ is light (5-12 agents)
 - **Circuit breaker** — stops after 2 consecutive iterations with no progress
 - **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
@@ -193,6 +196,9 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 - **Agent Teams powered** — structured coordination with TeamCreate, TaskCreate, SendMessage
 - **Cross-task file conflict analysis** — builds a DAG of file ownership at plan time
 - **Wave-based execution** — parallel where safe, sequential where files overlap
+- **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
+- **Recovery procedures** — stuck agent replacement and partial rollback on verification failure
+- **Anti-pattern validation** — catches redundant agents, file overlap, sequential deps in same wave
 - **Shared scout pool** — Opus scouts explore for all N tasks simultaneously
 - **Per-task plans + coordination file** — editable before implementation
 - **Module-grouped simplification** — ensures cross-task code consistency

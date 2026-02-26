@@ -3,6 +3,8 @@
 Created: [Date]
 Status: PENDING APPROVAL
 Task: {N} of {total} in Hydra batch "{slug}"
+Risk Tier: {0-3}
+Risk Rationale: {why this tier — 1 sentence}
 Orchestrator: Hydra (Opus)
 Scout Model: Opus (Shared Pool)
 Execution Mode: Wave-Based Parallel Deployment (Agent Teams)
@@ -50,6 +52,17 @@ Files this task will create or modify. No other task in this batch may touch the
 | Risk | Likelihood | Impact | Mitigation |
 |------|------------|--------|------------|
 | [Risk] | Low/Med/High | Low/Med/High | [Mitigation] |
+
+## Failure-Mode Checklist (Tier 1+ only)
+
+| # | Question | Answer |
+|---|----------|--------|
+| 1 | What could fail? | {specific failure scenario} |
+| 2 | How would we detect it? | {signal: test failure, runtime error, user report} |
+| 3 | What is the fastest rollback? | {revert commit, feature flag, config change} |
+| 4 | What is our weakest assumption? | {assumption most likely to be wrong} |
+
+*Omit this section for Tier 0 tasks.*
 
 ---
 **USER: Review this plan. Edit any section, then confirm ALL plans to proceed.**

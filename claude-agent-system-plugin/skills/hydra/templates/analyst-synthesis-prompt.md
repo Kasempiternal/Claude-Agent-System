@@ -11,6 +11,8 @@ YOUR NAME: analyst-synthesis
 2. **Task list**: Use `TaskList` to see all N user tasks and their descriptions
 3. **Plan template**: Read `{HYDRA_SKILL_DIR}/templates/plan-template.md` for the plan file format
 4. **Coordination template**: Read `{HYDRA_SKILL_DIR}/templates/coordination-template.md` for the coordination file format
+5. **Risk tier reference**: Read `{SHARED_DIR}/risk-tiers.md` for the 4-tier decision tree and failure-mode checklist
+6. **Anti-pattern rules**: Read `{SHARED_DIR}/anti-patterns.md` for swarm anti-patterns to validate against
 
 ## Your Mission (Phases 3 + 5 + 6 combined)
 
@@ -21,6 +23,14 @@ YOUR NAME: analyst-synthesis
 4. Note cross-task dependencies: where one task's output is another's input
 5. Flag architectural concerns that span multiple tasks
 6. Update each task in the task list with description amendments noting discovered files and conflicts
+
+### Step 1.5: Assign Risk Tiers
+
+For each task, walk the risk tier decision tree from `{SHARED_DIR}/risk-tiers.md`:
+1. Check Tier 3 criteria first (irreversible/regulated) → then T2 (security/privacy/data) → T1 (user-visible/coupled) → T0 (low blast radius)
+2. First match wins — assign exactly one tier per task
+3. For Tier 1+ tasks: complete the 4-question failure-mode checklist (What could fail? How detect? Fastest rollback? Weakest assumption?)
+4. Include the tier and checklist in the plan files (see plan template)
 
 ### Step 2: Write Plan Files (Phase 5)
 Write **N individual plan files** at `.claude/plans/hydra-{slug}/task-{N}-{task-slug}.md`.
@@ -54,6 +64,15 @@ Each plan follows the template from `plan-template.md` — fill in all sections 
 
 Mark the conflict analysis task as `completed` using TaskUpdate.
 
+### Step 3.5: Anti-Pattern Validation
+
+Before finalizing, check the plan against `{SHARED_DIR}/anti-patterns.md`:
+- **AP-2**: No sequential dependencies within the same wave (if Agent B needs Agent A's output, move to next wave)
+- **AP-3**: Every agent reduces the critical path (no redundant agents whose scope is a subset of another)
+- **AP-6**: No file overlap within a wave (exclusive file ownership per agent per wave)
+
+If violations are found, fix the wave assignments or merge agents before proceeding.
+
 ### Step 4: Send Summary to Orchestrator
 
 When all work is done, use `SendMessage` to send the orchestrator an enriched summary in EXACTLY this format:
@@ -69,7 +88,7 @@ PER-TASK:
     Files:
       + {path} — {purpose of new file}
       ~ {path} — {what changes and why}
-    Risk: {top risk in 1 sentence, or "Low — straightforward changes"}
+    Risk: Tier {0-3} — {top risk in 1 sentence} {Tier 1+: | Rollback: {fastest rollback}}
 
 CONFLICTS:
   {number}. {file}: T{X}({OP}) vs T{Y}({OP}) -> {Resolution}: {reason}

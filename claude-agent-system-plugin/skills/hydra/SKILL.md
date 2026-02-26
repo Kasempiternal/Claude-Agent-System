@@ -35,6 +35,12 @@ Read `~/.claude/settings.json`. Verify `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
 - **If NOT found or not "1"**: STOP. Tell the user to add `{"env":{"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS":"1"}}` to their settings, restart Claude Code, and run /hydra again. Suggest `/pcc-opus` as an alternative.
 - **If found**: Display `HYDRA: Teams feature verified` and proceed.
 
+### Step 3: Discover Shared Governance
+
+Use Glob to find the shared governance directory: `Glob("**/skills/shared/risk-tiers.md")`. Extract the parent directory path (everything before `/risk-tiers.md`). Store this as `SHARED_DIR`.
+
+Display: `HYDRA: Shared governance at {SHARED_DIR}` — the analyst and verifier templates reference `{SHARED_DIR}` for risk tiers, anti-patterns, and recovery procedures.
+
 ---
 
 ## Phase 1: Task Parsing
@@ -103,10 +109,12 @@ Task({
 The analyst will:
 1. Read all scout reports (via team messages)
 2. Build per-task file lists and identify conflicts
-3. Write N plan files (using `{HYDRA_SKILL_DIR}/templates/plan-template.md`)
-4. Build dependency DAG, compute waves, write coordination.md (using `{HYDRA_SKILL_DIR}/templates/coordination-template.md`)
-5. Update the task list with dependencies
-6. Send you an **enriched summary** (~500 tokens):
+3. Assign risk tiers (T0-T3) to each task using `{SHARED_DIR}/risk-tiers.md`
+4. Write N plan files (using `{HYDRA_SKILL_DIR}/templates/plan-template.md`) — Tier 1+ plans include failure-mode checklists
+5. Validate against anti-patterns (`{SHARED_DIR}/anti-patterns.md`)
+6. Build dependency DAG, compute waves, write coordination.md (using `{HYDRA_SKILL_DIR}/templates/coordination-template.md`)
+7. Update the task list with dependencies
+8. Send you an **enriched summary** (~500 tokens):
 
 ```
 SYNTHESIS COMPLETE
@@ -172,7 +180,7 @@ HYDRA PLAN BRIEFING
     + {path} — {purpose}
     ~ {path} — {what changes}
 
-  Risk: {top risk}
+  Risk: Tier {0-3} — {top risk}
 
   ... (repeat for all N tasks)
 
@@ -262,17 +270,19 @@ Task({
 
 ### After Wave Completes
 
-1. Mark completed tasks using TaskUpdate
-2. Later waves are automatically unblocked in the task list
-3. Context from completed waves is passed to next wave via the wave-prep analyst
+1. **Stuck agent check (RP-1)**: If any agent in the wave didn't send a completion message, follow the stuck agent replacement procedure from `{SHARED_DIR}/recovery-procedures.md` — spawn a replacement with `-r` suffix and the original agent's context
+2. Mark completed tasks using TaskUpdate
+3. Later waves are automatically unblocked in the task list
+4. Context from completed waves is passed to next wave via the wave-prep analyst
+5. **Verification failure recovery (RP-2)**: If per-wave verification fails, don't revert passing tasks — spawn targeted fix agents for the specific failures before proceeding to the next wave
 
 ---
 
 ## Phase 9: Per-Wave Verification
 
-After each wave completes, spawn a verifier teammate (`general-purpose`) to run the test suite.
+After each wave completes, spawn a verifier teammate (`general-purpose`) to run the test suite. The verifier scales depth by risk tier — Tier 0 tasks get quick checks, while Tier 2-3 tasks get security reviews and rollback plan validation (see verification template).
 
-If tests **fail**: spawn a fix teammate before proceeding to next wave.
+If tests **fail**: follow RP-2 (partial rollback) — spawn targeted fix agents for specific failures, don't revert passing tasks.
 
 After ALL waves: spawn a **global verification** pass:
 - 1 test runner for the full suite
@@ -357,6 +367,9 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 13. **RESOLVE ALL CONFLICTS AT PLAN TIME** — no runtime file contention, ever
 14. **ALWAYS CLEAN UP** — shutdown teammates and delete team when done
 15. **NAME TEAMMATES CONSISTENTLY** — scout-*, analyst-*, impl-*, verify-*, review-*, simplify-*
+16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all analyst/verifier prompts
+17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the analyst before implementation begins
+18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback)
 
 ---
 

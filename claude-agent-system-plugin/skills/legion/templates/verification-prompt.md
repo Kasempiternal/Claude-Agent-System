@@ -42,6 +42,21 @@ Verdict: {PASS | FAIL | PASS_WITH_WARNINGS}
 {If FAIL: list what needs fixing before next iteration}
 ```
 
+## Risk-Tiered Verification Depth
+
+Scale your verification effort by the highest risk tier in the completed tasks:
+
+| Tier | Verification Scope |
+|------|--------------------|
+| T0 | Relevant tests only — quick pass |
+| T1 | Full test suite + integration tests across affected modules |
+| T2 | Full suite + security/auth flow review — check access controls, data handling |
+| T3 | Full suite + rollback plan documented + **flag for user** before marking PASS |
+
+For Tier 1+ tasks, validate the failure-mode checklist from the CTO plan:
+- Does the detection mechanism work? (e.g., are there tests for the failure scenario?)
+- Is the rollback path viable? (e.g., can the change be reverted cleanly?)
+
 ## Critical Rules
 - Run ACTUAL tests (not just read code) — use Bash to execute test commands
 - Report failures with specifics (file, line, error message)

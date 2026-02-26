@@ -22,6 +22,9 @@ Context from the plan:
 Architectural context (from Opus scout insights):
 {relevant architectural insights}
 
+RISK TIER: {tier}
+{For Tier 1+: "Elevated risk. Verify assumptions before changes. Report unexpected complexity rather than improvising."}
+
 Files you EXCLUSIVELY own (ONLY modify these):
 - {file1}
 - {file2}

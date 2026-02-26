@@ -35,6 +35,12 @@ Read `~/.claude/settings.json`. Verify `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS
 - **If NOT found or not "1"**: STOP. Tell the user to add `{"env":{"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS":"1"}}` to their settings, restart Claude Code, and run /legion again. Suggest `/pcc-opus` or `/hydra` as alternatives.
 - **If found**: Display `LEGION: Teams feature verified` and proceed.
 
+### Step 3: Discover Shared Governance
+
+Use Glob to find the shared governance directory: `Glob("**/skills/shared/risk-tiers.md")`. Extract the parent directory path (everything before `/risk-tiers.md`). Store this as `SHARED_DIR`.
+
+Display: `LEGION: Shared governance at {SHARED_DIR}` — the CTO, verifier, and impl agent templates reference `{SHARED_DIR}` for risk tiers, anti-patterns, and recovery procedures.
+
 ---
 
 ## Phase 1: Project Parse
@@ -121,8 +127,9 @@ The CTO will:
 1. Read all scout reports
 2. Create the master task list at `.claude/plans/legion-{slug}/project-tasks.md`
 3. Decompose the project into checkbox tasks grouped by module
-4. Plan iteration 1 waves
-5. Send you a compressed summary (~200 tokens)
+4. Assign risk tiers (T0-T3) to each task using `{SHARED_DIR}/risk-tiers.md`
+5. Plan iteration 1 waves
+6. Send you a compressed summary (~200 tokens)
 
 **If the CTO flags KEY DECISIONS NEEDED**: Use `AskUserQuestion` to resolve, then relay the answer.
 
@@ -138,6 +145,7 @@ LEGION PLAN
   Project: {name}
   Team: legion-{slug}
   Total tasks: {count} (P1: {n}, P2: {n}, P3: {n})
+  Risk profile: T3:{n} | T2:{n} | T1:{n} | T0:{n}
   Estimated iterations: {CTO estimate}
   Max iterations: {configured max}
   Checkpoint mode: {ON/OFF}
@@ -216,6 +224,13 @@ iteration_log.append({
   verdict: verdict,
   summary: "{compressed 1-line summary}"
 })
+
+// Context pressure check (RP-4)
+IF iteration_count > 3 OR total_agents_spawned > 20:
+  Display "CONTEXT PRESSURE: entering conservation mode"
+  Compress iteration_log entries to ~100 tokens each
+  Delegate ALL file reading to sub-agents (orchestrator reads nothing directly)
+  Prefer fewer, larger agents in subsequent iterations
 ```
 
 ---
@@ -297,23 +312,29 @@ The CTO will update the master task list and plan targeted fixes.
 
 Usually 1 wave with 1-4 agents. Use the same wave-prep → impl-agent pattern but with smaller scope.
 
+#### Step 4: Recovery Check
+
+After implementation agents complete:
+- **Stuck agent check (RP-1)**: If any agent didn't respond, spawn a replacement with `-r` suffix and the original agent's context
+- **Budget check (RP-3)**: If total agents this iteration exceed the CTO's estimate, pause and assess before launching more
+
 ---
 
 ### run_verification()
 
-Spawn a verifier:
+Spawn a verifier. The verifier scales depth by risk tier — Tier 0 tasks get quick checks, while Tier 2-3 tasks get security reviews and rollback plan validation (see verification template).
 
 ```javascript
 Task({
   subagent_type: "general-purpose",
   team_name: "legion-{slug}",
   name: "verify-iter{N}",
-  prompt: "{read {LEGION_SKILL_DIR}/templates/verification-prompt.md, fill placeholders}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/verification-prompt.md, fill placeholders — include risk tiers from CTO plan}",
   description: "Verify iteration {N}"
 })
 ```
 
-If tests **fail badly** (not just minor issues): note this for the completion assessment.
+If tests **fail**: follow RP-2 (partial rollback) — spawn targeted fix agents for specific failures, don't revert passing tasks. If fixes fail twice: note this for the completion assessment and let the next iteration handle it.
 
 ---
 
@@ -420,6 +441,9 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 13. **SCALE DOWN IN LATER ITERATIONS** — iteration 1 is heavy (15-30 agents); iteration 2+ is light (5-12 agents)
 14. **ALWAYS CLEAN UP** — shutdown teammates and delete team on ALL exit paths (complete, max, stalled)
 15. **NAME TEAMMATES CONSISTENTLY** — scout-*, delta-scout-*, cto-iter-*, wave-prep-iter*-w*, impl-iter*-w*-*, verify-iter*, assess-iter*, simplify-module-*
+16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all CTO/verifier/impl prompts
+17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the CTO before implementation begins
+18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback), on context pressure follow RP-4 (conservation mode)
 
 ---
 

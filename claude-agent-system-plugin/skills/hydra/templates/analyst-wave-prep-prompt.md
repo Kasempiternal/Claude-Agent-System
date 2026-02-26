@@ -50,8 +50,8 @@ Use `SendMessage` to send the orchestrator agent specs in EXACTLY this format:
 WAVE {W} PREP COMPLETE
 Tasks in wave: {count} | Total agents: {count}
 
-AGENT 1: name={agent-name} | files=[{file1},{file2}] | mission="{brief mission}" | context="{key context}"
-AGENT 2: name={agent-name} | files=[{file1}] | mission="{brief mission}" | context="{key context}"
+AGENT 1: name={agent-name} | files=[{file1},{file2}] | tier={0-3} | mission="{brief mission}" | context="{key context}"
+AGENT 2: name={agent-name} | files=[{file1}] | tier={0-3} | mission="{brief mission}" | context="{key context}"
 ...
 
 {For Wave 2+:}
@@ -59,6 +59,15 @@ PRIOR WAVE CHANGES:
   {file}: {summary of what changed in earlier wave}
   ...
 ```
+
+### Step 3.5: Anti-Pattern Check
+
+Before sending specs, verify against anti-pattern rules:
+- **AP-6**: No file appears in two agents' lists within this wave
+- **AP-2**: No sequential dependencies within this wave (if Agent B needs Agent A's output, escalate to orchestrator)
+- **AP-3**: Every agent reduces the critical path (no redundant agents)
+
+If violations are found, adjust agent assignments or flag to the orchestrator before proceeding.
 
 ## Critical Rules
 - Keep each agent spec under 50 tokens — the orchestrator expands them into full prompts using the impl-agent-prompt template

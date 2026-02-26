@@ -13,6 +13,8 @@ MODE: {FULL | DELTA}
 3. **Task list**: Use `TaskList` to see agent team task status
 4. **Impl agent template**: Read `{LEGION_SKILL_DIR}/templates/impl-agent-prompt.md` for agent prompt format
 5. **Wave prep template**: Read `{LEGION_SKILL_DIR}/templates/wave-prep-prompt.md` for wave planning
+6. **Risk tier reference**: Read `{SHARED_DIR}/risk-tiers.md` for the 4-tier decision tree and failure-mode checklist
+7. **Anti-pattern rules**: Read `{SHARED_DIR}/anti-patterns.md` for swarm anti-patterns to validate against
 
 ## Mode: FULL (Iteration 1)
 
@@ -32,7 +34,7 @@ Write the master task list at `.claude/plans/legion-{slug}/project-tasks.md`:
 # Last Updated: Iteration {iteration}
 
 ## Module: {module_name}
-- [ ] {task description} | Files: {file1, file2} | Depends: {deps or "none"} | Priority: {P1/P2/P3}
+- [ ] {task description} | Files: {file1, file2} | Depends: {deps or "none"} | Priority: {P1/P2/P3} | Risk: T{0-3}
 - [ ] {task description} | Files: {file3} | Depends: {prev task} | Priority: {P1/P2/P3}
 
 ## Module: {next_module}
@@ -52,6 +54,14 @@ Rules for the task list:
 - Dependencies reference other items by description or module
 - Order within modules reflects implementation sequence
 
+### Step 2.5: Assign Risk Tiers
+
+For each task, walk the risk tier decision tree from `{SHARED_DIR}/risk-tiers.md`:
+1. Check Tier 3 criteria first (irreversible/regulated) → then T2 (security/privacy/data) → T1 (user-visible/coupled) → T0 (low blast radius)
+2. First match wins — assign exactly one tier per task
+3. For Tier 1+ tasks: add failure-mode notes (What could fail? Fastest rollback? Weakest assumption?)
+4. Include the tier in the task list format: `| Risk: T{0-3}`
+
 ### Step 3: Plan Iteration 1 Waves
 Decompose the P1 tasks into implementation waves:
 - Wave 1: Foundation tasks with no dependencies (parallel)
@@ -63,6 +73,7 @@ Decompose the P1 tasks into implementation waves:
 ```
 CTO ANALYSIS COMPLETE (FULL)
 Project: {name} | Modules: {count} | Total Tasks: {count} (P1: {n}, P2: {n}, P3: {n})
+Risk profile: T3:{n} | T2:{n} | T1:{n} | T0:{n}
 ITERATION 1 PLAN:
   Waves: {W} | Tasks this iteration: {count of P1 tasks in waves} | Agents needed: ~{estimate}
   Wave 1: {task summaries} -> {agent count} agents
@@ -95,6 +106,13 @@ Master task list written. Ready for user confirmation.
 - Usually 1 wave for delta iterations
 - Smaller agent count: 1-4 targeted agents
 
+### Step 3.5: Validate Delta Plan
+
+Before finalizing, check against `{SHARED_DIR}/anti-patterns.md`:
+- **AP-4**: Is any work being planned that wasn't in the original scope? If so, add it as a new task for a future iteration instead
+- **AP-3**: Does every planned agent reduce the critical path? Remove or merge redundant agents
+- **AP-5**: Do all remaining tasks have risk tiers? Assign tiers to any new or re-prioritized tasks
+
 ### Step 4: Send Summary to Orchestrator
 ```
 CTO ANALYSIS COMPLETE (DELTA)
@@ -105,6 +123,7 @@ DELTA PLAN:
   Waves: {W} | Tasks this iteration: {count} | Agents needed: ~{estimate}
   Wave 1: {task summaries} -> {agent count} agents
 REMAINING AFTER THIS ITERATION: ~{estimate} tasks
+Risk updates: {count} tasks re-tiered
 BLOCKERS: {none | specific issues}
 Master task list updated.
 ```
