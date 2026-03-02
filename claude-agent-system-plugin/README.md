@@ -144,6 +144,34 @@ Features:
 - Automatic workflow selection and execution
 - Triple code review (Senior Engineer, Lead Engineer, Architect)
 
+### `/setup-hooks` - Safety Hooks Installer
+Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding. All hooks use `"ask"` mode — Claude pauses and asks for your approval instead of silently blocking.
+
+```bash
+/setup-hooks
+```
+
+Three hooks available:
+
+| Hook | What it catches |
+|------|----------------|
+| **push-guard** | Any `git push` or `gh pr create` — commits are allowed freely |
+| **dangerous-commands** | `rm -rf ~/`, `dd` to disk, `git reset --hard`, `curl \| sh`, fork bombs, etc. |
+| **protect-secrets** | `.env` files, SSH keys, AWS creds, secret variables, exfiltration attempts |
+
+Best for:
+- Preventing Claude from pushing code without your approval
+- Catching destructive commands before they execute
+- Protecting sensitive files from accidental exposure
+
+Features:
+- **"Ask" mode** — you see a yes/no prompt, not a hard block. Approve when you asked for the action, deny when Claude acts on its own.
+- **Selective install** — choose which hooks you want during setup
+- **Non-destructive** — merges into existing settings without overwriting
+- **Audit logging** — all intercepted actions logged to `~/.claude/hooks-logs/`
+
+> **Based on**: [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks), modified to use `"ask"` instead of `"deny"`.
+
 ## Installation
 
 ```bash
@@ -162,6 +190,7 @@ Features:
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |
+| `/setup-hooks` | Install safety hooks (push guard, dangerous commands, secrets) | None (installer) | No (modifies `~/.claude/settings.json`) |
 
 ## How It Works
 

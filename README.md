@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.3.0 — Shared Governance: Risk Tiers, Anti-Patterns & Recovery**
+> **v7.4.0 — Safety Hooks: Push Guard, Dangerous Commands & Secret Protection**
 >
-> Hydra and Legion now share a governance layer (`skills/shared/`) with risk tier classification (T0-T3), multi-agent anti-pattern rules, and recovery procedures for stuck agents, partial rollbacks, budget overruns, and context pressure. Analysts assign tiers, verifiers scale depth by tier, and orchestrators follow recovery procedures instead of abandoning failed work.
+> New `/setup-hooks` skill installs PreToolUse hooks into your Claude settings. Three hooks available: **push-guard** (prompts before any `git push`), **dangerous-commands** (catches `rm -rf ~/`, `git reset --hard`, etc.), and **protect-secrets** (guards `.env`, SSH keys, AWS creds). All use `"ask"` mode — Claude prompts you instead of silently blocking, so you can approve when you asked for the action and deny when Claude acts on its own. Based on [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks).
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -20,7 +20,7 @@
 /plugin install cas
 ```
 
-Done! You now have 7 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, and `/systemcc`.
+Done! You now have 8 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, and `/setup-hooks`.
 
 ---
 
@@ -289,6 +289,33 @@ The catch-all convenience command. Auto-analyzes task complexity, risk, and scop
 
 ---
 
+## `/setup-hooks` - Safety Hooks Installer
+
+Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding.
+
+```bash
+/setup-hooks
+```
+
+### Available Hooks
+
+| Hook | What It Catches |
+|------|----------------|
+| **push-guard** | Any `git push` or `gh pr create` — commits are allowed freely |
+| **dangerous-commands** | `rm -rf ~/`, `dd` to disk, `git reset --hard`, `curl \| sh`, fork bombs, etc. |
+| **protect-secrets** | `.env` files, SSH keys, AWS creds, secret variables, exfiltration attempts |
+
+All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt instead of silently blocking. Approve when you asked for the action, deny when Claude acts autonomously.
+
+- **Run once** — hooks persist in your settings across all projects and sessions
+- **Selective install** — choose which hooks you want during setup
+- **Non-destructive** — merges into existing settings without overwriting
+- **Audit logging** — all intercepted actions logged to `~/.claude/hooks-logs/`
+
+> Based on [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks), modified to use `"ask"` instead of `"deny"`.
+
+---
+
 # When to Use Each Skill
 
 | Situation | Use This |
@@ -300,6 +327,7 @@ The catch-all convenience command. Auto-analyzes task complexity, risk, and scop
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
+| Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
 
 ---
 
