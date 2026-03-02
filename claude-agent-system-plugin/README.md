@@ -23,7 +23,7 @@ Best for:
 ### `/legion` - Iterative Swarm Loop `BETA`
 Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
 
-> **Requires Agent Teams**: Legion uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
 > **Very High Token Usage Warning**: Legion runs **multiple iterations** of agent swarms. Each iteration spawns 5-30 Opus agents. Recommended only for **MAX plan** subscribers.
 
@@ -50,7 +50,7 @@ Features:
 ### `/hydra` - Multi-Task Parallel Swarm Coordinator
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
 
-> **Requires Agent Teams**: Hydra uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
 > **High Token Usage Warning**: Hydra uses Anthropic's **Agent Teams** feature (currently in beta). It spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
 
@@ -144,6 +144,19 @@ Features:
 - Automatic workflow selection and execution
 - Triple code review (Senior Engineer, Lead Engineer, Architect)
 
+### `/setup-swarm` - Agent Teams Setup
+Enables the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var in your `~/.claude/settings.json`. Required before using `/hydra` or `/legion`.
+
+```bash
+/setup-swarm
+```
+
+Best for:
+- First-time setup before using swarm skills
+- Enabling Agent Teams without manually editing JSON
+
+> ⚠️ **Close all other Claude Code sessions first** — editing `settings.json` while other sessions are running can crash or corrupt those sessions.
+
 ### `/setup-hooks` - Safety Hooks Installer
 Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding. All hooks use `"ask"` mode — Claude pauses and asks for your approval instead of silently blocking.
 
@@ -190,6 +203,7 @@ Features:
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |
+| `/setup-swarm` | Enable Agent Teams for Hydra/Legion | None (installer) | No (modifies `~/.claude/settings.json`) |
 | `/setup-hooks` | Install safety hooks (push guard, dangerous commands, secrets) | None (installer) | No (modifies `~/.claude/settings.json`) |
 
 ## How It Works

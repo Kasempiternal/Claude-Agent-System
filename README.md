@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.4.0 — Safety Hooks: Push Guard, Dangerous Commands & Secret Protection**
+> **v7.5.0 — `/setup-swarm`: One-Command Agent Teams Setup**
 >
-> New `/setup-hooks` skill installs PreToolUse hooks into your Claude settings. Three hooks available: **push-guard** (prompts before any `git push`), **dangerous-commands** (catches `rm -rf ~/`, `git reset --hard`, etc.), and **protect-secrets** (guards `.env`, SSH keys, AWS creds). All use `"ask"` mode — Claude prompts you instead of silently blocking, so you can approve when you asked for the action and deny when Claude acts on its own. Based on [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks).
+> New `/setup-swarm` skill enables the Agent Teams feature in your `settings.json` automatically — no manual JSON editing needed. Required for `/hydra` and `/legion`. Both swarm skills now warn you to close all other Claude Code sessions before setup, since editing `settings.json` can crash active sessions.
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -20,7 +20,7 @@
 /plugin install cas
 ```
 
-Done! You now have 8 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, and `/setup-hooks`.
+Done! You now have 9 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/setup-swarm`, and `/setup-hooks`.
 
 ---
 
@@ -112,7 +112,7 @@ An orchestrator that spawns agent swarms for exploration and implementation.
 
 Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
 
-> **Requires Agent Teams**: Legion uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
 > **Very High Token Usage Warning**: Legion runs **multiple iterations** of agent swarms. Each iteration spawns 5-30 Opus agents. Recommended only for **MAX plan** subscribers.
 
@@ -163,7 +163,7 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
 
-> **Requires Agent Teams**: Hydra uses the experimental Agent Teams feature (`CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1` in `~/.claude/settings.json`). It will check for this setting on startup and guide you through enabling it if needed.
+> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
 > **High Token Usage Warning**: Hydra spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
 
@@ -289,6 +289,22 @@ The catch-all convenience command. Auto-analyzes task complexity, risk, and scop
 
 ---
 
+## `/setup-swarm` - Agent Teams Setup
+
+Enables the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var in your `~/.claude/settings.json`. Required before using `/hydra` or `/legion`.
+
+```bash
+/setup-swarm
+```
+
+> ⚠️ **Close all other Claude Code sessions first** — editing `settings.json` while other sessions are running can crash or corrupt those sessions. The skill will warn you about this before making changes.
+
+- **Run once** — the setting persists across all projects and sessions
+- **Non-destructive** — merges into existing settings without overwriting
+- **Restart required** — Claude Code needs a restart after the change
+
+---
+
 ## `/setup-hooks` - Safety Hooks Installer
 
 Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding.
@@ -327,6 +343,7 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
+| Enable Agent Teams for Hydra/Legion | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
 
 ---

@@ -32,7 +32,17 @@ Use Glob to find your own templates: `Glob("**/skills/hydra/templates/scout-prom
 
 Read `~/.claude/settings.json`. Verify `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is `"1"`.
 
-- **If NOT found or not "1"**: STOP. Tell the user to add `{"env":{"CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS":"1"}}` to their settings, restart Claude Code, and run /hydra again. Suggest `/pcc-opus` as an alternative.
+- **If NOT found or not "1"**: STOP. Tell the user:
+  ```
+  ⚠️  Agent Teams is not enabled. Run /setup-swarm to enable it automatically.
+
+     IMPORTANT: Close ALL other Claude Code sessions first — editing
+     ~/.claude/settings.json while other sessions are running can crash
+     or corrupt those sessions.
+
+     Alternative: /pcc-opus works without Agent Teams.
+  ```
+  Do NOT proceed with Hydra.
 - **If found**: Display `HYDRA: Teams feature verified` and proceed.
 
 ### Step 3: Discover Shared Governance

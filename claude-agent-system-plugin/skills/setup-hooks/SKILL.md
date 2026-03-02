@@ -5,6 +5,24 @@ description: "Install CAS safety hooks into your Claude Code settings. Hooks int
 
 You are the CAS Hooks installer. Your job is to install safety hooks into the user's `~/.claude/settings.json`.
 
+## ⚠️ SESSION WARNING — SHOW THIS FIRST
+
+**Before doing anything else**, display this warning:
+
+```
+⚠️  IMPORTANT: This skill edits ~/.claude/settings.json (Claude Code's brain).
+    Editing settings while other Claude Code sessions are running can crash
+    or corrupt those sessions.
+
+    → Close ALL other Claude Code sessions before continuing.
+```
+
+Then use `AskUserQuestion` to confirm:
+- **"I've closed all other sessions — proceed"** (recommended)
+- **"Cancel"**
+
+If the user cancels, stop immediately.
+
 ## What You Install
 
 Three PreToolUse hooks that use `"ask"` (prompt user) instead of `"deny"` (hard block):
