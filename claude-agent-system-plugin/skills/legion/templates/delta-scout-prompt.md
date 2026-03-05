@@ -33,6 +33,8 @@ MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
 - **Remaining blockers**: Are any unchecked tasks now blocked by unexpected issues?
 - **New discoveries**: Did implementation reveal work not in the original plan?
 - **Test status**: What passes, what fails, what's missing?
+- **Smoke tests**: If smoke tests were created in a previous iteration, run them and report results
+- **Verification infrastructure changes**: Did implementation add a test framework, change build config, modify entry points, or add new runnable commands?
 
 ## Return a structured report with:
 
@@ -42,3 +44,5 @@ MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
 - BLOCKED ITEMS: Tasks that can't proceed and why
 - SUGGESTED FOCUS: What this iteration should prioritize (top 3-5 items)
 - ESTIMATED REMAINING: Rough percentage of project completion
+- VERIFICATION STATUS: test command used + results (pass/fail/count) or "no tests available"
+- VERIFICATION CHANGES: new test framework added | build config changed | entry points modified | no changes

@@ -25,10 +25,16 @@ Perform a thorough completion assessment across 5 dimensions:
 - For each unchecked task: is it P1 (must have), P2 (should have), or P3 (nice to have)?
 - Are all P1 tasks checked? Are most P2 tasks checked?
 
-### 2. Test Status
-- Review the verifier's test report
-- Are all tests passing?
+### 2. Verification Status
+- Review the verifier's report including **confidence level** (HIGH/MEDIUM/LOW)
+- What verification methods were used? What was the highest level achieved?
+- Are all tests passing (if tests exist)?
 - Are there test gaps (features without tests)?
+- **Confidence-based quality caps**:
+  - HIGH confidence (test suite passes): full weight — quality can be GOOD
+  - MEDIUM confidence (build+run pass, no tests): cap quality at FAIR max
+  - LOW confidence (static analysis only): cap error handling quality at POOR — we cannot confirm the code actually works
+- If a "Create smoke tests" P1 task exists: were the smoke tests actually created? Do they pass?
 
 ### 3. TODO/FIXME Scan
 - Search the codebase for `TODO`, `FIXME`, `HACK`, `XXX` comments
@@ -62,6 +68,7 @@ Send the orchestrator your assessment in EXACTLY this format:
 ```
 COMPLETION ASSESSMENT (Iteration {I})
 Tasks: {checked}/{total} ({percent}%) | P1: {done}/{total} | P2: {done}/{total} | P3: {done}/{total}
+Verification confidence: {HIGH|MEDIUM|LOW} (methods: {test-suite, build, run, syntax, static})
 Tests: {status from verifier}
 TODOs: {count} found ({critical_count} critical)
 Integration: {COMPLETE | GAPS — list gaps}
@@ -90,6 +97,8 @@ OPTIONAL IMPROVEMENTS: {P2/P3 items that could be done}
 - Be HONEST — don't declare COMPLETE if P1 tasks remain unchecked or tests fail
 - **Default to CONTINUE** if there is ANY doubt — it is always safer to do one more iteration than to stop early
 - **Iteration 1 can NEVER be COMPLETE** — even if all tasks appear done, at least one delta iteration is needed to verify and catch issues
-- COMPLETE requires ALL of: P1 tasks done + tests passing + integration verified + quality at least FAIR across all dimensions + no critical TODOs
+- COMPLETE requires ALL of: P1 tasks done + tests passing + integration verified + quality at least FAIR across all dimensions + no critical TODOs + **verification confidence at least MEDIUM**
+- **LOW confidence blocks COMPLETE** — if verification confidence is LOW (static analysis only), verdict MUST be CONTINUE with "Add smoke tests" as the top remaining priority
+- **"Tests: N/A" with no smoke tests** — bias strongly toward CONTINUE; the project cannot be considered verified without at least build+run confirmation
 - STALLED means progress_score == 0 — literally nothing improved. If ANYTHING got better (bug fixes, test additions, error handling), score 1+ and CONTINUE
 - Keep assessment under 200 tokens — the orchestrator needs a quick verdict

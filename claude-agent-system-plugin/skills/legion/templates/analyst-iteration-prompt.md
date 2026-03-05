@@ -54,6 +54,25 @@ Rules for the task list:
 - Dependencies reference other items by description or module
 - Order within modules reflects implementation sequence
 
+### Step 2.3: Define Verification Strategy
+
+Using scout reports' VERIFICATION INFRASTRUCTURE findings, write a `## Verification Strategy` block at the **TOP** of the master task list (before the first Module section):
+
+```markdown
+## Verification Strategy
+- Project type: {from scouts}
+- Test command: {from scouts, or "none"}
+- Build command: {from scouts, or "none"}
+- Run command: {from scouts, or "none"}
+- Entry points: {from scouts}
+- Expected outputs: {what a successful run looks like — e.g., "server starts on port 3000", "HTML renders without errors"}
+- Verification chain: {ordered list of applicable levels — e.g., "tests > build > run > syntax"}
+```
+
+**If no test suite exists** (scouts reported test command = "none"):
+- Add a P1 task to the Testing module: `Create smoke tests for core functionality`
+- Include in the verification strategy: `- Smoke tests needed: YES — P1 task added`
+
 ### Step 2.5: Assign Risk Tiers
 
 For each task, walk the risk tier decision tree from `{SHARED_DIR}/risk-tiers.md`:
@@ -81,6 +100,7 @@ ITERATION 1 PLAN:
 MODULES:
   {module}: {task count} tasks | {file count} files | Depends: {deps}
   ...
+VERIFICATION STRATEGY: {project type} | Test: {command or "none"} | Build: {command or "none"} | Run: {command or "none"} | Smoke tests task added: {YES/NO}
 KEY DECISIONS NEEDED: {none | specific questions}
 Master task list written. Ready for user confirmation.
 ```
@@ -93,6 +113,14 @@ Master task list written. Ready for user confirmation.
 1. Read the master task list from `.claude/plans/legion-{slug}/project-tasks.md`
 2. Read delta scout reports for what changed, broke, or remains
 3. Compare: what was checked off vs what scouts say actually works
+
+### Step 1.5: Update Verification Strategy
+
+Check the `## Verification Strategy` block in the master task list:
+- If smoke tests were created in a previous iteration → update test command to include them
+- If a test framework was added → update test command and verification chain accordingly
+- If entry points changed → update entry points and run command
+- Keep the strategy current with the actual project state
 
 ### Step 2: Update Master Task List
 - Check off items that are VERIFIED complete (scouts confirmed working)
@@ -126,6 +154,7 @@ DELTA PLAN:
   Waves: {W} | Tasks this iteration: {count} | Agents needed: ~{estimate}
   Wave 1: {task summaries} -> {agent count} agents
 REMAINING AFTER THIS ITERATION: ~{estimate} tasks
+VERIFICATION STRATEGY UPDATE: {unchanged | updated — describe changes}
 Risk updates: {count} tasks re-tiered
 BLOCKERS: {none | specific issues}
 Master task list updated.

@@ -169,6 +169,12 @@ LEGION PLAN
   {module}: {task count} tasks
   ...
 
+  -- Verification Strategy --
+  Project type: {from CTO summary}
+  Test: {command or "none"} | Build: {command or "none"} | Run: {command or "none"}
+  Chain: {verification levels that apply}
+  Smoke tests needed: {YES — P1 task added | NO — test suite exists}
+
   -- Master Task List --
   .claude/plans/legion-{slug}/project-tasks.md
 
@@ -341,7 +347,7 @@ Task({
   subagent_type: "general-purpose",
   team_name: "legion-{slug}",
   name: "verify-iter{N}",
-  prompt: "{read {LEGION_SKILL_DIR}/templates/verification-prompt.md, fill placeholders — include risk tiers from CTO plan}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/verification-prompt.md, fill placeholders — include risk tiers from CTO plan AND the Verification Strategy block from the master task list}",
   description: "Verify iteration {N}"
 })
 ```
@@ -360,7 +366,7 @@ Task({
   model: "opus",
   team_name: "legion-{slug}",
   name: "assess-iter{N}",
-  prompt: "{read {LEGION_SKILL_DIR}/templates/completion-check-prompt.md, fill placeholders}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/completion-check-prompt.md, fill placeholders — include the verifier's confidence level (HIGH/MEDIUM/LOW) and verification methods used}",
   description: "Assess completion iteration {N}"
 })
 ```
@@ -466,6 +472,7 @@ LEGION {status}
   -- Final Task Status --
   P1: {done}/{total} | P2: {done}/{total} | P3: {done}/{total}
   Tests: {PASS/FAIL}
+  Verification: {highest level achieved} | Confidence: {HIGH/MEDIUM/LOW}
 
   -- Hardening Round --
   Findings: {critical}/{major}/{minor}

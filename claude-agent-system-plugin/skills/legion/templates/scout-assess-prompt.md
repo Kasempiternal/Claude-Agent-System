@@ -28,6 +28,8 @@ This is **Iteration 1** — the foundational exploration. Your findings shape th
 - **Module boundaries**: natural groupings of work that could be implemented in parallel
 - **Dependency chains**: components that must be built before others can start
 - **Risk areas**: complex integrations, unfamiliar patterns, potential blockers
+- **Verification infrastructure**: test suites (framework, runner command), build commands, run/start commands, entry points (e.g., `main.py`, `index.html`, `src/index.ts`)
+- **Project type**: library | node-app | python-app | frontend | game | cli-tool | api-server | static-site | other
 
 ## Return a structured report with:
 
@@ -37,3 +39,11 @@ This is **Iteration 1** — the foundational exploration. Your findings shape th
 - DEPENDENCY CHAIN: which modules depend on which others
 - ARCHITECTURAL RECOMMENDATIONS: patterns to follow, pitfalls to avoid
 - RISK ASSESSMENT: what could go wrong, what needs extra attention
+- VERIFICATION INFRASTRUCTURE:
+  - Project type: {library | node-app | python-app | frontend | game | cli-tool | api-server | static-site | other}
+  - Test command: {e.g., "npm test", "pytest", "go test ./..."} or "none found"
+  - Test framework: {e.g., "jest", "pytest", "go test"} or "none"
+  - Build command: {e.g., "npm run build", "cargo build"} or "none"
+  - Run command: {e.g., "python main.py", "npm start"} or "none"
+  - Entry points: {list of main files}
+  - Config files found: {e.g., "package.json", "pyproject.toml", "Makefile"}
