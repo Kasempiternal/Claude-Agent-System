@@ -38,8 +38,9 @@ PRIOR ITERATION CONTEXT:
 - Previous iterations established: {summary of what exists}
 
 {For Wave 2+ agents, add:}
-FILES MODIFIED BY EARLIER WAVES (read these for context):
-- {file modified in earlier wave}: {summary of what changed}
+WAVE STATE FROM PRIOR WAVE: .claude/plans/legion-{slug}/wave-{I}-{W-1}-state.md
+Read the "Files Modified" section to understand what changed in the prior wave
+that may interact with your owned files.
 
 ## Implementation Guidelines
 

@@ -17,6 +17,9 @@ ITERATION HISTORY:
 {compressed_iteration_summaries}
 
 MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
+WAVE STATE FILES: `.claude/plans/legion-{slug}/wave-*-state.md`
+Read the most recent wave state file(s) for specifics on what was implemented
+and what failed. These are more reliable than iteration history summaries.
 
 ## Your Mission
 
@@ -35,6 +38,9 @@ MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
 - **Test status**: What passes, what fails, what's missing?
 - **Smoke tests**: If smoke tests were created in a previous iteration, run them and report results
 - **Verification infrastructure changes**: Did implementation add a test framework, change build config, modify entry points, or add new runnable commands?
+- **Stale tasks**: Any tasks `in_progress` or DEFERRED across 2+ iterations?
+  Flag with reason (too complex, wrong approach, missing dependency) and recommend:
+  retry, simplify, or escalate
 
 ## Return a structured report with:
 
@@ -46,3 +52,4 @@ MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
 - ESTIMATED REMAINING: Rough percentage of project completion
 - VERIFICATION STATUS: test command used + results (pass/fail/count) or "no tests available"
 - VERIFICATION CHANGES: new test framework added | build config changed | entry points modified | no changes
+- STALE TASKS: {count} stuck for 2+ iterations — {task}: {reason} | {recommendation}

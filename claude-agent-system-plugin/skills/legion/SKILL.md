@@ -199,6 +199,8 @@ iteration_count = 0
 status = "RUNNING"
 consecutive_zero_progress = 0
 iteration_log = []
+fix_attempt_tracker = {}  // { "task": attempt_count }
+deferred_tasks = {}       // { "task": iterations_deferred }
 ```
 
 ### WHILE status == "RUNNING":
@@ -238,12 +240,26 @@ iteration_log.append({
   summary: "{compressed 1-line summary}"
 })
 
-// Context pressure check (RP-4)
-IF iteration_count > 5 OR total_agents_spawned > 50:
-  Display "CONTEXT PRESSURE: entering conservation mode"
-  Compress iteration_log entries to ~100 tokens each
-  Delegate ALL file reading to sub-agents (orchestrator reads nothing directly)
-  Prefer fewer, larger agents in subsequent iterations
+// Context management — Three-Tier Compression Strategy
+IF iteration_count <= 3 AND total_agents_spawned <= 30:
+  // TIER 1: Full Fidelity
+  // Wave state files on disk. Iteration log at ~200 tokens/iter.
+  // Orchestrator may read wave state files if needed.
+
+ELIF iteration_count <= 5 AND total_agents_spawned <= 50:
+  // TIER 2: Structured Summaries
+  // Wave state files on disk (always written).
+  // Compress iteration_log to ~100 tokens/iter.
+  // Delegate ALL file reading to sub-agents.
+  Display "TIER 2 COMPRESSION: structured summaries mode"
+
+ELSE:
+  // TIER 3: Fresh Context (Conservation Mode)
+  // Wave state files on disk (always written).
+  // Compress iteration_log to ~50 tokens/iter (number + verdict only).
+  // Orchestrator reads NOTHING — all context via wave state files + sub-agents.
+  // Prefer fewer, larger agents. Merge agents on related files.
+  Display "TIER 3 COMPRESSION: conservation mode — file-based state only"
 ```
 
 ---
@@ -281,7 +297,37 @@ Task({
 ```
 
 4. After wave completes, mark completed tasks via TaskUpdate
-5. Pass context from this wave to next wave via wave-prep analyst
+
+5. **Write wave state file**: Write `.claude/plans/legion-{slug}/wave-{I}-{W}-state.md`:
+
+   ```markdown
+   # Wave State: Iteration {I}, Wave {W}
+   # Team: legion-{slug}
+
+   ## Completed Tasks
+   - {task} | Files: {files} | Agent: {name} | Status: DONE
+
+   ## Failed Tasks
+   - {task} | Files: {files} | Agent: {name} | Error: {1-line summary}
+
+   ## Files Modified
+   - {file_path}: {1-line summary of change}
+
+   ## Blockers
+   - {blocker, if any}
+
+   ## Decisions Made
+   - {architectural decisions from impl agents, if any}
+   ```
+
+6. **Token-to-outcome check**: Review each agent's report:
+   - IF agent reports no file modifications AND no test additions AND no fixes:
+     Log: `ZERO-OUTPUT: {agent-name} — no meaningful changes`
+   - IF 2+ zero-output agents in same wave:
+     Log: `WARNING: wave over-provisioned`
+     Reduce agent count for next wave by zero-output count
+
+7. Pass context from this wave to next wave via the wave state file, NOT via message relay
 
 ---
 
@@ -330,6 +376,8 @@ Scale to remaining work — "delta" means focused, not necessarily small:
 
 Use the same wave-prep → impl-agent pattern but with scope matching the CTO's delta plan.
 
+After each wave in delta iteration, write the wave state file and run the token-to-outcome check (same as run_full_iteration steps 5-6).
+
 #### Step 4: Recovery Check
 
 After implementation agents complete:
@@ -352,7 +400,12 @@ Task({
 })
 ```
 
-If tests **fail**: follow RP-2 (partial rollback) — spawn targeted fix agents for specific failures, don't revert passing tasks. If fixes fail twice: note this for the completion assessment and let the next iteration handle it.
+If tests **fail**: follow RP-2 — spawn targeted fix agents. Track attempts:
+  fix_attempt_tracker[task] += 1
+  IF fix_attempt_tracker[task] >= 2: mark DEFERRED, skip this iteration
+  IF deferred_tasks[task] >= 2: AskUserQuestion to escalate
+Reset fix_attempt_tracker at the start of each iteration. Increment
+deferred_tasks[task] if task is still DEFERRED entering a new iteration.
 
 ---
 
@@ -366,7 +419,7 @@ Task({
   model: "opus",
   team_name: "legion-{slug}",
   name: "assess-iter{N}",
-  prompt: "{read {LEGION_SKILL_DIR}/templates/completion-check-prompt.md, fill placeholders — include the verifier's confidence level (HIGH/MEDIUM/LOW) and verification methods used}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/completion-check-prompt.md, fill placeholders — include the verifier's confidence level (HIGH/MEDIUM/LOW) and verification methods used AND for any T1+ tasks completed this iteration, include their failure-mode checklists from the master task list}",
   description: "Assess completion iteration {N}"
 })
 ```
@@ -521,6 +574,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all CTO/verifier/impl prompts
 17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the CTO before implementation begins
 18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback), on context pressure follow RP-4 (conservation mode)
+19. **WAVE STATE FILES ARE MANDATORY** — write after every wave to `.claude/plans/legion-{slug}/wave-{I}-{W}-state.md`
 
 ---
 

@@ -9,6 +9,11 @@ When things go wrong in a multi-agent swarm, follow these procedures instead of 
 - Agent has been idle for an extended period with no output
 - Agent reported an error but didn't mark task as completed
 
+**Timeout threshold**:
+- If all other agents in the same wave have completed and this agent has not
+  responded, it is stuck. No wall-clock timeout — the signal is relative:
+  "all peers finished, this one didn't."
+
 **Procedure**:
 1. Check the agent's task status via TaskList
 2. If stuck: spawn a replacement agent with name `{original-name}-r` (e.g., `impl-task1-stream-a-r`)
@@ -35,6 +40,13 @@ When things go wrong in a multi-agent swarm, follow these procedures instead of 
    - Name: `fix-iter{I}-w{W}-{letter}` or `fix-task{T}-{letter}`
 4. After fixes, re-run verification for the failed tasks only
 5. If fixes fail twice: escalate to the next iteration (Legion) or flag for user (Hydra)
+
+**Fix loop prevention**:
+- Track fix attempts per task: `fix_attempts: { "task": count }`
+- Max 2 fix attempts per task per iteration
+- After 2 failures in ONE iteration: mark task as DEFERRED, proceed with other work
+- After DEFERRED for 2 consecutive iterations: escalate to user via AskUserQuestion
+  ("Task X has failed fixes for 2 iterations. Skip / Different approach / Investigate?")
 
 **Key rule**: Surgical fixes, not full rollbacks. Preserve passing work.
 

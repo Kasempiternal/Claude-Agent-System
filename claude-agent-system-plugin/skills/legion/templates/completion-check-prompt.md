@@ -14,6 +14,9 @@ MAX ITERATIONS: {max_iterations}
 1. **Master task list**: Read `.claude/plans/legion-{slug}/project-tasks.md` — the source of truth
 2. **Verification report**: The verifier's results from this iteration
 3. **Task list**: Use `TaskList` to see agent team task status
+4. **Failure-mode checklists**: For T1+ tasks completed this iteration, the
+   orchestrator includes the failure-mode entries from the master task list.
+   If not provided, extract them from the master task list yourself.
 
 ## Your Mission
 
@@ -51,6 +54,15 @@ Perform a thorough completion assessment across 5 dimensions:
 - **Edge cases**: Are boundary conditions handled? Are inputs validated at system boundaries?
 - **Code quality**: Is the code readable, maintainable, and free of obvious anti-patterns?
 
+### 6. Risk Tier Confirmation (Tier 1+ only)
+For each T1/T2/T3 task completed this iteration:
+- Was the detection mechanism implemented? (test for the failure scenario)
+- Is the rollback path viable?
+- Was the weakest assumption validated?
+
+If ANY T1+ task lacks required controls: CANNOT be COMPLETE.
+Add "Complete risk controls for T{tier} task: {task}" as top remaining priority.
+
 ## Progress Score
 
 Calculate a PROGRESS_SCORE from 0-10 measuring how much CHANGED this iteration (not overall completion):
@@ -72,6 +84,7 @@ Verification confidence: {HIGH|MEDIUM|LOW} (methods: {test-suite, build, run, sy
 Tests: {status from verifier}
 TODOs: {count} found ({critical_count} critical)
 Integration: {COMPLETE | GAPS — list gaps}
+Risk controls: {ALL_CONFIRMED | GAPS — T{tier} {task}: missing {control}}
 Quality: Error handling: {GOOD/FAIR/POOR} | Edge cases: {GOOD/FAIR/POOR} | Code: {GOOD/FAIR/POOR}
 PROGRESS_SCORE: {0-10}
 
