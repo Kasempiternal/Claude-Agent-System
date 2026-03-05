@@ -103,8 +103,10 @@ Master task list written. Ready for user confirmation.
 
 ### Step 3: Plan Delta Waves
 - Focus on: (1) fixing regressions, (2) completing high-priority remaining items, (3) integration
-- Usually 1 wave for delta iterations
-- Smaller agent count: 1-4 targeted agents
+- Scale delta mode to remaining work — "delta" means focused, not necessarily small:
+  - **>30% P1 tasks remain**: 1-2 waves, 2-6 agents
+  - **10-30% P1 tasks remain**: 1 wave, 2-4 agents
+  - **<10% P1 tasks remain**: 1 wave, 1-2 agents
 
 ### Step 3.5: Validate Delta Plan
 
@@ -119,6 +121,7 @@ CTO ANALYSIS COMPLETE (DELTA)
 Iteration: {N} | Progress: {checked}/{total} tasks ({percent}%)
 CHANGES TO TASK LIST:
   Newly completed: {count} | Regressed: {count} | Added: {count}
+Quality items resolved: {count} (bug fixes, test additions, error handling improvements)
 DELTA PLAN:
   Waves: {W} | Tasks this iteration: {count} | Agents needed: ~{estimate}
   Wave 1: {task summaries} -> {agent count} agents

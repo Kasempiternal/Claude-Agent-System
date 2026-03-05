@@ -17,6 +17,7 @@ Focus on:
 5. Ensuring naming conventions are consistent across iteration boundaries
 6. Simplifying control flow where possible
 7. Removing any iteration scaffolding (temporary workarounds, placeholder code)
+8. Ensuring hardening fixes follow unified patterns — the hardening round may have added defensive code and error handling; include these in your simplification scope but do NOT remove intentional defensive code (try/catch, input validation, null checks at boundaries). Only simplify if the defensive code is redundant or inconsistent with the rest of the codebase.
 
 Do NOT change functionality — only simplify and clarify.
 

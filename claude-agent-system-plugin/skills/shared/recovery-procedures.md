@@ -59,8 +59,8 @@ When things go wrong in a multi-agent swarm, follow these procedures instead of 
 ## RP-4: Context Pressure
 
 **Detection signals**:
-- Iteration count > 3 (Legion)
-- Total agents spawned > 20 across all iterations
+- Iteration count > 5 (Legion)
+- Total agents spawned > 50 across all iterations
 - Iteration log > 50K tokens cumulative
 - Orchestrator starting to lose track of prior decisions
 

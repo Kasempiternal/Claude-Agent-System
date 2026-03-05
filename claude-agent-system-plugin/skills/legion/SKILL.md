@@ -191,8 +191,7 @@ Initialize state:
 ```
 iteration_count = 0
 status = "RUNNING"
-consecutive_no_progress = 0
-prev_completed_count = 0
+consecutive_zero_progress = 0
 iteration_log = []
 ```
 
@@ -207,21 +206,19 @@ ELSE:
   run_delta_iteration()       // Delta scouts → CTO updates → targeted impl
 
 run_verification()
-completed_count = run_completion_assessment()
+progress_score = run_completion_assessment()  // returns PROGRESS_SCORE (0-10) from assessor
 
 // Exit conditions
 IF verdict == "COMPLETE":
   status = "COMPLETE"
 ELIF iteration_count >= max_iterations:
   status = "MAX_REACHED"
-ELIF completed_count == prev_completed_count:
-  consecutive_no_progress += 1
-  IF consecutive_no_progress >= 2:
+ELIF progress_score == 0:
+  consecutive_zero_progress += 1
+  IF consecutive_zero_progress >= 3:
     status = "STALLED"
 ELSE:
-  consecutive_no_progress = 0
-
-prev_completed_count = completed_count
+  consecutive_zero_progress = 0
 
 // Checkpoint pause
 IF status == "RUNNING" AND checkpoint_mode:
@@ -230,13 +227,13 @@ IF status == "RUNNING" AND checkpoint_mode:
 // Log iteration
 iteration_log.append({
   iteration: iteration_count,
-  completed: completed_count,
+  progress_score: progress_score,
   verdict: verdict,
   summary: "{compressed 1-line summary}"
 })
 
 // Context pressure check (RP-4)
-IF iteration_count > 3 OR total_agents_spawned > 20:
+IF iteration_count > 5 OR total_agents_spawned > 50:
   Display "CONTEXT PRESSURE: entering conservation mode"
   Compress iteration_log entries to ~100 tokens each
   Delegate ALL file reading to sub-agents (orchestrator reads nothing directly)
@@ -320,7 +317,12 @@ The CTO will update the master task list and plan targeted fixes.
 
 #### Step 3: Targeted Implementation
 
-Usually 1 wave with 1-4 agents. Use the same wave-prep → impl-agent pattern but with smaller scope.
+Scale to remaining work — "delta" means focused, not necessarily small:
+- **>30% P1 tasks remain**: 1-2 waves, 2-6 agents
+- **10-30% P1 tasks remain**: 1 wave, 2-4 agents
+- **<10% P1 tasks remain**: 1 wave, 1-2 agents
+
+Use the same wave-prep → impl-agent pattern but with scope matching the CTO's delta plan.
 
 #### Step 4: Recovery Check
 
@@ -365,13 +367,67 @@ Task({
 
 Returns a verdict: **COMPLETE**, **CONTINUE**, or **STALLED**.
 
-Also returns `completed_count` (number of checked tasks) for the circuit breaker.
+Also returns `progress_score` (0-10) measuring how much changed this iteration — used by the circuit breaker. Bug fixes, test additions, and quality work all count as progress even without new task checkboxes.
 
 ---
 
-## Phase 7: Post-Loop Simplification (Only if COMPLETE)
+## Phase 6.5: Mandatory Hardening Round
 
-If the loop exited with status `COMPLETE`, run a simplification pass.
+**Always runs** regardless of exit status (COMPLETE, MAX_REACHED, or STALLED). This is a quality gate — every project gets defensive review.
+
+### Step 1: Hardening Scouts (2-3 agents)
+
+Spawn 2-3 hardening scouts to find remaining issues:
+
+```javascript
+Task({
+  subagent_type: "Explore",
+  model: "opus",
+  team_name: "legion-{slug}",
+  name: "harden-scout-{focus}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/hardening-prompt.md, set ROLE=SCOUT, fill placeholders}",
+  description: "Hardening scout: {focus}"
+})
+```
+
+Focus areas across scouts: bug hunting, error handling, integration. Launch ALL in ONE message.
+
+### Step 2: Hardening Fixes (2-4 agents)
+
+After scouts report, spawn fix agents for findings:
+
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  model: "opus",
+  team_name: "legion-{slug}",
+  name: "harden-fix-{letter}",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/hardening-prompt.md, set ROLE=FIX, fill with scout findings and exclusive file list}",
+  description: "Hardening fix: {assigned issues summary}"
+})
+```
+
+Assign each fix agent exclusive file ownership — no file in two fix agents. Launch ALL in ONE message.
+
+### Step 3: Hardening Verification (1 agent)
+
+```javascript
+Task({
+  subagent_type: "general-purpose",
+  team_name: "legion-{slug}",
+  name: "verify-hardening",
+  prompt: "{read {LEGION_SKILL_DIR}/templates/verification-prompt.md, focus on hardening fixes only}",
+  description: "Verify hardening round — no regressions"
+})
+```
+
+**Budget**: 5-8 agents total for the hardening round.
+
+---
+
+## Phase 7: Post-Loop Simplification
+
+Run a simplification pass regardless of exit status. This ensures code quality is cleaned up after both the main loop and the hardening round.
 
 Group all modified files by MODULE. Spawn 2-6 code-simplifier teammates:
 
@@ -403,13 +459,17 @@ LEGION {status}
   Status: {COMPLETE | MAX_REACHED | STALLED}
 
   -- Iteration Log --
-  Iter 1: {completed}/{total} tasks | {summary}
-  Iter 2: {completed}/{total} tasks | {summary}
+  Iter 1: progress={score}/10 | {summary}
+  Iter 2: progress={score}/10 | {summary}
   ...
 
   -- Final Task Status --
   P1: {done}/{total} | P2: {done}/{total} | P3: {done}/{total}
   Tests: {PASS/FAIL}
+
+  -- Hardening Round --
+  Findings: {critical}/{major}/{minor}
+  Fixed: {count} | Not fixable: {count}
 
   {If COMPLETE:}
   Simplification: {count} files across {count} modules
@@ -441,7 +501,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 3. **ITERATION LOOP WITHIN SESSION** — all iterations happen in one conversation, not across sessions
 4. **MASTER TASK LIST IS SOURCE OF TRUTH** — only the CTO agent writes to it (single-writer pattern)
 5. **FULL EXPLORATION ONLY ONCE** — iteration 1 gets full scouts; iteration 2+ gets delta scouts only
-6. **CIRCUIT BREAKER IS MANDATORY** — 2 consecutive iterations with zero newly completed tasks → STALLED, stop
+6. **CIRCUIT BREAKER IS MANDATORY** — 3 consecutive iterations with zero progress_score → STALLED, stop
 7. **EXCLUSIVE FILE OWNERSHIP PER WAVE** — no file in two agents within the same wave
 8. **NEVER IMPLEMENT BEFORE CONFIRMATION** — user approves the iteration 1 plan before any code is written
 9. **DELEGATE HEAVY ANALYSIS** — use CTO for task list management, wave-prep for agent specs, assessors for completion checks
@@ -466,6 +526,9 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 - Implementers: `impl-iter{I}-w{W}-{letter}` (e.g., impl-iter1-w1-a)
 - Verifiers: `verify-iter{N}`
 - Assessors: `assess-iter{N}`
+- Hardening scouts: `harden-scout-{focus}` (e.g., harden-scout-bugs, harden-scout-errors, harden-scout-integration)
+- Hardening fixers: `harden-fix-{letter}` (e.g., harden-fix-a, harden-fix-b)
+- Hardening verifier: `verify-hardening`
 - Simplifiers: `simplify-module-{name}`
 
 ---
@@ -490,11 +553,20 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 |-------|---------------|-------|-------|---------|
 | Delta Scouts | Explore | **Opus** | 2-3 | Assess what changed/broke/remains |
 | CTO Analysis | general-purpose | **Opus** | 1 | Update task list, plan targeted fixes |
-| Wave Prep | general-purpose | **Opus** | 1 | Prepare fix agent specs |
-| Implementation | general-purpose | **Opus** | 1-4 | Targeted fixes |
+| Wave Prep | general-purpose | **Opus** | 1 per wave | Prepare fix agent specs |
+| Implementation | general-purpose | **Opus** | 2-6 (scaled) | Targeted fixes — scaled to remaining P1 work |
 | Verification | general-purpose | default | 1 | Run tests |
 | Completion | general-purpose | **Opus** | 1 | Assess if done |
 | **Iteration 2+ Total** | | | **~5-12** | |
+
+### Hardening Round (Post-Loop)
+
+| Phase | Teammate Type | Model | Count | Purpose |
+|-------|---------------|-------|-------|---------|
+| Hardening Scouts | Explore | **Opus** | 2-3 | Find bugs, error handling gaps, integration issues |
+| Hardening Fixes | general-purpose | **Opus** | 2-4 | Fix scout findings with exclusive file ownership |
+| Hardening Verification | general-purpose | default | 1 | Confirm no regressions |
+| **Hardening Total** | | | **~5-8** | |
 
 ---
 
@@ -509,9 +581,11 @@ Phase 4:     CTO full analysis -> master task list + wave plan
 Phase 5:     User confirms plan
 Phase 6:     ITERATION LOOP:
                Iter 1:  full_iteration (waves from CTO plan)
-               Iter 2+: delta_scouts -> CTO delta -> targeted impl
-               Each:    verify -> assess completion -> loop or exit
-Phase 7:     Simplification (if COMPLETE)
+               Iter 2+: delta_scouts -> CTO delta -> targeted impl (scaled to remaining work)
+               Each:    verify -> assess completion (progress_score 0-10) -> loop or exit
+Phase 6.5:   HARDENING ROUND (always runs):
+               harden scouts -> harden fixes -> verify no regressions
+Phase 7:     Simplification (always runs)
 Phase 8:     Final report -> shutdown -> TeamDelete()
 ```
 
