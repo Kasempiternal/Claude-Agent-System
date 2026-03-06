@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.5.0 — `/setup-swarm`: One-Command Agent Teams Setup**
+> **v7.8.0 — Legion Orchestration Overhaul**
 >
-> New `/setup-swarm` skill enables the Agent Teams feature in your `settings.json` automatically — no manual JSON editing needed. Required for `/hydra` and `/legion`. Both swarm skills now warn you to close all other Claude Code sessions before setup, since editing `settings.json` can crash active sessions.
+> Legion gets three releases of improvements: mandatory hardening round that runs on every project (v7.6.0), verification strategy system with confidence levels (v7.7.0), and wave state files with three-tier compression and fix tracking (v7.8.0). Circuit breaker is now smarter — uses progress scoring (0-10) instead of simple task counts, and tolerates 3 zero-progress iterations before stalling.
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -134,28 +134,35 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 1. **Project Parse** - Parses holistic project description, extracts `--max-iterations` and `--checkpoint` flags
 2. **Team Init** - Creates team + structural phase tasks
 3. **Full Exploration** - Opus scout teammates explore the entire project scope
-4. **CTO Analysis** - CTO analyst creates master task list, decomposes project into modules and waves
+4. **CTO Analysis** - CTO analyst creates master task list with verification strategy, decomposes project into modules and waves
 5. **User Confirmation** - You review the CTO's plan, then confirm
 6. **Iteration Loop** - The core autonomous loop:
-   - Iteration 1: full wave-based implementation (Hydra-scale)
-   - Iteration 2+: delta scouts -> CTO updates task list -> targeted implementation
-   - Each iteration: verify -> assess completion -> loop or exit
-   - Exit: all P1 tasks done + tests pass, OR max iterations, OR stall detected
-7. **Simplification** - Module-grouped cleanup (only if project completed)
-8. **Final Report & Cleanup** - Iteration log, final task status, shutdown, clean up
+   - Iteration 1: full wave-based implementation (Hydra-scale), wave state files written after each wave
+   - Iteration 2+: delta scouts -> CTO updates task list -> scaled implementation (agents sized to remaining P1 work)
+   - Each iteration: verify (with confidence levels) -> assess completion (progress score 0-10) -> loop or exit
+   - Exit: all P1 tasks done + tests pass, OR max iterations, OR 3 consecutive zero-progress iterations
+7. **Hardening Round** - Mandatory defensive review: scouts find bugs/gaps, fix agents resolve them, verifier confirms no regressions (always runs regardless of exit status)
+8. **Simplification** - Module-grouped cleanup (always runs)
+9. **Final Report & Cleanup** - Iteration log with progress scores, hardening results, final task status, shutdown
 
 ### Features
 
 - **Autonomous iteration loop** — keeps deploying swarms until the project is done
 - **Master task list** — living checkbox document, updated each iteration by the CTO analyst
+- **Verification strategy** — CTO defines test/build/run commands and verification chain per project type
 - **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
-- **Recovery procedures** — stuck agent replacement, partial rollback, budget overrun protection, context pressure conservation
+- **Wave state files** — each wave writes a state file to disk for reliable cross-wave context
+- **Three-tier compression** — context management scales from full fidelity to conservation mode as iterations grow
+- **Fix tracking** — tracks fix attempts per task, defers after 2 failures, escalates to user after 2 deferred iterations
+- **Mandatory hardening round** — post-loop defensive review with scouts, fix agents, and regression verification (always runs)
+- **Recovery procedures** — stuck agent replacement, partial rollback, budget overrun protection
 - **Anti-pattern validation** — catches coordinator-implements-code, redundant agents, file overlap, scope drift
-- **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ is light (5-12 agents)
-- **Circuit breaker** — stops after 2 consecutive iterations with no progress
+- **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ scales to remaining P1 work (5-12 agents)
+- **Progress scoring** — completion assessment returns a 0-10 score; bug fixes and test additions count as progress
+- **Circuit breaker** — stops after 3 consecutive iterations with zero progress score
 - **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
 - **Configurable max iterations** (`--max-iterations N`, default 5)
-- **Post-loop simplification** — module-grouped code cleanup after project completion
+- **Post-loop simplification** — module-grouped code cleanup (always runs)
 
 ---
 
