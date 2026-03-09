@@ -5,7 +5,7 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 ## Skills
 
 ### `/zk` - Intelligent Router
-Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
+Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/siege`, `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
 
 ```bash
 /zk build a complete todo app from scratch      # -> Legion (holistic project, iterative)
@@ -19,6 +19,35 @@ Best for:
 - Any implementation task — ZK picks the right mode for you
 
 > **Escape hatch**: You can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly.
+
+### `/siege` - External Orchestrator with Worker-Judge Separation `BETA`
+Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-spawning. Independent **two-skeptic adversarial verifiers** evaluate work they didn't produce. Exit decisions are **arithmetic, not judgment**: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`.
+
+> **Requires Agent Teams**: Run `/setup-swarm` to enable. Workers use Agent Teams internally for coordination.
+
+> **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
+
+```bash
+/siege build a production-ready e-commerce platform with auth, billing, and dashboard
+/siege create an entire SaaS API from scratch --max-iterations 8 --worker-budget 8
+/siege implement the full platform end to end --checkpoint
+```
+
+Best for:
+- Mission-critical, reliability-sensitive projects
+- Large projects needing maximum rigor (XL scope, 10+ modules)
+- When you need independent verification (worker-judge separation)
+- Projects where premature exit is unacceptable
+
+Features:
+- **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
+- **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
+- **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
+- **Active mid-task coordination** — mandatory interface contracts, broadcast-on-discovery, sync checkpoints
+- **Arithmetic-only exit decisions** — no judgment, pure number comparison
+- **Configurable worker budget** (`--worker-budget N`, default $5.00)
+- **Mandatory hardening round** — always runs, even on stall
+- **Post-loop simplification** — module-grouped cleanup
 
 ### `/legion` - Iterative Swarm Loop `BETA`
 Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
@@ -47,8 +76,8 @@ Features:
 - **Configurable max iterations** (`--max-iterations N`, default 5)
 - **Post-loop simplification** — module-grouped code cleanup after project completion
 
-### `/hydra` - Multi-Task Parallel Swarm Coordinator
-Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
+### `/hydra` - Multi-Task Parallel Swarm Coordinator `BETA`
+Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do. Agents within each wave **collaborate in real-time** via mailbox messaging, and global verification uses a **two-skeptic adversarial debate**.
 
 > **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
@@ -68,6 +97,10 @@ Features:
 - **Agent Teams powered** — uses TeamCreate, TaskCreate/TaskUpdate/TaskList, SendMessage for structured coordination
 - **Cross-task file conflict analysis** — builds a DAG of file ownership at plan time
 - **Wave-based execution** — parallel where safe, sequential where files overlap
+- **Inter-agent collaboration** — mailbox messaging with pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints
+- **Two-skeptic adversarial global verification** — two independent skeptics must AGREE before global pass; disagreements escalate to user
+- **Mailbox persistence across waves** — Wave 2+ agents can read Wave 1 interface decisions
+- **Collaboration health metrics** — message counts, interface proposals, and zero-message warnings in final report
 - **Shared scout pool** — Opus scouts explore for all N tasks simultaneously
 - **Per-task plans + coordination file** — editable before implementation
 - **Module-grouped simplification** — ensures cross-task code consistency
@@ -196,9 +229,10 @@ Features:
 
 | Skill | Use Case | Agents | Modifies Code? |
 |-------|----------|--------|----------------|
-| `/zk` | Auto-routes to best mode | Router only (delegates to legion/hydra/pcc-opus/pcc) | Via delegated skill |
+| `/zk` | Auto-routes to best mode | Router only (delegates to siege/legion/hydra/pcc-opus/pcc) | Via delegated skill |
+| `/siege` `BETA` | Max-rigor iterative completion | External `claude -p` workers + two-skeptic verifiers (Agent Teams inside) | Yes |
 | `/legion` `BETA` | Iterative project completion | Opus scouts + CTO + wave-based Opus implementers, looped (Agent Teams) | Yes |
-| `/hydra` | Multi-task parallel swarms | Opus scouts + analyst teammates + wave-based Opus implementers (Agent Teams) | Yes |
+| `/hydra` `BETA` | Multi-task parallel swarms with collaboration | Opus scouts + analyst teammates + wave-based Opus implementers + two-skeptic verifiers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
@@ -212,12 +246,28 @@ Features:
 
 1. **Analyze** - Walks a 5-step decision tree against the user's request
 2. **Route** - First matching rule wins:
-   - **Step 0**: Holistic project needing iterative completion? -> Legion
+   - **Step 0**: Holistic project needing iterative completion?
+     - XL scope / reliability-critical / mission-critical -> Siege
+     - Standard scope -> Legion
    - **Step 1**: Multiple independent deliverables? -> Hydra
    - **Step 2**: Scale word + broad noun ("entire codebase")? -> Hydra
    - **Step 3**: High-stakes keyword + qualifying signal? -> PCC-Opus
    - **Step 4**: Everything else -> PCC (default)
 3. **Delegate** - Invokes the selected skill with the original task unchanged
+
+### `/siege` Flow
+
+0. **Prerequisites** - Verify Agent Teams enabled, locate templates, detect test/build commands
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
+2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
+3. **Orchestrator Loop** - For each iteration:
+   - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
+   - Orchestrator runs test/build as independent gate check
+   - Spawn TWO-SKEPTIC verifier via `claude -p` (two skeptics debate independently)
+   - Arithmetic decision: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`
+4. **Hardening** - Always runs: spawn hardening worker (scouts find issues, fix agents resolve)
+5. **Simplification** - Always runs: module-grouped cleanup worker
+6. **Final Report** - Per-iteration progress, skeptic debate highlights, hardening results
 
 ### `/legion` Flow
 
@@ -244,10 +294,10 @@ Features:
 4. **Delegated Synthesis** - `analyst-synthesis` teammate reads scout reports, writes N plans + coordination.md, resolves conflicts, sends compressed summary back to orchestrator
 5. **Clarification** - Batched questions across all tasks (using analyst summary)
 6. **User Review** - You review summary + plan files, then confirm
-7. **Wave Implementation** - Per wave: `analyst-wave-prep` teammate reads plans and returns agent specs; orchestrator spawns impl agents from specs
-8. **Per-Wave Verification** - Tests after each wave; global integration check after all waves
+7. **Wave Implementation** - Per wave: `analyst-wave-prep` teammate prepares agent specs with mailbox paths; orchestrator creates inbox files and spawns impl agents with inline collaboration protocol. Agents exchange interface proposals before coding, broadcast discoveries, and read inboxes at sync checkpoints
+8. **Per-Wave Verification** - Single verifier per wave; after ALL waves: **two-skeptic adversarial global verification** (two independent skeptics evaluate, write findings, debate disagreements, review collaboration health)
 9. **Simplification** - Module-grouped cleanup across all task boundaries
-10. **Final Report & Cleanup** - Per-task status, shutdown teammates, `TeamDelete`
+10. **Final Report & Cleanup** - Per-task status, collaboration metrics (messages, proposals, broadcasts), two-skeptic verdict, shutdown teammates, `TeamDelete`
 
 ### `/pcc` and `/pcc-opus` Flow
 

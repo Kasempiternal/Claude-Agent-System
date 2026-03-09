@@ -44,9 +44,29 @@ Wave 2 (sequential): [Task 3: Fix payments]
 | Wave 1 Verification | 1 | default |
 | Wave 2 Implementation | {agents_w2} | Opus |
 | Wave 2 Verification | 1 | default |
-| Global Verification | 1-2 | Opus |
+| Global Verification | 2 | Opus (two-skeptic) |
 | Simplification | {simplifier_count} | Opus |
 | **Total** | **{total}** | |
+
+## Mailbox Directory
+
+Implementation agents communicate via JSONL mailboxes at `.claude/plans/hydra-{slug}/mailboxes/`.
+
+| Agent Name | Inbox Path | Wave | Teammates |
+|------------|-----------|------|-----------|
+| {agent} | mailboxes/{agent}.jsonl | {W} | {other agents in wave} |
+
+Mailboxes persist across waves. Wave 2+ agents can read Wave 1 inboxes for prior interface decisions.
+
+## Collaboration Protocol
+
+Agents follow the shared collaboration protocol:
+- Pre-coding contract exchange (interface proposals before coding)
+- Broadcast-on-discovery (runtime notifications to peers)
+- Sync checkpoints (mandatory inbox reads at key points)
+- Message types: interface_proposal, broadcast, challenge, ack, blocker, sync
+
+Global verification uses Two-Skeptic Adversarial Debate.
 
 ---
 **USER: Review this coordination plan. Edit wave assignments or conflict resolutions, then confirm to proceed.**

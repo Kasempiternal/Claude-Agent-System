@@ -1,6 +1,6 @@
 ---
 name: zk
-description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (pcc, pcc-opus, or hydra). Use instead of choosing manually."
+description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (siege, legion, hydra, pcc-opus, or pcc). Use instead of choosing manually."
 model: opus
 argument-hint: <task description>
 ---
@@ -15,23 +15,30 @@ Task: $ARGUMENTS
 
 Walk through these steps IN ORDER. Stop at the first match.
 
-### Step 0: LEGION — Large holistic project needing iterative completion?
+### Step 0: Large holistic project needing iterative completion?
 
 Check if the input describes a **single large project** (not a list of independent tasks) with:
 - Build/create/implement keywords + scope qualifiers: "entire", "full", "complete", "from scratch", "end to end", "whole"
 - AND the scope suggests **multi-iteration work** — not a single deliverable but a project that will need exploration, planning, implementation, testing, and refinement cycles
 
-**Key test**: "Would this take multiple rounds of build-test-fix to get right?" If YES, it's a Legion project.
+**Key test**: "Would this take multiple rounds of build-test-fix to get right?" If YES, this is an iterative project.
+
+**Sub-routing** — SIEGE vs LEGION:
+- **SIEGE** if ANY of: "reliability-critical", "mission-critical", "production", "5+ iterations expected", user explicitly requests `/siege`, OR scope suggests XL (10+ modules, full platform, enterprise-grade)
+- **LEGION** for standard iterative projects that need the loop but not maximum rigor
 
 Examples:
-- "build a complete todo app with local storage from scratch" → **LEGION** (full project, iterative)
-- "create an entire e-commerce platform with auth, cart, and checkout" → **LEGION** (holistic project, multi-iteration)
-- "implement the full API layer end to end with tests" → **LEGION** (broad scope, needs iteration)
+- "build a complete todo app with local storage from scratch" → **LEGION** (standard iterative project)
+- "create an entire e-commerce platform with auth, cart, and checkout" → **SIEGE** (XL scope, reliability-critical)
+- "implement the full API layer end to end with tests" → **LEGION** (broad scope, standard rigor)
+- "build a production-ready payment processing system from scratch" → **SIEGE** (production + mission-critical)
+- "create an entire SaaS platform with auth, billing, dashboard, API" → **SIEGE** (XL scope, 10+ modules)
 - "add a settings page" → **NOT matched** (single deliverable) → continue to Step 1
 - "fix auth; add dashboard; update API" → **NOT matched** (independent tasks, not a project) → continue to Step 1
 - "refactor the payment system" → **NOT matched** (refactor, not build from scratch) → continue to Step 3
 
-If matched → Route to **Legion**.
+If matched as SIEGE → Route to **Siege**.
+If matched as LEGION → Route to **Legion**.
 
 ### Step 1: HYDRA — Multiple independent deliverables?
 
@@ -123,6 +130,11 @@ Routing: holistic project, needs iterative build-test-fix cycles
 ```
 
 ```
+ZK > SIEGE
+Routing: XL holistic project, reliability-critical, needs adversarial verification
+```
+
+```
 ZK > PCC
 Routing: standard single task, clear scope
 ```
@@ -141,6 +153,7 @@ Routing: 3 independent deliverables detected
 
 After displaying the routing decision, immediately invoke the selected skill using the `Skill` tool, passing the original task unchanged:
 
+- Siege → `Skill(skill: "cas:siege", args: "$ARGUMENTS")`
 - Legion → `Skill(skill: "cas:legion", args: "$ARGUMENTS")`
 - PCC → `Skill(skill: "cas:pcc", args: "$ARGUMENTS")`
 - PCC-Opus → `Skill(skill: "cas:pcc-opus", args: "$ARGUMENTS")`
@@ -150,4 +163,4 @@ Do NOT modify, rewrite, or "optimize" the user's original task text. Pass `$ARGU
 
 ## Escape Hatch
 
-Users can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
+Users can always bypass ZK and invoke `/siege`, `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.

@@ -1,27 +1,26 @@
-# Global Verification Prompt Template
+# Global Verification — Two-Skeptic Adversarial Debate
 
-You are an Opus code reviewer performing CROSS-TASK integration verification for a Hydra multi-task operation.
+You are SKEPTIC-{A|B} performing independent global verification for a Hydra multi-task operation.
 
 TEAM: hydra-{slug}
-YOUR NAME: review-integration
+YOUR NAME: skeptic-{a|b}-global
+OTHER SKEPTIC: skeptic-{b|a}-global
 
-TASKS COMPLETED:
-{list all N tasks and their summaries}
+TASKS COMPLETED: {list all N tasks}
+FILES MODIFIED: {complete file list}
+CONFLICT RESOLUTIONS: {from coordination.md}
 
 Use TaskList to see the full task status.
 
-FILES MODIFIED ACROSS ALL TASKS:
-{complete file list with which task modified each}
+## Phase 1: Independent Evaluation (before reading counterpart)
 
-CONFLICT RESOLUTIONS APPLIED:
-{from coordination.md}
-
-Your mission:
-1. Verify that changes from different tasks integrate correctly
-2. Check for unintended interactions between task implementations
-3. Verify shared modules work with all tasks' changes
-4. Check for type mismatches, import errors, or API contract violations
-5. Run the full test suite and report results
+Evaluate ALL completed tasks independently:
+1. **Cross-task integration** — do changes from different tasks integrate correctly?
+2. **Unintended interactions** — are there side effects between task implementations?
+3. **Shared module integrity** — do shared modules work with all tasks' changes?
+4. **Type/import/API contract violations** — any mismatches across task boundaries?
+5. **Run full test suite** → report exit code
+6. **Run build** → report exit code
 
 ## Risk-Tiered Verification Depth
 
@@ -38,8 +37,35 @@ For Tier 1+ tasks, validate the failure-mode checklist from the plan:
 - Does the detection mechanism work? (e.g., are there tests for the failure scenario?)
 - Is the rollback path viable? (e.g., can the change be reverted cleanly?)
 
-Report:
-- Integration status (PASS/FAIL)
-- Cross-task issues found (if any)
-- Risk tier verification results (per task)
-- Recommendations
+## Phase 2: Write Findings
+
+Write your findings to `.claude/plans/hydra-{slug}/verify-skeptic-{a|b}.md`:
+- Test results (exit code, pass/fail counts)
+- Build results (exit code)
+- Per-task verification status
+- Issues found (with file paths and evidence)
+- Risk tier verification results
+- Your verdict: PASS or FAIL (with specific reasons if FAIL)
+
+## Phase 3: Debate
+
+1. Read counterpart's findings file at `.claude/plans/hydra-{slug}/verify-skeptic-{b|a}.md`
+2. Acknowledge any issues they found that you missed (ack)
+3. Challenge any disagreements with evidence (run the test yourself, read the code)
+4. Do NOT force consensus — report DISAGREE if genuine disagreement exists
+
+Append your debate notes to your findings file under a `## Debate` section.
+
+## Phase 4: Collaboration Health Review
+
+Review inter-agent collaboration quality:
+- Count total messages in `.claude/plans/hydra-{slug}/mailboxes/*.jsonl`
+- For each wave, count messages per agent
+- Flag any multi-agent wave where agents sent zero messages (WARNING, not failure)
+- Note interface proposals, broadcasts, and challenges exchanged
+
+Append collaboration health to your findings file under a `## Collaboration Health` section.
+
+## Final Report
+
+Report: PASS / FAIL / DISAGREE + integration status + risk tier results + collaboration health

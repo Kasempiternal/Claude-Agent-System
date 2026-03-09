@@ -51,6 +51,14 @@ Use Glob to find the shared governance directory: `Glob("**/skills/shared/risk-t
 
 Display: `HYDRA: Shared governance at {SHARED_DIR}` — the analyst and verifier templates reference `{SHARED_DIR}` for risk tiers, anti-patterns, and recovery procedures.
 
+### Step 3.5: Read Collaboration Templates
+
+Read the collaboration protocol and message schema from the shared directory:
+- `{SHARED_DIR}/collaboration-protocol.md` → store as `COLLAB_PROTOCOL`
+- `{SHARED_DIR}/message-schema.md` → store as `MSG_SCHEMA`
+
+Display: `HYDRA: Collaboration protocol loaded from {SHARED_DIR}`
+
 ---
 
 ## Phase 1: Task Parsing
@@ -72,6 +80,7 @@ Display: `HYDRA: {N} tasks detected` with task list.
 
 1. **TeamCreate** with name `hydra-{slug}` (short kebab-case from task list)
 2. **TaskCreate** one item per user task, plus structural tasks: Exploration, Conflict Analysis, Verification, Simplification
+3. Create `.claude/plans/hydra-{slug}/mailboxes/` directory
 3. **TaskUpdate** to set dependencies: all user tasks blockedBy exploration; conflict analysis blockedBy exploration; verification blockedBy all impl tasks; simplification blockedBy verification. Wave-specific dependencies are set later by the analyst.
 
 ---
@@ -263,7 +272,15 @@ AGENT 1: name=impl-task1-stream-a | files=[file1,file2] | mission="..." | contex
 AGENT 2: ...
 ```
 
+Before launching impl agents: create empty `.jsonl` inbox files for each agent in this wave at `.claude/plans/hydra-{slug}/mailboxes/{agent-name}.jsonl`.
+
 **Construct Task calls directly from these specs** — no plan re-reading needed. Read `{HYDRA_SKILL_DIR}/templates/impl-agent-prompt.md` once to understand the prompt structure, then fill it with each agent's spec data.
+
+When constructing impl agent Task calls from specs, include in each prompt:
+- The collaboration protocol and message schema (inline from `COLLAB_PROTOCOL` and `MSG_SCHEMA`)
+- The agent's inbox path
+- All teammate inbox paths for agents in this wave
+- For Wave 2+: also include Wave 1 agent inbox paths (read-only, for prior interface decisions)
 
 Launch ALL implementation agents across ALL tasks in the same wave in **ONE message**:
 
@@ -294,9 +311,19 @@ After each wave completes, spawn a verifier teammate (`general-purpose`) to run 
 
 If tests **fail**: follow RP-2 (partial rollback) — spawn targeted fix agents for specific failures, don't revert passing tasks.
 
-After ALL waves: spawn a **global verification** pass:
-- 1 test runner for the full suite
-- 1 Opus code review teammate (`review-integration`) — build its prompt by reading `{HYDRA_SKILL_DIR}/templates/verification-prompt.md` and filling placeholders
+After ALL waves: spawn a **two-skeptic adversarial global verification**:
+
+1. Spawn TWO independent skeptic teammates in ONE message:
+   - `skeptic-a-global` (general-purpose, Opus): independently finds failures across all tasks
+   - `skeptic-b-global` (general-purpose, Opus): independent evaluation, same scope
+   Build each prompt by reading `{HYDRA_SKILL_DIR}/templates/verification-prompt.md` and filling placeholders (use `{A|B}` for each skeptic's identity).
+
+2. After both return, read both findings files at `.claude/plans/hydra-{slug}/`:
+   - AGREE on PASS → global verification PASSES
+   - AGREE on FAIL → follow RP-2 for specific failures
+   - DISAGREE → escalate to user via AskUserQuestion with both positions
+
+3. Skeptics also review collaboration health: message counts from mailboxes, flag any multi-agent wave with zero messages
 
 Mark verification task as `in_progress` then `completed`.
 
@@ -351,6 +378,12 @@ HYDRA COMPLETE
 
   Simplification: {count} files across {count} modules
 
+  Collaboration:
+    Total messages: {sum across all mailboxes}
+    Interface proposals: {count} | Broadcasts: {count} | Challenges: {count}
+    {If any multi-agent wave had 0 messages: ⚠️ Wave {W} had zero inter-agent messages}
+    Two-Skeptic Global Verdict: {AGREE-PASS | AGREE-FAIL | DISAGREE}
+
   Plans: .claude/plans/hydra-{slug}/
 ```
 
@@ -380,6 +413,9 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all analyst/verifier prompts
 17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the analyst before implementation begins
 18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback)
+19. **MAILBOXES PERSIST ACROSS WAVES** — do not clear mailbox directory between waves. Later wave agents can read interface decisions from earlier waves.
+20. **COLLABORATION IS EXPECTED** — multi-agent waves should exchange messages. Zero messages in a multi-agent wave triggers a WARNING in the final report, not a failure.
+21. **TWO-SKEPTIC IS GLOBAL ONLY** — per-wave verification remains single verifier. The two-skeptic debate is for global integration after all waves.
 
 ---
 
@@ -390,6 +426,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 - Implementers: `impl-task{N}-stream-{letter}` (e.g., impl-task1-stream-a)
 - Verifiers: `verify-wave{N}`
 - Global reviewer: `review-integration`
+- Global skeptics: `skeptic-a-global`, `skeptic-b-global`
 - Simplifiers: `simplify-module-{name}`
 
 ---
@@ -403,10 +440,10 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 | Wave Prep (per wave) | general-purpose | **Opus** | 1 per wave | Prepare impl agent specs from plans |
 | Implementation (per wave) | general-purpose | **Opus** | 2-6 per task | Write code |
 | Verification (per wave) | general-purpose | default | 1 per wave | Run tests |
-| Global Verification | general-purpose | **Opus** | 1-2 | Cross-task integration check |
+| Global Verification | general-purpose | **Opus** | 2 | Cross-task integration check (two-skeptic debate) |
 | Simplification | code-simplifier | **Opus** | 2-6 | Clean all modified files by module |
 
-**Example (3 tasks, 2 parallel + 1 dependent):** 5 scouts + 1 analyst-synthesis + 1 wave-prep-1 + 8 implementers (Wave 1) + 1 verifier + 1 wave-prep-2 + 3 implementers (Wave 2) + 1 verifier + 1 global reviewer + 3 simplifiers = ~25 teammates
+**Example (3 tasks, 2 parallel + 1 dependent):** 5 scouts + 1 analyst-synthesis + 1 wave-prep-1 + 8 implementers (Wave 1) + 1 verifier + 1 wave-prep-2 + 3 implementers (Wave 2) + 1 verifier + 2 global skeptics + 3 simplifiers = ~27 teammates
 
 ---
 
