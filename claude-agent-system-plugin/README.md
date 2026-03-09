@@ -29,7 +29,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 ```bash
 /siege build a production-ready e-commerce platform with auth, billing, and dashboard
-/siege create an entire SaaS API from scratch --max-iterations 8 --worker-budget 8
+/siege create an entire SaaS API from scratch --max-iterations 8
 /siege implement the full platform end to end --checkpoint
 ```
 
@@ -45,7 +45,6 @@ Features:
 - **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
 - **Active mid-task coordination** — mandatory interface contracts, broadcast-on-discovery, sync checkpoints
 - **Arithmetic-only exit decisions** — no judgment, pure number comparison
-- **Configurable worker budget** (`--worker-budget N`, default $5.00)
 - **Mandatory hardening round** — always runs, even on stall
 - **Post-loop simplification** — module-grouped cleanup
 
@@ -258,7 +257,7 @@ Features:
 ### `/siege` Flow
 
 0. **Prerequisites** - Verify Agent Teams enabled, locate templates, detect test/build commands
-1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`), write config, user confirms
 2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
 3. **Orchestrator Loop** - For each iteration:
    - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)

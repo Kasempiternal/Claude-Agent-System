@@ -2,11 +2,13 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.10.0 — Siege Skill + Shared Collaboration Protocols**
+> **v7.10.1 — Siege Nested Session Fix**
 >
-> **Siege** (v7.9.0): New three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls. Recommended for XL/reliability-critical projects.
+> **Siege fix** (v7.10.1): Fixed `claude -p` workers failing with "cannot be launched inside another Claude Code session." All spawn commands now clear the `CLAUDECODE` env var before launching. Removed unused `--worker-budget` flag (no-op on Max subscription).
 >
-> **Hydra collaboration** (v7.10.0): Agents within each wave now communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification upgraded to two-skeptic adversarial debate. Collaboration health metrics in the final report.
+> **Siege** (v7.9.0): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
+>
+> **Hydra collaboration** (v7.10.0): Agents within each wave communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification uses two-skeptic adversarial debate.
 >
 > **Shared protocol layer**: `collaboration-protocol.md` and `message-schema.md` extracted to `skills/shared/` for reuse across Siege and Hydra.
 >
@@ -124,7 +126,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 ```bash
 /siege build a production-ready e-commerce platform with auth, billing, and dashboard
-/siege create an entire SaaS API from scratch --max-iterations 8 --worker-budget 8
+/siege create an entire SaaS API from scratch --max-iterations 8
 /siege implement the full platform end to end --checkpoint
 ```
 
@@ -138,7 +140,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 ### How Siege Works
 
 0. **Prerequisites** - Verify Agent Teams enabled, locate templates, detect test/build commands
-1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`), write config, user confirms
 2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
 3. **Orchestrator Loop** - For each iteration:
    - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
@@ -156,7 +158,6 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 - **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
 - **Active mid-task coordination** — mandatory interface contracts, broadcast-on-discovery, sync checkpoints
 - **Arithmetic-only exit decisions** — no judgment, pure number comparison
-- **Configurable worker budget** (`--worker-budget N`, default $5.00)
 - **Mandatory hardening round** — always runs, even on stall
 - **Post-loop simplification** — module-grouped cleanup
 
