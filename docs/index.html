@@ -211,6 +211,7 @@ nav{
   color:var(--amber);background:var(--amber-dim);
   padding:.25rem .7rem;border-radius:3px;
 }
+.skill-desc code{font-family:var(--mono);font-size:.82em;color:var(--cyan)}
 
 /* ═══ HOW IT WORKS ═══ */
 .how{padding:4rem 0 8rem}
@@ -566,14 +567,14 @@ footer a:hover{color:var(--cyan)}
 <section class="skills" id="skills">
   <div class="container">
     <div class="section-label reveal">01 &mdash; Skills</div>
-    <h2 class="section-title reveal reveal-delay-1">Six commands.<br>Infinite leverage.</h2>
-    <p class="section-desc reveal reveal-delay-2">Each skill orchestrates a different swarm topology&mdash;from intelligent routing to full multi-task parallel execution.</p>
+    <h2 class="section-title reveal reveal-delay-1">Ten skills.<br>Infinite leverage.</h2>
+    <p class="section-desc reveal reveal-delay-2">Each skill orchestrates a different swarm topology&mdash;from intelligent routing to iterative autonomous loops and adversarial verification.</p>
 
     <div class="skills-grid reveal reveal-delay-3">
       <div class="skill-card">
         <div class="skill-cmd">zk</div>
         <div class="skill-name">Intelligent Router</div>
-        <p class="skill-desc">Analyzes your task and automatically picks the best skill&mdash;PCC, PCC-Opus, or Hydra&mdash;so you don't have to.</p>
+        <p class="skill-desc">Analyzes your task and automatically picks the best skill&mdash;Siege, Legion, Hydra, PCC-Opus, or PCC&mdash;so you don't have to.</p>
         <span class="skill-tag">auto-routing</span>
       </div>
       <div class="skill-card">
@@ -589,10 +590,22 @@ footer a:hover{color:var(--cyan)}
         <span class="skill-tag">max quality</span>
       </div>
       <div class="skill-card">
+        <div class="skill-cmd">siege</div>
+        <div class="skill-name">External Orchestrator</div>
+        <p class="skill-desc">Spawns fresh <code>claude&nbsp;-p</code> sessions per iteration with two-skeptic adversarial verification. Arithmetic-only exit decisions.</p>
+        <span class="skill-tag">beta &mdash; max rigor</span>
+      </div>
+      <div class="skill-card">
+        <div class="skill-cmd">legion</div>
+        <div class="skill-name">Iterative Swarm Loop</div>
+        <p class="skill-desc">Submit a holistic project. Legion keeps deploying swarms autonomously until everything is built or progress stalls.</p>
+        <span class="skill-tag">beta &mdash; autonomous loop</span>
+      </div>
+      <div class="skill-card">
         <div class="skill-cmd">hydra</div>
         <div class="skill-name">Multi-Task Swarm</div>
-        <p class="skill-desc">Submit N tasks at once. Wave-based execution with agent teams that work in parallel across all of them.</p>
-        <span class="skill-tag">n-task parallel</span>
+        <p class="skill-desc">Submit N tasks at once. Agents collaborate via mailbox messaging within waves. Two-skeptic adversarial global verification.</p>
+        <span class="skill-tag">beta &mdash; n-task parallel</span>
       </div>
       <div class="skill-card">
         <div class="skill-cmd">review</div>
@@ -694,7 +707,7 @@ footer a:hover{color:var(--cyan)}
         <div class="hydra-tier" data-tier="4">
           <span class="wave-badge">wave 1</span>
           <div class="parallel-bracket" data-group="wave1">
-            <span class="p-label">parallel &mdash; exclusive file ownership</span>
+            <span class="p-label">parallel &mdash; mailbox collaboration + exclusive file ownership</span>
             <div class="h-node h-impl" data-node="i1">impl-task1<span class="h-sub">stream-a</span></div>
             <div class="h-node h-impl" data-node="i2">impl-task1<span class="h-sub">stream-b</span></div>
             <div class="h-node h-impl" data-node="i3">impl-task2<span class="h-sub">stream-a</span></div>
@@ -714,11 +727,12 @@ footer a:hover{color:var(--cyan)}
           </div>
         </div>
 
-        <div class="hydra-conn-label" data-label="5-6"><span class="conn-icon">&#9662;</span> all waves complete</div>
+        <div class="hydra-conn-label" data-label="5-6"><span class="conn-icon">&#9662;</span> all waves complete &rarr; two-skeptic debate</div>
 
-        <!-- Tier 6: Verify + Simplify -->
+        <!-- Tier 6: Two-Skeptic Verify + Simplify -->
         <div class="hydra-tier" data-tier="6" style="gap:1.5rem">
-          <div class="h-node h-verify" data-node="v1">verify-global<span class="h-sub">integration tests</span></div>
+          <div class="h-node h-verify" data-node="v1">skeptic-a-global<span class="h-sub">independent evaluation</span></div>
+          <div class="h-node h-verify" data-node="v2">skeptic-b-global<span class="h-sub">adversarial debate</span></div>
           <div class="h-node h-simplify" data-node="sim1">simplify-module-a<span class="h-sub">cross-task cleanup</span></div>
           <div class="h-node h-simplify" data-node="sim2">simplify-module-b<span class="h-sub">cross-task cleanup</span></div>
         </div>
@@ -727,7 +741,7 @@ footer a:hover{color:var(--cyan)}
 
         <!-- Tier 7: Final -->
         <div class="hydra-tier" data-tier="7">
-          <div class="h-node h-orchestrator" data-node="final" style="border-width:1px">Final Report<span class="h-sub">N tasks &bull; W waves &bull; ~25 teammates</span></div>
+          <div class="h-node h-orchestrator" data-node="final" style="border-width:1px">Final Report<span class="h-sub">N tasks &bull; W waves &bull; ~27 teammates &bull; collaboration metrics</span></div>
         </div>
 
       </div>
@@ -737,7 +751,7 @@ footer a:hover{color:var(--cyan)}
         <div class="legend-item"><span class="legend-dot l-scout"></span>Explore agents</div>
         <div class="legend-item"><span class="legend-dot l-analyst"></span>Analyst</div>
         <div class="legend-item"><span class="legend-dot l-impl"></span>Implementers</div>
-        <div class="legend-item"><span class="legend-dot l-verify"></span>Verifier</div>
+        <div class="legend-item"><span class="legend-dot l-verify"></span>Two-Skeptic Verifiers</div>
         <div class="legend-item"><span class="legend-dot l-simplify"></span>Simplifiers</div>
         <div class="legend-item"><span class="legend-dot l-comm"></span>SendMessage (inter-agent)</div>
       </div>
@@ -802,9 +816,11 @@ reveals.forEach(r=>observer.observe(r));
     ['[data-node="analyst"]','[data-group="wave1"]','cyan'],
     ['[data-group="wave1"]','[data-group="wave2"]','cyan'],
     ['[data-group="wave2"]','[data-node="v1"]','green'],
+    ['[data-group="wave2"]','[data-node="v2"]','green'],
     ['[data-group="wave2"]','[data-node="sim1"]','blue'],
     ['[data-group="wave2"]','[data-node="sim2"]','blue'],
     ['[data-node="v1"]','[data-node="final"]','cyan'],
+    ['[data-node="v2"]','[data-node="final"]','cyan'],
     ['[data-node="sim1"]','[data-node="final"]','cyan'],
     ['[data-node="sim2"]','[data-node="final"]','cyan'],
   ];
@@ -893,6 +909,26 @@ reveals.forEach(r=>observer.observe(r));
       {sel:'[data-group="scouts"]',nodes:'[data-node^="s"]'},
       {sel:'[data-group="wave1"]',nodes:'[data-node^="i"]'}
     ];
+    // Add skeptic debate comm line (v1 <-> v2)
+    var skepticA=graph.querySelector('[data-node="v1"]');
+    var skepticB=graph.querySelector('[data-node="v2"]');
+    if(skepticA&&skepticB){
+      var dr2=diagram.getBoundingClientRect();
+      var ar2=skepticA.getBoundingClientRect();
+      var br2=skepticB.getBoundingClientRect();
+      var ax2=ar2.right-dr2.left, ay2=ar2.top+ar2.height/2-dr2.top;
+      var bx2=br2.left-dr2.left, by2=br2.top+br2.height/2-dr2.top;
+      var midX2=(ax2+bx2)/2;
+      var d2='M'+ax2+','+ay2+' C'+midX2+','+ay2+' '+midX2+','+by2+' '+bx2+','+by2;
+      var cp2=document.createElementNS(NS,'path');
+      cp2.setAttribute('d',d2);cp2.classList.add('comm-path');svg.appendChild(cp2);
+      var cpLen2=cp2.getTotalLength();
+      paths.push({path:cp2,pathLen:cpLen2,color:'comm'});
+      var circ2=document.createElementNS(NS,'circle');
+      circ2.setAttribute('r','1.5');circ2.classList.add('comm-particle');svg.appendChild(circ2);
+      particles.push({el:circ2,pathIdx:paths.length-1,offset:Math.random(),speed:0.005,bounce:true});
+    }
+
     commGroups.forEach(function(cg){
       var container=graph.querySelector(cg.sel);
       if(!container) return;
