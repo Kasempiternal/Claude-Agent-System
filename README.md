@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.12.0 — Siege Worker Progress Monitor**
+> **v7.13.0 — Siege Worker Hang Prevention**
 >
-> **New in v7.12.0**: Siege workers now show **real-time progress** instead of silent spinning. A Python monitor pipes `claude -p` stream-json output into formatted lines showing tool calls, phase transitions, and elapsed time — so you can see scouts deploying, waves starting, tests running, and results being written as they happen.
+> **New in v7.13.0**: The Siege progress monitor now **wraps** `claude -p` as a child process instead of piping. It detects completion via NDJSON `message_stop` events and result file polling, then kills the worker after a grace period — preventing the 1-hour hangs where `claude -p` finishes work but the process never exits. Pipe mode is preserved as a legacy fallback.
 >
 > **Siege** (v7.9.0+): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
 >

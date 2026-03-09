@@ -171,11 +171,12 @@ Write the filled prompt to `.claude/plans/siege-{slug}/worker-context-iter1.md`.
 
 **If MONITOR_AVAILABLE = true:**
 ```bash
-set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
+python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1 \
+  --result-file ".claude/plans/siege-{slug}/worker-result-iter1.md" \
+  -- claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
   --model opus \
   --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
-  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **If MONITOR_AVAILABLE = false (fallback):**
@@ -249,11 +250,12 @@ Write to `.claude/plans/siege-{slug}/worker-context-iter{N}.md`.
 
 **If MONITOR_AVAILABLE = true:**
 ```bash
-set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
+python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N} \
+  --result-file ".claude/plans/siege-{slug}/worker-result-iter{N}.md" \
+  -- claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
   --model opus \
   --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
-  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N}
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **If MONITOR_AVAILABLE = false (fallback):**
@@ -291,11 +293,12 @@ Write to `.claude/plans/siege-{slug}/verifier-context-iter{N}.md`.
 
 **If MONITOR_AVAILABLE = true:**
 ```bash
-set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
+python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N} \
+  --result-file ".claude/plans/siege-{slug}/verify-result-iter{N}.md" \
+  -- claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
   --model opus \
   --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
-  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N}
+  --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **If MONITOR_AVAILABLE = false (fallback):**
@@ -378,11 +381,12 @@ Write to `.claude/plans/siege-{slug}/hardening-context.md`.
 
 **If MONITOR_AVAILABLE = true:**
 ```bash
-set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
+python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration} \
+  --result-file ".claude/plans/siege-{slug}/hardening-result.md" \
+  -- claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
   --model opus \
   --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
-  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration}
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **If MONITOR_AVAILABLE = false (fallback):**
@@ -419,11 +423,12 @@ Write to `.claude/plans/siege-{slug}/simplifier-context.md`.
 
 **If MONITOR_AVAILABLE = true:**
 ```bash
-set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
+python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration} \
+  --result-file ".claude/plans/siege-{slug}/simplifier-result.md" \
+  -- claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
   --model opus \
   --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
-  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration}
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **If MONITOR_AVAILABLE = false (fallback):**
@@ -525,4 +530,4 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 10. **~700 TOKENS PER ITERATION** — keep your overhead minimal. All analysis happens in spawned sessions.
 11. **CHECKPOINT RESPECTS USER** — if `--checkpoint` is set, always pause between iterations
 12. **LOG EVERYTHING** — append to orchestrator-log.md after every iteration
-13. **UNSET CLAUDECODE** — all `claude -p` spawn commands MUST be prefixed with `unset CLAUDECODE &&`. The parent session sets this env var to prevent re-entrant launches; child workers inherit it and refuse to start without the unset.
+13. **UNSET CLAUDECODE** — in wrapper mode (monitor script), `CLAUDECODE` is automatically removed from the child environment. In fallback mode (no monitor), all `claude -p` spawn commands MUST be prefixed with `unset CLAUDECODE &&`. The parent session sets this env var to prevent re-entrant launches; child workers inherit it and refuse to start without the unset.
