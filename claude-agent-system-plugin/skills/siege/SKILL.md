@@ -2,7 +2,7 @@
 name: siege
 description: "External Orchestrator with Worker-Judge Separation — spawns fresh claude -p sessions per iteration with adversarial two-skeptic verification. Arithmetic exit decisions only. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 model: opus
-argument-hint: <project description> [--max-iterations N] [--checkpoint] [--worker-budget N]
+argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ---
 
 > **Warning: VERY HIGH TOKEN USAGE**: This skill spawns external `claude -p` sessions for workers and verifiers. Each iteration creates 2-3 sessions with Agent Teams inside. Recommended for MAX plan users only.
@@ -81,7 +81,6 @@ Parse `$ARGUMENTS`:
 - Project description (everything that's not a flag)
 - `--max-iterations N` (default: 5)
 - `--checkpoint` (default: off)
-- `--worker-budget N` (default: 5.00, in USD)
 
 ### Create Plans Directory
 
@@ -95,7 +94,6 @@ Write `.claude/plans/siege-{slug}/siege-config.md`:
 PROJECT: {description}
 MAX_ITERATIONS: {N}
 CHECKPOINT: {ON|OFF}
-WORKER_BUDGET: ${N}
 TEST_CMD: {cmd}
 BUILD_CMD: {cmd}
 RUN_CMD: {cmd}
@@ -111,7 +109,6 @@ SIEGE CONFIG
   Project: {description}
   Max iterations: {N}
   Checkpoint: {ON|OFF}
-  Worker budget: ${N}/session
   Test: {cmd}
   Build: {cmd}
 
@@ -133,7 +130,6 @@ Build the full worker prompt by filling `WORKER_FULL_TEMPLATE` with:
 - `{project_description}` from config
 - `{slug}` from config
 - `{plans_dir}` = `.claude/plans/siege-{slug}`
-- `{worker_budget}` from config
 - `{test_command}`, `{build_command}`, `{run_command}` from config
 - `{collaboration_protocol_content}` = full text of `COLLAB_PROTOCOL`
 - `{message_schema_content}` = full text of `MSG_SCHEMA`
@@ -146,15 +142,14 @@ Write the filled prompt to `.claude/plans/siege-{slug}/worker-context-iter1.md`.
 ### Spawn Worker
 
 ```bash
-claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
+unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
   --model opus \
-  --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
 **IMPORTANT**: Use Bash tool with a generous timeout (up to 600000ms / 10 minutes). The worker will take time.
 
-Display: `SIEGE: Worker iter 1 (FULL) spawned — budget $${worker_budget}`
+Display: `SIEGE: Worker iter 1 (FULL) spawned`
 
 ### Parse Result
 
@@ -215,9 +210,8 @@ Write to `.claude/plans/siege-{slug}/worker-context-iter{N}.md`.
 #### B. Spawn Delta Worker
 
 ```bash
-claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
+unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
   --model opus \
-  --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -248,9 +242,8 @@ Build verifier prompt from `VERIFIER_TEMPLATE` with:
 Write to `.claude/plans/siege-{slug}/verifier-context-iter{N}.md`.
 
 ```bash
-claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
+unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
   --model opus \
-  --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -326,9 +319,8 @@ Write to `.claude/plans/siege-{slug}/hardening-context.md`.
 ### Spawn Hardening Worker
 
 ```bash
-claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
+unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
   --model opus \
-  --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -358,9 +350,8 @@ Write to `.claude/plans/siege-{slug}/simplifier-context.md`.
 ### Spawn Simplifier Worker
 
 ```bash
-claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
+unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
   --model opus \
-  --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -456,3 +447,4 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 10. **~700 TOKENS PER ITERATION** — keep your overhead minimal. All analysis happens in spawned sessions.
 11. **CHECKPOINT RESPECTS USER** — if `--checkpoint` is set, always pause between iterations
 12. **LOG EVERYTHING** — append to orchestrator-log.md after every iteration
+13. **UNSET CLAUDECODE** — all `claude -p` spawn commands MUST be prefixed with `unset CLAUDECODE &&`. The parent session sets this env var to prevent re-entrant launches; child workers inherit it and refuse to start without the unset.
