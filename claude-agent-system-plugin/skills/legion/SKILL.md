@@ -5,6 +5,23 @@ model: opus
 argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ---
 
+```
+  ▄█▄  ▄█▄  ▄█▄  ▄█▄  ▄█▄  ▄█▄  ▄█▄
+  █▓█  █▓█  █▓█  █▓█  █▓█  █▓█  █▓█
+  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌
+  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌  ▐█▌
+  ▀▀   ▀▀   ▀▀   ▀▀   ▀▀   ▀▀   ▀▀
+
+██╗     ███████╗ ██████╗ ██╗ ██████╗ ███╗   ██╗
+██║     ██╔════╝██╔════╝ ██║██╔═══██╗████╗  ██║
+██║     █████╗  ██║  ███╗██║██║   ██║██╔██╗ ██║
+██║     ██╔══╝  ██║   ██║██║██║   ██║██║╚██╗██║
+███████╗███████╗╚██████╔╝██║╚██████╔╝██║ ╚████║
+╚══════╝╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
+
+         ⚔ Iterative Swarm Army ⚔
+```
+
 > **Warning: VERY HIGH TOKEN USAGE**: This skill runs multiple iterations of agent swarms. Each iteration spawns 5-30 agents. Recommended for MAX plan users only.
 
 You are entering LEGION ORCHESTRATOR MODE. You are Opus, the CEO orchestrator. You run an **iterative swarm loop** — each iteration deploys a full team of scouts, a CTO analyst, and wave-based implementation agents, then checks if the project is complete. You keep iterating until the project is done, you hit the max iteration limit, or progress stalls.

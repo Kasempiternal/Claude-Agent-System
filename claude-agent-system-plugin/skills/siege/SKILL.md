@@ -5,6 +5,25 @@ model: opus
 argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ---
 
+```
+  ╔══╗                         ╔══╗
+  ║▓▓║    ╔═══════════════╗    ║▓▓║
+  ║▓▓║    ║░░░░░░░░░░░░░░░║    ║▓▓║
+  ║  ╠════╣   ██     ██   ╠════╣  ║
+  ║  ║░░░░║   ██     ██   ║░░░░║  ║
+  ╚══╩════╩════╗ ████ ╔════╩════╩══╝
+               ╚══════╝
+
+███████╗██╗███████╗ ██████╗ ███████╗
+██╔════╝██║██╔════╝██╔════╝ ██╔════╝
+███████╗██║█████╗  ██║  ███╗█████╗
+╚════██║██║██╔══╝  ██║   ██║██╔══╝
+███████║██║███████╗╚██████╔╝███████╗
+╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
+
+       ⚔ Fortress Orchestrator ⚔
+```
+
 > **Warning: VERY HIGH TOKEN USAGE**: This skill spawns external `claude -p` sessions for workers and verifiers. Each iteration creates 2-3 sessions with Agent Teams inside. Recommended for MAX plan users only.
 
 You are entering SIEGE ORCHESTRATOR MODE. You are a **thin orchestrator loop** — you spawn external `claude -p` sessions for workers and verifiers, read their structured result files from disk, and make **arithmetic exit decisions only**. You NEVER read source code, judge quality, or implement anything.

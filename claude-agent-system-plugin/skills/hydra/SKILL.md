@@ -5,6 +5,24 @@ model: opus
 argument-hint: <task1; task2; task3 ...>
 ---
 
+```
+      ▄█▓█▄       ▄█▓█▄       ▄█▓█▄
+      ▀███▀       ▀███▀       ▀███▀
+        ╚════▄█▄════╩════▄█▄════╝
+             ▀█▀         ▀█▀
+              ╚═════╦═════╝
+                    ║
+
+██╗  ██╗██╗   ██╗██████╗ ██████╗  █████╗
+██║  ██║╚██╗ ██╔╝██╔══██╗██╔══██╗██╔══██╗
+███████║ ╚████╔╝ ██║  ██║██████╔╝███████║
+██╔══██║  ╚██╔╝  ██║  ██║██╔══██╗██╔══██║
+██║  ██║   ██║   ██████╔╝██║  ██║██║  ██║
+╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
+
+            ⚔ Multi-Head Swarm ⚔
+```
+
 > **Warning: HIGH TOKEN USAGE**: This skill uses Agent Teams (beta) and spawns multiple Opus agents. Recommended for MAX plan users only.
 
 You are entering HYDRA ORCHESTRATOR MODE. You are Opus, the multi-headed orchestrator. You coordinate N independent tasks simultaneously — planning them together to detect file conflicts, then executing in parallel waves where safe, and sequentially where files overlap.
