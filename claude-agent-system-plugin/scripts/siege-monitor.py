@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""Siege Worker Progress Monitor — real-time progress display for claude -p workers.
+
+Reads NDJSON from stdin (claude -p --output-format stream-json --include-partial-messages)
+and emits formatted progress lines showing tool calls, phase transitions, and timing.
+"""
+
+import sys
+import json
+import time
+import argparse
+
+# ── Phase detection patterns ────────────────────────────────────────────────
+
+WORKER_TYPE_LABELS = {
+    "main": "FULL",
+    "verifier": "VERIFY",
+    "hardening": "HARDEN",
+    "simplifier": "SIMPLIFY",
+}
+
+# ── Helpers ─────────────────────────────────────────────────────────────────
+
+
+def fmt_elapsed(seconds):
+    """Format seconds as [MM:SS]."""
+    m, s = divmod(int(seconds), 60)
+    return f"[{m:02d}:{s:02d}]"
+
+
+def extract_path(text):
+    """Try to pull a short file path from accumulated tool input JSON."""
+    if not text:
+        return None
+    for key in ("file_path", "path", "pattern", "command", "file"):
+        idx = text.find(f'"{key}"')
+        if idx == -1:
+            continue
+        # Walk forward to the value
+        colon = text.find(":", idx)
+        if colon == -1:
+            continue
+        quote_start = text.find('"', colon)
+        if quote_start == -1:
+            continue
+        quote_end = text.find('"', quote_start + 1)
+        if quote_end == -1:
+            continue
+        val = text[quote_start + 1 : quote_end]
+        # Shorten absolute paths
+        if "/" in val:
+            parts = val.rsplit("/", 2)
+            if len(parts) >= 2:
+                val = "/".join(parts[-2:])
+        # Truncate long values
+        if len(val) > 60:
+            val = val[:57] + "..."
+        return val
+    return None
+
+
+def detect_phase(tool_name, tool_input, state):
+    """Return a phase string if this tool call represents a milestone, else None."""
+    if tool_name == "TeamCreate":
+        return "Team created"
+
+    if tool_name == "TeamDelete":
+        return "Team cleanup"
+
+    if tool_name == "TaskCreate":
+        state["task_creates"] = state.get("task_creates", 0) + 1
+        count = state["task_creates"]
+        if not state.get("scouts_deployed") and count >= 3:
+            state["scouts_deployed"] = True
+            return "Scouts deployed"
+        if state.get("scouts_deployed") and not state.get("wave_started"):
+            state["wave_count"] = state.get("wave_count", 0) + 1
+            if count >= state.get("last_task_batch", 0) + 3:
+                state["wave_started"] = True
+                state["last_task_batch"] = count
+                wn = state["wave_count"]
+                return f"Wave {wn} starting"
+        return None
+
+    if tool_name == "Write" and tool_input:
+        if "project-tasks.md" in tool_input:
+            return "Task list ready"
+        if "worker-result-" in tool_input or "verify-result-" in tool_input:
+            return "Writing result"
+        if "hardening-result" in tool_input:
+            return "Writing result"
+
+    if tool_name == "Bash" and tool_input:
+        low = tool_input.lower()
+        if any(kw in low for kw in ["test", "pytest", "cargo test", "go test", "jest", "vitest", "mocha"]):
+            return "Running tests"
+        if any(kw in low for kw in ["build", "cargo build", "go build", "tsc", "webpack", "vite build"]):
+            return "Running build"
+
+    return None
+
+
+# ── Main loop ───────────────────────────────────────────────────────────────
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Siege worker progress monitor")
+    parser.add_argument(
+        "--worker-type",
+        choices=["main", "verifier", "hardening", "simplifier"],
+        default="main",
+    )
+    parser.add_argument("--iteration", type=int, default=1)
+    args = parser.parse_args()
+
+    label = WORKER_TYPE_LABELS.get(args.worker_type, "WORKER")
+    header = f"--- SIEGE WORKER [iter {args.iteration} / {label}] "
+    header += "-" * max(1, 47 - len(header))
+    emit(header)
+
+    start = time.time()
+    emit(f"{fmt_elapsed(0)} START   Worker session (opus)")
+
+    # State tracking
+    state = {}
+    tool_count = 0
+    current_tool = None
+    accumulated_input = ""
+    batch_tool = None
+    batch_count = 0
+    batch_start = 0.0
+
+    # Ensure real-time line buffering on stdin
+    if hasattr(sys.stdin, "reconfigure"):
+        sys.stdin.reconfigure(line_buffering=True)  # type: ignore[attr-defined]
+
+    try:
+        for line in sys.stdin:
+            line = line.strip()
+            if not line:
+                continue
+            try:
+                event = json.loads(line)
+            except (json.JSONDecodeError, ValueError):
+                continue
+
+            etype = event.get("type", "")
+            elapsed = time.time() - start
+
+            # ── content_block_start: new tool use ──
+            if etype == "content_block_start":
+                cb = event.get("content_block", {})
+                if cb.get("type") == "tool_use":
+                    current_tool = cb.get("name", "?")
+                    accumulated_input = ""
+
+            # ── input_json_delta: accumulate tool input ──
+            elif etype == "content_block_delta":
+                delta = event.get("delta", {})
+                if delta.get("type") == "input_json_delta":
+                    accumulated_input += delta.get("partial_json", "")
+
+            # ── content_block_stop: tool call complete ──
+            elif etype == "content_block_stop":
+                if current_tool:
+                    tool_count += 1
+                    path_hint = extract_path(accumulated_input)
+
+                    # Phase detection
+                    phase = detect_phase(current_tool, accumulated_input, state)
+                    if phase:
+                        flush_batch(batch_tool, batch_count, batch_start, start)
+                        batch_tool = None
+                        batch_count = 0
+                        emit(f"{fmt_elapsed(elapsed)} PHASE   {phase}")
+
+                    # Batching: collapse rapid identical tool calls
+                    if current_tool == batch_tool and (elapsed - batch_start) < 3.0:
+                        batch_count += 1
+                    else:
+                        flush_batch(batch_tool, batch_count, batch_start, start)
+                        batch_tool = current_tool
+                        batch_count = 1
+                        batch_start = elapsed
+                        # Emit individual tool line (will be replaced if batched)
+                        suffix = f" -> {path_hint}" if path_hint else ""
+                        emit(f"{fmt_elapsed(elapsed)} TOOL    {current_tool}{suffix}")
+
+                    current_tool = None
+                    accumulated_input = ""
+
+    except (BrokenPipeError, KeyboardInterrupt):
+        pass
+
+    # Summary
+    elapsed = time.time() - start
+    m, s = divmod(int(elapsed), 60)
+    time_str = f"{m}m{s:02d}s" if m else f"{s}s"
+    emit(f"{fmt_elapsed(elapsed)} DONE    {tool_count} tools | {time_str}")
+    emit("-" * 47)
+
+
+def flush_batch(tool, count, batch_start, _global_start=None):
+    """If a batch of 2+ identical tools accumulated, emit a summary line."""
+    if tool and count >= 2:
+        elapsed = batch_start
+        # Overwrite the individual line with the batch summary
+        emit(f"{fmt_elapsed(elapsed)} TOOL    {tool} x{count}")
+
+
+def emit(line):
+    """Print a line and flush immediately for real-time display."""
+    try:
+        print(line, flush=True)
+    except BrokenPipeError:
+        sys.exit(0)
+
+
+if __name__ == "__main__":
+    main()

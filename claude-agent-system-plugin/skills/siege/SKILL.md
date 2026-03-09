@@ -47,6 +47,15 @@ You are entering SIEGE ORCHESTRATOR MODE. You are a **thin orchestrator loop** â
 
 Use Glob to find your templates: `Glob("**/skills/siege/templates/worker-full-prompt.md")`. Extract the parent directory path (everything before `/templates/`). Store as `SIEGE_SKILL_DIR`.
 
+### Step 1.5: Locate Monitor Script
+
+Set `MONITOR_SCRIPT` = `{SIEGE_SKILL_DIR}/../scripts/siege-monitor.py`
+
+Verify via Bash: `test -f "{MONITOR_SCRIPT}" && echo "found" || echo "missing"`
+
+- If **missing**: set `MONITOR_AVAILABLE = false` (workers will run without progress monitoring â€” silent mode)
+- If **found**: set `MONITOR_AVAILABLE = true` and display `SIEGE: Progress monitor found`
+
 ### Step 2: Verify Teams Feature
 
 Read `~/.claude/settings.json`. Verify `env.CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` is `"1"`.
@@ -160,6 +169,16 @@ Write the filled prompt to `.claude/plans/siege-{slug}/worker-context-iter1.md`.
 
 ### Spawn Worker
 
+**If MONITOR_AVAILABLE = true:**
+```bash
+set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
+  --model opus \
+  --output-format stream-json --include-partial-messages \
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
+  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1
+```
+
+**If MONITOR_AVAILABLE = false (fallback):**
 ```bash
 unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
   --model opus \
@@ -228,6 +247,16 @@ Write to `.claude/plans/siege-{slug}/worker-context-iter{N}.md`.
 
 #### B. Spawn Delta Worker
 
+**If MONITOR_AVAILABLE = true:**
+```bash
+set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
+  --model opus \
+  --output-format stream-json --include-partial-messages \
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
+  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N}
+```
+
+**If MONITOR_AVAILABLE = false (fallback):**
 ```bash
 unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
   --model opus \
@@ -260,6 +289,16 @@ Build verifier prompt from `VERIFIER_TEMPLATE` with:
 
 Write to `.claude/plans/siege-{slug}/verifier-context-iter{N}.md`.
 
+**If MONITOR_AVAILABLE = true:**
+```bash
+set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
+  --model opus \
+  --output-format stream-json --include-partial-messages \
+  --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
+  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N}
+```
+
+**If MONITOR_AVAILABLE = false (fallback):**
 ```bash
 unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
   --model opus \
@@ -337,6 +376,16 @@ Write to `.claude/plans/siege-{slug}/hardening-context.md`.
 
 ### Spawn Hardening Worker
 
+**If MONITOR_AVAILABLE = true:**
+```bash
+set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
+  --model opus \
+  --output-format stream-json --include-partial-messages \
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
+  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration}
+```
+
+**If MONITOR_AVAILABLE = false (fallback):**
 ```bash
 unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
   --model opus \
@@ -368,6 +417,16 @@ Write to `.claude/plans/siege-{slug}/simplifier-context.md`.
 
 ### Spawn Simplifier Worker
 
+**If MONITOR_AVAILABLE = true:**
+```bash
+set -o pipefail; unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
+  --model opus \
+  --output-format stream-json --include-partial-messages \
+  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage" \
+  2>&1 | python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration}
+```
+
+**If MONITOR_AVAILABLE = false (fallback):**
 ```bash
 unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
   --model opus \
