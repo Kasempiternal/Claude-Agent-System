@@ -2,13 +2,13 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.10.1 — Siege Nested Session Fix**
+> **v7.11.0 — ASCII Art Banners**
 >
-> **Siege fix** (v7.10.1): Fixed `claude -p` workers failing with "cannot be launched inside another Claude Code session." All spawn commands now clear the `CLAUDECODE` env var before launching. Removed unused `--worker-budget` flag (no-op on Max subscription).
+> **New in v7.11.0**: Hydra, Legion, and Siege now launch with thematic 8-bit ASCII art banners — pixel-art creatures + ANSI Shadow figlet text give each skill a distinct visual identity.
 >
-> **Siege** (v7.9.0): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
+> **Siege** (v7.9.0+): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
 >
-> **Hydra collaboration** (v7.10.0): Agents within each wave communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification uses two-skeptic adversarial debate.
+> **Hydra collaboration** (v7.10.0+): Agents within each wave communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification uses two-skeptic adversarial debate.
 >
 > **Shared protocol layer**: `collaboration-protocol.md` and `message-schema.md` extracted to `skills/shared/` for reuse across Siege and Hydra.
 >
