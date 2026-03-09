@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.11.0 — ASCII Art Banners**
+> **v7.12.0 — Siege Worker Progress Monitor**
 >
-> **New in v7.11.0**: Hydra, Legion, and Siege now launch with thematic 8-bit ASCII art banners — pixel-art creatures + ANSI Shadow figlet text give each skill a distinct visual identity.
+> **New in v7.12.0**: Siege workers now show **real-time progress** instead of silent spinning. A Python monitor pipes `claude -p` stream-json output into formatted lines showing tool calls, phase transitions, and elapsed time — so you can see scouts deploying, waves starting, tests running, and results being written as they happen.
 >
 > **Siege** (v7.9.0+): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
 >
@@ -153,6 +153,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 ### Features
 
+- **Real-time progress monitor** — see tool calls, phase transitions, and elapsed time as workers run (no more silent spinning)
 - **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
 - **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
 - **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
