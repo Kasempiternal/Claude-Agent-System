@@ -2,9 +2,13 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.8.0 — Legion Orchestration Overhaul**
+> **v7.10.0 — Siege Skill + Shared Collaboration Protocols**
 >
-> Legion gets three releases of improvements: mandatory hardening round that runs on every project (v7.6.0), verification strategy system with confidence levels (v7.7.0), and wave state files with three-tier compression and fix tracking (v7.8.0). Circuit breaker is now smarter — uses progress scoring (0-10) instead of simple task counts, and tolerates 3 zero-progress iterations before stalling.
+> **Siege** (v7.9.0): New three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls. Recommended for XL/reliability-critical projects.
+>
+> **Hydra collaboration** (v7.10.0): Agents within each wave now communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification upgraded to two-skeptic adversarial debate. Collaboration health metrics in the final report.
+>
+> **Shared protocol layer**: `collaboration-protocol.md` and `message-schema.md` extracted to `skills/shared/` for reuse across Siege and Hydra.
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -20,7 +24,7 @@
 /plugin install cas
 ```
 
-Done! You now have 9 skills: `/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/setup-swarm`, and `/setup-hooks`.
+Done! You now have 10 skills: `/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/setup-swarm`, and `/setup-hooks`.
 
 ---
 
@@ -56,7 +60,8 @@ ZK walks a deterministic 5-step decision tree:
 
 | Step | Condition | Routes To |
 |------|-----------|-----------|
-| 0 | Holistic project needing iterative completion? | `/legion` |
+| 0a | Holistic project, XL scope or reliability-critical? | `/siege` |
+| 0b | Holistic project, standard scope? | `/legion` |
 | 1 | Multiple independent deliverables? | `/hydra` |
 | 2 | Scale word + broad noun ("entire codebase")? | `/hydra` |
 | 3 | High-stakes keyword + qualifying signal? | `/pcc-opus` |
@@ -65,12 +70,13 @@ ZK walks a deterministic 5-step decision tree:
 ### Examples
 
 ```bash
-/zk build a complete todo app from scratch      # -> Legion (holistic project, iterative)
-/zk add a button to the settings page           # -> PCC (simple, clear scope)
-/zk refactor the payment processing system      # -> PCC-Opus (keyword + risk domain)
-/zk migrate all models to SwiftData             # -> PCC-Opus ("migrate" always qualifies)
-/zk fix auth; add dashboard; update API         # -> Hydra (3 independent tasks)
-/zk modernize the entire codebase               # -> Hydra (scale + broad scope)
+/zk build a production-ready e-commerce platform   # -> Siege (XL scope, reliability-critical)
+/zk build a complete todo app from scratch          # -> Legion (holistic project, standard scope)
+/zk add a button to the settings page               # -> PCC (simple, clear scope)
+/zk refactor the payment processing system          # -> PCC-Opus (keyword + risk domain)
+/zk migrate all models to SwiftData                 # -> PCC-Opus ("migrate" always qualifies)
+/zk fix auth; add dashboard; update API             # -> Hydra (3 independent tasks)
+/zk modernize the entire codebase                   # -> Hydra (scale + broad scope)
 ```
 
 **Escape hatch**: You can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly.
@@ -105,6 +111,54 @@ An orchestrator that spawns agent swarms for exploration and implementation.
 8. **Verification** - Tests and code review
 9. **Simplification** - 2-6 parallel agents clean up the code
 10. **Final Report** - Summarizes everything
+
+---
+
+## `/siege` - External Orchestrator with Worker-Judge Separation `BETA`
+
+Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-spawning. Independent **two-skeptic adversarial verifiers** evaluate work they didn't produce. Exit decisions are **arithmetic, not judgment**: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`.
+
+> **Requires Agent Teams**: Run `/setup-swarm` to enable. Workers use Agent Teams internally for coordination.
+
+> **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
+
+```bash
+/siege build a production-ready e-commerce platform with auth, billing, and dashboard
+/siege create an entire SaaS API from scratch --max-iterations 8 --worker-budget 8
+/siege implement the full platform end to end --checkpoint
+```
+
+### Best For
+
+- Mission-critical, reliability-sensitive projects
+- Large projects needing maximum rigor (XL scope, 10+ modules)
+- When you need independent verification (worker-judge separation)
+- Projects where premature exit is unacceptable
+
+### How Siege Works
+
+0. **Prerequisites** - Verify Agent Teams enabled, locate templates, detect test/build commands
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
+2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
+3. **Orchestrator Loop** - For each iteration:
+   - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
+   - Orchestrator runs test/build as independent gate check
+   - Spawn TWO-SKEPTIC verifier via `claude -p` (two skeptics debate independently)
+   - Arithmetic decision: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`
+4. **Hardening** - Always runs: spawn hardening worker (scouts find issues, fix agents resolve)
+5. **Simplification** - Always runs: module-grouped cleanup worker
+6. **Final Report** - Per-iteration progress, skeptic debate highlights, hardening results, collaboration metrics
+
+### Features
+
+- **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
+- **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
+- **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
+- **Active mid-task coordination** — mandatory interface contracts, broadcast-on-discovery, sync checkpoints
+- **Arithmetic-only exit decisions** — no judgment, pure number comparison
+- **Configurable worker budget** (`--worker-budget N`, default $5.00)
+- **Mandatory hardening round** — always runs, even on stall
+- **Post-loop simplification** — module-grouped cleanup
 
 ---
 
@@ -166,9 +220,9 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 
 ---
 
-## `/hydra` - Multi-Task Parallel Swarm
+## `/hydra` - Multi-Task Parallel Swarm `BETA`
 
-Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do.
+Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do. Agents within each wave **collaborate in real-time** via mailbox messaging, and global verification uses a **two-skeptic adversarial debate**.
 
 > **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
@@ -193,16 +247,20 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 4. **Parallel Exploration** - Shared pool of Opus scout teammates explores for all N tasks
 5. **Delegated Synthesis** - Analyst teammate writes N plans + coordination file, resolves conflicts
 6. **User Review** - You review summary + plan files, then confirm
-7. **Wave Implementation** - Per wave: analyst prepares specs, orchestrator spawns impl agents
-8. **Per-Wave Verification** - Tests after each wave; global integration check after all waves
+7. **Wave Implementation** - Per wave: analyst prepares specs with mailbox paths, orchestrator creates inbox files and spawns impl agents with inline collaboration protocol. Agents exchange interface proposals before coding, broadcast discoveries, and read inboxes at sync checkpoints
+8. **Per-Wave Verification** - Single verifier per wave; after ALL waves: **two-skeptic adversarial global verification** (two independent skeptics evaluate, debate disagreements, review collaboration health)
 9. **Simplification** - Module-grouped cleanup across all task boundaries
-10. **Final Report & Cleanup** - Per-task status, shutdown teammates, clean up
+10. **Final Report & Cleanup** - Per-task status, collaboration metrics, two-skeptic verdict, shutdown teammates, clean up
 
 ### Features
 
 - **Agent Teams powered** — structured coordination with TeamCreate, TaskCreate, SendMessage
 - **Cross-task file conflict analysis** — builds a DAG of file ownership at plan time
 - **Wave-based execution** — parallel where safe, sequential where files overlap
+- **Inter-agent collaboration** — mailbox messaging with pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints
+- **Two-skeptic adversarial global verification** — two independent skeptics must AGREE before global pass; disagreements escalate to user
+- **Mailbox persistence across waves** — Wave 2+ agents can read Wave 1 interface decisions
+- **Collaboration health metrics** — message counts, interface proposals, and zero-message warnings in final report
 - **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
 - **Recovery procedures** — stuck agent replacement and partial rollback on verification failure
 - **Anti-pattern validation** — catches redundant agents, file overlap, sequential deps in same wave
@@ -344,13 +402,14 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 | Situation | Use This |
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
+| Mission-critical project, maximum rigor | `/siege` |
 | Build a complete project from scratch | `/legion` |
 | Single well-defined task | `/pcc` |
 | Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
-| Enable Agent Teams for Hydra/Legion | `/setup-swarm` (run once) |
+| Enable Agent Teams for Hydra/Legion/Siege | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
 
 ---
@@ -370,7 +429,7 @@ The `/systemcc` skill was partially inspired by ideas shared in the community:
 - [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
 - [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
 
-All other skills (`/zk`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
+All other skills (`/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
 
 ---
 
