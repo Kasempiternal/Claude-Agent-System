@@ -21,7 +21,7 @@ argument-hint: <task1; task2; task3 ...>
 ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 
             ⚔ Multi-Head Swarm ⚔
-              CAS v7.14.0
+              CAS v7.14.1
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.

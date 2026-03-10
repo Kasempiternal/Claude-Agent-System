@@ -22,7 +22,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.14.0
+             CAS v7.14.1
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -52,7 +52,7 @@ Use Glob to find your templates: `Glob("**/skills/siege/templates/worker-full-pr
 
 ### Step 1.5: Locate Monitor Script
 
-Set `MONITOR_SCRIPT` = `{SIEGE_SKILL_DIR}/../scripts/siege-monitor.py`
+Set `MONITOR_SCRIPT` = `{SIEGE_SKILL_DIR}/../../scripts/siege-monitor.py`
 
 Verify via Bash: `test -f "{MONITOR_SCRIPT}" && echo "found" || echo "missing"`
 
@@ -189,7 +189,7 @@ unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-i
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
-**IMPORTANT**: Use Bash tool with a generous timeout (up to 600000ms / 10 minutes). The worker will take time.
+**IMPORTANT**: Always prefer the monitor wrapper (MONITOR_AVAILABLE = true). It handles completion detection and automatic kill. Only use the fallback if the monitor script is genuinely missing.
 
 Display: `SIEGE: Worker iter 1 (FULL) spawned`
 
@@ -534,3 +534,4 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 11. **CHECKPOINT RESPECTS USER** — if `--checkpoint` is set, always pause between iterations
 12. **LOG EVERYTHING** — append to orchestrator-log.md after every iteration
 13. **UNSET CLAUDECODE** — in wrapper mode (monitor script), `CLAUDECODE` is automatically removed from the child environment. In fallback mode (no monitor), all `claude -p` spawn commands MUST be prefixed with `unset CLAUDECODE &&`. The parent session sets this env var to prevent re-entrant launches; child workers inherit it and refuse to start without the unset.
+14. **ALWAYS USE MONITOR WRAPPER** — the monitor script (`siege-monitor.py`) detects when a worker finishes via NDJSON message_stop events and kills the process after a grace period. This prevents workers from hanging. If the monitor is missing, something is wrong with the plugin installation — warn the user.
