@@ -20,7 +20,10 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
          ⚔ Iterative Swarm Army ⚔
+               CAS v7.14.0
 ```
+
+**MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
 > **Warning: VERY HIGH TOKEN USAGE**: This skill runs multiple iterations of agent swarms. Each iteration spawns 5-30 agents. Recommended for MAX plan users only.
 

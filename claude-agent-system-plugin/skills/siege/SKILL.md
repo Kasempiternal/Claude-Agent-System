@@ -22,7 +22,10 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
+             CAS v7.14.0
 ```
+
+**MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
 > **Warning: VERY HIGH TOKEN USAGE**: This skill spawns external `claude -p` sessions for workers and verifiers. Each iteration creates 2-3 sessions with Agent Teams inside. Recommended for MAX plan users only.
 

@@ -5,6 +5,28 @@ model: opus
 argument-hint: "[staged | file paths | description of scope]"
 ---
 
+```
+    ╔══════╗
+    ║ ╔══╗ ║
+    ║ ║✓ ║ ║
+    ║ ╚══╝ ║
+    ║ ════ ║
+    ║ ════ ║
+    ╚══════╝
+
+██████╗ ███████╗██╗   ██╗██╗███████╗██╗    ██╗
+██╔══██╗██╔════╝██║   ██║██║██╔════╝██║    ██║
+██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║
+██╔══██╗██╔══╝  ╚██╗ ██╔╝██║██╔══╝  ██║███╗██║
+██║  ██║███████╗ ╚████╔╝ ██║███████╗╚███╔███╔╝
+╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
+
+      ⚔ 7-Agent Code Review ⚔
+           CAS v7.14.0
+```
+
+**MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
+
 You are entering ORCHESTRATOR MODE for code review. Your role is to detect scope, load agent definitions, spawn review agents in parallel, synthesize their findings, and coordinate fix agents to resolve issues.
 
 ## Your Role: Review Orchestrator
