@@ -2,19 +2,23 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.16.0 — Spectre: Deep Research Swarm**
+> **v7.16.0 — Spectre + CyberConan (BETA)**
 >
-> **New in v7.16.0**: `/spectre` — a parallel research swarm that deploys 2-12 Opus researchers to investigate any topic from multiple angles via web search and codebase exploration, then synthesizes findings, cross-validates claims with independent skeptic validators, and produces a structured intelligence report.
+> **Two new skills**, both in beta:
 >
-> **What's new**:
-> - `/spectre` skill with adaptive scope tiers (XS/S/M/L/XL) that scale researcher count
-> - 4-wave execution: parallel researchers → intelligence analyst → cross-reference validators → report compiler
-> - Web + codebase hybrid research: WebSearch/WebFetch for web, Grep/Glob/Read for code
-> - Two-skeptic validation model adapted for research — independently verify top claims via fresh searches
-> - Inter-researcher collaboration via mailbox broadcasting for cross-facet discovery sharing
-> - Optional HTML dashboard output (`--html` flag) with dark theme and tabbed interface
-> - ZK router updated with pre-check step to auto-route research requests to Spectre
-> - 9 templates for researchers, analysts, validators, and report compilation
+> **`/spectre`** — Deep research swarm. Deploys 2-12 parallel Opus researchers to investigate any topic from multiple angles via web search and codebase exploration, then synthesizes, cross-validates claims with two-skeptic validators, and produces a structured intelligence report.
+> - Adaptive scope tiers (XS/S/M/L/XL) that scale researcher count from 2 to 12
+> - 4-wave pipeline: parallel researchers → intelligence analyst → cross-reference validators → report compiler
+> - Web + codebase hybrid research, optional HTML dashboard (`--html`)
+> - ZK auto-routes research requests to Spectre
+>
+> **`/cyberconan`** — Security audit swarm. Runs SAST, SCA, secrets detection, and config audit in parallel with pure Claude analysis — no external binaries needed.
+> - Adaptive mode: LITE (subagents for small repos) or FULL (Agent Teams for large ones)
+> - Two-skeptic adversarial verification for CRITICAL findings
+> - Security score [0-100], severity-tiered verification, opt-in remediation
+> - ZK auto-routes security scan requests to CyberConan
+>
+> Both skills need real-world testing. Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -91,7 +95,7 @@ ZK walks a deterministic decision tree:
 
 ---
 
-## `/spectre` - Deep Research Swarm
+## `/spectre` - Deep Research Swarm `BETA`
 
 Deploy a **parallel research swarm** to investigate any topic. Spectre decomposes your research question into facets, launches 2-12 Opus researchers in parallel, synthesizes findings through intelligence analysis, cross-validates claims with independent skeptic validators, and compiles a structured report.
 
@@ -405,7 +409,7 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
-## `/cyberconan` - Security Audit Swarm
+## `/cyberconan` - Security Audit Swarm `BETA`
 
 Full-repo security scanner. Runs **SAST, SCA, secrets detection, and config audit** in parallel with pure Claude analysis — no external binaries needed. Adaptive orchestration: subagents for small repos, Agent Teams for large ones.
 
