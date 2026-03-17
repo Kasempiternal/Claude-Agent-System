@@ -2,7 +2,7 @@
 name: siege
 description: "External Orchestrator with Worker-Judge Separation — spawns fresh claude -p sessions per iteration with adversarial two-skeptic verification. Arithmetic exit decisions only. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 model: opus
-argument-hint: <project description> [--max-iterations N] [--checkpoint]
+argument-hint: <project description> [--max-iterations N] [--checkpoint] [--worker-budget N]
 ---
 
 ```
@@ -22,7 +22,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.14.1
+             CAS v7.15.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -50,14 +50,20 @@ You are entering SIEGE ORCHESTRATOR MODE. You are a **thin orchestrator loop** �
 
 Use Glob to find your templates: `Glob("**/skills/siege/templates/worker-full-prompt.md")`. Extract the parent directory path (everything before `/templates/`). Store as `SIEGE_SKILL_DIR`.
 
-### Step 1.5: Locate Monitor Script
+### Step 1.5: Locate Monitor Script (REQUIRED)
 
 Set `MONITOR_SCRIPT` = `{SIEGE_SKILL_DIR}/../../scripts/siege-monitor.py`
 
 Verify via Bash: `test -f "{MONITOR_SCRIPT}" && echo "found" || echo "missing"`
 
-- If **missing**: set `MONITOR_AVAILABLE = false` (workers will run without progress monitoring — silent mode)
-- If **found**: set `MONITOR_AVAILABLE = true` and display `SIEGE: Progress monitor found`
+- If **missing**: STOP. Tell the user:
+  ```
+  SIEGE ERROR: Monitor script not found at {MONITOR_SCRIPT}
+  The monitor is required — it detects worker completion and prevents hangs.
+  Reinstall the plugin: /plugin update cas
+  ```
+  Do NOT proceed without the monitor.
+- If **found**: Display `SIEGE: Progress monitor found`
 
 ### Step 2: Verify Teams Feature
 
@@ -112,6 +118,7 @@ Parse `$ARGUMENTS`:
 - Project description (everything that's not a flag)
 - `--max-iterations N` (default: 5)
 - `--checkpoint` (default: off)
+- `--worker-budget N` (default: 10, in USD — passed to `--max-budget-usd` on each worker)
 
 ### Create Plans Directory
 
@@ -125,6 +132,7 @@ Write `.claude/plans/siege-{slug}/siege-config.md`:
 PROJECT: {description}
 MAX_ITERATIONS: {N}
 CHECKPOINT: {ON|OFF}
+WORKER_BUDGET: ${worker_budget}
 TEST_CMD: {cmd}
 BUILD_CMD: {cmd}
 RUN_CMD: {cmd}
@@ -140,6 +148,7 @@ SIEGE CONFIG
   Project: {description}
   Max iterations: {N}
   Checkpoint: {ON|OFF}
+  Worker budget: ${worker_budget}/session
   Test: {cmd}
   Build: {cmd}
 
@@ -161,6 +170,7 @@ Build the full worker prompt by filling `WORKER_FULL_TEMPLATE` with:
 - `{project_description}` from config
 - `{slug}` from config
 - `{plans_dir}` = `.claude/plans/siege-{slug}`
+- `{worker_budget}` from config (default: 10)
 - `{test_command}`, `{build_command}`, `{run_command}` from config
 - `{collaboration_protocol_content}` = full text of `COLLAB_PROTOCOL`
 - `{message_schema_content}` = full text of `MSG_SCHEMA`
@@ -172,30 +182,28 @@ Write the filled prompt to `.claude/plans/siege-{slug}/worker-context-iter1.md`.
 
 ### Spawn Worker
 
-**If MONITOR_AVAILABLE = true:**
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1 \
   --result-file ".claude/plans/siege-{slug}/worker-result-iter1.md" \
-  -- claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
-  --model opus \
-  --output-format stream-json --include-partial-messages \
+  --prompt-file ".claude/plans/siege-{slug}/worker-context-iter1.md" \
+  -- claude -p --model opus \
+  --verbose --output-format stream-json \
+  --permission-mode dontAsk --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
-
-**If MONITOR_AVAILABLE = false (fallback):**
-```bash
-unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter1.md)" \
-  --model opus \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
-```
-
-**IMPORTANT**: Always prefer the monitor wrapper (MONITOR_AVAILABLE = true). It handles completion detection and automatic kill. Only use the fallback if the monitor script is genuinely missing.
 
 Display: `SIEGE: Worker iter 1 (FULL) spawned`
 
 ### Parse Result
 
-After worker returns, read `.claude/plans/siege-{slug}/worker-result-iter1.md`.
+After worker returns, first check that the result file exists:
+```bash
+test -f ".claude/plans/siege-{slug}/worker-result-iter1.md" && echo "exists" || echo "missing"
+```
+
+If **missing**: Log `SIEGE: Worker iter 1 FAILED — no result file produced`. Set `p1_checked=0`, `p1_total=999`, `tests_pass=false`, `build_pass=false` and continue to the loop (the verifier will catch this).
+
+If **exists**: Read `.claude/plans/siege-{slug}/worker-result-iter1.md`.
 
 Extract via Grep:
 - `P1_CHECKED` and `P1_TOTAL`
@@ -251,20 +259,13 @@ Write to `.claude/plans/siege-{slug}/worker-context-iter{N}.md`.
 
 #### B. Spawn Delta Worker
 
-**If MONITOR_AVAILABLE = true:**
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N} \
   --result-file ".claude/plans/siege-{slug}/worker-result-iter{N}.md" \
-  -- claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
-  --model opus \
-  --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
-```
-
-**If MONITOR_AVAILABLE = false (fallback):**
-```bash
-unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/worker-context-iter{N}.md)" \
-  --model opus \
+  --prompt-file ".claude/plans/siege-{slug}/worker-context-iter{N}.md" \
+  -- claude -p --model opus \
+  --verbose --output-format stream-json \
+  --permission-mode dontAsk --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -272,7 +273,10 @@ Display: `SIEGE: Worker iter {N} (DELTA) spawned`
 
 #### C. Parse Worker Result
 
-Read `.claude/plans/siege-{slug}/worker-result-iter{N}.md`.
+Check if result file exists: `test -f ".claude/plans/siege-{slug}/worker-result-iter{N}.md"`
+If **missing**: Log `SIEGE: Worker iter {N} FAILED — no result file`. Set `p1_checked=0`, `p1_total=999`, `tests_pass=false`, `build_pass=false`. Skip to step E (verifier) — the verifier will assess actual project state.
+
+If **exists**: Read `.claude/plans/siege-{slug}/worker-result-iter{N}.md`.
 Extract: `P1_CHECKED`, `P1_TOTAL`, `TEST_EXIT_CODE`, `BUILD_EXIT_CODE`, `TOTAL_MESSAGES_SENT`.
 
 #### D. Run Gate Checks (Orchestrator-Owned)
@@ -294,20 +298,14 @@ Build verifier prompt from `VERIFIER_TEMPLATE` with:
 
 Write to `.claude/plans/siege-{slug}/verifier-context-iter{N}.md`.
 
-**If MONITOR_AVAILABLE = true:**
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N} \
   --result-file ".claude/plans/siege-{slug}/verify-result-iter{N}.md" \
-  -- claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
-  --model opus \
-  --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
-```
-
-**If MONITOR_AVAILABLE = false (fallback):**
-```bash
-unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/verifier-context-iter{N}.md)" \
-  --model opus \
+  --prompt-file ".claude/plans/siege-{slug}/verifier-context-iter{N}.md" \
+  --max-duration 1200 \
+  -- claude -p --model opus \
+  --verbose --output-format stream-json \
+  --permission-mode dontAsk --max-budget-usd 5 \
   --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -315,7 +313,10 @@ Display: `SIEGE: Verifier iter {N} spawned (two-skeptic)`
 
 #### F. Parse Verifier Result
 
-Read `.claude/plans/siege-{slug}/verify-result-iter{N}.md`.
+Check if result file exists: `test -f ".claude/plans/siege-{slug}/verify-result-iter{N}.md"`
+If **missing**: Log `SIEGE: Verifier iter {N} FAILED — no verdict`. Set `VERDICT = "CONTINUE"`, `PROGRESS_SCORE = 0`. This counts as zero progress for stall detection.
+
+If **exists**: Read `.claude/plans/siege-{slug}/verify-result-iter{N}.md`.
 Extract: `VERDICT` (COMPLETE/CONTINUE/STALLED/DISAGREE), `PROGRESS_SCORE`, `TESTS_PASS`, `BUILD_PASS`.
 
 #### G. DECISION (Arithmetic Only)
@@ -382,20 +383,13 @@ Write to `.claude/plans/siege-{slug}/hardening-context.md`.
 
 ### Spawn Hardening Worker
 
-**If MONITOR_AVAILABLE = true:**
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration} \
   --result-file ".claude/plans/siege-{slug}/hardening-result.md" \
-  -- claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
-  --model opus \
-  --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
-```
-
-**If MONITOR_AVAILABLE = false (fallback):**
-```bash
-unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/hardening-context.md)" \
-  --model opus \
+  --prompt-file ".claude/plans/siege-{slug}/hardening-context.md" \
+  -- claude -p --model opus \
+  --verbose --output-format stream-json \
+  --permission-mode dontAsk --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -403,7 +397,10 @@ Display: `SIEGE: Hardening worker spawned`
 
 ### Parse Result
 
-Read `.claude/plans/siege-{slug}/hardening-result.md`.
+Check if result file exists: `test -f ".claude/plans/siege-{slug}/hardening-result.md"`
+If **missing**: Log `SIEGE: Hardening worker produced no result`. Set all hardening counts to 0 and continue to simplification.
+
+If **exists**: Read `.claude/plans/siege-{slug}/hardening-result.md`.
 Extract: `CRITICAL`, `MAJOR`, `MINOR`, `FIXED`, `NOT_FIXABLE`, `TEST_EXIT_CODE`.
 
 ---
@@ -424,20 +421,13 @@ Write to `.claude/plans/siege-{slug}/simplifier-context.md`.
 
 ### Spawn Simplifier Worker
 
-**If MONITOR_AVAILABLE = true:**
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration} \
   --result-file ".claude/plans/siege-{slug}/simplifier-result.md" \
-  -- claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
-  --model opus \
-  --output-format stream-json --include-partial-messages \
-  --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
-```
-
-**If MONITOR_AVAILABLE = false (fallback):**
-```bash
-unset CLAUDECODE && claude -p "$(cat .claude/plans/siege-{slug}/simplifier-context.md)" \
-  --model opus \
+  --prompt-file ".claude/plans/siege-{slug}/simplifier-context.md" \
+  -- claude -p --model opus \
+  --verbose --output-format stream-json \
+  --permission-mode dontAsk --max-budget-usd {worker_budget} \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -533,5 +523,7 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 10. **~700 TOKENS PER ITERATION** — keep your overhead minimal. All analysis happens in spawned sessions.
 11. **CHECKPOINT RESPECTS USER** — if `--checkpoint` is set, always pause between iterations
 12. **LOG EVERYTHING** — append to orchestrator-log.md after every iteration
-13. **UNSET CLAUDECODE** — in wrapper mode (monitor script), `CLAUDECODE` is automatically removed from the child environment. In fallback mode (no monitor), all `claude -p` spawn commands MUST be prefixed with `unset CLAUDECODE &&`. The parent session sets this env var to prevent re-entrant launches; child workers inherit it and refuse to start without the unset.
-14. **ALWAYS USE MONITOR WRAPPER** — the monitor script (`siege-monitor.py`) detects when a worker finishes via NDJSON message_stop events and kills the process after a grace period. This prevents workers from hanging. If the monitor is missing, something is wrong with the plugin installation — warn the user.
+13. **MONITOR IS REQUIRED** — the monitor script (`siege-monitor.py`) detects worker completion via the NDJSON `result` event and kills the process after a grace period. It also enforces a hard timeout (45 min default) to prevent indefinite hangs. If the monitor is missing, STOP — the plugin needs reinstalling.
+14. **PROMPT VIA STDIN** — the monitor's `--prompt-file` flag pipes the context file to `claude -p` via stdin. NEVER use `$(cat ...)` shell expansion for prompt passing — it mangles content with `$`, backticks, or quotes.
+15. **CHECK RESULT FILES** — after every worker/verifier returns, verify the result file exists before parsing. Workers can crash or timeout without producing results. Handle missing files gracefully.
+16. **BUDGET LIMITS** — every `claude -p` command includes `--max-budget-usd` to prevent runaway workers. Default $10 for workers, $5 for verifiers.
