@@ -462,6 +462,48 @@ Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
 
 > **Note**: SCA scanner uses Claude's training knowledge for CVE detection, which has a knowledge cutoff. Complement with dedicated tools (npm audit, pip-audit, cargo-audit) for the latest CVE data.
 
+> Inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills). CyberConan adapts the concept with adaptive LITE/FULL orchestration modes, criteria-driven scanning, two-skeptic adversarial verification, and CAS integration.
+
+---
+
+## `/l30` - Last 30 Days Topic Research
+
+Research any topic across **5 free sources** from the last 30 days. Deploys a parallel agent swarm to scrape, score, deduplicate, and generate a self-contained HTML dashboard. Zero API keys required.
+
+> **Requires**: Python environment with [l30](https://github.com/Kasempiternal/l30) installed and Agent Teams (`/setup-swarm`).
+
+```bash
+/l30 "llm compression techniques"
+/l30 "rust vs zig 2026"
+/l30 "claude code plugins"
+```
+
+### Best For
+
+- Catching up on what happened in the last month for a topic
+- Finding recent discussions, repos, and articles
+- Getting a visual dashboard of community activity and trends
+
+### How L30 Works
+
+1. **Wave 1: Scraping** - 5 parallel Sonnet agents each scrape one source (Reddit, Hacker News, DuckDuckGo, Lobsters, GitHub) using Scrapling with Chrome impersonation
+2. **Wave 2: Intelligence** - Single analyst scores, ranks, and deduplicates results across all sources
+3. **Wave 3: Dashboard** - Compiler injects ranked data into an HTML template and opens the dashboard
+
+### Sources
+
+| Source | Method | What It Finds |
+|--------|--------|--------------|
+| Reddit | JSON API via Scrapling | Posts, discussions, top comments |
+| Hacker News | Algolia API | Stories, discussion threads |
+| DuckDuckGo | HTML scraping | Web articles, blog posts |
+| Lobsters | HTML + CSS selectors | Niche tech discussions |
+| GitHub | REST API + HTML fallback | Repos, stars, languages, topics |
+
+### Output
+
+Self-contained HTML dashboard at `~/Documents/l30/dashboards/` — works offline, no server needed. Partial results are still valuable if some sources fail.
+
 ---
 
 ## `/systemcc` - Auto-Routing Workflow Selector
@@ -548,8 +590,9 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
 | Security audit of your codebase | `/cyberconan` |
+| What happened in the last 30 days for a topic | `/l30` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
-| Enable Agent Teams for Hydra/Legion/Siege/Spectre | `/setup-swarm` (run once) |
+| Enable Agent Teams for swarm skills | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
 
 ---
@@ -569,7 +612,7 @@ The `/systemcc` skill was partially inspired by ideas shared in the community:
 - [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
 - [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
 
-All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`) are original.
+All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/l30`) are original. `/cyberconan` is inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills).
 
 ---
 
