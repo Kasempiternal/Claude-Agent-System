@@ -2,20 +2,19 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.15.0 — Siege Monitor Rewrite (BETA, needs testing)**
+> **v7.16.0 — Spectre: Deep Research Swarm**
 >
-> **New in v7.15.0**: Complete rewrite of the Siege progress monitor. The previous monitor's completion detection was based on `message_start`/`message_stop` NDJSON events — but `claude -p` uses a different event format (`assistant`/`user`/`result` types). The old detection was dead code since day one, causing workers to hang indefinitely.
+> **New in v7.16.0**: `/spectre` — a parallel research swarm that deploys 2-12 Opus researchers to investigate any topic from multiple angles via web search and codebase exploration, then synthesizes findings, cross-validates claims with independent skeptic validators, and produces a structured intelligence report.
 >
-> **What's fixed**:
-> - Detects the `result` NDJSON event as the definitive completion signal
-> - Hard timeout (45 min default) prevents indefinite hangs
-> - Prompts piped via stdin (`--prompt-file`) instead of `$(cat ...)` shell expansion — no more escaping bugs
-> - Workers get `--permission-mode dontAsk` and `--max-budget-usd` to prevent blocking and runaway costs
-> - Result file existence checks after every worker/verifier return
-> - Monitor shows model, cost, and turn count from NDJSON events
-> - Non-zero exit code when workers fail to produce results
->
-> **Still in beta** — the core hang fix is verified against the actual `claude -p` NDJSON format, but Siege needs real-world testing with full Agent Teams workloads. Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
+> **What's new**:
+> - `/spectre` skill with adaptive scope tiers (XS/S/M/L/XL) that scale researcher count
+> - 4-wave execution: parallel researchers → intelligence analyst → cross-reference validators → report compiler
+> - Web + codebase hybrid research: WebSearch/WebFetch for web, Grep/Glob/Read for code
+> - Two-skeptic validation model adapted for research — independently verify top claims via fresh searches
+> - Inter-researcher collaboration via mailbox broadcasting for cross-facet discovery sharing
+> - Optional HTML dashboard output (`--html` flag) with dark theme and tabbed interface
+> - ZK router updated with pre-check step to auto-route research requests to Spectre
+> - 9 templates for researchers, analysts, validators, and report compilation
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -31,7 +30,7 @@
 /plugin install cas
 ```
 
-Done! You now have 11 skills: `/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`.
+Done! You now have 13 skills: `/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`.
 
 ---
 
@@ -63,10 +62,12 @@ The smart entry point. Analyzes your request and **auto-routes** to the best exe
 
 ### How It Works
 
-ZK walks a deterministic 5-step decision tree:
+ZK walks a deterministic decision tree:
 
 | Step | Condition | Routes To |
 |------|-----------|-----------|
+| -1 | Security scan or vulnerability assessment? | `/cyberconan` |
+| Pre | Research or exploration request? | `/spectre` |
 | 0a | Holistic project, XL scope or reliability-critical? | `/siege` |
 | 0b | Holistic project, standard scope? | `/legion` |
 | 1 | Multiple independent deliverables? | `/hydra` |
@@ -77,16 +78,82 @@ ZK walks a deterministic 5-step decision tree:
 ### Examples
 
 ```bash
-/zk build a production-ready e-commerce platform   # -> Siege (XL scope, reliability-critical)
+/zk scan this repo for vulnerabilities              # -> CyberConan (security scan)
+/zk evaluate AI code generation tools               # -> Spectre (research/analysis)
+/zk build a production-ready e-commerce platform    # -> Siege (XL scope, reliability-critical)
 /zk build a complete todo app from scratch          # -> Legion (holistic project, standard scope)
 /zk add a button to the settings page               # -> PCC (simple, clear scope)
 /zk refactor the payment processing system          # -> PCC-Opus (keyword + risk domain)
-/zk migrate all models to SwiftData                 # -> PCC-Opus ("migrate" always qualifies)
 /zk fix auth; add dashboard; update API             # -> Hydra (3 independent tasks)
-/zk modernize the entire codebase                   # -> Hydra (scale + broad scope)
 ```
 
-**Escape hatch**: You can always bypass ZK and invoke `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly.
+**Escape hatch**: You can always bypass ZK and invoke any skill directly.
+
+---
+
+## `/spectre` - Deep Research Swarm
+
+Deploy a **parallel research swarm** to investigate any topic. Spectre decomposes your research question into facets, launches 2-12 Opus researchers in parallel, synthesizes findings through intelligence analysis, cross-validates claims with independent skeptic validators, and compiles a structured report.
+
+> **Requires Agent Teams**: Run `/setup-swarm` to enable.
+
+> **High Token Usage Warning**: Spawns multiple Opus agents. Recommended for MAX plan users only.
+
+```bash
+/spectre "evaluate AI code generation tools for enterprise teams"
+/spectre "current state of WebAssembly" --depth S
+/spectre "compare Kubernetes vs Nomad" --html
+/spectre "analyze our auth module architecture" --codebase --no-web
+```
+
+### Best For
+
+- Evaluating technologies, tools, or approaches before making decisions
+- Market/landscape analysis across a domain
+- Deep dives into topics requiring multiple research angles
+- Codebase architecture research and exploration
+- Any question where the answer is *information*, not *code changes*
+
+### How Spectre Works
+
+1. **Parse & Classify** - Analyzes topic, classifies scope tier (XS/S/M/L/XL), decomposes into research facets
+2. **User Confirmation** - You review the facets and depth, then confirm
+3. **Wave 1: Research** - Parallel Opus researchers each explore one facet via WebSearch/WebFetch (or Grep/Glob/Read for codebase)
+4. **Wave 2: Analysis** - Intelligence analyst synthesizes all findings, resolves contradictions, ranks by evidence
+5. **Wave 3: Validation** - Cross-reference validators independently verify top claims via fresh web searches (two-skeptic model)
+6. **Wave 4: Report** - Compiler assembles structured markdown report with validation status per finding
+7. **Final Summary** - Key findings, validation verdict, source stats, output paths
+
+### Scope Tiers
+
+| Tier | Type | Researchers | Total Agents | Example |
+|------|------|-------------|-------------|---------|
+| XS | Quick Scan | 2 | ~5 | "What's the state of WebGPU in Safari?" |
+| S | Focused | 3 | ~6 | "Compare Bun vs Deno performance" |
+| M | Standard | 4-5 | ~9 | "Best approaches to LLM function calling" |
+| L | Broad | 6-8 | ~13 | "AI code generation tools landscape" |
+| XL | Comprehensive | 8-12 | ~17 | "EU AI Act: regulatory, technical, and market analysis" |
+
+### Flags
+
+| Flag | Default | Description |
+|------|---------|-------------|
+| `--depth XS\|S\|M\|L\|XL` | auto | Override scope classification |
+| `--html` | off | Generate self-contained HTML dashboard |
+| `--codebase` | auto | Include codebase exploration |
+| `--no-web` | off | Codebase-only, no web sources |
+| `--sources N` | 5 | Max web sources per researcher |
+
+### Features
+
+- **Adaptive scope tiers** — auto-classifies research complexity and scales agents accordingly
+- **Facet decomposition** — breaks complex topics into distinct, parallel-researchable angles
+- **Inter-researcher collaboration** — mailbox broadcasting for cross-facet discovery sharing
+- **Two-skeptic validation** — independent validators verify claims via fresh web searches
+- **Validation status per finding** — every claim marked CONFIRMED / UNVERIFIED / DISPUTED
+- **Full source bibliography** — every finding traced to specific URLs with reliability ratings
+- **Optional HTML dashboard** — dark theme, tabbed interface, self-contained single file
+- **Web + codebase hybrid** — researchers can use WebSearch/WebFetch, Grep/Glob/Read, or both
 
 ---
 
@@ -129,7 +196,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 > **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
 
-> **Beta status**: The v7.15.0 monitor rewrite fixes the core hang issue (wrong NDJSON event format), but Siege still needs real-world testing with full Agent Teams workloads. Please report issues.
+> **Beta status**: The v7.16.0 monitor rewrite fixes the core hang issue (wrong NDJSON event format), but Siege still needs real-world testing with full Agent Teams workloads. Please report issues.
 
 ```bash
 /siege build a production-ready e-commerce platform with auth, billing, and dashboard
@@ -338,6 +405,61 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
+## `/cyberconan` - Security Audit Swarm
+
+Full-repo security scanner. Runs **SAST, SCA, secrets detection, and config audit** in parallel with pure Claude analysis — no external binaries needed. Adaptive orchestration: subagents for small repos, Agent Teams for large ones.
+
+```bash
+/cyberconan                          # Standard scan of entire repo
+/cyberconan --depth quick            # Fast scan (CRITICAL/HIGH only)
+/cyberconan --depth deep             # Extended scan (all severity levels)
+/cyberconan --type sast              # Only run SAST scanner
+/cyberconan --type secrets           # Only scan for leaked secrets
+```
+
+### How CyberConan Works
+
+0. **Recon** - Detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
+1. **Plan** - Loads vulnerability criteria per project type, applies depth/type filters
+2. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
+3. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
+4. **Report** - Security score [0-100], findings by severity, remediation recommendations
+5. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
+
+### Two Modes
+
+| Mode | When | Agents | Requires |
+|------|------|--------|----------|
+| **LITE** | < 50 source files, single project | ~6 | Nothing extra |
+| **FULL** | 50+ files or multi-project | ~10-20 | Agent Teams (`/setup-swarm`) |
+
+### Scanner Coverage
+
+| Scanner | What It Checks |
+|---------|---------------|
+| **SAST** | SQL injection, command injection, XSS, SSRF, path traversal, deserialization, race conditions, auth issues |
+| **SCA** | Known CVEs in dependencies (with exploitability context), outdated packages |
+| **Secrets** | AWS keys, API tokens, private keys, connection strings, .env files in git |
+| **Config** | Debug mode, weak TLS, permissive CORS, missing security headers, default creds, exposed endpoints |
+
+### Security Score
+
+```
+Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
+```
+
+| Range | Rating |
+|-------|--------|
+| 90-100 | Excellent |
+| 70-89 | Good |
+| 50-69 | Needs Improvement |
+| 30-49 | Poor |
+| 0-29 | Critical |
+
+> **Note**: SCA scanner uses Claude's training knowledge for CVE detection, which has a knowledge cutoff. Complement with dedicated tools (npm audit, pip-audit, cargo-audit) for the latest CVE data.
+
+---
+
 ## `/systemcc` - Auto-Routing Workflow Selector
 
 The catch-all convenience command. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
@@ -414,14 +536,16 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 | Situation | Use This |
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
+| Deep research, topic exploration, tool evaluation | `/spectre` |
 | Mission-critical project, maximum rigor | `/siege` |
 | Build a complete project from scratch | `/legion` |
 | Single well-defined task | `/pcc` |
 | Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
 | Code review before committing | `/review` |
+| Security audit of your codebase | `/cyberconan` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
-| Enable Agent Teams for Hydra/Legion/Siege | `/setup-swarm` (run once) |
+| Enable Agent Teams for Hydra/Legion/Siege/Spectre | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
 
 ---
@@ -441,7 +565,7 @@ The `/systemcc` skill was partially inspired by ideas shared in the community:
 - [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
 - [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
 
-All other skills (`/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`) are original.
+All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`) are original.
 
 ---
 

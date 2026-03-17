@@ -22,7 +22,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint] [--work
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.15.0
+             CAS v7.16.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
