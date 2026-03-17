@@ -2,15 +2,20 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.13.0 — Siege Worker Hang Prevention**
+> **v7.15.0 — Siege Monitor Rewrite (BETA, needs testing)**
 >
-> **New in v7.13.0**: The Siege progress monitor now **wraps** `claude -p` as a child process instead of piping. It detects completion via NDJSON `message_stop` events and result file polling, then kills the worker after a grace period — preventing the 1-hour hangs where `claude -p` finishes work but the process never exits. Pipe mode is preserved as a legacy fallback.
+> **New in v7.15.0**: Complete rewrite of the Siege progress monitor. The previous monitor's completion detection was based on `message_start`/`message_stop` NDJSON events — but `claude -p` uses a different event format (`assistant`/`user`/`result` types). The old detection was dead code since day one, causing workers to hang indefinitely.
 >
-> **Siege** (v7.9.0+): Three-tier orchestrator that spawns fresh `claude -p` sessions per iteration. Workers use Agent Teams internally; independent two-skeptic verifiers evaluate work they didn't produce. Exit decisions are arithmetic only — no judgment calls.
+> **What's fixed**:
+> - Detects the `result` NDJSON event as the definitive completion signal
+> - Hard timeout (45 min default) prevents indefinite hangs
+> - Prompts piped via stdin (`--prompt-file`) instead of `$(cat ...)` shell expansion — no more escaping bugs
+> - Workers get `--permission-mode dontAsk` and `--max-budget-usd` to prevent blocking and runaway costs
+> - Result file existence checks after every worker/verifier return
+> - Monitor shows model, cost, and turn count from NDJSON events
+> - Non-zero exit code when workers fail to produce results
 >
-> **Hydra collaboration** (v7.10.0+): Agents within each wave communicate in real-time via JSONL mailboxes — pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints. Global verification uses two-skeptic adversarial debate.
->
-> **Shared protocol layer**: `collaboration-protocol.md` and `message-schema.md` extracted to `skills/shared/` for reuse across Siege and Hydra.
+> **Still in beta** — the core hang fix is verified against the actual `claude -p` NDJSON format, but Siege needs real-world testing with full Agent Teams workloads. Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -26,7 +31,7 @@
 /plugin install cas
 ```
 
-Done! You now have 10 skills: `/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/setup-swarm`, and `/setup-hooks`.
+Done! You now have 11 skills: `/zk`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`.
 
 ---
 
@@ -116,7 +121,7 @@ An orchestrator that spawns agent swarms for exploration and implementation.
 
 ---
 
-## `/siege` - External Orchestrator with Worker-Judge Separation `BETA`
+## `/siege` - External Orchestrator with Worker-Judge Separation `BETA — needs testing`
 
 Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-spawning. Independent **two-skeptic adversarial verifiers** evaluate work they didn't produce. Exit decisions are **arithmetic, not judgment**: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`.
 
@@ -124,10 +129,12 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 > **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
 
+> **Beta status**: The v7.15.0 monitor rewrite fixes the core hang issue (wrong NDJSON event format), but Siege still needs real-world testing with full Agent Teams workloads. Please report issues.
+
 ```bash
 /siege build a production-ready e-commerce platform with auth, billing, and dashboard
 /siege create an entire SaaS API from scratch --max-iterations 8
-/siege implement the full platform end to end --checkpoint
+/siege implement the full platform end to end --checkpoint --worker-budget 15
 ```
 
 ### Best For
@@ -139,8 +146,8 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 ### How Siege Works
 
-0. **Prerequisites** - Verify Agent Teams enabled, locate templates, detect test/build commands
-1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`), write config, user confirms
+0. **Prerequisites** - Verify Agent Teams enabled, locate monitor script + templates, detect test/build commands
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
 2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
 3. **Orchestrator Loop** - For each iteration:
    - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
@@ -153,7 +160,10 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 
 ### Features
 
-- **Real-time progress monitor** — see tool calls, phase transitions, and elapsed time as workers run (no more silent spinning)
+- **Real-time progress monitor** — see tool calls, phase transitions, elapsed time, cost, and turn count as workers run
+- **Hang prevention** — `result` event detection + 45-min hard timeout + result file polling
+- **Stdin prompt piping** — prompts passed via `--prompt-file` to avoid shell escaping issues
+- **Budget limits** — `--max-budget-usd` on every worker ($10 default) and verifier ($5) session
 - **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
 - **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
 - **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
