@@ -6,14 +6,6 @@ argument-hint: "[staged | file paths | description of scope]"
 ---
 
 ```
-    ╔══════╗
-    ║ ╔══╗ ║
-    ║ ║✓ ║ ║
-    ║ ╚══╝ ║
-    ║ ════ ║
-    ║ ════ ║
-    ╚══════╝
-
 ██████╗ ███████╗██╗   ██╗██╗███████╗██╗    ██╗
 ██╔══██╗██╔════╝██║   ██║██║██╔════╝██║    ██║
 ██████╔╝█████╗  ██║   ██║██║█████╗  ██║ █╗ ██║
@@ -22,7 +14,7 @@ argument-hint: "[staged | file paths | description of scope]"
 ╚═╝  ╚═╝╚══════╝  ╚═══╝  ╚═╝╚══════╝ ╚══╝╚══╝
 
       ⚔ 7-Agent Code Review ⚔
-           CAS v7.16.0
+           CAS v7.16.1
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.

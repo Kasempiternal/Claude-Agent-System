@@ -6,13 +6,6 @@ argument-hint: <research topic> [--depth XS|S|M|L|XL] [--html] [--codebase] [--n
 ---
 
 ```
-  ╔═══╗         ╔═══╗
-  ║ ◉ ║═══╦═════║ ◉ ║
-  ╚═══╝   ║     ╚═══╝
-    ║   ╔══╩══╗   ║
-    ╚═══╣  ◈  ╠═══╝
-        ╚═════╝
-
 ███████╗██████╗ ███████╗ ██████╗████████╗██████╗ ███████╗
 ██╔════╝██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔══██╗██╔════╝
 ███████╗██████╔╝█████╗  ██║        ██║   ██████╔╝█████╗
@@ -21,7 +14,7 @@ argument-hint: <research topic> [--depth XS|S|M|L|XL] [--html] [--codebase] [--n
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
 
          ⚔ Reconnaissance Swarm ⚔
-              CAS v7.16.0
+              CAS v7.16.1
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
