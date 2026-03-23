@@ -75,7 +75,7 @@ Features:
 - **Configurable max iterations** (`--max-iterations N`, default 5)
 - **Post-loop simplification** — module-grouped code cleanup after project completion
 
-### `/hydra` - Multi-Task Parallel Swarm Coordinator `BETA`
+### `/hydra` - Multi-Task Parallel Swarm Coordinator
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do. Agents within each wave **collaborate in real-time** via mailbox messaging, and global verification uses a **two-skeptic adversarial debate**.
 
 > **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
@@ -231,7 +231,7 @@ Features:
 | `/zk` | Auto-routes to best mode | Router only (delegates to siege/legion/hydra/pcc-opus/pcc) | Via delegated skill |
 | `/siege` `BETA` | Max-rigor iterative completion | External `claude -p` workers + two-skeptic verifiers (Agent Teams inside) | Yes |
 | `/legion` `BETA` | Iterative project completion | Opus scouts + CTO + wave-based Opus implementers, looped (Agent Teams) | Yes |
-| `/hydra` `BETA` | Multi-task parallel swarms with collaboration | Opus scouts + analyst teammates + wave-based Opus implementers + two-skeptic verifiers (Agent Teams) | Yes |
+| `/hydra` | Multi-task parallel swarms with collaboration | Opus scouts + analyst teammates + wave-based Opus implementers + two-skeptic verifiers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
@@ -330,5 +330,11 @@ Features:
 6. **Complete** - Summary with session learnings
 
 ## License
+
+MIT
+e
+
+MIT
+e
 
 MIT

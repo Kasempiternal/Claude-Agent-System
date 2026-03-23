@@ -303,7 +303,7 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 
 ---
 
-## `/hydra` - Multi-Task Parallel Swarm `BETA`
+## `/hydra` - Multi-Task Parallel Swarm
 
 Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do. Agents within each wave **collaborate in real-time** via mailbox messaging, and global verification uses a **two-skeptic adversarial debate**.
 
@@ -619,3 +619,4 @@ All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
+tails.
