@@ -2,7 +2,7 @@
 name: spectre
 description: "Deep Research Swarm — Deploys parallel researchers to explore any topic via web, codebase, and documents, then synthesizes, validates claims, and generates a structured report. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 model: opus
-argument-hint: <research topic> [--depth XS|S|M|L|XL] [--html] [--codebase] [--no-web] [--sources N]
+argument-hint: <research topic>
 ---
 
 ```
@@ -19,7 +19,7 @@ argument-hint: <research topic> [--depth XS|S|M|L|XL] [--html] [--codebase] [--n
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
-> **Warning: HIGH TOKEN USAGE**: This skill uses Agent Teams (beta) and spawns multiple Opus agents. Recommended for MAX plan users only.
+> **Warning: HIGH TOKEN USAGE**: This skill uses Agent Teams and spawns multiple Opus agents. Recommended for MAX plan users only.
 
 You are entering SPECTRE INTELLIGENCE MODE. You are Opus, the intelligence commander. You deploy parallel research agents to investigate any topic from multiple angles — synthesizing, cross-validating, and producing a structured intelligence report.
 
@@ -79,17 +79,11 @@ Display: `SPECTRE: Collaboration protocol loaded from {SHARED_DIR}`
 
 ### Step 1: Parse `$ARGUMENTS`
 
-Extract:
-- **Research topic**: everything not a flag
-- `--depth XS|S|M|L|XL` — optional override for auto-classification
-- `--codebase` — include codebase exploration in scope (default: auto-detect)
-- `--no-web` — codebase-only research, no web sources
-- `--html` — generate self-contained HTML dashboard alongside markdown report
-- `--sources N` — max web sources per researcher to fetch via WebFetch (default: 5)
+The entire `$ARGUMENTS` string is the **research topic**. No flags — you auto-evaluate everything.
 
 ### Step 2: Scope Classification
 
-If `--depth` is provided, use it directly. Otherwise, analyze the topic text and classify into ONE tier (first match wins):
+Analyze the topic text and classify into ONE tier (first match wins):
 
 | Tier | Name | Criteria | Researcher Count |
 |------|------|----------|-----------------|
@@ -105,14 +99,12 @@ If `--depth` is provided, use it directly. Otherwise, analyze the topic text and
 - **Domain count**: Cross-domain topics (tech + policy + market) → L/XL
 - **Temporal scope**: Historical + current + projections → L/XL
 - **Single question mark, narrow scope** → XS/S
-- **User override** via `--depth` flag takes precedence over classification
 
 ### Step 3: Detect Research Context
 
 Determine whether this research involves the current codebase:
-- If `--codebase` flag → YES
-- If `--no-web` flag → codebase-only mode
-- If topic mentions "our code", "this project", "the codebase", file paths, function names → auto-detect YES
+- If topic mentions "our code", "this project", "the codebase", file paths, function names → codebase + web research
+- If topic is purely about the current project with no external angle → codebase-only mode
 - Otherwise → web + general research (no codebase)
 
 ### Step 4: Facet Decomposition
@@ -151,11 +143,12 @@ SPECTRE: Research query parsed
   Plans: .claude/plans/spectre-{slug}/
 ```
 
-Use `AskUserQuestion` with options: "Proceed" / "Adjust facets" / "Change depth"
+Use `AskUserQuestion` with options: "Proceed" / "Go harder" / "Go lighter" / "Adjust facets"
 
 - **Proceed** → Phase 2
+- **Go harder** → bump tier one level up (e.g., M→L), add more researchers, re-decompose facets, re-display
+- **Go lighter** → drop tier one level down (e.g., M→S), reduce researchers, re-decompose facets, re-display
 - **Adjust facets** → ask what to change, rebuild facets, re-display
-- **Change depth** → re-classify, re-decompose, re-display
 
 **DO NOT spawn researchers until user explicitly confirms.**
 
@@ -170,7 +163,6 @@ Use `AskUserQuestion` with options: "Proceed" / "Adjust facets" / "Change depth"
    - One task per analyst (Wave 2)
    - "Cross-reference validation" (Wave 3)
    - "Report compilation" (Wave 4)
-   - Optional: "Dashboard generation" (Wave 4, if `--html`)
 4. **TaskUpdate** to set dependencies: analysts blockedBy all researchers; validation blockedBy analysts; report blockedBy validation; dashboard blockedBy report.
 
 ---
@@ -181,15 +173,15 @@ Mark all researcher tasks as `in_progress`.
 
 **Agent count**: Determined by tier (see table above). **All launched in ONE message.**
 
-Choose the correct template based on research context:
+Choose the correct template based on the auto-detected research context (Phase 1 Step 3):
 - **Web research**: `{SPECTRE_SKILL_DIR}/templates/researcher-prompt.md`
-- **Codebase research** (when `--codebase` or `--no-web`): `{SPECTRE_SKILL_DIR}/templates/codebase-researcher-prompt.md`
-- **Hybrid** (auto-detect): use web template but add codebase tool instructions
+- **Codebase research** (codebase-only): `{SPECTRE_SKILL_DIR}/templates/codebase-researcher-prompt.md`
+- **Hybrid** (codebase + web): use web template but add codebase tool instructions
 
 Read the template and fill in the placeholders for each researcher:
 - The research topic
 - The specific facet assignment
-- Max sources to fetch (`--sources N`, default 5)
+- Max sources to fetch (5 per researcher)
 - Other researchers' facets (so they know what peers are covering)
 - Mailbox paths for inter-researcher communication
 - The collaboration protocol (inline from `COLLAB_PROTOCOL` and `MSG_SCHEMA`)
@@ -320,7 +312,7 @@ Task({
 3. Writes the final report to `.claude/plans/spectre-{slug}/report.md`
 4. Incorporates validation status into each finding (CONFIRMED / UNVERIFIED / DISPUTED)
 5. Includes full source bibliography with annotations
-6. If `--html` flag: also reads `{SPECTRE_SKILL_DIR}/templates/dashboard.html`, injects report data, writes to `.claude/plans/spectre-{slug}/dashboard.html`
+6. After writing the markdown report, the **orchestrator** asks the user via `AskUserQuestion`: "Generate an HTML dashboard too?" with options "Yes" / "No". If yes: reads `{SPECTRE_SKILL_DIR}/templates/dashboard.html`, injects report data, writes to `.claude/plans/spectre-{slug}/dashboard.html`
 
 Mark report task as `completed`.
 
@@ -358,7 +350,7 @@ SPECTRE COMPLETE
 
   ── Output ────────────────────────────────────
   Report: .claude/plans/spectre-{slug}/report.md
-  {If --html: Dashboard: .claude/plans/spectre-{slug}/dashboard.html}
+  {If dashboard generated: Dashboard: .claude/plans/spectre-{slug}/dashboard.html}
   Raw findings: .claude/plans/spectre-{slug}/findings-*.md
   Analysis: .claude/plans/spectre-{slug}/analysis.md
   Validation: .claude/plans/spectre-{slug}/validation-*.md

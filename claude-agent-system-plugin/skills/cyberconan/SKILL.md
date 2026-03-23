@@ -2,7 +2,7 @@
 name: cyberconan
 description: "Security Audit Swarm — Full repo security scan (SAST, SCA, secrets, config). Adaptive orchestration: subagents for small repos, Agent Teams for large. Pure Claude analysis."
 model: opus
-argument-hint: "[--depth quick|standard|deep] [--type sast|sca|secrets|config|all]"
+argument-hint: ""
 ---
 
 ```
@@ -69,18 +69,7 @@ The orchestrator performs recon directly — no agent spawning. This phase estab
 
 Use Glob to find the plugin root: `Glob("**/skills/cyberconan/SKILL.md")`. Extract the parent path (everything before `/skills/cyberconan/SKILL.md`) — this is the plugin root. The CyberConan skill directory is at `{PLUGIN_ROOT}/skills/cyberconan/`. Store this as `CYBERCONAN_DIR`.
 
-### Step 2: Parse Arguments
-
-Extract flags from `$ARGUMENTS`:
-
-| Flag | Values | Default |
-|------|--------|---------|
-| `--depth` | `quick`, `standard`, `deep` | `standard` |
-| `--type` | `sast`, `sca`, `secrets`, `config`, `all` | `all` |
-
-Any unrecognized flags: warn and continue with defaults.
-
-### Step 3: Count Source Files
+### Step 2: Count Source Files
 
 Use Glob to count all source files in the repository. **Exclude** these directories from the count:
 
@@ -92,7 +81,7 @@ Count files matching common source extensions: `*.ts`, `*.tsx`, `*.js`, `*.jsx`,
 
 Store the count as `SOURCE_FILE_COUNT` and the file list as `SOURCE_FILES`.
 
-### Step 4: Detect Languages
+### Step 3: Detect Languages
 
 Check for the presence of these lockfiles and manifests using Glob:
 
@@ -112,7 +101,7 @@ Check for the presence of these lockfiles and manifests using Glob:
 
 Store detected languages as `LANGUAGES`.
 
-### Step 5: Detect Frameworks
+### Step 4: Detect Frameworks
 
 Use Grep to search for characteristic imports, configuration files, and patterns:
 
@@ -134,7 +123,7 @@ Use Grep to search for characteristic imports, configuration files, and patterns
 
 Store detected frameworks as `FRAMEWORKS`.
 
-### Step 6: Classify Project Types
+### Step 5: Classify Project Types
 
 Based on detected languages, frameworks, and directory structure, classify the project into one or more types:
 
@@ -146,7 +135,7 @@ Based on detected languages, frameworks, and directory structure, classify the p
 
 Store as `PROJECT_TYPES`.
 
-### Step 7: Count Subprojects
+### Step 6: Count Subprojects
 
 Check for monorepo indicators:
 - `lerna.json` → Lerna monorepo
@@ -157,7 +146,7 @@ Check for monorepo indicators:
 
 Store subproject count as `SUBPROJECT_COUNT`.
 
-### Step 8: Pick Mode
+### Step 7: Pick Mode
 
 Apply the mode selection rules:
 
@@ -175,7 +164,7 @@ IF MODE == "FULL":
            Run /setup-swarm to enable Agent Teams for future scans."
 ```
 
-### Step 9: Display Recon Summary
+### Step 8: Display Recon Summary & Confirm
 
 ```
 CYBERCONAN: Recon Complete
@@ -186,15 +175,25 @@ CYBERCONAN: Recon Complete
   Frameworks: [list]
   Project types: [list]
   Subprojects: N
-  Depth: quick | standard | deep
-  Scan types: [list]
+  Depth: standard
+  Scanners: SAST, SCA, Secrets, Config
 ```
+
+Use `AskUserQuestion` with options:
+
+- **"Proceed"** → Phase 1 with `standard` depth and all scanners
+- **"Quick scan"** → Phase 1 with `quick` depth (CRITICAL/HIGH only)
+- **"Deep scan"** → Phase 1 with `deep` depth (all severity levels + extended checks)
+
+Store the user's choice as `DEPTH` (default: `standard`) and always run all scanner types (`ACTIVE_SCANNERS = all`).
+
+**DO NOT scan until user explicitly confirms.**
 
 ---
 
 ## Phase 1: Plan
 
-The orchestrator loads all necessary criteria and templates for the selected scan types.
+The orchestrator loads all necessary criteria and templates.
 
 ### Step 1: Load Criteria Index
 
@@ -226,7 +225,7 @@ Read all needed scanner templates from `{CYBERCONAN_DIR}/templates/`:
 | Secrets | `{CYBERCONAN_DIR}/templates/secrets-scanner.md` |
 | Config | `{CYBERCONAN_DIR}/templates/config-scanner.md` |
 
-Only load templates for scanners selected by `--type`.
+Load all four scanner templates (all scanners always run).
 
 ### Step 4: Load Shared Formats
 
@@ -251,7 +250,7 @@ In FULL mode, partition `SOURCE_FILES` by top-level directory or module boundary
 
 ### Step 7: Apply Depth Filter
 
-Filter the merged `CRITERIA` based on `--depth`:
+Filter the merged `CRITERIA` based on `DEPTH` (chosen by user in Phase 0 Step 8):
 
 | Depth | Severity Vectors Included |
 |-------|--------------------------|
@@ -259,21 +258,7 @@ Filter the merged `CRITERIA` based on `--depth`:
 | `standard` | CRITICAL, HIGH, MEDIUM (default) |
 | `deep` | CRITICAL, HIGH, MEDIUM, LOW + extended checks |
 
-Store filtered criteria as `FILTERED_CRITERIA`.
-
-### Step 8: Apply Type Filter
-
-Determine which scanners to spawn based on `--type`:
-
-| Flag Value | Scanners to Spawn |
-|-----------|-------------------|
-| `all` | SAST, SCA, Secrets, Config (default) |
-| `sast` | SAST only |
-| `sca` | SCA only |
-| `secrets` | Secrets only |
-| `config` | Config only |
-
-Store the active scanner list as `ACTIVE_SCANNERS`.
+Store filtered criteria as `FILTERED_CRITERIA`. All four scanners always run (`ACTIVE_SCANNERS = [SAST, SCA, Secrets, Config]`).
 
 ---
 
@@ -281,7 +266,7 @@ Store the active scanner list as `ACTIVE_SCANNERS`.
 
 ### LITE Mode
 
-Spawn Task calls for all active scanners in **ONE message** for maximum parallelism. Each scanner gets a fully-embedded prompt:
+Spawn Task calls for all 4 scanners in **ONE message** for maximum parallelism. Each scanner gets a fully-embedded prompt:
 
 ```javascript
 // For each scanner in ACTIVE_SCANNERS:
@@ -658,7 +643,7 @@ In FULL mode, after remediation: send `shutdown_request` to all active teammates
 3. **LAUNCH ALL SCANNERS IN ONE MESSAGE** — maximum parallelism. Whether LITE (4 Task calls) or FULL (N teammates), all scanners go out in a single message.
 4. **EMBED FULL TEMPLATE CONTENTS** — paste the ENTIRE template file content into Task prompts. NEVER summarize, abbreviate, or paraphrase any template or criteria file.
 5. **SELF-DISCOVERY** — use `Glob("**/skills/cyberconan/SKILL.md")` to find the plugin root, then read all criteria and templates from there. NEVER hardcode paths.
-6. **RESPECT DEPTH AND TYPE FLAGS** — filter criteria vectors by `--depth` and spawn only the scanners selected by `--type`. Do not scan for vectors outside the configured depth.
+6. **RESPECT USER'S DEPTH CHOICE** — filter criteria vectors by the depth the user confirmed in Phase 0. Always run all 4 scanner types.
 7. **MINIMUM CONFIDENCE 70%** — scanner agents should NOT report findings below 70% confidence. Low-confidence patterns generate noise and waste verification time.
 8. **VERIFICATION IS MANDATORY** — every finding from every scanner goes through verification before appearing in the report. No unverified findings in the final output.
 9. **TWO-SKEPTIC FOR CRITICALS IN FULL MODE** — CRITICAL severity findings in FULL mode require adversarial verification with two independent skeptics. Both must agree for a verdict; disagreement escalates to the user.
@@ -678,7 +663,7 @@ In FULL mode, after remediation: send `shutdown_request` to all active teammates
 | Phase | Agent Type | Model | Count | Purpose |
 |-------|-----------|-------|-------|---------|
 | Recon | (orchestrator) | — | 0 | Detect project type, languages, frameworks, pick mode |
-| Scan | general-purpose | Opus | 1-4 | SAST, SCA, Secrets, Config scanners (based on --type) |
+| Scan | general-purpose | Opus | 4 | SAST, SCA, Secrets, Config scanners |
 | Verify | general-purpose | Opus | 1 | Verify all findings (single verifier) |
 | Fix (opt-in) | general-purpose | Opus | 1-4 | Fix confirmed vulnerabilities |
 | **Total** | | | **~3-9** | |
@@ -696,7 +681,7 @@ In FULL mode, after remediation: send `shutdown_request` to all active teammates
 | Fix (opt-in) | general-purpose | Opus | 2-6 | Fix confirmed vulnerabilities |
 | **Total** | | | **~10-22** | |
 
-**Example (backend + frontend monorepo, 200 files, 3 partitions, --type all):** 1 scan-planner + 12 scanners (4 types x 3 partitions) + 2 skeptics + 1 high-verifier + 1 batch-verifier + 3 fix agents = ~20 teammates
+**Example (backend + frontend monorepo, 200 files, 3 partitions):** 1 scan-planner + 12 scanners (4 types x 3 partitions) + 2 skeptics + 1 high-verifier + 1 batch-verifier + 3 fix agents = ~20 teammates
 
 ---
 
@@ -713,8 +698,8 @@ In FULL mode, after remediation: send `shutdown_request` to all active teammates
 ## Orchestrator Lifecycle Summary
 
 ```
-Phase 0:     Glob self-discovery -> detect languages/frameworks -> count files -> pick mode
-Phase 1:     Read criteria index -> load criteria + templates -> apply depth/type filters
+Phase 0:     Glob self-discovery -> detect languages/frameworks -> count files -> pick mode -> user confirms (proceed/quick/deep)
+Phase 1:     Read criteria index -> load criteria + templates -> apply depth filter
 Phase 2:     Spawn scanner agents (LITE: Task calls | FULL: TeamCreate + teammates)
 Phase 3:     Collect findings -> deduplicate -> verify (LITE: single | FULL: tiered + two-skeptic)
 Phase 4:     Calculate score -> write report -> display summary

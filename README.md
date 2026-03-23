@@ -2,23 +2,13 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.16.0 — Spectre + CyberConan (BETA)**
+> **v7.16.0 — Spectre + CyberConan**
 >
-> **Two new skills**, both in beta:
+> **`/spectre`** — Deep research swarm. Auto-evaluates your topic, proposes scope, and deploys parallel Opus researchers. You confirm or adjust (harder/lighter) before it launches.
 >
-> **`/spectre`** — Deep research swarm. Deploys 2-12 parallel Opus researchers to investigate any topic from multiple angles via web search and codebase exploration, then synthesizes, cross-validates claims with two-skeptic validators, and produces a structured intelligence report.
-> - Adaptive scope tiers (XS/S/M/L/XL) that scale researcher count from 2 to 12
-> - 4-wave pipeline: parallel researchers → intelligence analyst → cross-reference validators → report compiler
-> - Web + codebase hybrid research, optional HTML dashboard (`--html`)
-> - ZK auto-routes research requests to Spectre
+> **`/cyberconan`** — Security audit swarm. Just run `/cyberconan` — auto-detects everything and runs SAST, SCA, secrets, and config scanners in parallel. You confirm before scanning.
 >
-> **`/cyberconan`** — Security audit swarm. Runs SAST, SCA, secrets detection, and config audit in parallel with pure Claude analysis — no external binaries needed.
-> - Adaptive mode: LITE (subagents for small repos) or FULL (Agent Teams for large ones)
-> - Two-skeptic adversarial verification for CRITICAL findings
-> - Security score [0-100], severity-tiered verification, opt-in remediation
-> - ZK auto-routes security scan requests to CyberConan
->
-> Both skills need real-world testing. Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
+> Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -95,19 +85,15 @@ ZK walks a deterministic decision tree:
 
 ---
 
-## `/spectre` - Deep Research Swarm `BETA`
+## `/spectre` - Deep Research Swarm
 
-Deploy a **parallel research swarm** to investigate any topic. Spectre decomposes your research question into facets, launches 2-12 Opus researchers in parallel, synthesizes findings through intelligence analysis, cross-validates claims with independent skeptic validators, and compiles a structured report.
-
-> **Requires Agent Teams**: Run `/setup-swarm` to enable.
-
-> **High Token Usage Warning**: Spawns multiple Opus agents. Recommended for MAX plan users only.
+Deploy a **parallel research swarm** to investigate any topic. Just give Spectre a topic — it auto-evaluates complexity, proposes a scope tier and facets, and asks for your confirmation. You can accept, **go harder**, or **go lighter**.
 
 ```bash
 /spectre "evaluate AI code generation tools for enterprise teams"
-/spectre "current state of WebAssembly" --depth S
-/spectre "compare Kubernetes vs Nomad" --html
-/spectre "analyze our auth module architecture" --codebase --no-web
+/spectre "current state of WebAssembly"
+/spectre "compare Kubernetes vs Nomad"
+/spectre "analyze our auth module architecture"
 ```
 
 ### Best For
@@ -120,15 +106,15 @@ Deploy a **parallel research swarm** to investigate any topic. Spectre decompose
 
 ### How Spectre Works
 
-1. **Parse & Classify** - Analyzes topic, classifies scope tier (XS/S/M/L/XL), decomposes into research facets
-2. **User Confirmation** - You review the facets and depth, then confirm
+1. **Parse & Classify** - Analyzes topic, auto-classifies scope tier (XS/S/M/L/XL), auto-detects codebase context, decomposes into research facets
+2. **User Confirmation** - You review the proposed scope and facets, then proceed, go harder, or go lighter
 3. **Wave 1: Research** - Parallel Opus researchers each explore one facet via WebSearch/WebFetch (or Grep/Glob/Read for codebase)
 4. **Wave 2: Analysis** - Intelligence analyst synthesizes all findings, resolves contradictions, ranks by evidence
 5. **Wave 3: Validation** - Cross-reference validators independently verify top claims via fresh web searches (two-skeptic model)
 6. **Wave 4: Report** - Compiler assembles structured markdown report with validation status per finding
-7. **Final Summary** - Key findings, validation verdict, source stats, output paths
+7. **Final Summary** - Key findings, validation verdict, source stats, optional HTML dashboard
 
-### Scope Tiers
+### Scope Tiers (Auto-Classified)
 
 | Tier | Type | Researchers | Total Agents | Example |
 |------|------|-------------|-------------|---------|
@@ -138,26 +124,16 @@ Deploy a **parallel research swarm** to investigate any topic. Spectre decompose
 | L | Broad | 6-8 | ~13 | "AI code generation tools landscape" |
 | XL | Comprehensive | 8-12 | ~17 | "EU AI Act: regulatory, technical, and market analysis" |
 
-### Flags
-
-| Flag | Default | Description |
-|------|---------|-------------|
-| `--depth XS\|S\|M\|L\|XL` | auto | Override scope classification |
-| `--html` | off | Generate self-contained HTML dashboard |
-| `--codebase` | auto | Include codebase exploration |
-| `--no-web` | off | Codebase-only, no web sources |
-| `--sources N` | 5 | Max web sources per researcher |
-
 ### Features
 
-- **Adaptive scope tiers** — auto-classifies research complexity and scales agents accordingly
+- **Auto-evaluation with user control** — classifies scope automatically, you confirm or adjust (harder/lighter)
 - **Facet decomposition** — breaks complex topics into distinct, parallel-researchable angles
 - **Inter-researcher collaboration** — mailbox broadcasting for cross-facet discovery sharing
 - **Two-skeptic validation** — independent validators verify claims via fresh web searches
 - **Validation status per finding** — every claim marked CONFIRMED / UNVERIFIED / DISPUTED
 - **Full source bibliography** — every finding traced to specific URLs with reliability ratings
-- **Optional HTML dashboard** — dark theme, tabbed interface, self-contained single file
-- **Web + codebase hybrid** — researchers can use WebSearch/WebFetch, Grep/Glob/Read, or both
+- **Optional HTML dashboard** — offered after report completion
+- **Web + codebase hybrid** — auto-detects whether research involves the current codebase
 
 ---
 
@@ -409,33 +385,30 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
-## `/cyberconan` - Security Audit Swarm `BETA`
+## `/cyberconan` - Security Audit Swarm
 
-Full-repo security scanner. Runs **SAST, SCA, secrets detection, and config audit** in parallel with pure Claude analysis — no external binaries needed. Adaptive orchestration: subagents for small repos, Agent Teams for large ones.
+Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, and size, picks the right mode, and runs all 4 scanners. You confirm the recon summary before scanning, with options for a **quick scan** or **deep scan**.
 
 ```bash
-/cyberconan                          # Standard scan of entire repo
-/cyberconan --depth quick            # Fast scan (CRITICAL/HIGH only)
-/cyberconan --depth deep             # Extended scan (all severity levels)
-/cyberconan --type sast              # Only run SAST scanner
-/cyberconan --type secrets           # Only scan for leaked secrets
+/cyberconan
 ```
 
 ### How CyberConan Works
 
-0. **Recon** - Detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
-1. **Plan** - Loads vulnerability criteria per project type, applies depth/type filters
-2. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
-3. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
-4. **Report** - Security score [0-100], findings by severity, remediation recommendations
-5. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
+0. **Recon** - Auto-detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
+1. **Confirm** - You review the recon summary, then proceed (standard), go quick (CRITICAL/HIGH only), or go deep (all levels)
+2. **Plan** - Loads vulnerability criteria per project type, applies depth filter
+3. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
+4. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
+5. **Report** - Security score [0-100], findings by severity, remediation recommendations
+6. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
 
-### Two Modes
+### Two Modes (Auto-Selected)
 
-| Mode | When | Agents | Requires |
-|------|------|--------|----------|
-| **LITE** | < 50 source files, single project | ~6 | Nothing extra |
-| **FULL** | 50+ files or multi-project | ~10-20 | Agent Teams (`/setup-swarm`) |
+| Mode | When | Agents |
+|------|------|--------|
+| **LITE** | < 50 source files, single project | ~6 |
+| **FULL** | 50+ files or multi-project | ~10-20 |
 
 ### Scanner Coverage
 
