@@ -80,7 +80,7 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 
 > **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
 
-> **High Token Usage Warning**: Hydra spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
+> **High Token Usage Warning**: Hydra uses Anthropic's **Agent Teams** feature (currently in beta). It spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
 
 ```bash
 /hydra add auth; build dashboard; fix payments

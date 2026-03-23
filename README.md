@@ -2,13 +2,23 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.16.0 — Spectre + CyberConan**
+> **v7.16.0 — Spectre + CyberConan (BETA)**
 >
-> **`/spectre`** — Deep research swarm. Deploys parallel Opus researchers to investigate any topic, synthesizes findings, cross-validates claims, and produces a structured intelligence report. Auto-evaluates scope from your topic.
+> **Two new skills**, both in beta:
 >
-> **`/cyberconan`** — Security audit swarm. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, and size, picks the right mode, and scans. No flags needed.
+> **`/spectre`** — Deep research swarm. Deploys 2-12 parallel Opus researchers to investigate any topic from multiple angles via web search and codebase exploration, then synthesizes, cross-validates claims with two-skeptic validators, and produces a structured intelligence report.
+> - Adaptive scope tiers (XS/S/M/L/XL) that scale researcher count from 2 to 12
+> - 4-wave pipeline: parallel researchers → intelligence analyst → cross-reference validators → report compiler
+> - Web + codebase hybrid research, optional HTML dashboard (`--html`)
+> - ZK auto-routes research requests to Spectre
 >
-> Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
+> **`/cyberconan`** — Security audit swarm. Runs SAST, SCA, secrets detection, and config audit in parallel with pure Claude analysis — no external binaries needed.
+> - Adaptive mode: LITE (subagents for small repos) or FULL (Agent Teams for large ones)
+> - Two-skeptic adversarial verification for CRITICAL findings
+> - Security score [0-100], severity-tiered verification, opt-in remediation
+> - ZK auto-routes security scan requests to CyberConan
+>
+> Both skills need real-world testing. Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
 > The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
 > ```bash
@@ -85,13 +95,17 @@ ZK walks a deterministic decision tree:
 
 ---
 
-## `/spectre` - Deep Research Swarm
+## `/spectre` - Deep Research Swarm `BETA`
 
-Deploy a **parallel research swarm** to investigate any topic. Just tell Spectre what to research — it auto-evaluates complexity, proposes a scope tier, and asks for your confirmation before launching. You can accept, **go harder**, or **go lighter**.
+Deploy a **parallel research swarm** to investigate any topic. Spectre decomposes your research question into facets, launches 2-12 Opus researchers in parallel, synthesizes findings through intelligence analysis, cross-validates claims with independent skeptic validators, and compiles a structured report.
+
+> **Requires Agent Teams**: Run `/setup-swarm` to enable.
+
+> **High Token Usage Warning**: Spawns multiple Opus agents. Recommended for MAX plan users only.
 
 ```bash
 /spectre "evaluate AI code generation tools for enterprise teams"
-/spectre "current state of WebAssembly"
+/spectre "current state of WebAssembly" --depth S
 /spectre "compare Kubernetes vs Nomad" --html
 /spectre "analyze our auth module architecture" --codebase --no-web
 ```
@@ -107,7 +121,7 @@ Deploy a **parallel research swarm** to investigate any topic. Just tell Spectre
 ### How Spectre Works
 
 1. **Parse & Classify** - Analyzes topic, classifies scope tier (XS/S/M/L/XL), decomposes into research facets
-2. **User Confirmation** - You review the proposed scope and facets, then confirm, go harder, or go lighter
+2. **User Confirmation** - You review the facets and depth, then confirm
 3. **Wave 1: Research** - Parallel Opus researchers each explore one facet via WebSearch/WebFetch (or Grep/Glob/Read for codebase)
 4. **Wave 2: Analysis** - Intelligence analyst synthesizes all findings, resolves contradictions, ranks by evidence
 5. **Wave 3: Validation** - Cross-reference validators independently verify top claims via fresh web searches (two-skeptic model)
@@ -395,9 +409,9 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
-## `/cyberconan` - Security Audit Swarm
+## `/cyberconan` - Security Audit Swarm `BETA`
 
-Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, size, and complexity, then runs **SAST, SCA, secrets detection, and config audit** in parallel with pure Claude analysis. No external binaries, no flags needed.
+Full-repo security scanner. Runs **SAST, SCA, secrets detection, and config audit** in parallel with pure Claude analysis — no external binaries needed. Adaptive orchestration: subagents for small repos, Agent Teams for large ones.
 
 ```bash
 /cyberconan                          # Standard scan of entire repo
@@ -416,12 +430,12 @@ Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo
 4. **Report** - Security score [0-100], findings by severity, remediation recommendations
 5. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
 
-### Two Modes (Auto-Selected)
+### Two Modes
 
-| Mode | When | Agents |
-|------|------|--------|
-| **LITE** | < 50 source files, single project | ~6 |
-| **FULL** | 50+ files or multi-project | ~10-20 |
+| Mode | When | Agents | Requires |
+|------|------|--------|----------|
+| **LITE** | < 50 source files, single project | ~6 | Nothing extra |
+| **FULL** | 50+ files or multi-project | ~10-20 | Agent Teams (`/setup-swarm`) |
 
 ### Scanner Coverage
 
