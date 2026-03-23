@@ -4,7 +4,9 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 
 ## Skills
 
-### `/zk` - Intelligent Router
+### `/zk` - Intelligent Router `BETA`
+*AKA "Zero Knowledge"* — for the people who don't want to use their brain. Just type `/zk` and let Claude figure out the rest.
+
 Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/siege`, `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
 
 ```bash

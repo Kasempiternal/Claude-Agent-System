@@ -46,7 +46,9 @@ Done! You now have 13 skills: `/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/
 
 # Skills
 
-## `/zk` - Intelligent Router
+## `/zk` - Intelligent Router `BETA`
+
+*AKA "Zero Knowledge"* — born because a friend of mine kept typing `/systemcc` for literally everything, even a commit and push. So I made a skill for people who don't want to use their brain: just type `/zk` and let Claude figure out the rest.
 
 The smart entry point. Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed.
 
