@@ -137,34 +137,97 @@ Deploy a **parallel research swarm** to investigate any topic. Just give Spectre
 
 ---
 
-## `/pcc` and `/pcc-opus` - Parallel Claude Coordinator
+## `/cyberconan` - Security Audit Swarm
 
-An orchestrator that spawns agent swarms for exploration and implementation.
+Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, and size, picks the right mode, and runs all 4 scanners. You confirm the recon summary before scanning, with options for a **quick scan** or **deep scan**.
 
 ```bash
-/pcc "implement user authentication with JWT tokens"
-/pcc-opus "refactor the entire payment processing system"
+/cyberconan
 ```
 
-### Two Variants
+### How CyberConan Works
 
-| Variant | Scouts | Implementers | Best For |
-|---------|--------|-------------|----------|
-| `/pcc` | **Sonnet** (fast, cost-efficient) | **Opus** (high quality) | Most tasks |
-| `/pcc-opus` | **Opus** (maximum depth) | **Opus** (high quality) | Critical systems, unfamiliar codebases |
+0. **Recon** - Auto-detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
+1. **Confirm** - You review the recon summary, then proceed (standard), go quick (CRITICAL/HIGH only), or go deep (all levels)
+2. **Plan** - Loads vulnerability criteria per project type, applies depth filter
+3. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
+4. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
+5. **Report** - Security score [0-100], findings by severity, remediation recommendations
+6. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
 
-### How PCC Works
+### Two Modes (Auto-Selected)
 
-1. **Task Understanding** - Clarifies the task with you
-2. **Parallel Exploration** - Spawns 2-6 scout agents to map the codebase
-3. **Synthesis** - Combines findings into unified understanding
-4. **Clarification** - Asks questions if multiple valid approaches exist
-5. **Plan Creation** - Creates editable plan at `.claude/plans/{task}.md`
-6. **User Review** - You edit and approve the plan before any code is written
-7. **Parallel Implementation** - Spawns 2-6 Opus agents working simultaneously
-8. **Verification** - Tests and code review
-9. **Simplification** - 2-6 parallel agents clean up the code
-10. **Final Report** - Summarizes everything
+| Mode | When | Agents |
+|------|------|--------|
+| **LITE** | < 50 source files, single project | ~6 |
+| **FULL** | 50+ files or multi-project | ~10-20 |
+
+### Scanner Coverage
+
+| Scanner | What It Checks |
+|---------|---------------|
+| **SAST** | SQL injection, command injection, XSS, SSRF, path traversal, deserialization, race conditions, auth issues |
+| **SCA** | Known CVEs in dependencies (with exploitability context), outdated packages |
+| **Secrets** | AWS keys, API tokens, private keys, connection strings, .env files in git |
+| **Config** | Debug mode, weak TLS, permissive CORS, missing security headers, default creds, exposed endpoints |
+
+### Security Score
+
+```
+Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
+```
+
+| Range | Rating |
+|-------|--------|
+| 90-100 | Excellent |
+| 70-89 | Good |
+| 50-69 | Needs Improvement |
+| 30-49 | Poor |
+| 0-29 | Critical |
+
+> **Note**: SCA scanner uses Claude's training knowledge for CVE detection, which has a knowledge cutoff. Complement with dedicated tools (npm audit, pip-audit, cargo-audit) for the latest CVE data.
+
+> Inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills). CyberConan adapts the concept with adaptive LITE/FULL orchestration modes, criteria-driven scanning, two-skeptic adversarial verification, and CAS integration.
+
+---
+
+## `/l30` - Last 30 Days Topic Research
+
+Research any topic across **5 free sources** from the last 30 days. Deploys a parallel agent swarm to scrape, score, deduplicate, and generate a self-contained HTML dashboard. Zero API keys required.
+
+> **Requires**: Python environment with [l30](https://github.com/Kasempiternal/l30) installed and Agent Teams (`/setup-swarm`).
+
+```bash
+/l30 "llm compression techniques"
+/l30 "rust vs zig 2026"
+/l30 "claude code plugins"
+```
+
+### Best For
+
+- Catching up on what happened in the last month for a topic
+- Finding recent discussions, repos, and articles
+- Getting a visual dashboard of community activity and trends
+
+### How L30 Works
+
+1. **Wave 1: Scraping** - 5 parallel Sonnet agents each scrape one source (Reddit, Hacker News, DuckDuckGo, Lobsters, GitHub) using Scrapling with Chrome impersonation
+2. **Wave 2: Intelligence** - Single analyst scores, ranks, and deduplicates results across all sources
+3. **Wave 3: Dashboard** - Compiler injects ranked data into an HTML template and opens the dashboard
+
+### Sources
+
+| Source | Method | What It Finds |
+|--------|--------|--------------|
+| Reddit | JSON API via Scrapling | Posts, discussions, top comments |
+| Hacker News | Algolia API | Stories, discussion threads |
+| DuckDuckGo | HTML scraping | Web articles, blog posts |
+| Lobsters | HTML + CSS selectors | Niche tech discussions |
+| GitHub | REST API + HTML fallback | Repos, stars, languages, topics |
+
+### Output
+
+Self-contained HTML dashboard at `~/Documents/l30/dashboards/` — works offline, no server needed. Partial results are still valuable if some sources fail.
 
 ---
 
@@ -385,97 +448,34 @@ Fix agents are grouped by file (exclusive ownership, no conflicts) and make mini
 
 ---
 
-## `/cyberconan` - Security Audit Swarm
+## `/pcc` and `/pcc-opus` - Parallel Claude Coordinator
 
-Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, and size, picks the right mode, and runs all 4 scanners. You confirm the recon summary before scanning, with options for a **quick scan** or **deep scan**.
-
-```bash
-/cyberconan
-```
-
-### How CyberConan Works
-
-0. **Recon** - Auto-detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
-1. **Confirm** - You review the recon summary, then proceed (standard), go quick (CRITICAL/HIGH only), or go deep (all levels)
-2. **Plan** - Loads vulnerability criteria per project type, applies depth filter
-3. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
-4. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
-5. **Report** - Security score [0-100], findings by severity, remediation recommendations
-6. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
-
-### Two Modes (Auto-Selected)
-
-| Mode | When | Agents |
-|------|------|--------|
-| **LITE** | < 50 source files, single project | ~6 |
-| **FULL** | 50+ files or multi-project | ~10-20 |
-
-### Scanner Coverage
-
-| Scanner | What It Checks |
-|---------|---------------|
-| **SAST** | SQL injection, command injection, XSS, SSRF, path traversal, deserialization, race conditions, auth issues |
-| **SCA** | Known CVEs in dependencies (with exploitability context), outdated packages |
-| **Secrets** | AWS keys, API tokens, private keys, connection strings, .env files in git |
-| **Config** | Debug mode, weak TLS, permissive CORS, missing security headers, default creds, exposed endpoints |
-
-### Security Score
-
-```
-Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
-```
-
-| Range | Rating |
-|-------|--------|
-| 90-100 | Excellent |
-| 70-89 | Good |
-| 50-69 | Needs Improvement |
-| 30-49 | Poor |
-| 0-29 | Critical |
-
-> **Note**: SCA scanner uses Claude's training knowledge for CVE detection, which has a knowledge cutoff. Complement with dedicated tools (npm audit, pip-audit, cargo-audit) for the latest CVE data.
-
-> Inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills). CyberConan adapts the concept with adaptive LITE/FULL orchestration modes, criteria-driven scanning, two-skeptic adversarial verification, and CAS integration.
-
----
-
-## `/l30` - Last 30 Days Topic Research
-
-Research any topic across **5 free sources** from the last 30 days. Deploys a parallel agent swarm to scrape, score, deduplicate, and generate a self-contained HTML dashboard. Zero API keys required.
-
-> **Requires**: Python environment with [l30](https://github.com/Kasempiternal/l30) installed and Agent Teams (`/setup-swarm`).
+An orchestrator that spawns agent swarms for exploration and implementation.
 
 ```bash
-/l30 "llm compression techniques"
-/l30 "rust vs zig 2026"
-/l30 "claude code plugins"
+/pcc "implement user authentication with JWT tokens"
+/pcc-opus "refactor the entire payment processing system"
 ```
 
-### Best For
+### Two Variants
 
-- Catching up on what happened in the last month for a topic
-- Finding recent discussions, repos, and articles
-- Getting a visual dashboard of community activity and trends
+| Variant | Scouts | Implementers | Best For |
+|---------|--------|-------------|----------|
+| `/pcc` | **Sonnet** (fast, cost-efficient) | **Opus** (high quality) | Most tasks |
+| `/pcc-opus` | **Opus** (maximum depth) | **Opus** (high quality) | Critical systems, unfamiliar codebases |
 
-### How L30 Works
+### How PCC Works
 
-1. **Wave 1: Scraping** - 5 parallel Sonnet agents each scrape one source (Reddit, Hacker News, DuckDuckGo, Lobsters, GitHub) using Scrapling with Chrome impersonation
-2. **Wave 2: Intelligence** - Single analyst scores, ranks, and deduplicates results across all sources
-3. **Wave 3: Dashboard** - Compiler injects ranked data into an HTML template and opens the dashboard
-
-### Sources
-
-| Source | Method | What It Finds |
-|--------|--------|--------------|
-| Reddit | JSON API via Scrapling | Posts, discussions, top comments |
-| Hacker News | Algolia API | Stories, discussion threads |
-| DuckDuckGo | HTML scraping | Web articles, blog posts |
-| Lobsters | HTML + CSS selectors | Niche tech discussions |
-| GitHub | REST API + HTML fallback | Repos, stars, languages, topics |
-
-### Output
-
-Self-contained HTML dashboard at `~/Documents/l30/dashboards/` — works offline, no server needed. Partial results are still valuable if some sources fail.
+1. **Task Understanding** - Clarifies the task with you
+2. **Parallel Exploration** - Spawns 2-6 scout agents to map the codebase
+3. **Synthesis** - Combines findings into unified understanding
+4. **Clarification** - Asks questions if multiple valid approaches exist
+5. **Plan Creation** - Creates editable plan at `.claude/plans/{task}.md`
+6. **User Review** - You edit and approve the plan before any code is written
+7. **Parallel Implementation** - Spawns 2-6 Opus agents working simultaneously
+8. **Verification** - Tests and code review
+9. **Simplification** - 2-6 parallel agents clean up the code
+10. **Final Report** - Summarizes everything
 
 ---
 
@@ -556,14 +556,14 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
 | Deep research, topic exploration, tool evaluation | `/spectre` |
-| Mission-critical project, maximum rigor | `/siege` |
-| Build a complete project from scratch | `/legion` |
-| Single well-defined task | `/pcc` |
-| Critical systems, unfamiliar codebases | `/pcc-opus` |
-| Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
-| Code review before committing | `/review` |
 | Security audit of your codebase | `/cyberconan` |
 | What happened in the last 30 days for a topic | `/l30` |
+| Mission-critical project, maximum rigor | `/siege` |
+| Build a complete project from scratch | `/legion` |
+| Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
+| Code review before committing | `/review` |
+| Single well-defined task | `/pcc` |
+| Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
 | Enable Agent Teams for swarm skills | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
@@ -592,4 +592,3 @@ All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-tails.
