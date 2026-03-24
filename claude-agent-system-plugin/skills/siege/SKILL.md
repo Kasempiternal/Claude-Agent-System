@@ -2,7 +2,7 @@
 name: siege
 description: "External Orchestrator with Worker-Judge Separation — spawns fresh claude -p sessions per iteration with adversarial two-skeptic verification. Arithmetic exit decisions only. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
 model: opus
-argument-hint: <project description> [--max-iterations N] [--checkpoint] [--worker-budget N]
+argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ---
 
 ```
@@ -14,7 +14,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint] [--work
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.16.1
+             CAS v7.16.2
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -110,7 +110,7 @@ Parse `$ARGUMENTS`:
 - Project description (everything that's not a flag)
 - `--max-iterations N` (default: 5)
 - `--checkpoint` (default: off)
-- `--worker-budget N` (default: 10, in USD — passed to `--max-budget-usd` on each worker)
+
 
 ### Create Plans Directory
 
@@ -124,7 +124,7 @@ Write `.claude/plans/siege-{slug}/siege-config.md`:
 PROJECT: {description}
 MAX_ITERATIONS: {N}
 CHECKPOINT: {ON|OFF}
-WORKER_BUDGET: ${worker_budget}
+
 TEST_CMD: {cmd}
 BUILD_CMD: {cmd}
 RUN_CMD: {cmd}
@@ -140,7 +140,7 @@ SIEGE CONFIG
   Project: {description}
   Max iterations: {N}
   Checkpoint: {ON|OFF}
-  Worker budget: ${worker_budget}/session
+
   Test: {cmd}
   Build: {cmd}
 
@@ -162,7 +162,7 @@ Build the full worker prompt by filling `WORKER_FULL_TEMPLATE` with:
 - `{project_description}` from config
 - `{slug}` from config
 - `{plans_dir}` = `.claude/plans/siege-{slug}`
-- `{worker_budget}` from config (default: 10)
+
 - `{test_command}`, `{build_command}`, `{run_command}` from config
 - `{collaboration_protocol_content}` = full text of `COLLAB_PROTOCOL`
 - `{message_schema_content}` = full text of `MSG_SCHEMA`
@@ -180,7 +180,7 @@ python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1 \
   --prompt-file ".claude/plans/siege-{slug}/worker-context-iter1.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
-  --permission-mode dontAsk --max-budget-usd {worker_budget} \
+  --permission-mode dontAsk --max-turns 200 \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -257,7 +257,7 @@ python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N} \
   --prompt-file ".claude/plans/siege-{slug}/worker-context-iter{N}.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
-  --permission-mode dontAsk --max-budget-usd {worker_budget} \
+  --permission-mode dontAsk --max-turns 200 \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -297,7 +297,7 @@ python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N} \
   --max-duration 1200 \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
-  --permission-mode dontAsk --max-budget-usd 5 \
+  --permission-mode dontAsk --max-turns 200 \
   --allowedTools "Bash,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -381,7 +381,7 @@ python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration} \
   --prompt-file ".claude/plans/siege-{slug}/hardening-context.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
-  --permission-mode dontAsk --max-budget-usd {worker_budget} \
+  --permission-mode dontAsk --max-turns 200 \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -419,7 +419,7 @@ python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration} \
   --prompt-file ".claude/plans/siege-{slug}/simplifier-context.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
-  --permission-mode dontAsk --max-budget-usd {worker_budget} \
+  --permission-mode dontAsk --max-turns 200 \
   --allowedTools "Bash,Edit,Write,Read,Grep,Glob,Agent,TeamCreate,TeamDelete,TaskCreate,TaskUpdate,TaskList,SendMessage"
 ```
 
@@ -518,4 +518,4 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 13. **MONITOR IS REQUIRED** — the monitor script (`siege-monitor.py`) detects worker completion via the NDJSON `result` event and kills the process after a grace period. It also enforces a hard timeout (45 min default) to prevent indefinite hangs. If the monitor is missing, STOP — the plugin needs reinstalling.
 14. **PROMPT VIA STDIN** — the monitor's `--prompt-file` flag pipes the context file to `claude -p` via stdin. NEVER use `$(cat ...)` shell expansion for prompt passing — it mangles content with `$`, backticks, or quotes.
 15. **CHECK RESULT FILES** — after every worker/verifier returns, verify the result file exists before parsing. Workers can crash or timeout without producing results. Handle missing files gracefully.
-16. **BUDGET LIMITS** — every `claude -p` command includes `--max-budget-usd` to prevent runaway workers. Default $10 for workers, $5 for verifiers.
+16. **NO TURN/BUDGET CAPS** — workers use `--max-turns 200` with no budget cap. The budget is controlled at the account level, not per-worker.

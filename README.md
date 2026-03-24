@@ -2,11 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.16.0 — Spectre + CyberConan**
+> **v7.16.2 — Siege Unleashed**
 >
-> **`/spectre`** — Deep research swarm. Auto-evaluates your topic, proposes scope, and deploys parallel Opus researchers. You confirm or adjust (harder/lighter) before it launches.
->
-> **`/cyberconan`** — Security audit swarm. Just run `/cyberconan` — auto-detects everything and runs SAST, SCA, secrets, and config scanners in parallel. You confirm before scanning.
+> **`/siege`** — Removed turn limits and budget caps from external worker sessions. Workers now use `--max-turns 200` with no `--max-budget-usd`, fixing premature worker termination (previously dying at 10 turns/$0.54). Removed `--worker-budget` flag.
 >
 > Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
@@ -246,7 +244,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 ```bash
 /siege build a production-ready e-commerce platform with auth, billing, and dashboard
 /siege create an entire SaaS API from scratch --max-iterations 8
-/siege implement the full platform end to end --checkpoint --worker-budget 15
+/siege implement the full platform end to end --checkpoint
 ```
 
 ### Best For
@@ -259,7 +257,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 ### How Siege Works
 
 0. **Prerequisites** - Verify Agent Teams enabled, locate monitor script + templates, detect test/build commands
-1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`, `--worker-budget`), write config, user confirms
+1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`), write config, user confirms
 2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
 3. **Orchestrator Loop** - For each iteration:
    - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
@@ -275,7 +273,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 - **Real-time progress monitor** — see tool calls, phase transitions, elapsed time, cost, and turn count as workers run
 - **Hang prevention** — `result` event detection + 45-min hard timeout + result file polling
 - **Stdin prompt piping** — prompts passed via `--prompt-file` to avoid shell escaping issues
-- **Budget limits** — `--max-budget-usd` on every worker ($10 default) and verifier ($5) session
+- **Uncapped workers** — `--max-turns 200` with no budget cap, workers run until the job is done
 - **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
 - **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
 - **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules

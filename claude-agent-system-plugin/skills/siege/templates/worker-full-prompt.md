@@ -10,8 +10,6 @@ ITERATION: 1
 MODE: FULL
 PLANS DIR: {plans_dir}
 MAILBOXES DIR: {plans_dir}/mailboxes/
-WORKER BUDGET: ${worker_budget}
-
 ## Detected Commands
 - Test: {test_command}
 - Build: {build_command}
