@@ -14,7 +14,7 @@ argument-hint: <research topic>
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
 
          ⚔ Reconnaissance Swarm ⚔
-              CAS v7.16.2
+              CAS v7.16.3
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
