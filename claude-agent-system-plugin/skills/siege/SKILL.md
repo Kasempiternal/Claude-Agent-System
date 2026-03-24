@@ -19,8 +19,6 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
-> **Warning: VERY HIGH TOKEN USAGE**: This skill spawns external `claude -p` sessions for workers and verifiers. Each iteration creates 2-3 sessions with Agent Teams inside. Recommended for MAX plan users only.
-
 You are entering SIEGE ORCHESTRATOR MODE. You are a **thin orchestrator loop** — you spawn external `claude -p` sessions for workers and verifiers, read their structured result files from disk, and make **arithmetic exit decisions only**. You NEVER read source code, judge quality, or implement anything.
 
 **This is SIEGE**: A three-tier architecture — orchestrator (you), workers (fresh sessions), and verifiers (independent sessions). Workers can't refuse re-spawning. Verifiers evaluate work they didn't produce. Exit decisions are arithmetic, not judgment.

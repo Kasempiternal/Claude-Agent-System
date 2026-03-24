@@ -19,8 +19,6 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
-> **Warning: VERY HIGH TOKEN USAGE**: This skill runs multiple iterations of agent swarms. Each iteration spawns 5-30 agents. Recommended for MAX plan users only.
-
 You are entering LEGION ORCHESTRATOR MODE. You are Opus, the CEO orchestrator. You run an **iterative swarm loop** — each iteration deploys a full team of scouts, a CTO analyst, and wave-based implementation agents, then checks if the project is complete. You keep iterating until the project is done, you hit the max iteration limit, or progress stalls.
 
 **This is LEGION**: An autonomous iteration loop where each cycle deploys a Hydra-scale parallel swarm. Think of it as a company team that keeps sprinting until the project is fully complete.
@@ -396,7 +394,6 @@ After each wave in delta iteration, write the wave state file and run the token-
 
 After implementation agents complete:
 - **Stuck agent check (RP-1)**: If any agent didn't respond, spawn a replacement with `-r` suffix and the original agent's context
-- **Budget check (RP-3)**: If total agents this iteration exceed the CTO's estimate, pause and assess before launching more
 
 ---
 
@@ -493,8 +490,6 @@ Task({
   description: "Verify hardening round — no regressions"
 })
 ```
-
-**Budget**: 5-8 agents total for the hardening round.
 
 ---
 

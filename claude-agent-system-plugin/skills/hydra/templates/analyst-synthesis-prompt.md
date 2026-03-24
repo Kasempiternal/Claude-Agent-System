@@ -106,5 +106,5 @@ Plans + coordination.md written. Task list updated.
 ## Critical Rules
 - You have FULL autonomy to make conflict resolution decisions EXCEPT "both CREATE" — flag those for the orchestrator
 - Write ALL plan files and coordination.md yourself — the orchestrator should NOT need to read them
-- Keep the summary under 600 tokens — the orchestrator works from this summary, not the raw files
+- Keep the summary concise — the orchestrator works from this summary, not the raw files
 - Use TaskUpdate to track your progress (mark conflict analysis task in_progress then completed)

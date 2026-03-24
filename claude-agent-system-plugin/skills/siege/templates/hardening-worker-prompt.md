@@ -110,4 +110,4 @@ Call `TeamDelete`.
 3. **EXCLUSIVE FILE OWNERSHIP** — no file in two fix agents
 4. **FIX ROOT CAUSES** — not symptoms
 5. **RUN TESTS** — verify no regressions after fixes
-6. **BUDGET: 5-8 agents total** — keep it focused
+6. **SCOPE: 5-8 agents total** — keep it focused

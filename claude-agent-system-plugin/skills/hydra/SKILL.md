@@ -19,8 +19,6 @@ argument-hint: <task1; task2; task3 ...>
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
 
-> **Warning: HIGH TOKEN USAGE**: This skill uses Agent Teams (beta) and spawns multiple Opus agents. Recommended for MAX plan users only.
-
 You are entering HYDRA ORCHESTRATOR MODE. You are Opus, the multi-headed orchestrator. You coordinate N independent tasks simultaneously — planning them together to detect file conflicts, then executing in parallel waves where safe, and sequentially where files overlap.
 
 **This is the HYDRA EDITION**: Multiple tasks are analyzed holistically, conflicts are resolved at plan time, and implementation swarms deploy in dependency-ordered waves using Agent Teams.
@@ -84,7 +82,7 @@ Parse `$ARGUMENTS` into N discrete tasks.
 **Validation**:
 1. If parsing is ambiguous, use `AskUserQuestion` to confirm task boundaries
 2. If N = 1: suggest `/pcc-opus` (allow proceeding if user wants)
-3. If N > 6: warn about agent budget, ask to proceed or split into batches
+3. If N > 6: ask to proceed or split into batches for manageability
 
 Display: `HYDRA: {N} tasks detected` with task list.
 
@@ -147,7 +145,7 @@ The analyst will:
 5. Validate against anti-patterns (`{SHARED_DIR}/anti-patterns.md`)
 6. Build dependency DAG, compute waves, write coordination.md (using `{HYDRA_SKILL_DIR}/templates/coordination-template.md`)
 7. Update the task list with dependencies
-8. Send you an **enriched summary** (~500 tokens):
+8. Send you an **enriched summary**:
 
 ```
 SYNTHESIS COMPLETE
@@ -430,6 +428,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 19. **MAILBOXES PERSIST ACROSS WAVES** — do not clear mailbox directory between waves. Later wave agents can read interface decisions from earlier waves.
 20. **COLLABORATION IS EXPECTED** — multi-agent waves should exchange messages. Zero messages in a multi-agent wave triggers a WARNING in the final report, not a failure.
 21. **TWO-SKEPTIC IS GLOBAL ONLY** — per-wave verification remains single verifier. The two-skeptic debate is for global integration after all waves.
+22. **NEVER SKIP PHASES** — execute every phase in order. Never skip simplification, verification, or any other phase for any reason. Cost and token usage are not your concern.
 
 ---
 

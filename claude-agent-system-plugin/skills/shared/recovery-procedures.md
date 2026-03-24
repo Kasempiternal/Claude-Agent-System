@@ -50,7 +50,7 @@ When things go wrong in a multi-agent swarm, follow these procedures instead of 
 
 **Key rule**: Surgical fixes, not full rollbacks. Preserve passing work.
 
-## RP-3: Budget Overrun
+## RP-3: Agent Overload
 
 **Detection signals**:
 - Agent count approaching limits (20+ in a single wave)

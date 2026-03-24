@@ -166,6 +166,6 @@ Master task list updated.
 - You are the SINGLE WRITER for the master task list — maintain it as the source of truth
 - In FULL mode: be comprehensive but realistic — don't plan more than 2-3 waves for iteration 1
 - In DELTA mode: be surgical — focus on what's broken and what's highest priority
-- Keep summaries under 300 tokens — the orchestrator works from your summary, not raw files
+- Keep summaries concise — the orchestrator works from your summary, not raw files
 - Use TaskUpdate to track CTO task progress (in_progress -> completed)
-- Always include agent count estimates so the orchestrator can budget
+- Always include agent count estimates so the orchestrator can plan waves

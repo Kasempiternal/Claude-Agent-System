@@ -35,7 +35,7 @@ Wave 1 (parallel):  [Task 1: Add auth]  [Task 2: Build dashboard]
                            v
 Wave 2 (sequential): [Task 3: Fix payments]
 
-## Agent Budget Estimate
+## Agent Deployment Plan
 
 | Phase | Agents | Model |
 |-------|--------|-------|

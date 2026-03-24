@@ -82,7 +82,7 @@ Before sending specs, verify against anti-pattern rules:
 If violations are found, adjust agent assignments or flag to the orchestrator before proceeding.
 
 ## Critical Rules
-- Keep each agent spec under 50 tokens — the orchestrator expands them into full prompts using the impl-agent-prompt template
+- Keep each agent spec brief — the orchestrator expands them into full prompts using the impl-agent-prompt template
 - Ensure NO file appears in two agents' file lists within the same wave
 - For Wave 2+, always include the PRIOR WAVE CHANGES section
 - Mark each task in this wave as `in_progress` using TaskUpdate before sending specs
