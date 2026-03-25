@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.18.0 — Spectra: See Everything, Touch Everything, Faster Than Sight**
+> **v7.18.0 — Gonk: E2E Frontend Testing**
 >
 > **`/gonk-test`** — New E2E frontend testing skill powered by **Spectra**, a 52-tool headless browser MCP server using direct Chrome DevTools Protocol. ~5x faster than Playwright. Accessibility tree + DOM hybrid output, framework-aware component trees (React/Vue/Svelte/Angular), AI-native assertions, network interception, Maestro-style YAML flow recording, and smart DOM diffing that saves 90% of context tokens.
 >
