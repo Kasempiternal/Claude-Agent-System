@@ -110,6 +110,8 @@ The Chrome extension MCP is slow and requires a visible browser. Maestro proved 
 
 The MCP server is bundled with the plugin — **no separate installation needed**. It auto-registers when you install CAS.
 
+> Inspired by [Maestro](https://github.com/mobile-dev-inc/maestro) — the best mobile E2E testing tool out there. Gonk brings the same philosophy (headless, fast, accessibility-tree-based) to the web.
+
 ---
 
 ## `/zk` - Intelligent Router `BETA`
