@@ -3,29 +3,13 @@ name: setup-hooks
 description: "Install CAS safety hooks into your Claude Code settings. Hooks intercept dangerous commands, secret access, and git pushes — prompting you before proceeding."
 ---
 
-You are the CAS Hooks installer. Your job is to install safety hooks into the user's `~/.claude/settings.json`.
+You are the CAS Hooks installer. Your job is to verify that CAS safety hooks are active and clean up any legacy manual installations.
 
-## ⚠️ SESSION WARNING — SHOW THIS FIRST
+## How CAS Hooks Work (v7.17+)
 
-**Before doing anything else**, display this warning:
+CAS hooks are now **automatic** — they activate via the plugin's `hooks/hooks.json` when the CAS plugin is enabled. No manual setup is needed.
 
-```
-⚠️  IMPORTANT: This skill edits ~/.claude/settings.json (Claude Code's brain).
-    Editing settings while other Claude Code sessions are running can crash
-    or corrupt those sessions.
-
-    → Close ALL other Claude Code sessions before continuing.
-```
-
-Then use `AskUserQuestion` to confirm:
-- **"I've closed all other sessions — proceed"** (recommended)
-- **"Cancel"**
-
-If the user cancels, stop immediately.
-
-## What You Install
-
-Three PreToolUse hooks that use `"ask"` (prompt user) instead of `"deny"` (hard block):
+Three PreToolUse hooks ship with the plugin:
 
 | Hook | Matcher | What it catches |
 |------|---------|----------------|
@@ -35,98 +19,49 @@ Three PreToolUse hooks that use `"ask"` (prompt user) instead of `"deny"` (hard 
 
 All hooks log to `~/.claude/hooks-logs/` for audit trail.
 
-## Installation Steps
+## Steps
 
-### Step 1: Find the hooks directory
+### Step 1: Verify plugin is enabled
 
-The hook scripts ship with the CAS plugin. Locate them:
+Check `~/.claude/settings.json` for `"cas@claude-agent-system": true` in `enabledPlugins`. If not enabled, tell the user to run `/plugin install cas` first.
 
-```bash
-# Find the CAS plugin installation
-find ~/.claude -path "*/cas/hooks" -type d 2>/dev/null || find ~/.claude -path "*/claude-agent-system-plugin/hooks" -type d 2>/dev/null
+### Step 2: Clean up legacy manual hooks
+
+**IMPORTANT**: Older CAS versions (pre-7.17) required manual installation that hardcoded version-specific paths like:
 ```
-
-If that fails, check common plugin locations. The hooks are at:
-`<plugin-root>/claude-agent-system-plugin/hooks/`
-
-Store the resolved absolute path to the hooks directory as `$HOOKS_DIR`.
-
-### Step 2: Read existing settings
-
-Read `~/.claude/settings.json`. If it doesn't exist, start with `{}`.
-
-### Step 3: Ask the user which hooks to install
-
-Use `AskUserQuestion` with multiSelect to let them choose:
-
-- **Push Guard** — Prompts before any git push (recommended)
-- **Dangerous Commands** — Prompts before destructive shell commands (recommended)
-- **Protect Secrets** — Prompts before accessing sensitive files (recommended)
-
-Default recommendation: all three.
-
-### Step 4: Merge hooks into settings
-
-Add the selected hooks to `settings.json` under the `hooks.PreToolUse` array. **Do not remove existing hooks** — merge alongside them.
-
-The hook configuration to add (adjust paths to `$HOOKS_DIR`):
-
-```json
-{
-  "hooks": {
-    "PreToolUse": [
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node $HOOKS_DIR/push-guard.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node $HOOKS_DIR/dangerous-commands.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Edit|Write|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node $HOOKS_DIR/protect-secrets.js"
-          }
-        ]
-      }
-    ]
-  }
-}
+node ~/.claude/plugins/cache/claude-agent-system/cas/7.0.0/hooks/push-guard.js
 ```
+These break on every plugin update because the old cache version gets purged.
 
-Only include entries for the hooks the user selected.
+Read `~/.claude/settings.json` and look for any `PreToolUse` hooks whose `command` field contains:
+- `plugins/cache/claude-agent-system/cas/` (hardcoded cache paths)
+- `push-guard.js`, `dangerous-commands.js`, or `protect-secrets.js` with absolute versioned paths
 
-### Step 5: Write settings and confirm
+**Remove these entries** from the `hooks.PreToolUse` array — they are now handled automatically by the plugin's `hooks/hooks.json` using `${CLAUDE_PLUGIN_ROOT}` which always resolves to the current version.
 
-Write the merged `~/.claude/settings.json`. Then display a summary:
+⚠️ Only remove CAS hook entries. Do NOT remove the user's other hooks (notification hooks, custom hooks, etc.).
+
+### Step 3: Confirm
+
+Display:
 
 ```
-CAS Hooks installed:
-  [x] push-guard       — prompts before git push
-  [x] dangerous-commands — prompts before destructive commands
-  [x] protect-secrets   — prompts before accessing secrets
+CAS Safety Hooks — Status
+═════════════════════════
+✅ Plugin hooks active (automatic via hooks.json):
+   • push-guard        — prompts before git push
+   • dangerous-commands — prompts before destructive commands
+   • protect-secrets    — prompts before accessing secrets
 
-Hooks use "ask" mode — Claude will prompt you for approval instead of silently blocking.
+🧹 Legacy cleanup: [removed N old manual entries / no legacy entries found]
+
+Hooks use "ask" mode — Claude will prompt you for approval.
 Logs: ~/.claude/hooks-logs/
 ```
 
 ## Important Rules
 
-- NEVER overwrite existing hooks — always merge
-- NEVER modify the hook scripts themselves during installation
-- If hooks are already installed (same command path exists), skip them and tell the user
-- Use absolute paths in the command field — relative paths break across projects
-- If `~/.claude/settings.json` has other config (permissions, etc.), preserve it all
+- NEVER remove non-CAS hooks from settings.json
+- NEVER modify the hook scripts themselves
+- If `~/.claude/settings.json` has other config (permissions, env, etc.), preserve it all
+- The plugin's hooks.json uses `${CLAUDE_PLUGIN_ROOT}` which auto-resolves — no version numbers needed
