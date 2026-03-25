@@ -42,6 +42,9 @@ build/
 *.egg-info/
 .eggs/
 
+# Spectra MCP server — dist must be tracked for plugin to work
+!spectra-mcp-server/dist/
+
 # Node.js
 node_modules/
 npm-debug.log*

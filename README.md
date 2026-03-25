@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.16.2 — Siege Unleashed**
+> **v7.18.0 — Spectra: See Everything, Touch Everything, Faster Than Sight**
 >
-> **`/siege`** — Removed turn limits and budget caps from external worker sessions. Workers now use `--max-turns 200` with no `--max-budget-usd`, fixing premature worker termination (previously dying at 10 turns/$0.54). Removed `--worker-budget` flag.
+> **`/gonk-test`** — New E2E frontend testing skill powered by **Spectra**, a 52-tool headless browser MCP server using direct Chrome DevTools Protocol. ~5x faster than Playwright. Accessibility tree + DOM hybrid output, framework-aware component trees (React/Vue/Svelte/Angular), AI-native assertions, network interception, Maestro-style YAML flow recording, and smart DOM diffing that saves 90% of context tokens.
 >
 > Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
@@ -22,7 +22,7 @@
 /plugin install cas
 ```
 
-Done! You now have 13 skills: `/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`.
+Done! You now have 14 skills: `/zk`, `/spectre`, `/gonk-test`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`. The Spectra MCP server (headless browser E2E testing) is bundled and auto-registers on install.
 
 ---
 
@@ -550,12 +550,81 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 
 ---
 
+## `/gonk-test` - E2E Frontend Testing with Spectra MCP `NEW`
+
+**Headless browser E2E testing, powered by direct Chrome DevTools Protocol.** Describe what you want to test in plain English — Spectra launches a headless browser, navigates, interacts, asserts, and reports results. No visible browser needed.
+
+```bash
+/gonk-test https://localhost:3000
+/gonk-test "test the login flow — fill email and password, click submit, verify dashboard loads"
+/gonk-test "check that the checkout page has no JS errors and all API calls return 200"
+/gonk-test "verify the landing page renders correctly on iPhone 15"
+```
+
+### Why Spectra?
+
+The Chrome extension MCP is slow and requires a visible browser. Maestro proved that headless, accessibility-tree-based testing is dramatically faster — but only works for mobile. **Spectra brings this to the web.**
+
+| | Chrome Extension MCP | Playwright MCP | **Spectra** |
+|---|---|---|---|
+| **Speed** | Slow (extension relay) | Medium (Playwright layer) | **~5x faster** (direct CDP) |
+| **Browser** | Must be visible | Headless available | **Headless, zero UI** |
+| **Output** | Screenshots | Accessibility snapshots | **Hybrid AX+DOM with smart diffing** |
+| **Framework awareness** | None | None | **React/Vue/Svelte/Angular** component trees |
+| **Network** | Basic logging | Basic logging | **Full interception + mocking** |
+| **Assertions** | None | None | **AI-native with self-correction suggestions** |
+| **Flows** | None | None | **Maestro-style YAML record/replay** |
+| **Token efficiency** | Full snapshots | Full snapshots | **Diff mode: ~50 tokens vs ~2000** |
+
+### 52 Tools Across 11 Categories
+
+| Category | Tools | What They Do |
+|----------|-------|-------------|
+| **Browser** (5) | launch, close, status, viewport, emulate | Lifecycle management, device emulation |
+| **Navigation** (5) | navigate, back, forward, reload, wait | Page navigation with smart waits |
+| **Inspection** (7) | snapshot, element, query, text, html, style, metrics | LLM-friendly page analysis |
+| **Interaction** (10) | click, type, key, select, check, hover, scroll, drag, upload, dialog | Full user interaction simulation |
+| **Tabs** (4) | new, close, switch, list | Multi-tab parallel testing |
+| **Network** (6) | list, detail, intercept, mock, clear, wait | Request interception and mocking |
+| **Console** (3) | logs, errors, evaluate | Console monitoring + JS execution |
+| **Visual** (3) | screenshot, compare, bounding boxes | Visual regression testing |
+| **Framework** (4) | detect, component tree, state, trigger update | React/Vue/Svelte/Angular introspection |
+| **Assertions** (3) | visible, text, page state | AI-native assertions with `{passed, actual, expected, suggestion}` |
+| **Flows** (2) | record, run | Maestro-style YAML flow recording and replay |
+
+### Key Innovations
+
+- **Smart DOM Diffing** — After interactions, `diffOnly: true` returns only what changed (~50 tokens vs ~2000 for full snapshot)
+- **Unified Selector Engine** — Every tool accepts CSS selectors, XPath, accessibility names, text content, or coordinates
+- **Framework-Aware Component Trees** — Inspect React fiber tree, Vue component hierarchy, props, state, hooks
+- **Event Bus Architecture** — Console logs and network requests collected in-memory, queries are instant (no Chrome round-trip)
+- **AI-Native Assertions** — Each assertion returns `{passed, actual, expected, suggestion, candidates}` so Claude can self-correct on failure
+
+### Architecture
+
+```
+/gonk-test "your test description"
+       |
+  Skill orchestrates the test plan
+       |
+  52 Spectra MCP tools (mcp__spectra__*)
+       |
+  Direct CDP WebSocket (chrome-remote-interface)
+       |
+  Headless Chrome (auto-launched, --headless=new)
+```
+
+The MCP server is bundled with the plugin — **no separate installation needed**. It auto-registers when you install CAS.
+
+---
+
 # When to Use Each Skill
 
 | Situation | Use This |
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
 | Deep research, topic exploration, tool evaluation | `/spectre` |
+| **E2E frontend testing**, verify UI, check flows | `/gonk-test` |
 | Security audit of your codebase | `/cyberconan` |
 | What happened in the last 30 days for a topic | `/l30` |
 | Mission-critical project, maximum rigor | `/siege` |
