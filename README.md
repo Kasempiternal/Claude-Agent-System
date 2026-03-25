@@ -101,7 +101,7 @@ The Chrome extension MCP is slow and requires a visible browser. Maestro proved 
        |
   Skill orchestrates the test plan
        |
-  52 Gonk MCP tools (mcp__spectra__*)
+  52 Gonk MCP tools
        |
   Direct CDP WebSocket (chrome-remote-interface)
        |
