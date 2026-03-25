@@ -4,7 +4,7 @@
 
 > **v7.18.0 — Gonk: E2E Frontend Testing**
 >
-> **`/gonk-test`** — New E2E frontend testing skill powered by **Spectra**, a 52-tool headless browser MCP server using direct Chrome DevTools Protocol. ~5x faster than Playwright. Accessibility tree + DOM hybrid output, framework-aware component trees (React/Vue/Svelte/Angular), AI-native assertions, network interception, Maestro-style YAML flow recording, and smart DOM diffing that saves 90% of context tokens.
+> **`/gonk-test`** — New E2E frontend testing skill powered by **Gonk**, a 52-tool headless browser MCP server using direct Chrome DevTools Protocol. ~5x faster than Playwright. Accessibility tree + DOM hybrid output, framework-aware component trees (React/Vue/Svelte/Angular), AI-native assertions, network interception, Maestro-style YAML flow recording, and smart DOM diffing that saves 90% of context tokens.
 >
 > Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
@@ -22,7 +22,7 @@
 /plugin install cas
 ```
 
-Done! You now have 14 skills: `/zk`, `/spectre`, `/gonk-test`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`. The Spectra MCP server (headless browser E2E testing) is bundled and auto-registers on install.
+Done! You now have 14 skills: `/zk`, `/spectre`, `/gonk-test`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`. The Gonk MCP server (headless browser E2E testing) is bundled and auto-registers on install.
 
 ---
 
@@ -550,9 +550,9 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 
 ---
 
-## `/gonk-test` - E2E Frontend Testing with Spectra MCP `NEW`
+## `/gonk-test` - E2E Frontend Testing with Gonk MCP `NEW`
 
-**Headless browser E2E testing, powered by direct Chrome DevTools Protocol.** Describe what you want to test in plain English — Spectra launches a headless browser, navigates, interacts, asserts, and reports results. No visible browser needed.
+**Headless browser E2E testing, powered by direct Chrome DevTools Protocol.** Describe what you want to test in plain English — Gonk launches a headless browser, navigates, interacts, asserts, and reports results. No visible browser needed.
 
 ```bash
 /gonk-test https://localhost:3000
@@ -561,11 +561,11 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 /gonk-test "verify the landing page renders correctly on iPhone 15"
 ```
 
-### Why Spectra?
+### Why Gonk?
 
-The Chrome extension MCP is slow and requires a visible browser. Maestro proved that headless, accessibility-tree-based testing is dramatically faster — but only works for mobile. **Spectra brings this to the web.**
+The Chrome extension MCP is slow and requires a visible browser. Maestro proved that headless, accessibility-tree-based testing is dramatically faster — but only works for mobile. **Gonk brings this to the web.**
 
-| | Chrome Extension MCP | Playwright MCP | **Spectra** |
+| | Chrome Extension MCP | Playwright MCP | **Gonk** |
 |---|---|---|---|
 | **Speed** | Slow (extension relay) | Medium (Playwright layer) | **~5x faster** (direct CDP) |
 | **Browser** | Must be visible | Headless available | **Headless, zero UI** |
@@ -607,7 +607,7 @@ The Chrome extension MCP is slow and requires a visible browser. Maestro proved 
        |
   Skill orchestrates the test plan
        |
-  52 Spectra MCP tools (mcp__spectra__*)
+  52 Gonk MCP tools (mcp__spectra__*)
        |
   Direct CDP WebSocket (chrome-remote-interface)
        |
