@@ -103,6 +103,10 @@ Call `TeamDelete`.
 
 ---
 
+## Skills Access
+
+You and your teammates have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve hardening — for example, `axiom:ax-concurrency` for concurrency safety, `axiom:ax-performance` for performance anti-patterns, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Critical Rules
 
 1. **ALWAYS RUNS** — even on MAX_REACHED or STALLED exits

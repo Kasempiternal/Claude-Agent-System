@@ -74,6 +74,10 @@ Call `TeamDelete`.
 
 ---
 
+## Skills Access
+
+You and your simplifier teammates have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve simplification — for example, `axiom:ax-swift-perf` for Swift performance idioms, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Critical Rules
 
 1. **DO NOT CHANGE FUNCTIONALITY** — simplify and clarify only

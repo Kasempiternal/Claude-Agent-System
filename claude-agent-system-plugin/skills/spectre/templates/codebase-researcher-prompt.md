@@ -117,6 +117,10 @@ Open questions: {count}
 
 ---
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your codebase exploration — for example, `axiom:ax-onboard` to discover all available iOS/Apple skills, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Research Quality Rules
 
 1. **FULL FILE PATHS ALWAYS** — include complete paths with line numbers (e.g., `src/auth/middleware.ts:45`)

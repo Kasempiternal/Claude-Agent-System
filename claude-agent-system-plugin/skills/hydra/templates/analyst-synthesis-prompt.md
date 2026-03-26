@@ -103,6 +103,10 @@ Plans + coordination.md written. Task list updated.
 
 **File list rules**: Show up to 5 key files per task. If N > 4 tasks, compress to max 3 files per task. Use `+` for CREATE and `~` for MODIFY. Each file entry must include a short purpose/reason.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your analysis — for example, `axiom:ax-onboard` to discover all available iOS/Apple skills, or any other installed skill relevant to the codebase. Invoke skills proactively when domain context would lead to better planning decisions.
+
 ## Critical Rules
 - You have FULL autonomy to make conflict resolution decisions EXCEPT "both CREATE" — flag those for the orchestrator
 - Write ALL plan files and coordination.md yourself — the orchestrator should NOT need to read them

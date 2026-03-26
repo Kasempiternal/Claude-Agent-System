@@ -85,6 +85,10 @@ Before sending specs, verify against anti-pattern rules:
 
 If violations are found, adjust agent assignments or flag to the orchestrator before proceeding.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your agent specifications — for example, noting which skills impl agents should invoke for their specific domain. Invoke skills proactively when domain context would lead to better agent preparation.
+
 ## Critical Rules
 - Keep each agent spec under 50 tokens — the orchestrator expands them into full prompts
 - Ensure NO file appears in two agents' file lists within the same wave

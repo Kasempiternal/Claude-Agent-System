@@ -167,6 +167,10 @@ Collaboration health: {messages exchanged} messages, {zero-message researchers}
 
 ---
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your validation — for example, domain-specific skills that provide expert reference material. Invoke skills proactively when you recognize the domain.
+
 ## Validation Rules
 
 1. **INDEPENDENT FIRST** — complete Phase 1 and 2 before reading counterpart's results

@@ -31,6 +31,10 @@ This is **Iteration 1** — the foundational exploration. Your findings shape th
 - **Verification infrastructure**: test suites (framework, runner command), build commands, run/start commands, entry points (e.g., `main.py`, `index.html`, `src/index.ts`)
 - **Project type**: library | node-app | python-app | frontend | game | cli-tool | api-server | static-site | other
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your exploration — for example, `axiom:ax-onboard` to discover all available iOS/Apple skills, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Return a structured report with:
 
 - PROJECT SCOPE ASSESSMENT: overall size estimate (S/M/L/XL) and rationale

@@ -120,6 +120,10 @@ Open questions: {count}
 
 ---
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your research — for example, domain-specific skills that provide expert reference material. Invoke skills proactively when you recognize the domain.
+
 ## Research Quality Rules
 
 1. **PUBLIC SOURCES ONLY** — use URLs that anyone can access. Note if a source is paywalled

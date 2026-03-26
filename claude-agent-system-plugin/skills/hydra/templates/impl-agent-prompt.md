@@ -72,6 +72,10 @@ Read your inbox at these points:
 - Before marking your task as DONE
 At each checkpoint: read inbox → process HIGH priority first → reply if needed → continue.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your implementation — for example, `axiom:ax-concurrency` for Swift concurrency patterns, `axiom:ax-swiftui` for SwiftUI best practices, `axiom:ax-swiftdata` for SwiftData modeling, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain — they provide expert-level reference that leads to higher quality code.
+
 Implementation guidelines:
 1. Implement the changes described in the plan
 2. Follow established codebase patterns
@@ -80,6 +84,7 @@ Implementation guidelines:
 5. Follow pre-coding contract exchange before writing code
 6. Read inbox at every sync checkpoint
 7. Broadcast discoveries that affect teammates
+8. Invoke relevant skills via the Skill tool when domain expertise would help
 
 When done:
 - Use TaskUpdate to mark your assigned task items as completed

@@ -95,6 +95,10 @@ Call `TeamDelete`.
 
 ---
 
+## Skills Access
+
+You and your teammates have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve work — for example, `axiom:ax-concurrency` for Swift concurrency patterns, or any other installed skill relevant to the codebase. When constructing teammate prompts, tell them they can invoke skills proactively when they recognize the domain.
+
 ## Delta-Specific Rules
 
 1. **DO NOT RE-EXPLORE EVERYTHING** — delta scouts focus on changes and remaining work only

@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.18.0 — Gonk: E2E Frontend Testing**
+> **v7.19.0 — Skills Access for Swarm Agents**
 >
-> **`/gonk-test`** — New E2E frontend testing skill powered by **Gonk**, a 52-tool headless browser MCP server using direct Chrome DevTools Protocol. ~5x faster than Playwright. Accessibility tree + DOM hybrid output, framework-aware component trees (React/Vue/Svelte/Angular), AI-native assertions, network interception, Maestro-style YAML flow recording, and smart DOM diffing that saves 90% of context tokens.
+> All swarm agent teammates (Hydra, Legion, Siege, Spectre) can now **invoke any installed plugin skill** via the Skill tool. Teammates proactively load domain expertise — e.g., `axiom:ax-concurrency` for Swift concurrency, `axiom:ax-swiftui` for SwiftUI best practices — directly during exploration, implementation, verification, and simplification phases. 24 agent templates updated across 4 skills.
 >
 > Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
@@ -204,6 +204,7 @@ Deploy a **parallel research swarm** to investigate any topic. Just give Spectre
 - **Full source bibliography** — every finding traced to specific URLs with reliability ratings
 - **Optional HTML dashboard** — offered after report completion
 - **Web + codebase hybrid** — auto-detects whether research involves the current codebase
+- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
 
 ---
 
@@ -351,6 +352,7 @@ Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-
 - **Arithmetic-only exit decisions** — no judgment, pure number comparison
 - **Mandatory hardening round** — always runs, even on stall
 - **Post-loop simplification** — module-grouped cleanup
+- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
 
 ---
 
@@ -409,6 +411,7 @@ Submit a **holistic project description**. Legion deploys a full agent swarm eac
 - **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
 - **Configurable max iterations** (`--max-iterations N`, default 5)
 - **Post-loop simplification** — module-grouped code cleanup (always runs)
+- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
 
 ---
 
@@ -459,6 +462,7 @@ Submit **N tasks at once**. Hydra plans them together, detects cross-task file c
 - **Shared scout pool** — Opus scouts explore for all N tasks simultaneously
 - **Per-task plans + coordination file** — editable before implementation
 - **Module-grouped simplification** — ensures cross-task code consistency
+- **Skills Access** — all teammates can invoke any installed plugin skill (e.g., axiom, ui-ux-pro-max) for domain expertise during their work
 
 ---
 

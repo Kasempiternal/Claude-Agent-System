@@ -23,6 +23,10 @@ As an Opus scout in a multi-task operation, you must specifically identify:
 - Order-dependent changes (e.g., task B needs a type that task A creates)
 - Non-obvious cross-task interactions
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your exploration — for example, `axiom:ax-onboard` to discover all available iOS/Apple skills, `axiom:ax-swiftui` for SwiftUI architecture patterns, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 Return a structured report with:
 - PER-TASK file lists (files each task will likely modify)
 - CROSS-TASK conflicts (files appearing in 2+ task lists)

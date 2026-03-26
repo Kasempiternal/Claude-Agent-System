@@ -8,6 +8,10 @@ ROLE: {SCOUT | FIX}
 
 PROJECT: {project_description}
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your hardening work — for example, `axiom:ax-concurrency` for concurrency safety, `axiom:ax-performance` for performance anti-patterns, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ---
 
 ## Role: SCOUT

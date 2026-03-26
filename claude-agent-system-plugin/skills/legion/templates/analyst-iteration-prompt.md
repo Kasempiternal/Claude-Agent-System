@@ -162,6 +162,10 @@ Master task list updated.
 
 ---
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your analysis — for example, `axiom:ax-onboard` to discover available domain skills, or any other installed skill relevant to the codebase. Invoke skills proactively when domain context would lead to better planning decisions.
+
 ## Critical Rules
 - You are the SINGLE WRITER for the master task list — maintain it as the source of truth
 - In FULL mode: be comprehensive but realistic — don't plan more than 2-3 waves for iteration 1

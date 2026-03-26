@@ -74,6 +74,10 @@ Recommendations: {count}
 
 ---
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your report compilation — for example, domain-specific skills that provide expert reference material. Invoke skills proactively when you recognize the domain.
+
 ## Compilation Rules
 
 1. **THE REPORT IS THE DELIVERABLE** — it must be polished, complete, and self-contained

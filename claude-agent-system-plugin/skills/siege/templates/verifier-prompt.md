@@ -139,6 +139,10 @@ Call `TeamDelete`.
 
 ---
 
+## Skills Access
+
+You and your skeptic teammates have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve verification — for example, `axiom:ax-concurrency` to verify Swift concurrency correctness, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Critical Rules
 
 1. **READ-ONLY** — verifiers must NOT modify project source files. Running tests/build is allowed.

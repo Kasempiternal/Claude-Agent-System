@@ -12,6 +12,10 @@ CONFLICT RESOLUTIONS: {from coordination.md}
 
 Use TaskList to see the full task status.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your verification — for example, `axiom:ax-concurrency` to verify Swift concurrency correctness, `axiom:ax-performance` for performance anti-patterns, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Phase 1: Independent Evaluation (before reading counterpart)
 
 Evaluate ALL completed tasks independently:

@@ -42,6 +42,10 @@ and what failed. These are more reliable than iteration history summaries.
   Flag with reason (too complex, wrong approach, missing dependency) and recommend:
   retry, simplify, or escalate
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your assessment — for example, `axiom:ax-onboard` to discover available domain skills, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Return a structured report with:
 
 - DELTA SUMMARY: What changed since last iteration (3-5 bullet points)

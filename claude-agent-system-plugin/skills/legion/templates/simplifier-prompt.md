@@ -19,6 +19,10 @@ Focus on:
 7. Removing any iteration scaffolding (temporary workarounds, placeholder code)
 8. Ensuring hardening fixes follow unified patterns — the hardening round may have added defensive code and error handling; include these in your simplification scope but do NOT remove intentional defensive code (try/catch, input validation, null checks at boundaries). Only simplify if the defensive code is redundant or inconsistent with the rest of the codebase.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your simplification — for example, `axiom:ax-swift-perf` for Swift performance idioms, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 Do NOT change functionality — only simplify and clarify.
 
 When done, report what you simplified and any consistency issues you resolved.

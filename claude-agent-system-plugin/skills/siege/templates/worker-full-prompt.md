@@ -125,6 +125,10 @@ Call `TeamDelete` to clean up the team.
 
 ---
 
+## Skills Access
+
+You and your teammates have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve work — for example, `axiom:ax-concurrency` for Swift concurrency patterns, `axiom:ax-swiftui` for SwiftUI best practices, or any other installed skill relevant to the codebase. When constructing teammate prompts, tell them they can invoke skills proactively when they recognize the domain.
+
 ## Critical Rules
 
 1. **USE AGENT TEAMS** — TeamCreate, TaskCreate, TaskUpdate, TaskList, SendMessage for coordination

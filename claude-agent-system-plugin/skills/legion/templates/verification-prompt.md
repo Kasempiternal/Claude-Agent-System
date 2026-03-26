@@ -22,6 +22,10 @@ Use TaskList to see the full task status.
 
 {Insert the `## Verification Strategy` block from the master task list here. If not provided, self-detect by reading project config files (package.json, pyproject.toml, Makefile, Cargo.toml, etc.) to determine project type, test/build/run commands, and entry points.}
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your verification — for example, `axiom:ax-concurrency` to verify Swift concurrency correctness, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Your Mission: Verification Fallback Chain
 
 Execute ALL applicable verification levels (not just the first hit). Report results for each level attempted.

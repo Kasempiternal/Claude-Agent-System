@@ -42,6 +42,10 @@ WAVE STATE FROM PRIOR WAVE: .claude/plans/legion-{slug}/wave-{I}-{W-1}-state.md
 Read the "Files Modified" section to understand what changed in the prior wave
 that may interact with your owned files.
 
+## Skills Access
+
+You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your implementation — for example, `axiom:ax-concurrency` for Swift concurrency patterns, `axiom:ax-swiftui` for SwiftUI best practices, or any other installed skill relevant to the codebase. Invoke skills proactively when you recognize the domain.
+
 ## Implementation Guidelines
 
 1. Implement the changes described in the CTO plan
@@ -49,6 +53,7 @@ that may interact with your owned files.
 3. Write clean, well-documented code
 4. Add tests if the plan requires it
 5. Ensure your changes integrate with existing code from prior iterations
+6. Invoke relevant skills via the Skill tool when domain expertise would help
 
 ## When Done
 
