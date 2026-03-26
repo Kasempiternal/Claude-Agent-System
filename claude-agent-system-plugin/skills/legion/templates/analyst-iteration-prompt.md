@@ -9,7 +9,7 @@ MODE: {FULL | DELTA}
 ## Your Inputs
 
 1. **Scout reports**: Read messages from all scout teammates to gather their findings
-2. **Master task list** (if exists): `.claude/plans/legion-{slug}/project-tasks.md`
+2. **Master task list** (if exists): `.cas/plans/legion-{slug}/project-tasks.md`
 3. **Task list**: Use `TaskList` to see agent team task status
 4. **Impl agent template**: Read `{LEGION_SKILL_DIR}/templates/impl-agent-prompt.md` for agent prompt format
 5. **Wave prep template**: Read `{LEGION_SKILL_DIR}/templates/wave-prep-prompt.md` for wave planning
@@ -25,7 +25,7 @@ MODE: {FULL | DELTA}
 4. Flag architectural decisions that need user input
 
 ### Step 2: Create Master Task List
-Write the master task list at `.claude/plans/legion-{slug}/project-tasks.md`:
+Write the master task list at `.cas/plans/legion-{slug}/project-tasks.md`:
 
 ```markdown
 # Project: {project_name}
@@ -110,7 +110,7 @@ Master task list written. Ready for user confirmation.
 ## Mode: DELTA (Iteration 2+)
 
 ### Step 1: Read Current State
-1. Read the master task list from `.claude/plans/legion-{slug}/project-tasks.md`
+1. Read the master task list from `.cas/plans/legion-{slug}/project-tasks.md`
 2. Read delta scout reports for what changed, broke, or remains
 3. Compare: what was checked off vs what scouts say actually works
 

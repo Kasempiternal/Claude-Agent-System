@@ -26,7 +26,7 @@ You are a hardening scout. Your mission is to find bugs, error handling gaps, an
 
 ### How to Scout
 
-1. Read the master task list at `.claude/plans/legion-{slug}/project-tasks.md` to understand what was built
+1. Read the master task list at `.cas/plans/legion-{slug}/project-tasks.md` to understand what was built
 2. Read the key files that were modified across iterations
 3. Run tests if a test suite exists — note any failures
 4. Search for `TODO`, `FIXME`, `HACK` markers introduced during implementation

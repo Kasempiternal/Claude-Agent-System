@@ -7,12 +7,12 @@ YOUR NAME: analyst-wave-prep-{W}
 
 ## Your Inputs
 
-1. **Plan files**: Read `.claude/plans/hydra-{slug}/task-{N}-{slug}.md` for each task in this wave
-2. **Coordination file**: Read `.claude/plans/hydra-{slug}/coordination.md` for wave assignments and conflict resolutions
+1. **Plan files**: Read `.cas/plans/hydra-{slug}/task-{N}-{slug}.md` for each task in this wave
+2. **Coordination file**: Read `.cas/plans/hydra-{slug}/coordination.md` for wave assignments and conflict resolutions
 3. **Impl agent template**: Read `{HYDRA_SKILL_DIR}/templates/impl-agent-prompt.md` for the agent prompt format
 4. **Task list**: Use `TaskList` to see current task status
 5. **Collaboration protocol**: The orchestrator provides the inline protocol and message schema
-6. **Mailbox directory**: `.claude/plans/hydra-{slug}/mailboxes/`
+6. **Mailbox directory**: `.cas/plans/hydra-{slug}/mailboxes/`
 
 ## Your Mission
 
@@ -42,7 +42,7 @@ For each implementation agent needed, create a spec including:
 - Mission summary (what to implement)
 - Context from plan (relevant section, not the whole plan)
 - Architectural context from scouts
-- Agent inbox path: `.claude/plans/hydra-{slug}/mailboxes/{agent-name}.jsonl`
+- Agent inbox path: `.cas/plans/hydra-{slug}/mailboxes/{agent-name}.jsonl`
 - All teammate inbox paths for this wave
 - For Wave 2+: also include Wave 1+ agent inbox paths (read-only)
 - For Wave 2+: files modified by earlier waves with summary of changes
@@ -60,15 +60,15 @@ AGENT 2: name={agent-name} | files=[{file1}] | tier={0-3} | inbox={path} | teamm
 ...
 
 MAILBOX PATHS:
-  {agent-1}: .claude/plans/hydra-{slug}/mailboxes/{agent-1}.jsonl
-  {agent-2}: .claude/plans/hydra-{slug}/mailboxes/{agent-2}.jsonl
+  {agent-1}: .cas/plans/hydra-{slug}/mailboxes/{agent-1}.jsonl
+  {agent-2}: .cas/plans/hydra-{slug}/mailboxes/{agent-2}.jsonl
 
 {For Wave 2+:}
 PRIOR WAVE CHANGES:
   {file}: {summary of what changed in earlier wave}
   ...
 PRIOR WAVE INBOXES (read-only):
-  {wave-1-agent}: .claude/plans/hydra-{slug}/mailboxes/{wave-1-agent}.jsonl
+  {wave-1-agent}: .cas/plans/hydra-{slug}/mailboxes/{wave-1-agent}.jsonl
 ```
 
 ### Step 3.5: Anti-Pattern Check

@@ -10,8 +10,8 @@ TOPIC: {topic}
 
 ## Your Inputs
 
-1. **Findings files**: Read ALL files at `.claude/plans/spectre-{slug}/findings-*.md`
-2. **Mailbox messages**: Read `.claude/plans/spectre-{slug}/mailboxes/*.jsonl` to understand cross-researcher communication — broadcasts, challenges, and acknowledgments reveal where researchers agreed or disagreed
+1. **Findings files**: Read ALL files at `.cas/plans/spectre-{slug}/findings-*.md`
+2. **Mailbox messages**: Read `.cas/plans/spectre-{slug}/mailboxes/*.jsonl` to understand cross-researcher communication — broadcasts, challenges, and acknowledgments reveal where researchers agreed or disagreed
 3. **Task list**: Use `TaskList` to see all researcher tasks and their status
 
 ---
@@ -65,7 +65,7 @@ What does the research NOT tell us?
 
 ### Step 6: Write Analysis
 
-Write your analysis to `.claude/plans/spectre-{slug}/analysis{scope_suffix}.md`:
+Write your analysis to `.cas/plans/spectre-{slug}/analysis{scope_suffix}.md`:
 
 ```markdown
 # Intelligence Analysis: {topic}

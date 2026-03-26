@@ -33,7 +33,7 @@ For each task, walk the risk tier decision tree from `{SHARED_DIR}/risk-tiers.md
 4. Include the tier and checklist in the plan files (see plan template)
 
 ### Step 2: Write Plan Files (Phase 5)
-Write **N individual plan files** at `.claude/plans/hydra-{slug}/task-{N}-{task-slug}.md`.
+Write **N individual plan files** at `.cas/plans/hydra-{slug}/task-{N}-{task-slug}.md`.
 
 Each plan follows the template from `plan-template.md` — fill in all sections with concrete details from scout findings.
 
@@ -60,7 +60,7 @@ Each plan follows the template from `plan-template.md` — fill in all sections 
 
 **Update Task List Dependencies**: Use `TaskUpdate` to set `addBlockedBy` on tasks assigned to later waves.
 
-**Write Coordination File**: Create `.claude/plans/hydra-{slug}/coordination.md` following the coordination template.
+**Write Coordination File**: Create `.cas/plans/hydra-{slug}/coordination.md` following the coordination template.
 
 Mark the conflict analysis task as `completed` using TaskUpdate.
 

@@ -1,6 +1,6 @@
 # Worker Result Format
 
-Workers MUST write their result to `.claude/plans/siege-{slug}/worker-result-iter{N}.md` in EXACTLY this format. The orchestrator parses this file — deviation breaks the loop.
+Workers MUST write their result to `.cas/plans/siege-{slug}/worker-result-iter{N}.md` in EXACTLY this format. The orchestrator parses this file — deviation breaks the loop.
 
 ```markdown
 # Worker Result: Iteration {N}

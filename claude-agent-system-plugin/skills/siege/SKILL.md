@@ -14,7 +14,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.19.0
+             CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -112,11 +112,11 @@ Parse `$ARGUMENTS`:
 
 ### Create Plans Directory
 
-Generate a short slug from the project description. Create `.claude/plans/siege-{slug}/` and `.claude/plans/siege-{slug}/mailboxes/`.
+Generate a short slug from the project description. Create `.cas/plans/siege-{slug}/` and `.cas/plans/siege-{slug}/mailboxes/`.
 
 ### Write Config
 
-Write `.claude/plans/siege-{slug}/siege-config.md`:
+Write `.cas/plans/siege-{slug}/siege-config.md`:
 ```markdown
 # Siege Config
 PROJECT: {description}
@@ -142,7 +142,7 @@ SIEGE CONFIG
   Test: {cmd}
   Build: {cmd}
 
-  Plans: .claude/plans/siege-{slug}/
+  Plans: .cas/plans/siege-{slug}/
 ```
 
 Use `AskUserQuestion` with options: "Proceed" / "Edit config" / "Cancel"
@@ -159,7 +159,7 @@ Use `AskUserQuestion` with options: "Proceed" / "Edit config" / "Cancel"
 Build the full worker prompt by filling `WORKER_FULL_TEMPLATE` with:
 - `{project_description}` from config
 - `{slug}` from config
-- `{plans_dir}` = `.claude/plans/siege-{slug}`
+- `{plans_dir}` = `.cas/plans/siege-{slug}`
 
 - `{test_command}`, `{build_command}`, `{run_command}` from config
 - `{collaboration_protocol_content}` = full text of `COLLAB_PROTOCOL`
@@ -168,14 +168,14 @@ Build the full worker prompt by filling `WORKER_FULL_TEMPLATE` with:
 
 ### Write Context File
 
-Write the filled prompt to `.claude/plans/siege-{slug}/worker-context-iter1.md`.
+Write the filled prompt to `.cas/plans/siege-{slug}/worker-context-iter1.md`.
 
 ### Spawn Worker
 
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type main --iteration 1 \
-  --result-file ".claude/plans/siege-{slug}/worker-result-iter1.md" \
-  --prompt-file ".claude/plans/siege-{slug}/worker-context-iter1.md" \
+  --result-file ".cas/plans/siege-{slug}/worker-result-iter1.md" \
+  --prompt-file ".cas/plans/siege-{slug}/worker-context-iter1.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
   --permission-mode dontAsk --max-turns 200 \
@@ -188,12 +188,12 @@ Display: `SIEGE: Worker iter 1 (FULL) spawned`
 
 After worker returns, first check that the result file exists:
 ```bash
-test -f ".claude/plans/siege-{slug}/worker-result-iter1.md" && echo "exists" || echo "missing"
+test -f ".cas/plans/siege-{slug}/worker-result-iter1.md" && echo "exists" || echo "missing"
 ```
 
 If **missing**: Log `SIEGE: Worker iter 1 FAILED — no result file produced`. Set `p1_checked=0`, `p1_total=999`, `tests_pass=false`, `build_pass=false` and continue to the loop (the verifier will catch this).
 
-If **exists**: Read `.claude/plans/siege-{slug}/worker-result-iter1.md`.
+If **exists**: Read `.cas/plans/siege-{slug}/worker-result-iter1.md`.
 
 Extract via Grep:
 - `P1_CHECKED` and `P1_TOTAL`
@@ -245,14 +245,14 @@ Build the delta prompt by filling `WORKER_DELTA_TEMPLATE` with:
 - `{remaining_p1_tasks}` = unchecked P1 tasks from the last worker result
 - Inline collaboration protocol, message schema, result format
 
-Write to `.claude/plans/siege-{slug}/worker-context-iter{N}.md`.
+Write to `.cas/plans/siege-{slug}/worker-context-iter{N}.md`.
 
 #### B. Spawn Delta Worker
 
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type main --iteration {N} \
-  --result-file ".claude/plans/siege-{slug}/worker-result-iter{N}.md" \
-  --prompt-file ".claude/plans/siege-{slug}/worker-context-iter{N}.md" \
+  --result-file ".cas/plans/siege-{slug}/worker-result-iter{N}.md" \
+  --prompt-file ".cas/plans/siege-{slug}/worker-context-iter{N}.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
   --permission-mode dontAsk --max-turns 200 \
@@ -263,10 +263,10 @@ Display: `SIEGE: Worker iter {N} (DELTA) spawned`
 
 #### C. Parse Worker Result
 
-Check if result file exists: `test -f ".claude/plans/siege-{slug}/worker-result-iter{N}.md"`
+Check if result file exists: `test -f ".cas/plans/siege-{slug}/worker-result-iter{N}.md"`
 If **missing**: Log `SIEGE: Worker iter {N} FAILED — no result file`. Set `p1_checked=0`, `p1_total=999`, `tests_pass=false`, `build_pass=false`. Skip to step E (verifier) — the verifier will assess actual project state.
 
-If **exists**: Read `.claude/plans/siege-{slug}/worker-result-iter{N}.md`.
+If **exists**: Read `.cas/plans/siege-{slug}/worker-result-iter{N}.md`.
 Extract: `P1_CHECKED`, `P1_TOTAL`, `TEST_EXIT_CODE`, `BUILD_EXIT_CODE`, `TOTAL_MESSAGES_SENT`.
 
 #### D. Run Gate Checks (Orchestrator-Owned)
@@ -286,12 +286,12 @@ Build verifier prompt from `VERIFIER_TEMPLATE` with:
 - `{iteration}` = current
 - `{plans_dir}` = plans directory path
 
-Write to `.claude/plans/siege-{slug}/verifier-context-iter{N}.md`.
+Write to `.cas/plans/siege-{slug}/verifier-context-iter{N}.md`.
 
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type verifier --iteration {N} \
-  --result-file ".claude/plans/siege-{slug}/verify-result-iter{N}.md" \
-  --prompt-file ".claude/plans/siege-{slug}/verifier-context-iter{N}.md" \
+  --result-file ".cas/plans/siege-{slug}/verify-result-iter{N}.md" \
+  --prompt-file ".cas/plans/siege-{slug}/verifier-context-iter{N}.md" \
   --max-duration 1200 \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
@@ -303,10 +303,10 @@ Display: `SIEGE: Verifier iter {N} spawned (two-skeptic)`
 
 #### F. Parse Verifier Result
 
-Check if result file exists: `test -f ".claude/plans/siege-{slug}/verify-result-iter{N}.md"`
+Check if result file exists: `test -f ".cas/plans/siege-{slug}/verify-result-iter{N}.md"`
 If **missing**: Log `SIEGE: Verifier iter {N} FAILED — no verdict`. Set `VERDICT = "CONTINUE"`, `PROGRESS_SCORE = 0`. This counts as zero progress for stall detection.
 
-If **exists**: Read `.claude/plans/siege-{slug}/verify-result-iter{N}.md`.
+If **exists**: Read `.cas/plans/siege-{slug}/verify-result-iter{N}.md`.
 Extract: `VERDICT` (COMPLETE/CONTINUE/STALLED/DISAGREE), `PROGRESS_SCORE`, `TESTS_PASS`, `BUILD_PASS`.
 
 #### G. DECISION (Arithmetic Only)
@@ -344,7 +344,7 @@ IF checkpoint mode is ON AND status == "RUNNING":
 
 #### I. Log
 
-Append to `.claude/plans/siege-{slug}/orchestrator-log.md`:
+Append to `.cas/plans/siege-{slug}/orchestrator-log.md`:
 ```
 ## Iteration {N}
 P1: {checked}/{total} | Tests: {pass/fail} | Build: {pass/fail} | Skeptics: {verdict} | Progress: {score}/10
@@ -369,14 +369,14 @@ Fill `HARDENING_TEMPLATE` with:
 - `{final_status}` = status from the loop
 - `{iteration_history}` = full orchestrator log
 
-Write to `.claude/plans/siege-{slug}/hardening-context.md`.
+Write to `.cas/plans/siege-{slug}/hardening-context.md`.
 
 ### Spawn Hardening Worker
 
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type hardening --iteration {iteration} \
-  --result-file ".claude/plans/siege-{slug}/hardening-result.md" \
-  --prompt-file ".claude/plans/siege-{slug}/hardening-context.md" \
+  --result-file ".cas/plans/siege-{slug}/hardening-result.md" \
+  --prompt-file ".cas/plans/siege-{slug}/hardening-context.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
   --permission-mode dontAsk --max-turns 200 \
@@ -387,10 +387,10 @@ Display: `SIEGE: Hardening worker spawned`
 
 ### Parse Result
 
-Check if result file exists: `test -f ".claude/plans/siege-{slug}/hardening-result.md"`
+Check if result file exists: `test -f ".cas/plans/siege-{slug}/hardening-result.md"`
 If **missing**: Log `SIEGE: Hardening worker produced no result`. Set all hardening counts to 0 and continue to simplification.
 
-If **exists**: Read `.claude/plans/siege-{slug}/hardening-result.md`.
+If **exists**: Read `.cas/plans/siege-{slug}/hardening-result.md`.
 Extract: `CRITICAL`, `MAJOR`, `MINOR`, `FIXED`, `NOT_FIXABLE`, `TEST_EXIT_CODE`.
 
 ---
@@ -407,14 +407,14 @@ Fill `SIMPLIFIER_TEMPLATE` with:
 - Config values
 - `{modified_files_list}` = combined file list
 
-Write to `.claude/plans/siege-{slug}/simplifier-context.md`.
+Write to `.cas/plans/siege-{slug}/simplifier-context.md`.
 
 ### Spawn Simplifier Worker
 
 ```bash
 python3 "{MONITOR_SCRIPT}" --worker-type simplifier --iteration {iteration} \
-  --result-file ".claude/plans/siege-{slug}/simplifier-result.md" \
-  --prompt-file ".claude/plans/siege-{slug}/simplifier-context.md" \
+  --result-file ".cas/plans/siege-{slug}/simplifier-result.md" \
+  --prompt-file ".cas/plans/siege-{slug}/simplifier-context.md" \
   -- claude -p --model opus \
   --verbose --output-format stream-json \
   --permission-mode dontAsk --max-turns 200 \
@@ -478,8 +478,8 @@ SIEGE {status}
   Stall detected: {consecutive_stalls} iterations with zero progress.
 
   -- Plans --
-  Master task list: .claude/plans/siege-{slug}/project-tasks.md
-  Orchestrator log: .claude/plans/siege-{slug}/orchestrator-log.md
+  Master task list: .cas/plans/siege-{slug}/project-tasks.md
+  Orchestrator log: .cas/plans/siege-{slug}/orchestrator-log.md
 ```
 
 ---

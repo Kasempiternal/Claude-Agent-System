@@ -14,7 +14,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
          ⚔ Iterative Swarm Army ⚔
-               CAS v7.19.0
+               CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -94,7 +94,7 @@ LEGION: Project parsed
 ## Phase 2: Team Initialization
 
 1. **TeamCreate** with name `legion-{slug}` (short kebab-case from project description)
-2. **Create plans directory**: The CTO will write to `.claude/plans/legion-{slug}/project-tasks.md`
+2. **Create plans directory**: The CTO will write to `.cas/plans/legion-{slug}/project-tasks.md`
 3. **TaskCreate** structural tasks:
    - "Full Exploration" (iteration 1 only)
    - "CTO Analysis"
@@ -147,7 +147,7 @@ Task({
 
 The CTO will:
 1. Read all scout reports
-2. Create the master task list at `.claude/plans/legion-{slug}/project-tasks.md`
+2. Create the master task list at `.cas/plans/legion-{slug}/project-tasks.md`
 3. Decompose the project into checkbox tasks grouped by module
 4. Assign risk tiers (T0-T3) to each task using `{SHARED_DIR}/risk-tiers.md`
 5. Plan iteration 1 waves
@@ -188,7 +188,7 @@ LEGION PLAN
   Smoke tests needed: {YES — P1 task added | NO — test suite exists}
 
   -- Master Task List --
-  .claude/plans/legion-{slug}/project-tasks.md
+  .cas/plans/legion-{slug}/project-tasks.md
 
   -- Key Decisions --
   {decisions from clarification, if any}
@@ -197,7 +197,7 @@ LEGION PLAN
 Use `AskUserQuestion` with options: "Yes, proceed" / "No, I need to edit" / "Show task list".
 
 - **Yes** -> Enter iteration loop (Phase 6)
-- **No** -> tell user to edit `.claude/plans/legion-{slug}/project-tasks.md`, wait for confirmation
+- **No** -> tell user to edit `.cas/plans/legion-{slug}/project-tasks.md`, wait for confirmation
 - **Show task list** -> read and display the master task list, ask again
 - **DO NOT start implementation until user explicitly approves**
 
@@ -310,7 +310,7 @@ Task({
 
 4. After wave completes, mark completed tasks via TaskUpdate
 
-5. **Write wave state file**: Write `.claude/plans/legion-{slug}/wave-{I}-{W}-state.md`:
+5. **Write wave state file**: Write `.cas/plans/legion-{slug}/wave-{I}-{W}-state.md`:
 
    ```markdown
    # Wave State: Iteration {I}, Wave {W}
@@ -554,7 +554,7 @@ LEGION {status}
   Total teammates: ~{count across all iterations}
 
   -- Plans --
-  Master task list: .claude/plans/legion-{slug}/project-tasks.md
+  Master task list: .cas/plans/legion-{slug}/project-tasks.md
 ```
 
 ### Step 2: Shutdown & Cleanup
@@ -583,7 +583,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all CTO/verifier/impl prompts
 17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the CTO before implementation begins
 18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback), on context pressure follow RP-4 (conservation mode)
-19. **WAVE STATE FILES ARE MANDATORY** — write after every wave to `.claude/plans/legion-{slug}/wave-{I}-{W}-state.md`
+19. **WAVE STATE FILES ARE MANDATORY** — write after every wave to `.cas/plans/legion-{slug}/wave-{I}-{W}-state.md`
 
 ---
 

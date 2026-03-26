@@ -2,7 +2,7 @@
 
 ## Shared Message Vocabulary
 
-All inter-agent communication in the collaboration mailbox system uses JSONL (one JSON object per line) written to inbox files at `.claude/plans/{slug}/mailboxes/{agent-name}.jsonl`.
+All inter-agent communication in the collaboration mailbox system uses JSONL (one JSON object per line) written to inbox files at `.cas/plans/{slug}/mailboxes/{agent-name}.jsonl`.
 
 ## Message Format
 
@@ -72,7 +72,7 @@ To read your inbox:
 
 To send a message to teammate `impl-b`:
 1. Construct the JSON message object
-2. Append it as a single line to `.claude/plans/{slug}/mailboxes/impl-b.jsonl`
+2. Append it as a single line to `.cas/plans/{slug}/mailboxes/impl-b.jsonl`
 3. If the file doesn't exist, create it
 
 ## Message Count Tracking

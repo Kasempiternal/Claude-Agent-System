@@ -306,7 +306,7 @@ Features:
 2. **Parallel Exploration** - Spawns 2-6 scout agents (Sonnet or Opus)
 3. **Synthesis** - Combines findings into unified understanding
 4. **Clarification** - Asks questions if multiple approaches exist
-5. **Plan Creation** - Creates editable `.claude/plans/{task}.md`
+5. **Plan Creation** - Creates editable `.cas/plans/{task}.md`
 6. **User Review** - You edit and approve the plan
 7. **Parallel Implementation** - Spawns 2-6 Opus agents
 8. **Verification** - Tests and code review

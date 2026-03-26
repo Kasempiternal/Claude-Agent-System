@@ -16,8 +16,8 @@ This is NOT the first iteration. Previous iterations have already made progress.
 ITERATION HISTORY:
 {compressed_iteration_summaries}
 
-MASTER TASK LIST LOCATION: `.claude/plans/legion-{slug}/project-tasks.md`
-WAVE STATE FILES: `.claude/plans/legion-{slug}/wave-*-state.md`
+MASTER TASK LIST LOCATION: `.cas/plans/legion-{slug}/project-tasks.md`
+WAVE STATE FILES: `.cas/plans/legion-{slug}/wave-*-state.md`
 Read the most recent wave state file(s) for specifics on what was implemented
 and what failed. These are more reliable than iteration history summaries.
 

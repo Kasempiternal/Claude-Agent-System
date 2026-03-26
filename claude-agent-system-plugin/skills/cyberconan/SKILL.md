@@ -20,7 +20,7 @@ argument-hint: ""
  ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝╚═╝  ╚═╝╚═╝  ╚═══╝
 
         ⚔ Security Audit Swarm ⚔
-              CAS v7.19.0
+              CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -477,11 +477,11 @@ Assign a rating based on score:
 
 ### Step 2: Create Output Directory
 
-Create `.claude/plans/cyberconan-{slug}/` if it does not exist.
+Create `.cas/plans/cyberconan-{slug}/` if it does not exist.
 
 ### Step 3: Write Full Report
 
-Write the complete security report to `.claude/plans/cyberconan-{slug}/security-report.md` using `{CYBERCONAN_DIR}/templates/report-template.md` as the structure. The report includes all verified findings with full detail, scanner metadata, verification verdicts, and remediation guidance.
+Write the complete security report to `.cas/plans/cyberconan-{slug}/security-report.md` using `{CYBERCONAN_DIR}/templates/report-template.md` as the structure. The report includes all verified findings with full detail, scanner metadata, verification verdicts, and remediation guidance.
 
 ### Step 4: Display Report Summary
 
@@ -540,7 +540,7 @@ CYBERCONAN: Security Audit Complete
   (See full report for details)
   ──────────────────────────────────────
 
-  Full report: .claude/plans/cyberconan-{slug}/security-report.md
+  Full report: .cas/plans/cyberconan-{slug}/security-report.md
 ```
 
 Scanner status: `PASS` = zero confirmed findings for that scanner type. `FAIL` = one or more confirmed findings.
@@ -629,7 +629,7 @@ CYBERCONAN: Remediation Complete
 
   Updated Security Score: [XX]/100 [RATING] (was [YY]/100)
 
-  Full report: .claude/plans/cyberconan-{slug}/security-report.md
+  Full report: .cas/plans/cyberconan-{slug}/security-report.md
 ```
 
 In FULL mode, after remediation: send `shutdown_request` to all active teammates, then call `TeamDelete()`.

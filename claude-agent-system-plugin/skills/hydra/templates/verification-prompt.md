@@ -43,7 +43,7 @@ For Tier 1+ tasks, validate the failure-mode checklist from the plan:
 
 ## Phase 2: Write Findings
 
-Write your findings to `.claude/plans/hydra-{slug}/verify-skeptic-{a|b}.md`:
+Write your findings to `.cas/plans/hydra-{slug}/verify-skeptic-{a|b}.md`:
 - Test results (exit code, pass/fail counts)
 - Build results (exit code)
 - Per-task verification status
@@ -53,7 +53,7 @@ Write your findings to `.claude/plans/hydra-{slug}/verify-skeptic-{a|b}.md`:
 
 ## Phase 3: Debate
 
-1. Read counterpart's findings file at `.claude/plans/hydra-{slug}/verify-skeptic-{b|a}.md`
+1. Read counterpart's findings file at `.cas/plans/hydra-{slug}/verify-skeptic-{b|a}.md`
 2. Acknowledge any issues they found that you missed (ack)
 3. Challenge any disagreements with evidence (run the test yourself, read the code)
 4. Do NOT force consensus — report DISAGREE if genuine disagreement exists
@@ -63,7 +63,7 @@ Append your debate notes to your findings file under a `## Debate` section.
 ## Phase 4: Collaboration Health Review
 
 Review inter-agent collaboration quality:
-- Count total messages in `.claude/plans/hydra-{slug}/mailboxes/*.jsonl`
+- Count total messages in `.cas/plans/hydra-{slug}/mailboxes/*.jsonl`
 - For each wave, count messages per agent
 - Flag any multi-agent wave where agents sent zero messages (WARNING, not failure)
 - Note interface proposals, broadcasts, and challenges exchanged

@@ -14,7 +14,7 @@ argument-hint: <research topic>
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
 
          ⚔ Reconnaissance Swarm ⚔
-              CAS v7.19.0
+              CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -138,7 +138,7 @@ SPECTRE: Research query parsed
     2. {facet_name} — {1-line description}
     ...
 
-  Plans: .claude/plans/spectre-{slug}/
+  Plans: .cas/plans/spectre-{slug}/
 ```
 
 Use `AskUserQuestion` with options: "Proceed" / "Go harder" / "Go lighter" / "Adjust facets"
@@ -155,7 +155,7 @@ Use `AskUserQuestion` with options: "Proceed" / "Go harder" / "Go lighter" / "Ad
 ## Phase 2: Team & Task Graph Initialization
 
 1. **TeamCreate** with name `spectre-{slug}` (short kebab-case from topic, max 20 chars)
-2. Create plans directory: `.claude/plans/spectre-{slug}/` and `.claude/plans/spectre-{slug}/mailboxes/`
+2. Create plans directory: `.cas/plans/spectre-{slug}/` and `.cas/plans/spectre-{slug}/mailboxes/`
 3. **TaskCreate** one task per phase:
    - One task per researcher (Wave 1)
    - One task per analyst (Wave 2)
@@ -195,13 +195,13 @@ Task({
 })
 ```
 
-Before launching: create empty `.jsonl` inbox files for each researcher at `.claude/plans/spectre-{slug}/mailboxes/researcher-{facet-slug}.jsonl`.
+Before launching: create empty `.jsonl` inbox files for each researcher at `.cas/plans/spectre-{slug}/mailboxes/researcher-{facet-slug}.jsonl`.
 
 **What each researcher does:**
 1. Uses WebSearch to find relevant sources for their facet
 2. Uses WebFetch to read key pages and extract information
 3. Optionally uses Grep/Glob/Read if codebase context is relevant
-4. Writes findings to `.claude/plans/spectre-{slug}/findings-{facet-slug}.md` using the findings template
+4. Writes findings to `.cas/plans/spectre-{slug}/findings-{facet-slug}.md` using the findings template
 5. Broadcasts cross-cutting discoveries to other researchers' inboxes
 6. Reports key findings, source count, and confidence level
 
@@ -231,7 +231,7 @@ Task({
 - Synthesizes across facets, resolves contradictions
 - Ranks findings by importance and evidence strength
 - Identifies gaps (what researchers could not find)
-- Writes analysis to `.claude/plans/spectre-{slug}/analysis.md`
+- Writes analysis to `.cas/plans/spectre-{slug}/analysis.md`
 
 **For multiple analysts (L/XL)**:
 - Split scope: e.g., analyst-technical reads tech/benchmark findings, analyst-strategic reads market/policy findings
@@ -279,7 +279,7 @@ Task({
    - XS: 3 claims | S: 5 | M: 5 | L: 8 | XL: 12
 4. Flag claims that cannot be independently verified
 5. Flag claims where the source contradicts the researcher's interpretation
-6. Write validation results to `.claude/plans/spectre-{slug}/validation-{letter}.md`
+6. Write validation results to `.cas/plans/spectre-{slug}/validation-{letter}.md`
 
 **For two validators (M/L/XL)**: They operate independently (two-skeptic model), then read each other's results. If they disagree on a claim's validity, they note the disagreement. **No forced consensus.**
 
@@ -307,10 +307,10 @@ Task({
 **What the compiler does:**
 1. Reads analysis file(s) and validation results
 2. Reads `{SPECTRE_SKILL_DIR}/templates/report-template.md` for the output structure
-3. Writes the final report to `.claude/plans/spectre-{slug}/report.md`
+3. Writes the final report to `.cas/plans/spectre-{slug}/report.md`
 4. Incorporates validation status into each finding (CONFIRMED / UNVERIFIED / DISPUTED)
 5. Includes full source bibliography with annotations
-6. After writing the markdown report, the **orchestrator** asks the user via `AskUserQuestion`: "Generate an HTML dashboard too?" with options "Yes" / "No". If yes: reads `{SPECTRE_SKILL_DIR}/templates/dashboard.html`, injects report data, writes to `.claude/plans/spectre-{slug}/dashboard.html`
+6. After writing the markdown report, the **orchestrator** asks the user via `AskUserQuestion`: "Generate an HTML dashboard too?" with options "Yes" / "No". If yes: reads `{SPECTRE_SKILL_DIR}/templates/dashboard.html`, injects report data, writes to `.cas/plans/spectre-{slug}/dashboard.html`
 
 Mark report task as `completed`.
 
@@ -347,11 +347,11 @@ SPECTRE COMPLETE
   {If any multi-researcher set had 0 messages: ⚠️ Low cross-pollination detected}
 
   ── Output ────────────────────────────────────
-  Report: .claude/plans/spectre-{slug}/report.md
-  {If dashboard generated: Dashboard: .claude/plans/spectre-{slug}/dashboard.html}
-  Raw findings: .claude/plans/spectre-{slug}/findings-*.md
-  Analysis: .claude/plans/spectre-{slug}/analysis.md
-  Validation: .claude/plans/spectre-{slug}/validation-*.md
+  Report: .cas/plans/spectre-{slug}/report.md
+  {If dashboard generated: Dashboard: .cas/plans/spectre-{slug}/dashboard.html}
+  Raw findings: .cas/plans/spectre-{slug}/findings-*.md
+  Analysis: .cas/plans/spectre-{slug}/analysis.md
+  Validation: .cas/plans/spectre-{slug}/validation-*.md
 ```
 
 ### Step 2: Shutdown & Cleanup

@@ -15,7 +15,7 @@ argument-hint: <task description>
 
   ⚔ Parallel Coordinator ⚔
       ◈ OPUS EDITION ◈
-        CAS v7.19.0
+        CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -195,7 +195,7 @@ AskUserQuestion({
 
 ## Phase 4: Plan Creation
 
-**After receiving answers from Phase 3.5** (if questions were asked), create a detailed plan file at `.claude/plans/{task-slug}.md` with this structure:
+**After receiving answers from Phase 3.5** (if questions were asked), create a detailed plan file at `.cas/plans/{task-slug}.md` with this structure:
 
 ```markdown
 # Implementation Plan: [Task Title]

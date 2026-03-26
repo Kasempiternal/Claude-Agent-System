@@ -10,10 +10,10 @@ TOPIC: {topic}
 
 ## Your Inputs
 
-1. **Analysis file(s)**: Read `.claude/plans/spectre-{slug}/analysis*.md` — the synthesized intelligence picture
-2. **Validation file(s)**: Read `.claude/plans/spectre-{slug}/validation-*.md` — which claims were confirmed/disputed/unverifiable
+1. **Analysis file(s)**: Read `.cas/plans/spectre-{slug}/analysis*.md` — the synthesized intelligence picture
+2. **Validation file(s)**: Read `.cas/plans/spectre-{slug}/validation-*.md` — which claims were confirmed/disputed/unverifiable
 3. **Report template**: Read `{SPECTRE_SKILL_DIR}/templates/report-template.md` — the structure to follow
-4. **Findings files** (reference only): `.claude/plans/spectre-{slug}/findings-*.md` — for source details if needed
+4. **Findings files** (reference only): `.cas/plans/spectre-{slug}/findings-*.md` — for source details if needed
 
 ---
 
@@ -30,7 +30,7 @@ Read the analysis and validation files completely. Build a mental model of:
 
 Read the report template at `{SPECTRE_SKILL_DIR}/templates/report-template.md` and fill it in completely.
 
-Write the final report to `.claude/plans/spectre-{slug}/report.md`.
+Write the final report to `.cas/plans/spectre-{slug}/report.md`.
 
 **Key compilation rules:**
 - The executive summary must be readable WITHOUT the rest of the report
@@ -64,8 +64,8 @@ Before finalizing, verify:
 
 ```
 REPORT COMPILED
-Output: .claude/plans/spectre-{slug}/report.md
-{If dashboard: Dashboard: .claude/plans/spectre-{slug}/dashboard.html}
+Output: .cas/plans/spectre-{slug}/report.md
+{If dashboard: Dashboard: .cas/plans/spectre-{slug}/dashboard.html}
 Sections: {count}
 Findings included: {count} ({confirmed} confirmed, {unverified} unverified, {disputed} disputed)
 Sources cited: {count}

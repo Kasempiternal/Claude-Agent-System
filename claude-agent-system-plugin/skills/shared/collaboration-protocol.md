@@ -82,7 +82,7 @@ Files you MAY modify: ONLY files under {owned_dirs}
 Files you MAY READ: anything
 Files you MUST NOT TOUCH: {forbidden_dirs}
 
-Your inbox: .claude/plans/{slug}/mailboxes/{your-name}.jsonl
+Your inbox: .cas/plans/{slug}/mailboxes/{your-name}.jsonl
 Other inboxes: {list of all other teammate inbox paths}
 ```
 

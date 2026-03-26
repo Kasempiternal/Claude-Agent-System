@@ -11,7 +11,7 @@ MAX ITERATIONS: {max_iterations}
 
 ## Your Inputs
 
-1. **Master task list**: Read `.claude/plans/legion-{slug}/project-tasks.md` — the source of truth
+1. **Master task list**: Read `.cas/plans/legion-{slug}/project-tasks.md` — the source of truth
 2. **Verification report**: The verifier's results from this iteration
 3. **Task list**: Use `TaskList` to see agent team task status
 4. **Failure-mode checklists**: For T1+ tasks completed this iteration, the

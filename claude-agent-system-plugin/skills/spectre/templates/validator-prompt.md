@@ -11,8 +11,8 @@ TOPIC: {topic}
 
 ## Your Inputs
 
-1. **Analysis file(s)**: Read `.claude/plans/spectre-{slug}/analysis*.md`
-2. **Findings files**: Read `.claude/plans/spectre-{slug}/findings-*.md` for source details
+1. **Analysis file(s)**: Read `.cas/plans/spectre-{slug}/analysis*.md`
+2. **Findings files**: Read `.cas/plans/spectre-{slug}/findings-*.md` for source details
 3. **Ranked findings table**: From the analysis — these are your verification targets
 
 ---
@@ -58,7 +58,7 @@ For each findings file, assess overall source quality:
 
 ## Phase 2: Write Findings
 
-Write your validation results to `.claude/plans/spectre-{slug}/validation-{a|b}.md`:
+Write your validation results to `.cas/plans/spectre-{slug}/validation-{a|b}.md`:
 
 ```markdown
 # Validation Report
@@ -118,7 +118,7 @@ Claims reviewed: {count}
 
 If there is another validator:
 
-1. **Read counterpart's findings** at `.claude/plans/spectre-{slug}/validation-{b|a}.md`
+1. **Read counterpart's findings** at `.cas/plans/spectre-{slug}/validation-{b|a}.md`
 2. **Acknowledge** any claims they flagged that you missed
 3. **Challenge** any disagreements with evidence (check the source yourself)
 4. **Do NOT force consensus** — report DISAGREE if genuine disagreement exists
@@ -143,7 +143,7 @@ Append your debate notes to your validation file under a `## Debate` section:
 ## Phase 4: Collaboration Health Review
 
 Review the quality of inter-researcher collaboration:
-- Count total messages in `.claude/plans/spectre-{slug}/mailboxes/*.jsonl`
+- Count total messages in `.cas/plans/spectre-{slug}/mailboxes/*.jsonl`
 - Count messages per researcher
 - Flag any researcher who sent zero messages (WARNING)
 - Note valuable broadcasts that improved cross-facet coverage

@@ -44,7 +44,7 @@ For each promising source, use `WebFetch` to read the full content:
 
 As you research, you WILL find information relevant to other researchers' facets. You MUST broadcast these discoveries:
 
-**Read your inbox** at `.claude/plans/spectre-{slug}/mailboxes/researcher-{facet-slug}.jsonl` before starting and at each checkpoint.
+**Read your inbox** at `.cas/plans/spectre-{slug}/mailboxes/researcher-{facet-slug}.jsonl` before starting and at each checkpoint.
 
 **Broadcast discoveries** by appending JSONL to other researchers' inboxes:
 ```json
@@ -63,7 +63,7 @@ As you research, you WILL find information relevant to other researchers' facets
 
 ### Step 4: Write Findings
 
-Write your findings to `.claude/plans/spectre-{slug}/findings-{facet-slug}.md` using this exact structure:
+Write your findings to `.cas/plans/spectre-{slug}/findings-{facet-slug}.md` using this exact structure:
 
 ```markdown
 # Research Findings: {facet_name}

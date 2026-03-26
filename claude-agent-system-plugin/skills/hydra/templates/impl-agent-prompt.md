@@ -38,7 +38,7 @@ FILES MODIFIED BY EARLIER WAVES (read these for context):
 ## Collaboration Protocol
 
 ### Your Mailbox
-Your inbox: .claude/plans/hydra-{slug}/mailboxes/{your-name}.jsonl
+Your inbox: .cas/plans/hydra-{slug}/mailboxes/{your-name}.jsonl
 
 ### Teammate Inboxes (this wave)
 {list of all teammate inbox paths in this wave}

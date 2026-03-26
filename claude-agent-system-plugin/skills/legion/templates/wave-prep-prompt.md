@@ -7,11 +7,11 @@ YOUR NAME: wave-prep-iter{I}-w{W}
 
 ## Your Inputs
 
-1. **Master task list**: Read `.claude/plans/legion-{slug}/project-tasks.md` for the full project state
+1. **Master task list**: Read `.cas/plans/legion-{slug}/project-tasks.md` for the full project state
 2. **CTO summary**: The CTO has planned this wave — use their guidance on which tasks to include
 3. **Impl agent template**: Read `{LEGION_SKILL_DIR}/templates/impl-agent-prompt.md` for the agent prompt format
 4. **Task list**: Use `TaskList` to see current agent team task status
-5. **Prior wave state** (if Wave > 1): Read `.claude/plans/legion-{slug}/wave-{I}-{W-1}-state.md`
+5. **Prior wave state** (if Wave > 1): Read `.cas/plans/legion-{slug}/wave-{I}-{W-1}-state.md`
    for previous wave outcomes. For Iteration 2+, also read the last wave state from the
    prior iteration. For Wave 1, this file does not exist — use CTO plan only.
 
@@ -23,7 +23,7 @@ CTO PLAN FOR THIS WAVE:
 {cto_wave_plan}
 
 {If Wave > 1:}
-PRIOR WAVE STATE FILE: .claude/plans/legion-{slug}/wave-{I}-{W-1}-state.md
+PRIOR WAVE STATE FILE: .cas/plans/legion-{slug}/wave-{I}-{W-1}-state.md
 Read this file for context instead of relying on message history.
 
 ## Your Mission
@@ -54,8 +54,8 @@ For each implementation agent, create a spec including:
 - Mission summary (what to implement)
 - Context from CTO plan (relevant section, not everything)
 - Architectural context from scouts
-- For Iteration 2+: read `.claude/plans/legion-{slug}/wave-{I-1}-{last}-state.md` for what was built
-- For Wave 2+: read `.claude/plans/legion-{slug}/wave-{I}-{W-1}-state.md` for files modified
+- For Iteration 2+: read `.cas/plans/legion-{slug}/wave-{I-1}-{last}-state.md` for what was built
+- For Wave 2+: read `.cas/plans/legion-{slug}/wave-{I}-{W-1}-state.md` for files modified
   by earlier waves — do NOT rely on message context from the orchestrator
 
 ### Step 4: Send Specs to Orchestrator

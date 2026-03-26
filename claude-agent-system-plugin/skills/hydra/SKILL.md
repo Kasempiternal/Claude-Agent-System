@@ -14,7 +14,7 @@ argument-hint: <task1; task2; task3 ...>
 ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 
             ⚔ Multi-Head Swarm ⚔
-              CAS v7.19.0
+              CAS v7.20.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -92,7 +92,7 @@ Display: `HYDRA: {N} tasks detected` with task list.
 
 1. **TeamCreate** with name `hydra-{slug}` (short kebab-case from task list)
 2. **TaskCreate** one item per user task, plus structural tasks: Exploration, Conflict Analysis, Verification, Simplification
-3. Create `.claude/plans/hydra-{slug}/mailboxes/` directory
+3. Create `.cas/plans/hydra-{slug}/mailboxes/` directory
 3. **TaskUpdate** to set dependencies: all user tasks blockedBy exploration; conflict analysis blockedBy exploration; verification blockedBy all impl tasks; simplification blockedBy verification. Wave-specific dependencies are set later by the analyst.
 
 ---
@@ -243,8 +243,8 @@ HYDRA PLAN BRIEFING
   ──────────────────────────────────────
   PLAN FILES
   ──────────────────────────────────────
-  .claude/plans/hydra-{slug}/task-*.md
-  .claude/plans/hydra-{slug}/coordination.md
+  .cas/plans/hydra-{slug}/task-*.md
+  .cas/plans/hydra-{slug}/coordination.md
 ```
 
 Then use `AskUserQuestion` with options: "Yes, proceed" / "No, I need to edit" / "Show more detail".
@@ -284,7 +284,7 @@ AGENT 1: name=impl-task1-stream-a | files=[file1,file2] | mission="..." | contex
 AGENT 2: ...
 ```
 
-Before launching impl agents: create empty `.jsonl` inbox files for each agent in this wave at `.claude/plans/hydra-{slug}/mailboxes/{agent-name}.jsonl`.
+Before launching impl agents: create empty `.jsonl` inbox files for each agent in this wave at `.cas/plans/hydra-{slug}/mailboxes/{agent-name}.jsonl`.
 
 **Construct Task calls directly from these specs** — no plan re-reading needed. Read `{HYDRA_SKILL_DIR}/templates/impl-agent-prompt.md` once to understand the prompt structure, then fill it with each agent's spec data.
 
@@ -330,7 +330,7 @@ After ALL waves: spawn a **two-skeptic adversarial global verification**:
    - `skeptic-b-global` (general-purpose, Opus): independent evaluation, same scope
    Build each prompt by reading `{HYDRA_SKILL_DIR}/templates/verification-prompt.md` and filling placeholders (use `{A|B}` for each skeptic's identity).
 
-2. After both return, read both findings files at `.claude/plans/hydra-{slug}/`:
+2. After both return, read both findings files at `.cas/plans/hydra-{slug}/`:
    - AGREE on PASS → global verification PASSES
    - AGREE on FAIL → follow RP-2 for specific failures
    - DISAGREE → escalate to user via AskUserQuestion with both positions
@@ -396,7 +396,7 @@ HYDRA COMPLETE
     {If any multi-agent wave had 0 messages: ⚠️ Wave {W} had zero inter-agent messages}
     Two-Skeptic Global Verdict: {AGREE-PASS | AGREE-FAIL | DISAGREE}
 
-  Plans: .claude/plans/hydra-{slug}/
+  Plans: .cas/plans/hydra-{slug}/
 ```
 
 ### Step 3: Shutdown & Cleanup

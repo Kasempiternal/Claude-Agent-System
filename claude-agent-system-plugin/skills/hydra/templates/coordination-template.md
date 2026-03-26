@@ -50,7 +50,7 @@ Wave 2 (sequential): [Task 3: Fix payments]
 
 ## Mailbox Directory
 
-Implementation agents communicate via JSONL mailboxes at `.claude/plans/hydra-{slug}/mailboxes/`.
+Implementation agents communicate via JSONL mailboxes at `.cas/plans/hydra-{slug}/mailboxes/`.
 
 | Agent Name | Inbox Path | Wave | Teammates |
 |------------|-----------|------|-----------|

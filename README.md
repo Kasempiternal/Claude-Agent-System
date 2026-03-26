@@ -2,9 +2,9 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.19.0 — Skills Access for Swarm Agents**
+> **v7.20.0 — State directory moved out of `.claude/`**
 >
-> All swarm agent teammates (Hydra, Legion, Siege, Spectre) can now **invoke any installed plugin skill** via the Skill tool. Teammates proactively load domain expertise — e.g., `axiom:ax-concurrency` for Swift concurrency, `axiom:ax-swiftui` for SwiftUI best practices — directly during exploration, implementation, verification, and simplification phases. 24 agent templates updated across 4 skills.
+> All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
 >
 > Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
 >
@@ -544,7 +544,7 @@ An orchestrator that spawns agent swarms for exploration and implementation.
 2. **Parallel Exploration** - Spawns 2-6 scout agents to map the codebase
 3. **Synthesis** - Combines findings into unified understanding
 4. **Clarification** - Asks questions if multiple valid approaches exist
-5. **Plan Creation** - Creates editable plan at `.claude/plans/{task}.md`
+5. **Plan Creation** - Creates editable plan at `.cas/plans/{task}.md`
 6. **User Review** - You edit and approve the plan before any code is written
 7. **Parallel Implementation** - Spawns 2-6 Opus agents working simultaneously
 8. **Verification** - Tests and code review
