@@ -1,0 +1,6 @@
+{statusLine}
+Objective:    {objective}
+Status:       {status}
+Iteration:    {iterations}/{maxIterations}
+Time used:    {timeUsed}
+{commandRow}

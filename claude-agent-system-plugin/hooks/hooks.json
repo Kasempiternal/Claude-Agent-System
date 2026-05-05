@@ -1,5 +1,5 @@
 {
-  "description": "CAS safety hooks — intercept dangerous commands, secret access, and git pushes",
+  "description": "CAS safety hooks — intercept dangerous commands, secret access, git pushes, and drive /goal auto-continuation",
   "hooks": {
     "PreToolUse": [
       {
@@ -26,6 +26,16 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/protect-secrets.js"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/goal-continuation.js"
           }
         ]
       }

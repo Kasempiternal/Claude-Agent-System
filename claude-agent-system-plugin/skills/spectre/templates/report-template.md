@@ -119,4 +119,4 @@
 
 ---
 
-*Report compiled by Spectre Intelligence Swarm — CAS v7.20.0*
+*Report compiled by Spectre Intelligence Swarm — CAS v7.24.0*

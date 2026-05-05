@@ -1,6 +1,6 @@
 ---
 name: zk
-description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (cyberconan, spectre, siege, legion, hydra, pcc-opus, or pcc). Use instead of choosing manually."
+description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (cccontrol, cyberconan, spectre, goal, siege, legion, hydra, pcc-opus, or pcc). Use instead of choosing manually."
 model: opus
 argument-hint: <task description>
 ---
@@ -14,7 +14,7 @@ argument-hint: <task description>
 ╚══════╝╚═╝  ╚═╝
 
   ⚔ Intelligent Router ⚔
-       CAS v7.20.0
+       CAS v7.24.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -28,6 +28,31 @@ Task: $ARGUMENTS
 ## Decision Tree
 
 Walk through these steps IN ORDER. Stop at the first match.
+
+### Step -2: Native macOS app control or testing?
+
+Check if the input describes **controlling, testing, or automating a native macOS application** (not a web app, not code implementation).
+
+**Keywords**: "test the app", "click", "open the app", "verify the UI", "check the menu", "launch", "automate", "control the app", "interact with", "test native app", "macOS app", "simulator", "open TextEdit", "check if the button works", "fill the form in the app", "navigate the app"
+
+**Key test**: "Is the user asking to interact with a running macOS application's UI?" If YES, route to CCControl.
+
+**Exclusions** (continue to Step -1):
+- "build the app" — code implementation, not UI control
+- "fix the button" — code fix, not UI testing
+- "test the API" — not GUI interaction
+- Web app testing — use Gonk instead
+
+Examples:
+- "test my macOS app and click through all tabs" → **CCCONTROL**
+- "launch TextEdit and type a document" → **CCCONTROL**
+- "verify the onboarding flow in the iOS Simulator" → **CCCONTROL**
+- "open the app and check if the settings menu works" → **CCCONTROL**
+- "control System Settings and change a preference" → **CCCONTROL**
+- "build the app and then test it" → **CCCONTROL** (has a UI testing goal)
+- "fix the login button" → **NOT matched** (code fix) → continue to Step -1
+
+If matched → Route to **CCControl**.
 
 ### Step -1: Security scan?
 
@@ -82,6 +107,30 @@ Examples:
 - "investigate the auth bug and fix it" → **NOT matched** (fix goal) → continue to Step 0
 
 If matched → Route to **Spectre**.
+
+### Pre-check 2: GOAL — Persistent autonomous pursuit? ⚠ DEV / TESTING PHASE
+
+Check if the input asks Claude to **keep working on a single objective autonomously across multiple turns**, with explicit "until done / autonomous / persistent" phrasing.
+
+**Keywords**: "keep working on", "keep going until", "until done", "until complete", "autonomous pursuit", "set a goal", "pursue", "persist on", "don't stop until", "work on this until you finish"
+
+**Key test**: "Does the user want auto-continuation of a single objective across many turns, with budget/iteration safeguards?" If YES, route to **Goal**.
+
+**Exclusions** (continue to Step 0):
+- "build the entire X from scratch" — that's a project scope, not an autonomy directive (use Legion/Siege)
+- "implement N independent tasks" — that's parallelism, not persistence (use Hydra)
+- "research X" — pure information, not pursuit (already routed to Spectre)
+- Any request that does not explicitly ask Claude to *keep going* across turns
+
+Examples:
+- "set a goal to refactor the payment module and keep working until tests pass" → **GOAL**
+- "pursue this objective until done: write a haiku and save it to haiku.txt" → **GOAL**
+- "keep working on this autonomously until you finish: clean up the imports across the repo" → **GOAL**
+- "don't stop until all the type errors are gone" → **GOAL**
+- "build the entire e-commerce platform" → **NOT matched** (project scope) → continue to Step 0
+- "fix three bugs: A, B, C" → **NOT matched** (parallel tasks) → continue to Step 0
+
+If matched → Route to **Goal**. **Warn the user first** that `/goal` is in DEV / TESTING PHASE and untested end-to-end; only proceed if they confirm or invoked `/goal` explicitly.
 
 ### Step 0: Large holistic project needing iterative completion?
 
@@ -231,8 +280,10 @@ Routing: 3 independent deliverables detected
 
 After displaying the routing decision, immediately invoke the selected skill using the `Skill` tool, passing the original task unchanged:
 
+- CCControl → `Skill(skill: "cas:cccontrol", args: "$ARGUMENTS")`
 - CyberConan → `Skill(skill: "cas:cyberconan", args: "$ARGUMENTS")`
 - Spectre → `Skill(skill: "cas:spectre", args: "$ARGUMENTS")`
+- Goal → `Skill(skill: "cas:goal", args: "$ARGUMENTS")`
 - Siege → `Skill(skill: "cas:siege", args: "$ARGUMENTS")`
 - Legion → `Skill(skill: "cas:legion", args: "$ARGUMENTS")`
 - PCC → `Skill(skill: "cas:pcc", args: "$ARGUMENTS")`
@@ -243,4 +294,4 @@ Do NOT modify, rewrite, or "optimize" the user's original task text. Pass `$ARGU
 
 ## Escape Hatch
 
-Users can always bypass ZK and invoke `/cyberconan`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
+Users can always bypass ZK and invoke `/cccontrol`, `/cyberconan`, `/spectre`, `/goal`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
