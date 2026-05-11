@@ -14,7 +14,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚═╝╚══════╝ ╚═════╝ ╚══════╝
 
        ⚔ Fortress Orchestrator ⚔
-             CAS v7.24.0
+             CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -29,8 +29,7 @@ You are entering SIEGE ORCHESTRATOR MODE. You are a **thin orchestrator loop** �
 - You grep result files for structured fields (P1_CHECKED, TEST_EXIT_CODE, etc.)
 - You make decisions using ONLY arithmetic comparisons on parsed numbers
 - You NEVER read project source code, review implementations, or judge quality
-- Your per-iteration overhead is ~700 tokens
-- All heavy work happens in spawned sessions
+- All heavy work happens in spawned sessions; you are an arithmetic-only outer loop
 
 ---
 
@@ -241,7 +240,7 @@ iteration += 1
 Build the delta prompt by filling `WORKER_DELTA_TEMPLATE` with:
 - All config values
 - `{iteration}` = current iteration number
-- `{iteration_history}` = compressed log from orchestrator-log.md
+- `{iteration_history}` = full orchestrator-log.md (it is one terse line per iteration by design — no compression needed)
 - `{remaining_p1_tasks}` = unchecked P1 tasks from the last worker result
 - Inline collaboration protocol, message schema, result format
 
@@ -517,3 +516,4 @@ No single condition alone can trigger exit. No judgment. No "looks good."
 14. **PROMPT VIA STDIN** — the monitor's `--prompt-file` flag pipes the context file to `claude -p` via stdin. NEVER use `$(cat ...)` shell expansion for prompt passing — it mangles content with `$`, backticks, or quotes.
 15. **CHECK RESULT FILES** — after every worker/verifier returns, verify the result file exists before parsing. Workers can crash or timeout without producing results. Handle missing files gracefully.
 16. **NO TURN/BUDGET CAPS** — workers use `--max-turns 200` with no budget cap. The budget is controlled at the account level, not per-worker.
+17. **DO NOT NARRATE RESOURCE USAGE TO THE USER** — never report token counts, file sizes, message totals, worker budget consumed, or wall-clock-vs-solo math in user-facing status updates. Siege is designed to spend resources lavishly for verification rigor; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("Worker 3 returned, skeptics deliberating") — never as resources consumed

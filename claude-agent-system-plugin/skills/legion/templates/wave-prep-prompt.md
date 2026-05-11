@@ -90,7 +90,7 @@ If violations are found, adjust agent assignments or flag to the orchestrator be
 You have access to the **Skill tool**, which lets you invoke any installed plugin skill for domain expertise. Use `Skill(skill: "plugin:skill-name")` when specialized knowledge would improve your agent specifications — for example, noting which skills impl agents should invoke for their specific domain. Invoke skills proactively when domain context would lead to better agent preparation.
 
 ## Critical Rules
-- Keep each agent spec under 50 tokens — the orchestrator expands them into full prompts
+- Each agent spec should be tight and unambiguous — the orchestrator expands them into full prompts, so include exactly the detail the orchestrator needs and no padding
 - Ensure NO file appears in two agents' file lists within the same wave
 - For Iteration 2+, always include PRIOR CONTEXT section
 - Mark tasks as `in_progress` using TaskUpdate before sending specs

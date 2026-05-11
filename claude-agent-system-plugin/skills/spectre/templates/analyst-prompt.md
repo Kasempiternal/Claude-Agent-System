@@ -120,7 +120,7 @@ Total sources across all facets: {count}
 
 ### Step 7: Report to Orchestrator
 
-Send the orchestrator a compressed summary via `SendMessage` (~300 tokens):
+Send the orchestrator a concise summary via `SendMessage`. The full analysis lives in `analysis.md`; this summary is the orchestrator's working mental model for downstream phases — include what the orchestrator needs to brief validators and the report compiler, no more, no less:
 
 ```
 ANALYSIS COMPLETE

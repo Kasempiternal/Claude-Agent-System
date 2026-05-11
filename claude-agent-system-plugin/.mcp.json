@@ -7,6 +7,10 @@
         "SPECTRA_HEADLESS": "true",
         "SPECTRA_DEFAULT_VIEWPORT": "1280x720"
       }
+    },
+    "cccontrol": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/cccontrol-mcp/index.js"]
     }
   }
 }

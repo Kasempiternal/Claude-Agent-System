@@ -106,7 +106,7 @@ Date: {current date}
 
 ### Step 5: Report to Orchestrator
 
-After writing findings, send a compressed summary:
+After writing findings, send a concise summary (the full findings live in your facet file; this summary just tells the analyst what's notable):
 
 ```
 RESEARCH COMPLETE: {facet_name}

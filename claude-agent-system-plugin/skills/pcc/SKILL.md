@@ -14,7 +14,7 @@ argument-hint: <task description>
 ╚═╝      ╚═════╝ ╚═════╝
 
   ⚔ Parallel Coordinator ⚔
-        CAS v7.24.0
+        CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -388,6 +388,7 @@ After all simplification agents complete:
 - **ALWAYS re-read the plan** after user confirms (they may have edited it)
 - **Each agent should have focused scope** - clear boundaries prevent conflicts
 - **Commit incrementally** - each agent commits its own work
+- **DO NOT NARRATE RESOURCE USAGE TO THE USER** - never report token counts, file sizes, agent counts as cost figures, or wall-clock-vs-solo math in user-facing status updates. PCC is designed to spend resources lavishly for quality; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("Scouts done, spawning implementers") - never as resources consumed
 
 ---
 

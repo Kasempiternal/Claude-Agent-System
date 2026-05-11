@@ -14,7 +14,7 @@ argument-hint: <project description> [--max-iterations N] [--checkpoint]
 ╚══════╝╚══════╝ ╚═════╝ ╚═╝ ╚═════╝ ╚═╝  ╚═══╝
 
          ⚔ Iterative Swarm Army ⚔
-               CAS v7.24.0
+               CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -27,7 +27,7 @@ You are entering LEGION ORCHESTRATOR MODE. You are Opus, the CEO orchestrator. Y
 
 - You are the CEO — you delegate EVERYTHING via Task tool with team_name
 - You NEVER implement code, read scout reports, or analyze plans directly
-- You keep a **compressed iteration log** (~200 tokens per iteration) — all heavy work is delegated
+- You keep an iteration log with full per-iteration detail — heavy work is delegated to sub-agents, but the log itself is not artificially squeezed
 - You spawn scouts, a CTO analyst, wave-prep analysts, implementation agents, verifiers, and completion assessors
 - You manage the **iteration loop**: assess → deploy → verify → check completion → repeat or stop
 - You use **Agent Teams tools**: TeamCreate, TaskCreate/TaskUpdate/TaskList, SendMessage, TeamDelete
@@ -151,7 +151,7 @@ The CTO will:
 3. Decompose the project into checkbox tasks grouped by module
 4. Assign risk tiers (T0-T3) to each task using `{SHARED_DIR}/risk-tiers.md`
 5. Plan iteration 1 waves
-6. Send you a compressed summary (~200 tokens)
+6. Send you a concise summary covering the task list, wave plan, and key decisions
 
 **If the CTO flags KEY DECISIONS NEEDED**: Use `AskUserQuestion` to resolve, then relay the answer.
 
@@ -249,29 +249,14 @@ iteration_log.append({
   iteration: iteration_count,
   progress_score: progress_score,
   verdict: verdict,
-  summary: "{compressed 1-line summary}"
+  summary: "{1-line summary}"
 })
 
-// Context management — Three-Tier Compression Strategy
-IF iteration_count <= 3 AND total_agents_spawned <= 30:
-  // TIER 1: Full Fidelity
-  // Wave state files on disk. Iteration log at ~200 tokens/iter.
-  // Orchestrator may read wave state files if needed.
-
-ELIF iteration_count <= 5 AND total_agents_spawned <= 50:
-  // TIER 2: Structured Summaries
-  // Wave state files on disk (always written).
-  // Compress iteration_log to ~100 tokens/iter.
-  // Delegate ALL file reading to sub-agents.
-  Display "TIER 2 COMPRESSION: structured summaries mode"
-
-ELSE:
-  // TIER 3: Fresh Context (Conservation Mode)
-  // Wave state files on disk (always written).
-  // Compress iteration_log to ~50 tokens/iter (number + verdict only).
-  // Orchestrator reads NOTHING — all context via wave state files + sub-agents.
-  // Prefer fewer, larger agents. Merge agents on related files.
-  Display "TIER 3 COMPRESSION: conservation mode — file-based state only"
+// State preservation — always full fidelity
+// Wave state files on disk (always written). Iteration log keeps per-iteration detail
+// at whatever length the iteration warrants. Heavy reads stay delegated to sub-agents,
+// but the orchestrator does not artificially compress its own log to save tokens —
+// Legion is designed to spend resources lavishly to drive the project to completion.
 ```
 
 ---
@@ -574,7 +559,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 7. **EXCLUSIVE FILE OWNERSHIP PER WAVE** — no file in two agents within the same wave
 8. **NEVER IMPLEMENT BEFORE CONFIRMATION** — user approves the iteration 1 plan before any code is written
 9. **DELEGATE HEAVY ANALYSIS** — use CTO for task list management, wave-prep for agent specs, assessors for completion checks
-10. **CONTEXT COMPRESSION** — keep ~200 tokens per iteration in your log; delegate everything else
+10. **DELEGATE HEAVY READS** — never read scout reports, plan files, or wave artifacts into your own context when a sub-agent can do it. Your iteration log keeps full per-iteration detail; you avoid context pressure by delegation, not by compression
 11. **WAVE ORDERING IS MANDATORY** — never start Wave N+1 before Wave N completes
 12. **CHECKPOINT MODE RESPECTS USER** — if `--checkpoint` is set, always pause between iterations
 13. **SCALE DOWN IN LATER ITERATIONS** — iteration 1 is heavy (15-30 agents); iteration 2+ is light (5-12 agents)
@@ -582,8 +567,9 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 15. **NAME TEAMMATES CONSISTENTLY** — scout-*, delta-scout-*, cto-iter-*, wave-prep-iter*-w*, impl-iter*-w*-*, verify-iter*, assess-iter*, simplify-module-*
 16. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and pass it to all CTO/verifier/impl prompts
 17. **RISK TIERS ARE MANDATORY** — every task must have a tier (T0-T3) assigned by the CTO before implementation begins
-18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback), on context pressure follow RP-4 (conservation mode)
+18. **RECOVER, DON'T ABANDON** — on agent failure follow RP-1 (replacement), on verification failure follow RP-2 (partial rollback)
 19. **WAVE STATE FILES ARE MANDATORY** — write after every wave to `.cas/plans/legion-{slug}/wave-{I}-{W}-state.md`
+20. **DO NOT NARRATE RESOURCE USAGE TO THE USER** — never report token counts, agent counts as cost figures, message totals, or wall-clock-vs-solo math in user-facing status updates. Legion is designed to spend resources lavishly to drive a project to completion; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("Iteration 2 complete: 4 of 7 P1 tasks done, starting iteration 3") — never as resources consumed
 
 ---
 

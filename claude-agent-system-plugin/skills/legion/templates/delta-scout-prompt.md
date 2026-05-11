@@ -14,7 +14,7 @@ TEAM: You are part of team "legion-{slug}". Use TaskList to see tracked tasks.
 This is NOT the first iteration. Previous iterations have already made progress. Your job is to assess what CHANGED, what BROKE, and what REMAINS — not to re-explore the entire codebase.
 
 ITERATION HISTORY:
-{compressed_iteration_summaries}
+{prior_iteration_summaries}
 
 MASTER TASK LIST LOCATION: `.cas/plans/legion-{slug}/project-tasks.md`
 WAVE STATE FILES: `.cas/plans/legion-{slug}/wave-*-state.md`

@@ -114,4 +114,4 @@ OPTIONAL IMPROVEMENTS: {P2/P3 items that could be done}
 - **LOW confidence blocks COMPLETE** — if verification confidence is LOW (static analysis only), verdict MUST be CONTINUE with "Add smoke tests" as the top remaining priority
 - **"Tests: N/A" with no smoke tests** — bias strongly toward CONTINUE; the project cannot be considered verified without at least build+run confirmation
 - STALLED means progress_score == 0 — literally nothing improved. If ANYTHING got better (bug fixes, test additions, error handling), score 1+ and CONTINUE
-- Keep assessment under 200 tokens — the orchestrator needs a quick verdict
+- Keep the assessment concise and verdict-focused — the orchestrator needs to act on it quickly. Length should match what the iteration actually warrants; don't pad and don't artificially squeeze

@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "cas",
-      "version": "7.24.0",
+      "version": "7.25.0",
       "description": "Claude Agent System - Parallel agent swarms for planning, implementation, research, and code review. NOTE: /goal is in DEV / TESTING PHASE and untested end-to-end.",
       "source": "./claude-agent-system-plugin"
     }

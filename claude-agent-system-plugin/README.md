@@ -119,6 +119,32 @@ Best for:
 - Complex architectural changes
 - Unfamiliar codebases
 
+### `/faster` - Single-Turn Parallel Burst
+Same all-Opus quality as `/pcc-opus`, but **no plan file** and **no approval gate** — runs end-to-end in a single conversation turn. For when you're already in flow and just want speed without ceremony.
+
+```bash
+/faster add a /healthz endpoint with a unit test
+/faster wire up Stripe webhooks for the billing module
+/faster add dark mode toggle to the settings page and persist it
+```
+
+Best for:
+- Single tasks with 3–6 genuinely independent subtasks
+- "Make this faster" moments where `/pcc-opus`'s plan-file phase is overkill
+- When you already know the task is parallelizable and don't want a confirmation gate
+
+How it differs from siblings:
+- **vs `/pcc-opus`** — same model (Opus everywhere), but skips the plan file and skips user confirmation. One turn instead of three.
+- **vs `/hydra`** — one task, not N. If decomposition turns up >6 independent pieces, `/faster` escalates you to `/hydra`.
+- **vs `/zk`** — `/zk` is a router; `/faster` is opt-in. Type `/faster` directly when you know what you want.
+
+Guardrails (built into the skill):
+- **Phase 0 stop-test** — if subtasks aren't genuinely independent, `/faster` redirects you to `/pcc-opus` rather than burn tokens parallelizing sequential work.
+- **Hard escalation at >6 subtasks** — won't silently truncate; recommends `/hydra` instead.
+- **In-prompt file ownership** — each subagent gets explicit "files you OWN" and "files you may READ but NOT modify" lists. No mailboxes, no `.cas/plans/` files.
+
+> **High Token Usage**: spawns up to 6 Opus scouts + 6 Opus implementers per invocation. Cost-comparable to one `/pcc-opus` run, but faster wall-clock.
+
 ### `/pcc` - Parallel Claude Coordinator
 Uses **Sonnet scouts** for fast exploration and **Opus agents** for implementation.
 
@@ -160,6 +186,26 @@ Features:
 - **Deduplicated report** - orchestrator merges overlapping findings
 - **Agent verdicts table** - quick pass/fail per agent
 - **Opt-in fix phase** - parallel fix agents resolve CRITICAL and MAJOR findings (you choose: fix critical+major, fix all, or report only)
+
+### `/cccontrol` - Lightning-Fast Native macOS App Control
+Control **any macOS application** at lightning speed using Accessibility APIs instead of slow screenshot-based computer use. 10-60x faster than `computer-use`.
+
+```bash
+/cccontrol test my macOS app and click through all tabs
+/cccontrol launch TextEdit and type a document
+/cccontrol verify the settings menu works in my app
+/cccontrol open the iOS Simulator and test the onboarding flow
+```
+
+Architecture:
+- **Accessibility-first**: Reads the UI via `AXUIElement` tree (~100ms) instead of screenshots (~3-6s)
+- **Screenshots-last**: Only captures images for visual evidence, not for understanding UI state
+- **Any app**: Works with SwiftUI, AppKit, Electron, Qt, Java, iOS Simulator — anything with a window
+- **Bundled MCP**: Includes its own `cccontrol-bridge` (Swift CLI) and Node.js MCP server — no extra installs
+
+Requirements:
+- macOS with Xcode Command Line Tools (`xcode-select --install`)
+- Accessibility permission in System Settings > Privacy & Security > Accessibility
 
 ### `/systemcc` - Auto-Routing Workflow Selector
 The catch-all convenience command. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
@@ -235,6 +281,7 @@ Features:
 | `/legion` `BETA` | Iterative project completion | Opus scouts + CTO + wave-based Opus implementers, looped (Agent Teams) | Yes |
 | `/hydra` | Multi-task parallel swarms with collaboration | Opus scouts + analyst teammates + wave-based Opus implementers + two-skeptic verifiers (Agent Teams) | Yes |
 | `/pcc-opus` | Max quality orchestration | Opus scouts (2-6) + Opus implementers (2-6) | Yes |
+| `/faster` | Single-turn parallel burst (no plan file, no approval gate) | Opus scouts (3-6) + Opus implementers (3-6) | Yes |
 | `/pcc` | Parallel orchestration | Sonnet scouts (2-6) + Opus implementers (2-6) | Yes |
 | `/review` | Code review & analysis + fix | 7 review agents + 1-4 fix agents | Only if opted in |
 | `/systemcc` | Any implementation task - auto-routes | Auto-selected | Yes |

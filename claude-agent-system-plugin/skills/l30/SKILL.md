@@ -14,7 +14,7 @@ argument-hint: <topic to research, e.g. "llm compression techniques">
 ╚══════╝ ╚═════╝  ╚═════╝
 
   Topic Research • Last 30 Days
-        CAS v7.24.0
+        CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -347,3 +347,4 @@ L30 RESEARCH COMPLETE
 6. **Open the file in browser** — the user expects visual output
 7. **Self-contained HTML** — the dashboard works offline, no server needed
 8. **All teammates use `subagent_type: "general-purpose"`** — required for team coordination tools
+9. **DO NOT NARRATE RESOURCE USAGE TO THE USER** — never report token counts, scraped post counts as cost figures, or wall-clock-vs-solo math in user-facing status updates. L30 is designed to spend resources lavishly across 5 sources for research breadth; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("All 5 scrapers returned, compiling dashboard") — never as resources consumed

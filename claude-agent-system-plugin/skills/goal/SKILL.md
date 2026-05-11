@@ -13,7 +13,7 @@ argument-hint: <objective> | pause | resume | clear | status
  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚══════╝
 
   ◎ Persistent Autonomous Goal Pursuit ◎
-              CAS v7.24.0
+              CAS v7.25.0
         ⚠ DEV / TESTING PHASE ⚠
 ```
 

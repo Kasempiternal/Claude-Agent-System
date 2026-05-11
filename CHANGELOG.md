@@ -5,6 +5,58 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.25.0] - 2026-05-11
+
+### Changed: No-narration + context-conservation cleanup across 8 skills
+
+**No-narration rule (spectre, hydra, siege, legion, l30, pcc, pcc-opus, faster)**: Critical Rules now explicitly forbid reporting token counts, file sizes, message totals, or wall-clock-vs-solo math in user-facing status output. These metrics leak implementation details and erode trust when inaccurate.
+
+**Numeric token caps dropped** (spectre analyst ~300t, legion ~200t/iter, completion-check <200t, wave-prep <50t): replaced with "concise summary" framing. Hard caps were both wrong (models don't count tokens mid-inference) and counterproductive (forcing truncation of legitimately useful output).
+
+**Legion context-conservation mode removed**: The three-tier compression cascade (IF iter<=3/ELIF/ELSE) and RP-4 ("On Conservation Mode") are gone. Recovery procedures now explicitly reject conservation mode and point to delegation + durable disk artifacts as the correct response to context pressure. Rule 18 no longer references RP-4.
+
+**Placeholder rename**: `{compressed_iteration_summaries}` → `{prior_iteration_summaries}` in `delta-scout-prompt.md` — "compressed" was a misleading claim.
+
+**Siege descriptive noise**: removed "Your per-iteration overhead is ~700 tokens" and fixed misleading "compressed log" wording.
+
+---
+
+## [7.24.0] - 2026-05-05
+
+### Added: `/goal` skill — Persistent Autonomous Goal Pursuit ⚠ DEV / TESTING PHASE
+
+Codex `/goal` parity for Claude Code. Set an objective; a Stop hook forces Claude to keep continuing turns until the goal is `achieved`, `abandoned` (max-iter / livelock guard / absolute ceiling), `cleared`, or `paused`.
+
+**⚠ This skill has NOT been tested end-to-end in a real Claude Code session.** Only script-level smoke tests of the CLI and Stop hook have passed. Behavior under live session conditions is unverified. Do not rely on `/goal` for real work yet — test in throwaway projects only. Disarm runaway loops with `/goal clear` or `rm .cas/goals/active.json`.
+
+This is the first cross-turn Stop hook in the plugin; all other CAS skills loop within a single turn. Other skills are unaffected.
+
+Subcommands: `/goal <objective> [--max-iter N] [--yield-every N]`, `/goal pause | resume | clear | status`. State at `.cas/goals/active.json` (durable) and `.cas/goals/.runtime.json` (transient).
+
+**v7.24.0**: removed token-budget machinery from v7.23.0 (per user request — simpler than carrying approximate accounting).
+
+---
+
+## [7.22.0] - 2026-04-27
+
+### Added: `/faster` skill — Single-Turn Parallel Burst
+
+A lightweight sibling to `/pcc-opus` that fans out 3–6 Opus subagents per wave for ONE task, all in a single conversation turn. No plan file. No user-confirmation gate. The orchestrator's context window IS the plan.
+
+**Why it exists**: every other CAS swarm skill (`/pcc`, `/pcc-opus`, `/hydra`, `/legion`, `/siege`) writes plan files to `.cas/plans/` and pauses for user approval between phases. That's the right tradeoff for high-stakes work but the wrong one when the user is mid-flow and just wants Claude to use parallelism RIGHT NOW for the task at hand. `/faster` fills that gap.
+
+**Mechanism**: Phase 0 in-context decomposition + a mandatory stop-test ("are these subtasks GENUINELY independent?") → Phase 1 parallel exploration via 3–6 Opus `Explore` subagents in a single message → Phase 2 inline synthesis (no analyst subagent) → Phase 3 parallel implementation via 3–6 Opus `general-purpose` subagents with explicit per-agent file ownership → Phase 4 inline verification + tight return.
+
+**Guardrails**:
+- Phase 0 stop-test redirects sequential-spine work to `/pcc-opus` before burning tokens
+- Hard escalation to `/hydra` if decomposition produces >6 independent pieces
+- All-Opus subagents (no Sonnet, no adaptive downgrade) — preserves "effort xhigh"
+- Empty-args mode prints usage and stops (no inference from conversation context)
+
+**Token cost**: comparable to one `/pcc-opus` run (worst case ~13 Opus subagent runs), but faster wall-clock because there is no plan-file phase and no confirmation gate.
+
+---
+
 ## [7.0.0] - 2026-02-20
 
 ### Plugin-Only Distribution

@@ -14,7 +14,7 @@ argument-hint: <task1; task2; task3 ...>
 ╚═╝  ╚═╝   ╚═╝   ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝
 
             ⚔ Multi-Head Swarm ⚔
-              CAS v7.24.0
+              CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -429,6 +429,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 20. **COLLABORATION IS EXPECTED** — multi-agent waves should exchange messages. Zero messages in a multi-agent wave triggers a WARNING in the final report, not a failure.
 21. **TWO-SKEPTIC IS GLOBAL ONLY** — per-wave verification remains single verifier. The two-skeptic debate is for global integration after all waves.
 22. **NEVER SKIP PHASES** — execute every phase in order. Never skip simplification, verification, or any other phase for any reason. Cost and token usage are not your concern.
+23. **DO NOT NARRATE RESOURCE USAGE TO THE USER** — never report token counts (`6 scouts × ~30k tokens`), wall-clock-vs-solo math (`3 minutes wall-clock instead of 20`), file sizes, or message totals in user-facing status updates. Hydra is designed to spend resources lavishly for parallelism quality; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("Scouts finished, analyst synthesizing now") — never as resources consumed
 
 ---
 
@@ -467,7 +468,7 @@ Phase 0:     Read settings.json -> verify teams enabled
 Phase 1:     Parse tasks
 Phase 1.5:   TeamCreate -> TaskCreate for all tasks + phases
 Phase 2:     Spawn scout teammates -> they explore and return
-Phase 3+5+6: Spawn analyst-synthesis -> receives compressed summary
+Phase 3+5+6: Spawn analyst-synthesis -> receives concise summary (plan files on disk)
 Phase 4:     Clarification (orchestrator, using summary)
 Phase 7:     User reviews summary -> confirms
 Phase 8:     Per wave: spawn analyst-wave-prep -> receive specs -> spawn impl agents

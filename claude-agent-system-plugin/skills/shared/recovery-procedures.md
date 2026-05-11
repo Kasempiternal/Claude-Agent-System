@@ -68,20 +68,8 @@ When things go wrong in a multi-agent swarm, follow these procedures instead of 
 
 **Key rule**: More agents != faster completion. Each agent adds coordination overhead.
 
-## RP-4: Context Pressure
+## On Context Pressure
 
-**Detection signals**:
-- Iteration count > 5 (Legion)
-- Total agents spawned > 50 across all iterations
-- Iteration log > 50K tokens cumulative
-- Orchestrator starting to lose track of prior decisions
+These swarm skills are designed to spend resources lavishly for quality. There is no defensive "conservation mode" — the orchestrator does not preemptively compress its own log or abandon parallelism to save tokens. If the orchestrator's context genuinely runs low during a long Legion run, the correct response is **never** to discard data — it is to keep delegating heavy reads to sub-agents (which the skill already requires) and to write durable artifacts to disk (wave state files, plans, iteration logs) so any future orchestrator session can resume from a complete record.
 
-**Procedure**:
-1. Enter CONSERVATION MODE — announce: `CONTEXT PRESSURE: entering conservation mode`
-2. Compress iteration logs to bare minimum (~100 tokens per iteration)
-3. Delegate ALL reading to sub-agents — orchestrator should not read files directly
-4. Agent self-reporting: each agent includes a 1-line summary with their completion message
-5. Prefer fewer, larger agents over many small ones
-6. Consider stopping early if P1 tasks are complete (Legion: trigger completion assessment)
-
-**Key rule**: Context is a finite resource. When pressure is high, trade parallelism for simplicity.
+**Key rule**: Resources are not your concern. Quality of work and durability of artifacts are.

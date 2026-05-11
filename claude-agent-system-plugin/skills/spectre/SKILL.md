@@ -14,7 +14,7 @@ argument-hint: <research topic>
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
 
          ⚔ Reconnaissance Swarm ⚔
-              CAS v7.24.0
+              CAS v7.25.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -238,7 +238,7 @@ Task({
 - Each writes their section: `analysis-{scope}.md`
 - Use mailboxes to share cross-cutting insights
 
-**Analyst sends compressed summary to orchestrator** (~300 tokens):
+**Analyst sends a concise summary to orchestrator** (full analysis is written to `analysis.md`; the summary is just the orchestrator's mental model for downstream phases):
 
 ```
 ANALYSIS COMPLETE
@@ -377,6 +377,7 @@ Send `shutdown_request` to all active teammates, then call `TeamDelete()`.
 13. **NAME TEAMMATES CONSISTENTLY** — researcher-*, analyst-*, validator-*, report-compiler
 14. **READ SHARED GOVERNANCE AT PHASE 0** — discover `{SHARED_DIR}` via Glob and inline collaboration protocol into all researcher prompts
 15. **COLLABORATION IS EXPECTED** — researchers should broadcast discoveries that overlap with other facets. Zero messages in a multi-researcher wave triggers a WARNING in the final report
+16. **DO NOT NARRATE RESOURCE USAGE TO THE USER** — never report token counts, file sizes (`∑141K`, `17.6K per researcher`), message totals (`86 messages exchanged`), or wall-clock-vs-solo comparisons in user-facing status updates. Spectre is designed to spend resources lavishly for research quality; bragging about throughput reads as defensive and misses the point. Report progress as work completed ("Researchers finished, spawning analysts now") — never as resources consumed
 
 ---
 
@@ -430,7 +431,7 @@ Phase 0:     Read settings.json → verify teams enabled
 Phase 1:     Parse topic → classify scope → decompose facets → user confirms
 Phase 2:     TeamCreate → TaskCreate for all phases
 Phase 3:     Spawn researcher teammates → they explore and return
-Phase 4:     Spawn analyst teammate(s) → receive compressed summary
+Phase 4:     Spawn analyst teammate(s) → receive concise summary (full analysis on disk)
 Phase 5:     Spawn validator teammate(s) → cross-reference claims
 Phase 6:     Spawn report-compiler → writes final report
 Phase 7:     Final summary → shutdown all → TeamDelete()
