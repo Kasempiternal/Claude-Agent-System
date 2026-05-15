@@ -1,6 +1,6 @@
 ---
 name: zk
-description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (cccontrol, cyberconan, spectre, goal, siege, legion, hydra, pcc-opus, or pcc). Use instead of choosing manually."
+description: "Intelligent router — analyzes your request and auto-routes to the best execution mode (cccontrol, cyberconan, spectre, siege, legion, hydra, pcc-opus, or pcc). Use instead of choosing manually."
 model: opus
 argument-hint: <task description>
 ---
@@ -14,7 +14,7 @@ argument-hint: <task description>
 ╚══════╝╚═╝  ╚═╝
 
   ⚔ Intelligent Router ⚔
-       CAS v7.25.0
+       CAS v7.26.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -107,30 +107,6 @@ Examples:
 - "investigate the auth bug and fix it" → **NOT matched** (fix goal) → continue to Step 0
 
 If matched → Route to **Spectre**.
-
-### Pre-check 2: GOAL — Persistent autonomous pursuit? ⚠ DEV / TESTING PHASE
-
-Check if the input asks Claude to **keep working on a single objective autonomously across multiple turns**, with explicit "until done / autonomous / persistent" phrasing.
-
-**Keywords**: "keep working on", "keep going until", "until done", "until complete", "autonomous pursuit", "set a goal", "pursue", "persist on", "don't stop until", "work on this until you finish"
-
-**Key test**: "Does the user want auto-continuation of a single objective across many turns, with budget/iteration safeguards?" If YES, route to **Goal**.
-
-**Exclusions** (continue to Step 0):
-- "build the entire X from scratch" — that's a project scope, not an autonomy directive (use Legion/Siege)
-- "implement N independent tasks" — that's parallelism, not persistence (use Hydra)
-- "research X" — pure information, not pursuit (already routed to Spectre)
-- Any request that does not explicitly ask Claude to *keep going* across turns
-
-Examples:
-- "set a goal to refactor the payment module and keep working until tests pass" → **GOAL**
-- "pursue this objective until done: write a haiku and save it to haiku.txt" → **GOAL**
-- "keep working on this autonomously until you finish: clean up the imports across the repo" → **GOAL**
-- "don't stop until all the type errors are gone" → **GOAL**
-- "build the entire e-commerce platform" → **NOT matched** (project scope) → continue to Step 0
-- "fix three bugs: A, B, C" → **NOT matched** (parallel tasks) → continue to Step 0
-
-If matched → Route to **Goal**. **Warn the user first** that `/goal` is in DEV / TESTING PHASE and untested end-to-end; only proceed if they confirm or invoked `/goal` explicitly.
 
 ### Step 0: Large holistic project needing iterative completion?
 
@@ -283,7 +259,6 @@ After displaying the routing decision, immediately invoke the selected skill usi
 - CCControl → `Skill(skill: "cas:cccontrol", args: "$ARGUMENTS")`
 - CyberConan → `Skill(skill: "cas:cyberconan", args: "$ARGUMENTS")`
 - Spectre → `Skill(skill: "cas:spectre", args: "$ARGUMENTS")`
-- Goal → `Skill(skill: "cas:goal", args: "$ARGUMENTS")`
 - Siege → `Skill(skill: "cas:siege", args: "$ARGUMENTS")`
 - Legion → `Skill(skill: "cas:legion", args: "$ARGUMENTS")`
 - PCC → `Skill(skill: "cas:pcc", args: "$ARGUMENTS")`
@@ -294,4 +269,4 @@ Do NOT modify, rewrite, or "optimize" the user's original task text. Pass `$ARGU
 
 ## Escape Hatch
 
-Users can always bypass ZK and invoke `/cccontrol`, `/cyberconan`, `/spectre`, `/goal`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.
+Users can always bypass ZK and invoke `/cccontrol`, `/cyberconan`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, or `/hydra` directly if the routing doesn't match their intent.

@@ -2,14 +2,6 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> ## ⚠ v7.24.0 — `/goal` is in DEV / TESTING PHASE
->
-> A new `/goal` skill (codex `/goal` parity) ships in v7.23.0+. It installs the **first cross-turn Stop hook** in this plugin — once a goal is active in a project, Claude is forced to take another turn after every Stop event until the goal is `achieved`, `abandoned`, `cleared`, or hits the iteration cap.
->
-> **It has NOT been tested end-to-end inside a real Claude Code session.** Only script-level smoke tests have passed. Expect rough edges. Do not rely on `/goal` for real work yet.
->
-> If a goal misbehaves, disarm it with `/goal clear` or `rm .cas/goals/active.json`. The other CAS skills (Legion, Siege, Hydra, Spectre, etc.) are unaffected — they don't use Stop hooks. Feedback at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
-
 > **v7.20.0 — State directory moved out of `.claude/`**
 >
 > All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).

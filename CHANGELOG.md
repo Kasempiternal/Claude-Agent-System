@@ -5,6 +5,25 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.26.0] - 2026-05-15
+
+### Removed: `/goal` skill (deprecated)
+
+The `/goal` skill (added in v7.23.0, callout in v7.24.0) is removed. It was Claude-generated rather than hand-authored, shipped without an end-to-end test in a live session, and the v7.25.0 release was missing its `state.js` dependency entirely — meaning the Stop hook crashed on every turn for anyone who had the plugin installed.
+
+Persistent autonomous pursuit is better served by `/legion` (iterative swarm loop, in-turn) or by running Claude Code in a `/loop`. Neither needs a cross-turn Stop hook, so neither risks the same kind of runaway behavior `/goal` was designed to guard against.
+
+**Removed:**
+- `claude-agent-system-plugin/skills/goal/` (entire skill directory)
+- `claude-agent-system-plugin/hooks/goal-continuation.js` (Stop hook)
+- `Stop` entry in `claude-agent-system-plugin/hooks/hooks.json`
+- `/goal` routing branch (Pre-check 2) and references in `skills/zk/SKILL.md`
+- `/goal` callout and DEV/TESTING-PHASE warnings from README, `plugin.yaml`, and `marketplace.json`
+
+**Migration:** if you had an active goal, delete `.cas/goals/active.json` from your project root — it's no longer read by anything. For autonomous pursuit, use `/legion <objective>` instead.
+
+---
+
 ## [7.25.0] - 2026-05-11
 
 ### Changed: No-narration + context-conservation cleanup across 8 skills
