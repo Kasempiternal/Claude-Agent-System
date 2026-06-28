@@ -1,6 +1,16 @@
 {
-  "description": "CAS safety hooks — intercept dangerous commands, secret access, and git pushes",
+  "description": "CAS safety hooks — intercept dangerous commands, secret access, and git pushes; surface open /orchestrate handoff threads at session start",
   "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/orchestrate-resume.js"
+          }
+        ]
+      }
+    ],
     "PreToolUse": [
       {
         "matcher": "Bash",
