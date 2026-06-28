@@ -12,7 +12,7 @@ argument-hint: <app name or test description>
  ██║     ██║      ██╔═══██╗████╗  ██║╚══██╔══╝██╔══██╗██╔═══██╗██║
  ╚██████╗╚██████╗ ██║   ██║██╔██╗ ██║   ██║   ██████╔╝██║   ██║██║
   ╚═════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═══╝   ╚═╝   ╚═════╝ ╚═════╝ ╚═╝
-  CAS v7.26.0 — Accessibility-first. Screenshots-last. Lightning-fast.
+  CAS v7.27.0 — Accessibility-first. Screenshots-last. Lightning-fast.
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message, before any tool calls.
