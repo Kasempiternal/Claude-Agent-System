@@ -415,13 +415,35 @@ function buildLaunchCmd(session, claudeBin) {
   return `${pathExport}cd ${shq(session.cwd)} && exec ${resume}`;
 }
 
+// Opens a NEW Ghostty window (used for the first/anchor session).
 function launchSession(session, dryRun, claudeBin) {
   const script = buildLaunchCmd(session, claudeBin);
   const args = ['-na', GHOSTTY, '--args', '-e', 'zsh', '-lc', script];
   if (dryRun) { out(`open ${args.map(a => (/\s/.test(a) ? `"${a}"` : a)).join(' ')}`); return; }
   const child = spawn('open', args, { detached: true, stdio: 'ignore' });
   child.unref();
-  appendLog(`launch ${session.sessionId || '(most-recent)'} ${session.cwd}`);
+  appendLog(`anchor ${session.sessionId || '(most-recent)'} ${session.cwd}`);
+}
+
+function osa(script) { spawnSync('osascript', ['-e', script], { stdio: 'ignore' }); }
+function setClipboard(text) { spawnSync('pbcopy', [], { input: text }); }
+function getClipboard() { return run('pbpaste', []); }
+
+// Adds the session as a TAB in the frontmost Ghostty window, via keystroke
+// automation (Ghostty has no CLI to open tabs on macOS). The new tab opens an
+// interactive shell; we paste the launch command and press Return. Requires the
+// controlling process to hold Accessibility permission (to send keystrokes).
+function openTab(session, claudeBin) {
+  const cmd = buildLaunchCmd(session, claudeBin);
+  setClipboard(cmd);
+  osa('tell application "Ghostty" to activate');
+  sleepSec(0.35);
+  osa('tell application "System Events" to keystroke "t" using command down'); // new_tab
+  sleepSec(0.7);
+  osa('tell application "System Events" to keystroke "v" using command down'); // paste
+  sleepSec(0.3);
+  osa('tell application "System Events" to key code 36');                      // Return
+  appendLog(`tab ${session.sessionId || '(most-recent)'} ${session.cwd}`);
 }
 
 function cmdRestore(flags) {
@@ -456,23 +478,39 @@ function cmdRestore(flags) {
   }
   if (!dryRun) appendLog(`restore start: ${data.sessions.length} session(s), fromLogin=${fromLogin}`);
 
-  // at login, let WindowServer / Ghostty come up before spawning windows
-  if (fromLogin && !dryRun) sleepSec(10);
-
   // claudeBin from the snapshot; fall back for older snapshots that predate it
   const localBin = path.join(os.homedir(), '.local', 'bin', 'claude');
   const claudeBin = data.claudeBin || (fs.existsSync(localBin) ? localBin : 'claude');
+  const sessions = data.sessions.filter(s => s.cwd);
 
-  let n = 0;
-  for (const s of data.sessions) {
-    if (!s.cwd) continue;
-    launchSession(s, dryRun, claudeBin);
-    n++;
-    if (!dryRun && n < data.sessions.length) sleepSec(0.7); // stagger
+  if (dryRun) {
+    sessions.forEach((s, i) => {
+      const cmd = buildLaunchCmd(s, claudeBin);
+      if (i === 0) out(`# anchor window:\nopen -na Ghostty --args -e zsh -lc ${JSON.stringify(cmd)}`);
+      else out(`# tab ${i + 1} (Cmd+T → paste → Return):\n${cmd}`);
+    });
+    out(`\n(${sessions.length} session(s) — dry run, nothing launched)`);
+    return;
   }
 
-  if (dryRun) out(`\n(${n} session(s) — dry run, nothing launched)`);
-  else out(`Reopened ${n} session(s) in Ghostty.`);
+  // at login, let WindowServer / Ghostty come up before spawning windows
+  if (fromLogin) sleepSec(10);
+
+  // All sessions go into ONE Ghostty window: the first opens the window, the rest
+  // are added as tabs via keystroke automation (no CLI exists for Ghostty tabs).
+  launchSession(sessions[0], false, claudeBin);   // anchor window (tab 1)
+  sleepSec(fromLogin ? 4 : 2.5);                   // let the window come up
+
+  const savedClip = getClipboard();                // don't trash the user's clipboard
+  let n = 1;
+  for (let i = 1; i < sessions.length; i++) {
+    openTab(sessions[i], claudeBin);
+    n++;
+    sleepSec(1.0);                                 // let each tab's shell settle
+  }
+  setClipboard(savedClip);
+
+  out(`Reopened ${n} session(s) as tabs in one Ghostty window.`);
 }
 
 // --- restart (full auto) --------------------------------------------------

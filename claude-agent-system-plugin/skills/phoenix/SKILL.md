@@ -14,7 +14,7 @@ model: opus
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
         ◎ Reboot without losing a single session ◎
-                       CAS v7.28.1
+                       CAS v7.28.2
               ⚠ BETA — macOS + Ghostty only ⚠
 ```
 
@@ -30,8 +30,8 @@ model: opus
 
 Phoenix makes rebooting cost-free when you have many `claude` sessions open. It captures the
 live session set, arms a **one-shot** login agent, and (optionally) reboots. On the next login,
-every session reopens in its own **Ghostty** window, `cd`'d to its original directory and resumed
-with `claude --resume <id>`.
+every session reopens as a **tab in one Ghostty window**, `cd`'d to its original directory and
+resumed with `claude --resume <id>`.
 
 ## How it works (one moving part: a deterministic CLI)
 
@@ -43,11 +43,13 @@ right subcommand and **print its stdout to the user verbatim**.
   (`~/.claude/projects/<enc>/<uuid>.jsonl`) it holds open — the transcript basename is the
   session id. This correctly separates *multiple sessions sharing one directory* (each tree holds
   its own transcript open). The Electron desktop app and daemon "spare" processes are filtered out.
-- **Restore** uses `open -na Ghostty --args -e zsh -lc "…cd <dir> && exec <abs claude> --resume <id>"` —
-  one new window per session. This is a launch, not Apple-Events automation, so it avoids the macOS
-  Automation permission prompt. The `claude` path is **absolute** (resolved + stored at snapshot
-  time) because Ghostty's `zsh -lc` is a non-interactive login shell that does not source `~/.zshrc`,
-  so at login `claude` would not be on PATH otherwise.
+- **Restore** reopens every session as a **tab in ONE Ghostty window**. The first session opens the
+  window (`open -na Ghostty --args -e zsh -lc "…cd <dir> && exec <abs claude> --resume <id>"`); each
+  remaining session is added as a tab via keystroke automation (`osascript` → activate Ghostty →
+  `Cmd+T` → paste the command → Return), because **Ghostty has no CLI to open a tab on macOS**
+  (`+new-window` is unsupported there; `new_tab` exists only as a keybind). The `claude` path is
+  **absolute** (resolved + stored at snapshot time) because Ghostty's `zsh -lc` is a non-interactive
+  login shell that does not source `~/.zshrc`, so `claude` would not be on PATH otherwise.
 - **State** lives at a stable path `~/.cas/phoenix/` (snapshot.json, ARMED flag, a copy of the
   script, restore.log). The login agent is `~/Library/LaunchAgents/com.cas.phoenix.restore.plist`.
 
@@ -84,8 +86,15 @@ Useful flags: `restart --dry-run` (snapshot + arm, print the reboot command inst
 
 ## Honest limitations (tell the user when relevant)
 
-- **Ghostty only.** Restore opens Ghostty windows. If a session was running in a different terminal,
-  it still reopens — just in Ghostty. Requires `Ghostty.app`; `snapshot` warns if it's missing.
+- **Ghostty only.** Restore opens one Ghostty window with one tab per session. If a session was
+  running in a different terminal, it still reopens — just in Ghostty. Requires `Ghostty.app`.
+- **Tabs need Accessibility permission.** Adding tabs uses keystroke automation (`Cmd+T` + paste),
+  which requires the controlling process to be allowed under System Settings → Privacy & Security →
+  Accessibility. Run manually (`/phoenix restore`) from a session that already has it and tabs build
+  reliably (proven). At **login** (the auto-restore agent), keystroke permission is less certain — if
+  tabs don't appear after a reboot, the first session's window still opens; re-run `/phoenix restore`
+  from it, or grant Accessibility to the relevant process. Focus briefly moves to Ghostty while tabs
+  are created, so don't type elsewhere during restore.
 - **The reboot may need permission.** The first `System Events` restart can prompt for Automation/
   Accessibility consent, and macOS may pause if an app has unsaved work. If the auto-reboot doesn't
   fire, sessions are already **armed** — just reboot manually and they reopen on next login.
