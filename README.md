@@ -624,6 +624,35 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 
 ---
 
+## `/phoenix` - Reboot Without Losing Your Sessions `BETA — macOS + Ghostty only`
+
+Got a dozen `claude` sessions open and dread rebooting because reopening and resuming them all is a pain? Phoenix makes restarting cost-free.
+
+```bash
+/phoenix restart      # snapshot all sessions → arm one-shot login agent → reboot
+/phoenix snapshot     # just capture the current sessions (non-destructive)
+/phoenix status       # armed? what's captured? recent restore log
+/phoenix disarm       # cancel a pending auto-restore
+```
+
+### How Phoenix Works
+
+1. **Snapshot** — finds every running Claude Code CLI session from the OS (`ps` + `lsof`), recovering each one's working directory and the exact session id from the transcript it holds open. Correctly separates multiple sessions sharing one directory; ignores the desktop app and daemon spares.
+2. **Arm** — installs a one-shot `launchd` login agent and saves the snapshot to `~/.cas/phoenix/`.
+3. **Reboot** — graceful restart via `osascript` (5-second abort countdown).
+4. **Restore** — on next login, each session reopens in its own **Ghostty** window, `cd`'d back to its directory and resumed with `claude --resume <id>`. The agent then deletes itself — fires exactly once.
+
+### Features
+
+- **One command** (`restart`) does the whole cycle; or drive it manually (`snapshot` → `arm` → reboot when ready).
+- **One-shot by design** — reopens once on the next login, never loops. `disarm` cancels anytime.
+- **Survives plugin updates** — the restore agent runs a copy of the script from a stable path.
+- **Honest fallback** — if the auto-reboot needs macOS permission, your sessions are already armed; just reboot manually and they reappear.
+
+> Currently **Ghostty-only** for the reopen step. Requires macOS.
+
+---
+
 # When to Use Each Skill
 
 | Situation | Use This |
@@ -642,6 +671,7 @@ All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt i
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
 | Enable Agent Teams for swarm skills | `/setup-swarm` (run once) |
 | Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
+| Reboot your Mac without losing open `claude` sessions | `/phoenix` (macOS + Ghostty) |
 
 ---
 

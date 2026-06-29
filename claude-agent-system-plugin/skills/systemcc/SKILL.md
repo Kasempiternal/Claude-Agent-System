@@ -14,7 +14,7 @@ argument-hint: <task description>
 ╚══════╝   ╚═╝   ╚══════╝   ╚═╝   ╚══════╝╚═╝     ╚═╝
 
             ⚔ Command Center ⚔
-               CAS v7.27.0
+               CAS v7.28.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
