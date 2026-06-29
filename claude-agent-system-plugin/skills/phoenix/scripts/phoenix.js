@@ -134,6 +134,19 @@ function encodeCwd(cwd) {
   return cwd.replace(/[/.]/g, '-');
 }
 
+// Absolute path to the `claude` binary. Resolved at snapshot time (interactive
+// context, PATH is good) and stored, because the login-time restore runs in a
+// minimal-PATH launchd context where `claude` is NOT on PATH (it lives in
+// ~/.local/bin, added only by ~/.zshrc, which a non-interactive `zsh -lc` does
+// not source). Never rely on PATH for the restore launch.
+function resolveClaudeBin() {
+  const local = path.join(os.homedir(), '.local', 'bin', 'claude');
+  if (fs.existsSync(local)) return local;
+  const w = run('which', ['claude']).trim().split('\n')[0];
+  if (w && fs.existsSync(w)) return w;
+  return 'claude';
+}
+
 function isClaudeExec(exec) {
   if (/\/Applications\/Claude\.app/.test(exec)) return false;       // Electron desktop app
   if (/Claude Helper|chrome_crashpad|chrome-native-host/.test(exec)) return false;
@@ -293,6 +306,7 @@ function cmdSnapshot() {
     capturedAt: nowISO(),
     nodeBin: process.execPath,
     ghosttyBin: fs.existsSync(ghosttyBin) ? ghosttyBin : null,
+    claudeBin: resolveClaudeBin(),
     sessions: sessions.map(s => ({ cwd: s.cwd, sessionId: s.sessionId })),
   };
   writeJSON(snapshotJson, data);
@@ -383,18 +397,26 @@ function cmdDisarm() {
 
 // --- restore --------------------------------------------------------------
 
-function buildLaunchCmd(session) {
-  const dir = session.cwd;
-  const resume = session.sessionId
-    ? `claude --resume ${session.sessionId}`
-    : 'claude -c';
-  // single shell command; cd then hand off to claude. quote dir for safety.
-  const q = `'${dir.replace(/'/g, `'\\''`)}'`;
-  return `cd ${q} && exec ${resume}`;
+function shq(s) {
+  return `'${String(s).replace(/'/g, `'\\''`)}'`;
 }
 
-function launchSession(session, dryRun) {
-  const script = buildLaunchCmd(session);
+function buildLaunchCmd(session, claudeBin) {
+  const bin = claudeBin || 'claude';
+  const binDir = path.dirname(bin);
+  const resume = session.sessionId
+    ? `${shq(bin)} --resume ${session.sessionId}`
+    : `${shq(bin)} -c`;
+  // Ghostty runs this via `zsh -lc` — a NON-interactive login shell that does NOT
+  // source ~/.zshrc, so at login `claude` may not be on PATH. Use the absolute
+  // binary path AND prepend its dir to PATH (so tools claude itself shells out to
+  // resolve). Then cd and hand off via exec.
+  const pathExport = (binDir && binDir !== '.') ? `export PATH=${shq(binDir)}:"$PATH"; ` : '';
+  return `${pathExport}cd ${shq(session.cwd)} && exec ${resume}`;
+}
+
+function launchSession(session, dryRun, claudeBin) {
+  const script = buildLaunchCmd(session, claudeBin);
   const args = ['-na', GHOSTTY, '--args', '-e', 'zsh', '-lc', script];
   if (dryRun) { out(`open ${args.map(a => (/\s/.test(a) ? `"${a}"` : a)).join(' ')}`); return; }
   const child = spawn('open', args, { detached: true, stdio: 'ignore' });
@@ -437,10 +459,14 @@ function cmdRestore(flags) {
   // at login, let WindowServer / Ghostty come up before spawning windows
   if (fromLogin && !dryRun) sleepSec(10);
 
+  // claudeBin from the snapshot; fall back for older snapshots that predate it
+  const localBin = path.join(os.homedir(), '.local', 'bin', 'claude');
+  const claudeBin = data.claudeBin || (fs.existsSync(localBin) ? localBin : 'claude');
+
   let n = 0;
   for (const s of data.sessions) {
     if (!s.cwd) continue;
-    launchSession(s, dryRun);
+    launchSession(s, dryRun, claudeBin);
     n++;
     if (!dryRun && n < data.sessions.length) sleepSec(0.7); // stagger
   }

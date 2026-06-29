@@ -14,7 +14,7 @@ model: opus
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
         ◎ Reboot without losing a single session ◎
-                       CAS v7.28.0
+                       CAS v7.28.1
               ⚠ BETA — macOS + Ghostty only ⚠
 ```
 
@@ -43,9 +43,11 @@ right subcommand and **print its stdout to the user verbatim**.
   (`~/.claude/projects/<enc>/<uuid>.jsonl`) it holds open — the transcript basename is the
   session id. This correctly separates *multiple sessions sharing one directory* (each tree holds
   its own transcript open). The Electron desktop app and daemon "spare" processes are filtered out.
-- **Restore** uses `open -na Ghostty --args -e zsh -lc "cd <dir> && exec claude --resume <id>"` —
+- **Restore** uses `open -na Ghostty --args -e zsh -lc "…cd <dir> && exec <abs claude> --resume <id>"` —
   one new window per session. This is a launch, not Apple-Events automation, so it avoids the macOS
-  Automation permission prompt.
+  Automation permission prompt. The `claude` path is **absolute** (resolved + stored at snapshot
+  time) because Ghostty's `zsh -lc` is a non-interactive login shell that does not source `~/.zshrc`,
+  so at login `claude` would not be on PATH otherwise.
 - **State** lives at a stable path `~/.cas/phoenix/` (snapshot.json, ARMED flag, a copy of the
   script, restore.log). The login agent is `~/Library/LaunchAgents/com.cas.phoenix.restore.plist`.
 
