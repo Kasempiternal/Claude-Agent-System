@@ -1,6 +1,6 @@
 ---
 name: gpt-architect
-description: Architect mode — Claude is the boss; it plans, decomposes, and reviews while spending as few of its own tokens as possible. ALL delegable work (coding AND investigation) goes to GPT-5.6 workers (Sol/Terra/Luna) via the Codex MCP server, billed to the ChatGPT subscription. Use when the user types /gpt-architect, or says "use the architect", "use gpt subagents", "delegate to codex/chatgpt". Subcommands: on | off | status.
+description: "Architect mode — Claude is the boss; it plans, decomposes, and reviews while spending as few of its own tokens as possible. ALL delegable work (coding AND investigation) goes to GPT-5.6 workers (Sol/Terra/Luna) via the Codex MCP server, billed to the ChatGPT subscription. Use when the user types /gpt-architect, or says 'use the architect', 'use gpt subagents', 'delegate to codex/chatgpt'. Subcommands: on | off | status."
 model: opus
 argument-hint: <on | on session | on here [dir] | off | status>
 ---
@@ -20,8 +20,8 @@ tool result that lands in its context, every re-explained brief is waste. Judge 
 ## Subcommands
 
 **This skill is the whole system — one switch activates everything.** There are no other
-skills, no separate installs, nothing else to invoke: every component below ships with
-`/gpt-architect` and turns on/off together.
+skills or separate plugin components to install: every component below ships with
+`/gpt-architect` and turns on/off together. Install and authenticate the Codex CLI separately.
 
 | Arg | Action |
 |---|---|

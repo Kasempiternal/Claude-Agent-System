@@ -7,7 +7,7 @@ A Claude Code plugin that spawns parallel agent swarms to plan, implement, and r
 ### `/zk` - Intelligent Router `BETA`
 *AKA "Zero Knowledge"* — for the people who don't want to use their brain. Just type `/zk` and let Claude figure out the rest.
 
-Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/siege`, `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
+Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed. Uses a deterministic decision tree to pick between `/cccontrol`, `/cyberconan`, `/spectre`, `/siege`, `/legion`, `/hydra`, `/pcc-opus`, and `/pcc`.
 
 ```bash
 /zk build a complete todo app from scratch      # -> Legion (holistic project, iterative)
@@ -188,7 +188,7 @@ Features:
 - **Opt-in fix phase** - parallel fix agents resolve CRITICAL and MAJOR findings (you choose: fix critical+major, fix all, or report only)
 
 ### `/cccontrol` - Lightning-Fast Native macOS App Control
-Control **any macOS application** at lightning speed using Accessibility APIs instead of slow screenshot-based computer use. 10-60x faster than `computer-use`.
+Control Apple Silicon macOS applications using Accessibility APIs instead of slow screenshot-based computer use. 10-60x faster than `computer-use`.
 
 ```bash
 /cccontrol test my macOS app and click through all tabs
@@ -200,11 +200,11 @@ Control **any macOS application** at lightning speed using Accessibility APIs in
 Architecture:
 - **Accessibility-first**: Reads the UI via `AXUIElement` tree (~100ms) instead of screenshots (~3-6s)
 - **Screenshots-last**: Only captures images for visual evidence, not for understanding UI state
-- **Any app**: Works with SwiftUI, AppKit, Electron, Qt, Java, iOS Simulator — anything with a window
-- **Bundled MCP**: Includes its own `cccontrol-bridge` (Swift CLI) and Node.js MCP server — no extra installs
+- **Supported apps**: Works with SwiftUI, AppKit, Electron, Qt, Java, and iOS Simulator when their accessibility trees are available
+- **Bundled MCP**: Includes bridge source and a Node.js MCP server; the bridge compiles locally when first used
 
 Requirements:
-- macOS with Xcode Command Line Tools (`xcode-select --install`)
+- Apple Silicon macOS, Node.js, Accessibility permission, and Xcode Command Line Tools when rebuilding (`xcode-select --install`)
 - Accessibility permission in System Settings > Privacy & Security > Accessibility
 
 ### `/systemcc` - Auto-Routing Workflow Selector
@@ -237,8 +237,8 @@ Best for:
 
 > ⚠️ **Close all other Claude Code sessions first** — editing `settings.json` while other sessions are running can crash or corrupt those sessions.
 
-### `/setup-hooks` - Safety Hooks Installer
-Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding. All hooks use `"ask"` mode — Claude pauses and asks for your approval instead of silently blocking.
+### `/setup-hooks` - Safety Hooks Status & Legacy Cleanup
+CAS safety hooks activate automatically through the enabled plugin's `hooks/hooks.json`. `/setup-hooks` verifies that the plugin is enabled and removes only legacy manual CAS hook entries from `~/.claude/settings.json`. All hooks use `"ask"` mode — Claude pauses and asks for your approval instead of silently blocking.
 
 ```bash
 /setup-hooks
@@ -259,8 +259,8 @@ Best for:
 
 Features:
 - **"Ask" mode** — you see a yes/no prompt, not a hard block. Approve when you asked for the action, deny when Claude acts on its own.
-- **Selective install** — choose which hooks you want during setup
-- **Non-destructive** — merges into existing settings without overwriting
+- **Automatic activation** — plugin hooks load when CAS is enabled
+- **Legacy cleanup only** — removes version-pinned CAS entries without changing other hooks
 - **Audit logging** — all intercepted actions logged to `~/.claude/hooks-logs/`
 
 > **Based on**: [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks), modified to use `"ask"` instead of `"deny"`.

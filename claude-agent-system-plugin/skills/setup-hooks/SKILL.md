@@ -1,9 +1,9 @@
 ---
 name: setup-hooks
-description: "Install CAS safety hooks into your Claude Code settings. Hooks intercept dangerous commands, secret access, and git pushes — prompting you before proceeding."
+description: "Check automatic CAS safety hooks status and clean up legacy manual hook entries from your Claude Code settings."
 ---
 
-You are the CAS Hooks installer. Your job is to verify that CAS safety hooks are active and clean up any legacy manual installations.
+You are the CAS Hooks status and legacy cleanup tool. Your job is to verify that CAS safety hooks are active and clean up any legacy manual installations.
 
 ## How CAS Hooks Work (v7.17+)
 

@@ -15,7 +15,7 @@
  *   gpt <model> <effort> full: <task>    -> danger-full-access sandbox (network, ssh)
  *
  * Results land in ~/.claude/gpt-direct/<ts>-<slug>.result.md ; a macOS
- * notification fires on completion. GPT_DIRECT_DRY=1 prints parsing instead of
+ * notification fires on completion when osascript is available. GPT_DIRECT_DRY=1 prints parsing instead of
  * spawning (debug aid).
  */
 
@@ -92,6 +92,9 @@ fs.writeFileSync(
 );
 
 const q = (s) => "'" + String(s).replace(/'/g, "'\\''") + "'";
+const notify = (process.env.PATH || "").split(path.delimiter).some((dir) => isExecutable(path.join(dir, "osascript")))
+  ? "osascript -e " + q('display notification "' + slug + '" with title "GPT-5.6 worker finished" sound name "Glass"')
+  : ":";
 const sh =
   q(CODEX) + " exec --skip-git-repo-check" +
   " -C " + q(cwd) +
@@ -99,9 +102,7 @@ const sh =
   " -c model_reasoning_effort=" + q(effort) +
   " --sandbox " + q(sandbox) +
   " -o " + q(outFile) +
-  " - < " + q(promptFile) + " > " + q(logFile) + " 2>&1; " +
-  "/usr/bin/osascript -e " +
-  q('display notification "' + slug + '" with title "GPT-5.6 worker finished" sound name "Glass"');
+  " - < " + q(promptFile) + " > " + q(logFile) + " 2>&1; " + notify;
 
 spawn("/bin/sh", ["-c", sh], { detached: true, stdio: "ignore" }).unref();
 
@@ -110,5 +111,5 @@ block(
     "this message was blocked before reaching the Anthropic API; no safeguard can flag it.\n" +
     "  result  → " + outFile + "\n" +
     "  live log → tail -f " + logFile + "\n" +
-    "macOS notification fires when done. To have Claude integrate it, ask: read " + outFile
+    "A macOS notification is sent when available. To have Claude integrate it, ask: read " + outFile
 );

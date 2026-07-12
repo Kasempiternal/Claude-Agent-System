@@ -91,7 +91,7 @@ When `CLAUDE_PLUGIN_ROOT` is unset for a standalone installation, use `gpt-run`,
 | `gpt-quota [-s]` | Reads current 5-hour/weekly ChatGPT quota from recent Codex rollouts. |
 | `gpt-watch` | Color-coded live tail of active Codex worker rollout files. |
 
-`gpt-run` resolves Codex in this order: `$CODEX_BIN`, `codex` on `PATH`, then `/opt/homebrew/bin/codex`; it exits with a clear diagnostic if none is available.
+`gpt-run` resolves Codex in this order: `$CODEX_BIN`, then `codex` on `PATH`, then `/opt/homebrew/bin/codex` when it exists and is executable; it exits with a clear diagnostic if none is available.
 
 ## Requirements
 

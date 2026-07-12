@@ -552,10 +552,11 @@ footer a:hover{color:var(--cyan)}
   </p>
   <div class="hero-install">
     <div class="install-box" onclick="copyInstall(this)" title="Click to copy">
+      <span class="prompt">$</span> /plugin marketplace add Kasempiternal/Claude-Agent-System<br>
       <span class="prompt">$</span> /plugin install cas
       <span class="copy-hint">click to copy</span>
     </div>
-    <span class="hero-note">Works with Claude Code &mdash; zero config required</span>
+    <span class="hero-note">Several skills have additional prerequisites</span>
   </div>
   <div class="scroll-hint">
     <span>Explore</span>
@@ -567,7 +568,7 @@ footer a:hover{color:var(--cyan)}
 <section class="skills" id="skills">
   <div class="container">
     <div class="section-label reveal">01 &mdash; Skills</div>
-    <h2 class="section-title reveal reveal-delay-1">Ten skills.<br>Infinite leverage.</h2>
+    <h2 class="section-title reveal reveal-delay-1">Nineteen skills.<br>Infinite leverage.</h2>
     <p class="section-desc reveal reveal-delay-2">Each skill orchestrates a different swarm topology&mdash;from intelligent routing to iterative autonomous loops and adversarial verification.</p>
 
     <div class="skills-grid reveal reveal-delay-3">
@@ -764,7 +765,7 @@ footer a:hover{color:var(--cyan)}
   <div class="container">
     <div class="cta-box reveal">
       <h2 class="section-title">Ready to deploy the swarm?</h2>
-      <p class="section-desc">Install in one command. No configuration needed.</p>
+      <p class="section-desc">Add the marketplace, then install CAS. Several skills have additional prerequisites.</p>
       <div class="cta-buttons">
         <button class="btn btn-primary" onclick="copyInstall(this)">
           <svg viewBox="0 0 16 16"><path d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.744 3.744 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.623-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
@@ -787,7 +788,7 @@ footer a:hover{color:var(--cyan)}
 <script>
 // ─── Copy install command ───
 function copyInstall(el){
-  navigator.clipboard.writeText('/plugin install cas').then(()=>{
+  navigator.clipboard.writeText('/plugin marketplace add Kasempiternal/Claude-Agent-System\n/plugin install cas').then(()=>{
     el.classList.add('copied');
     const hint=el.querySelector('.copy-hint');
     if(hint){const orig=hint.textContent;hint.textContent='copied!';setTimeout(()=>{hint.textContent=orig;el.classList.remove('copied')},2000)}

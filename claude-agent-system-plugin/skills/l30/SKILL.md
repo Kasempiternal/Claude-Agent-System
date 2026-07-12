@@ -14,7 +14,7 @@ argument-hint: <topic to research, e.g. "llm compression techniques">
 ╚══════╝ ╚═════╝  ╚═════╝
 
   Topic Research • Last 30 Days
-        CAS v7.28.2
+        CAS v7.29.0
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -40,20 +40,40 @@ Use `Glob("**/skills/l30/templates/dashboard.html")` to find the dashboard templ
 
 ### Step 2: Verify Python Environment
 
-Set:
+Resolve `L30_PYTHON` in this order:
+
+1. If `$L30_PYTHON` is set, use that interpreter.
+2. Otherwise, if `$L30_HOME` is set, use `$L30_HOME/.venv/bin/python`.
+3. Otherwise, use `python3` found on `PATH`.
+
+`L30_HOME` must be the l30 project directory. To configure a project-local environment in one step:
+
 ```
-VENV = /Users/izotz.cristobal/Multiverse/Izotz/l30/.venv/bin/python
+cd <l30-project-directory> && python3 -m venv .venv && .venv/bin/pip install -e .
 ```
 
-Run `Bash("test -f /Users/izotz.cristobal/Multiverse/Izotz/l30/.venv/bin/python && echo OK")`.
+Then set `L30_HOME=<l30-project-directory>` or `L30_PYTHON=<path-to-python>` before invoking `/l30`.
 
-- **If OK**: Proceed.
-- **If NOT OK**: STOP. Tell the user:
+Run a Bash command that resolves the interpreter in that order and verifies it:
+
+```bash
+if [ -n "${L30_PYTHON:-}" ]; then
+  VENV="$L30_PYTHON"
+elif [ -n "${L30_HOME:-}" ]; then
+  VENV="$L30_HOME/.venv/bin/python"
+else
+  VENV="$(command -v python3 || true)"
+fi
+test -n "$VENV" && test -x "$VENV" && "$VENV" -c 'import l30' && printf '%s\n' "$VENV"
+```
+
+- **If the command succeeds**: Store its path as `VENV` and proceed.
+- **If it fails**: STOP. Tell the user:
   ```
-  l30 Python environment not found. Install it:
+  l30 Python environment is not configured or cannot import l30.
+  Set L30_PYTHON to an interpreter with l30 installed, or set L30_HOME to the l30 project directory and create its environment:
 
-  cd ~/Multiverse/Izotz/l30
-  python3 -m venv .venv
+  cd <l30-project-directory> && python3 -m venv .venv
   .venv/bin/pip install -e .
   ```
   Do NOT proceed.

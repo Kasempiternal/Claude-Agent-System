@@ -27,7 +27,7 @@ Workers whose dependency failed are skipped (marked ⤼). Exit 0 iff all ok.
 Artifacts: each worker in ~/.claude/gpt-runs/<ts>-<name>/ (via gpt-run) +
 fleet prompts in ~/.claude/gpt-runs/fleet-<ts>-<specname>/.
 """
-import json, os, queue, re, subprocess, sys, threading, time
+import json, os, queue, re, shutil, subprocess, sys, threading, time
 
 BIN_DIR = os.path.dirname(os.path.abspath(__file__))
 GPT_RUN = os.environ.get("GPT_RUN", os.path.join(BIN_DIR, "gpt-run"))
@@ -138,10 +138,12 @@ def main():
     except Exception:
         pass
     try:
-        subprocess.run(["/usr/bin/osascript", "-e",
-                        f'display notification "{fname}: {ok}/{total} ok" '
-                        f'with title "GPT fleet finished" sound name "Glass"'],
-                       timeout=10)
+        osascript = shutil.which("osascript")
+        if osascript:
+            subprocess.run([osascript, "-e",
+                            f'display notification "{fname}: {ok}/{total} ok" '
+                            f'with title "GPT fleet finished" sound name "Glass"'],
+                           timeout=10)
     except Exception:
         pass
     sys.exit(0 if ok == total else 1)

@@ -23,8 +23,7 @@ Thank you for your interest in contributing! This project is a Claude Code plugi
 
 ### 1. Fork and Clone
 ```bash
-git fork https://github.com/Kasempiternal/Claude-Agent-System
-git clone https://github.com/yourusername/Claude-Agent-System
+gh repo fork Kasempiternal/Claude-Agent-System --clone
 cd Claude-Agent-System
 ```
 

@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.20.0 — State directory moved out of `.claude/`**
+> **v7.29.0 — Current release (includes the v7.20.0 state-directory migration)**
 >
 > All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
 >
@@ -22,7 +22,7 @@
 /plugin install cas
 ```
 
-Done! You now have 15 skills: `/gpt-architect`, `/zk`, `/spectre`, `/gonk-test`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/cyberconan`, `/systemcc`, `/l30`, `/setup-swarm`, and `/setup-hooks`. The bundled MCP components auto-register on install.
+You now have 19 skills: `/cccontrol`, `/cyberconan`, `/faster`, `/gonk-test`, `/gpt-architect`, `/hydra`, `/l30`, `/legion`, `/orchestrate`, `/pcc`, `/pcc-opus`, `/phoenix`, `/review`, `/setup-hooks`, `/setup-swarm`, `/siege`, `/spectre`, `/systemcc`, and `/zk`. The bundled MCP components auto-register on install.
 
 ---
 
@@ -175,7 +175,7 @@ The Chrome extension MCP is slow and requires a visible browser. Maestro proved 
   Headless Chrome (auto-launched, --headless=new)
 ```
 
-The MCP server is bundled with the plugin — **no separate installation needed**. It auto-registers when you install CAS.
+The Spectra MCP build is bundled with the plugin and auto-registers on install. Gonk requires Node.js 20+, Chrome or Chromium, and its bundled `spectra-mcp-server` dependencies installed with `npm ci --omit=dev` before first use.
 
 > Inspired by [Maestro](https://github.com/mobile-dev-inc/maestro) — the best mobile E2E testing tool out there. Gonk brings the same philosophy (headless, fast, accessibility-tree-based) to the web.
 
@@ -333,7 +333,7 @@ Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
 
 Research any topic across **5 free sources** from the last 30 days. Deploys a parallel agent swarm to scrape, score, deduplicate, and generate a self-contained HTML dashboard. Zero API keys required.
 
-> **Requires**: Python environment with [l30](https://github.com/Kasempiternal/l30) installed and Agent Teams (`/setup-swarm`).
+> **Requires**: the l30 project/environment installed separately and Agent Teams (`/setup-swarm`). Configure `L30_PYTHON` or `L30_HOME` as described in the `/l30` skill.
 
 ```bash
 /l30 "llm compression techniques"
@@ -373,7 +373,7 @@ Self-contained HTML dashboard at `~/Documents/l30/dashboards/` — works offline
 
 Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-spawning. Independent **two-skeptic adversarial verifiers** evaluate work they didn't produce. Exit decisions are **arithmetic, not judgment**: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`.
 
-> **Requires Agent Teams**: Run `/setup-swarm` to enable. Workers use Agent Teams internally for coordination.
+> **Requires**: Agent Teams (run `/setup-swarm`), Python 3, and a `claude` CLI executable on `PATH`.
 
 > **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
 
@@ -664,9 +664,9 @@ Enables the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var in your `~/.claude/se
 
 ---
 
-## `/setup-hooks` - Safety Hooks Installer
+## `/setup-hooks` - Hooks Status + Legacy Cleanup
 
-Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept risky actions and prompt you before proceeding.
+Checks automatic CAS safety hooks status and removes legacy hard-coded CAS hook entries from `~/.claude/settings.json`.
 
 ```bash
 /setup-hooks
@@ -682,10 +682,9 @@ Installs **PreToolUse hooks** into your `~/.claude/settings.json` that intercept
 
 All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt instead of silently blocking. Approve when you asked for the action, deny when Claude acts autonomously.
 
-- **Run once** — hooks persist in your settings across all projects and sessions
-- **Selective install** — choose which hooks you want during setup
-- **Non-destructive** — merges into existing settings without overwriting
-- **Audit logging** — all intercepted actions logged to `~/.claude/hooks-logs/`
+- **Automatic activation** — plugin hooks load when CAS is enabled
+- **Legacy cleanup only** — removes version-pinned CAS entries without changing other hooks
+- **Audit logging** — all intercepted actions log to `~/.claude/hooks-logs/`
 
 > Based on [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks), modified to use `"ask"` instead of `"deny"`.
 
@@ -738,7 +737,7 @@ Got a dozen `claude` sessions open and dread rebooting because reopening and res
 | Critical systems, unfamiliar codebases | `/pcc-opus` |
 | Want auto-routing with Lyra AI optimization | `/systemcc` |
 | Enable Agent Teams for swarm skills | `/setup-swarm` (run once) |
-| Prevent Claude from pushing without permission | `/setup-hooks` (run once) |
+| Prevent Claude from pushing without permission | CAS hooks activate automatically; `/setup-hooks` cleans up legacy entries |
 | Reboot your Mac without losing open `claude` sessions | `/phoenix` (macOS + Ghostty) |
 
 ---
