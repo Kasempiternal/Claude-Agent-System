@@ -11,6 +11,10 @@
     "cccontrol": {
       "command": "node",
       "args": ["${CLAUDE_PLUGIN_ROOT}/cccontrol-mcp/index.js"]
+    },
+    "codex": {
+      "command": "codex",
+      "args": ["mcp-server"]
     }
   }
 }

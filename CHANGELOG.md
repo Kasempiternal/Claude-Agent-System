@@ -5,6 +5,19 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.29.0] - 2026-07-12
+
+### Added: `/gpt-architect` — Claude Plans, GPT Executes
+
+Claude Code can now remain the architect while GPT-5.6 Sol, Terra, and Luna workers handle delegable implementation and investigation through a ChatGPT-authenticated Codex layer. No OpenAI API key, proxy, or change to Claude authentication is required.
+
+- `/gpt-architect` skill with global, session, and path-scoped activation; ordered first-match routing; quota-aware wave budgeting; and writer-safety limits.
+- Four hooks: native-Agent enforcement, session standing orders, Codex worker telemetry, and the `gpt:` direct route.
+- Four CLIs: `gpt-run` parallel fan-out, `gpt-fleet` dependency-DAG orchestration, `gpt-quota`, and `gpt-watch`.
+- Plugin hook registration and standalone idempotent installer with backup/optional `jq` settings merge.
+- Public documentation with architecture, lane selection, routing, safety caps, examples, and requirements.
+- Script syntax checks covering shipped shell, Node, and Python entry points; public-path sanitization check included.
+
 ## [7.26.0] - 2026-05-15
 
 ### Removed: `/goal` skill (deprecated)
