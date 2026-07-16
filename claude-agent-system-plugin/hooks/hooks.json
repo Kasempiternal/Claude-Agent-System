@@ -1,5 +1,5 @@
 {
-  "description": "Surface open /orchestrate handoffs at session start; command approval is handled by the user-level rm/commit/push harness",
+  "description": "Surface open /orchestrate handoffs and enforce GPT Architect's session-local delegation backend; command approval is handled by the user-level rm/commit/push harness",
   "hooks": {
     "SessionStart": [
       {
@@ -7,6 +7,18 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/orchestrate-resume.js"
+          }
+        ]
+      }
+    ],
+    "PreToolUse": [
+      {
+        "matcher": "Agent",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gpt-architect-native-agent-guard.cjs",
+            "timeout": 5
           }
         ]
       }

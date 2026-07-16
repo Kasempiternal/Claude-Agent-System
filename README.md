@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.31.0 — Current release (includes the v7.20.0 state-directory migration)**
+> **v7.34.0 — Current release (includes the v7.20.0 state-directory migration)**
 >
 > All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
 >
@@ -46,15 +46,21 @@ You now have 19 skills: `/cccontrol`, `/cyberconan`, `/faster`, `/gonk-test`, `/
 
 ## `/gpt-architect` - Focused Codex Delegation
 
-Use Claude as the architect and delegate one focused implementation, investigation, or review to the separately configured normal Codex MCP. The skill is opt-in per request: it creates no global mode, background worker, fleet, watcher, quota segment, or approval window.
+Use Claude as the architect and delegate focused implementation, investigation, or review to the separately configured normal Codex MCP. The skill supports one-shot requests and explicit session-only mode; it creates no global or persistent mode, background worker, fleet, watcher, quota segment, or approval window.
 
 ```text
 /gpt-architect investigate the failing synchronization test and implement a verified fix
+/gpt-architect on
+/gpt-architect off
 ```
 
 Claude keeps scope, review, and user communication. Codex may run ordinary builds and tests automatically, but must return any `rm`, `git commit`, or `git push` action to Claude for the user's approval hook.
 
-Claude explicitly selects Sol, Terra, or Luna and a supported reasoning effort for every call, then shows `Codex → <model>/<effort>: <task>` before launch. The routing guide favors the lowest sufficient effort, reserves Max for the hardest single problems, and uses Ultra only for explicitly requested parallel delegation.
+Claude explicitly selects Sol, Terra, Luna, or the research-preview Codex-Spark fast lane and a supported reasoning effort for every call, then shows `Codex → <model>/<effort>: <task>` before launch. Spark is restricted to near-instant, tightly scoped, low-risk work; its code changes normally receive a separate read-only Terra review. The routing guide favors the lowest sufficient effort, reserves Max for the hardest single problems, and uses Ultra only for explicitly requested parallel delegation.
+
+New sessions start with GPT Architect off. A custom Claude status line can derive `GPT-A ON` or `GPT-A OFF` from the latest explicit command in the session transcript, without marker files or polling.
+
+While `GPT-A ON`, Codex is the exclusive delegation backend. A session-aware `Agent` hook silently prevents native Claude, Explore, Axiom, and workflow teammates from launching; `/gpt-architect off` restores native delegation immediately. Direct Claude tools and ordinary Codex work are unaffected.
 
 ---
 
