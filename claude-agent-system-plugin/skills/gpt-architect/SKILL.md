@@ -19,9 +19,44 @@ Use the connected normal `codex` MCP directly. Claude owns scope, architecture, 
 4. Let Codex inspect the repository. Do not paste large files, restate generic coding rules, request progress narration, or duplicate context already present in the workspace.
 5. Review Codex's result and relevant diff/tests before reporting completion. Resolve small review issues directly; use one focused follow-up for substantive corrections.
 
+## Select model and effort
+
+Always pass both `model` and `config: {"model_reasoning_effort":"<effort>"}` to the Codex MCP. Do not rely on model defaults: they differ by model and may change. Honor an explicit user choice unless it is unavailable, and never silently substitute a different model or effort.
+
+Model selects the capability, speed, and cost profile. Effort selects reasoning depth within that model:
+
+| Model | Use it for |
+| --- | --- |
+| `gpt-5.6-luna` | Clear, repeatable work with exact acceptance criteria: extraction, classification, transformation, structured summaries, or mechanical edits. |
+| `gpt-5.6-terra` | Everyday repository work: bounded implementation, debugging, tests, and focused review. This is the default workhorse. |
+| `gpt-5.6-sol` | Ambiguous, cross-cutting, high-value, or high-risk work requiring judgment and polish: architecture, security, concurrency, performance, or difficult multi-system changes. |
+
+Use the lowest effort that fits the work:
+
+| Effort | Use it when |
+| --- | --- |
+| `low` | The path is obvious and primarily mechanical. |
+| `medium` | The task is bounded but needs ordinary planning and verification. |
+| `high` | Behavior, edge cases, multiple steps, or tradeoffs require careful reasoning. |
+| `xhigh` | A difficult coherent problem has interacting invariants or substantial uncertainty. |
+| `max` | The hardest single problem needs depth more than speed or token economy. |
+| `ultra` | Sol or Terra can split an explicitly authorized task into genuinely independent subproblems. Ultra is delegation, not a generic quality upgrade. |
+
+Current supported combinations are `low` through `ultra` for Sol and Terra, and `low` through `max` for Luna. Use these routing defaults:
+
+- Luna `low` for exact mechanical transformations; Luna `medium` for structured extraction or summaries that require checking.
+- Terra `medium` for clear, bounded implementation; Terra `high` for behavioral implementation, debugging, test failures, or focused review with edge cases.
+- Sol `high` for architecture, security, concurrency, performance, ambiguous cross-cutting work, or other high-stakes changes.
+- Sol `xhigh` when those concerns interact across systems. Use `max` only when the hardest coherent problem warrants it, not merely because a task is large.
+- Use `ultra` only when the user explicitly wants parallel delegation and the work has meaningful independent branches.
+
+Escalate one effort step only when risk and complexity justify it up front or a concrete gap remains, such as a missed invariant, unresolved ambiguity, or failed verification. Refine the prompt before retrying. Change model when the task class was wrong; do not use extreme effort to compensate for the wrong model.
+
+Immediately before the MCP call, show one compact status line: `Codex → <model>/<effort>: <task>`. This is the user's visibility into what is running. If the MCP rejects the requested combination, report that and choose a supported alternative deliberately.
+
 ## Permissions
 
-Use the normal Codex sandbox and approval behavior. Do not add a background watcher, status poller, flag file, scheduler, or menu application. Never auto-approve a command merely because Codex requested it.
+Use `sandbox: read-only` for investigations and reviews, or `sandbox: workspace-write` when repository edits are authorized. Use `approval-policy: on-request`; never use `never` to bypass safety. Do not add a background watcher, status poller, flag file, scheduler, or menu application. Never auto-approve a command merely because Codex requested it.
 
 Codex must never execute `rm`, `git commit`, `git commit-tree`, `git push`, or a wrapper intended to bypass those restrictions. If one is needed, Codex must stop short of it and return the exact proposed command and reason to Claude. User-level Codex execpolicy enforces this independently of the prompt.
 

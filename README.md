@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.30.0 — Current release (includes the v7.20.0 state-directory migration)**
+> **v7.31.0 — Current release (includes the v7.20.0 state-directory migration)**
 >
 > All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
 >
@@ -53,6 +53,8 @@ Use Claude as the architect and delegate one focused implementation, investigati
 ```
 
 Claude keeps scope, review, and user communication. Codex may run ordinary builds and tests automatically, but must return any `rm`, `git commit`, or `git push` action to Claude for the user's approval hook.
+
+Claude explicitly selects Sol, Terra, or Luna and a supported reasoning effort for every call, then shows `Codex → <model>/<effort>: <task>` before launch. The routing guide favors the lowest sufficient effort, reserves Max for the hardest single problems, and uses Ultra only for explicitly requested parallel delegation.
 
 ---
 
