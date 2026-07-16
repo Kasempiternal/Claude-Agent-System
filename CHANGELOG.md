@@ -5,6 +5,29 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.35.0] - 2026-07-16
+
+### Core-first product reset
+
+- Repositioned CAS around the four workflows used in real sessions: `/spectre`, `/gpt-architect`, `/hydra`, and the safety hooks. Older orchestration skills remain available but are documented as optional compatibility and experimental tools.
+- Rewrote the repository README, plugin README, contribution guide, marketplace copy, and GitHub Pages site around explicit execution modes instead of an undifferentiated catalog of swarms.
+- Removed hardcoded release numbers from skill banners and generated Spectre reports so normal plugin updates no longer make otherwise-current workflows look stale.
+- Added a hard mode interlock to Spectre and Hydra. Both now stop before spawning native teammates when GPT Architect is ON and explain how to switch modes cleanly.
+- Defined Hydra as an explicit deterministic alternative to Claude Dynamic Workflows; it no longer permits silent handoff to another router after invocation.
+
+### Focused safety contract
+
+- Restored automatic secret and environment protection through the plugin manifest.
+- Added a parser-based approval hook for every `rm`, `git commit`, `git commit-tree`, and `git push`, including common wrappers and nested shell commands.
+- Kept builds, tests, formatters, package managers, ordinary edits, and read-only Git automatic. Removed the superseded broad `dangerous-commands` and `push-guard` scripts so inactive policy cannot be mistaken for the current contract.
+- Rebuilt `/setup-hooks` as a verifier and legacy-duplicate cleanup tool. It no longer claims safeguards that are absent from the active manifest.
+
+### GPT Architect refinements
+
+- Documents the current Spark, Luna, Terra, and Sol routing model and explicit effort selection.
+- Spark remains restricted to tiny, low-risk, known-surface work and normally receives an independent read-only Terra review after executable workspace changes.
+- Sensitive repository operations remain Claude-only and flow through the single CAS approval point.
+
 ## [7.29.0] - 2026-07-12
 
 ### Added: `/gpt-architect` — Claude Plans, GPT Executes

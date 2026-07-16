@@ -1,110 +1,85 @@
 # Contributing to Claude Agent System
 
-Thank you for your interest in contributing! This project is a Claude Code plugin that spawns parallel agent swarms for planning, implementation, and code review.
+CAS is a Claude Code plugin for evidence-driven research, guarded Codex delegation, deliberate native parallelism, and focused safety controls.
 
-## How to Contribute
+## Design principles
 
-### 1. New Skills
-- Created a useful skill for Claude Code? We'd love to include it!
-- Skills live in `claude-agent-system-plugin/skills/{skill-name}/SKILL.md`
+1. **Prefer clear modes over more routers.** A new behavior should usually strengthen Spectre, GPT Architect, Hydra, the safety hooks, or an existing specialist.
+2. **Keep expensive orchestration explicit.** Do not silently launch teammates, Dynamic Workflows, external workers, or parallel branches.
+3. **Make safety narrow and predictable.** High-consequence actions should be gated; builds, tests, and ordinary development should stay automatic.
+4. **Validate claims and changes.** Skills must say how completion is checked. Documentation must match the active manifests and scripts.
+5. **Preserve user ownership.** Do not remove files, commit, push, publish, or alter unrelated configuration without explicit authority.
 
-### 2. Review Agents
-- Improved an existing review agent or created a new one?
-- Agents live in `claude-agent-system-plugin/agents/{agent-name}.md`
+## Repository layout
 
-### 3. Documentation Improvements
-- Fix typos or clarify existing documentation
-- Add examples for complex scenarios
+```text
+.claude-plugin/                     marketplace manifest
+claude-agent-system-plugin/
+  skills/{skill}/SKILL.md           skill definitions
+  hooks/                            automatic hook scripts and manifest
+  agents/                           bundled review agents
+  plugin.yaml                       plugin metadata
+docs/index.html                     GitHub Pages site
+spectra-mcp-server/                 bundled browser MCP implementation
+```
 
-### 4. Bug Fixes
-- Found an issue with a skill? Help us fix it!
+## Proposing a change
 
-## Contribution Process
+Open an issue or pull request that explains:
 
-### 1. Fork and Clone
+- the concrete session problem;
+- why an existing core workflow cannot express it cleanly;
+- the expected token, latency, and permission behavior;
+- failure modes and recovery behavior;
+- how you tested it in a real Claude Code session.
+
+New top-level skills need a distinct job. Overlapping catch-all routers, model aliases without guardrails, and unverified autonomous loops are unlikely to be accepted.
+
+## Development workflow
+
 ```bash
 gh repo fork Kasempiternal/Claude-Agent-System --clone
 cd Claude-Agent-System
+git switch -c feature/short-description
 ```
 
-### 2. Create a Feature Branch
+Make focused changes and preserve unrelated work. Use conventional, imperative commit subjects such as `Fix hook registration` or `Document Hydra mode isolation`.
+
+## Validation
+
+Run checks appropriate to the files you changed. At minimum:
+
 ```bash
-git checkout -b feature/your-feature-name
+jq empty .claude-plugin/marketplace.json claude-agent-system-plugin/hooks/hooks.json
+node --check claude-agent-system-plugin/hooks/*.js
+node --check claude-agent-system-plugin/hooks/*.cjs
+git diff --check
+claude plugin validate .
 ```
 
-### 3. Make Your Changes
-- Plugin code lives in `claude-agent-system-plugin/`
-- Skills: `claude-agent-system-plugin/skills/{name}/SKILL.md`
-- Agents: `claude-agent-system-plugin/agents/{name}.md`
-- Plugin manifest: `claude-agent-system-plugin/plugin.yaml`
+For hook changes, feed representative `PreToolUse` JSON into the script. Never execute the sample command itself. Include both positive and negative cases so a safety fix does not create prompt noise.
 
-### 4. Commit Your Changes
-```bash
-git add .
-git commit -m "Add: Brief description of your contribution"
-```
+For skill changes:
 
-Follow conventional commit messages:
-- `Add:` for new features
-- `Fix:` for bug fixes
-- `Update:` for improvements
-- `Docs:` for documentation changes
+- validate YAML frontmatter;
+- exercise the intended route in a fresh Claude Code session;
+- test missing prerequisites and mode conflicts;
+- verify the skill does not silently invoke a different router;
+- document any model, MCP, platform, or Agent Teams requirement.
 
-### 5. Push and Create Pull Request
-```bash
-git push origin feature/your-feature-name
-```
+For documentation or metadata changes, search for stale versions, obsolete hooks, removed infrastructure, and contradictory installation instructions.
 
-Then create a pull request on GitHub with:
-- Clear title describing the change
-- Detailed description of what and why
-- Examples of the skill/agent in action
+## Pull-request checklist
 
-## Contribution Guidelines
-
-### Code Style
-- Use clear, descriptive file names
-- Follow the existing markdown formatting
-- Include practical examples
-- Keep skills focused and single-purpose
-
-### Testing Requirements
-- Test skills with multiple project types
-- Verify skills work with latest Claude Code version
-- Document any limitations discovered
-
-### Quality Checklist
-Before submitting, ensure your contribution:
-- [ ] Follows existing naming conventions
-- [ ] Includes clear documentation
-- [ ] Has been tested thoroughly
-- [ ] Adds value without duplicating existing skills
-
-## What We're Looking For
-
-### High Priority
-- Domain-specific skills (mobile dev, data science, DevOps, etc.)
-- Performance improvements to existing skills
-- New review agents for specialized analysis
-
-### Always Welcome
-- Real-world case studies
-- Tips and best practices
-- Community success stories
-
-## What We Don't Accept
-
-- Skills that violate Claude's usage policies
-- Malicious or harmful patterns
-- Plagiarized content without attribution
-- Low-quality or untested submissions
-
-## Questions?
-
-- Open an issue for clarification
-- Join the discussion on r/ClaudeAI
-- Check existing issues and PRs to avoid duplication
+- [ ] The change solves one clear problem.
+- [ ] README, plugin metadata, and active behavior agree.
+- [ ] Expensive or parallel execution is visible before launch.
+- [ ] Sensitive commands remain approval-gated.
+- [ ] Ordinary builds and tests do not gain new prompts.
+- [ ] Failure and fallback behavior are explicit.
+- [ ] Relevant syntax, fixtures, and live-session checks pass.
+- [ ] No credentials, private paths, or generated state are included.
 
 ## License
 
-By contributing, you agree that your contributions will be licensed under the same MIT License that covers this project.
+Contributions are licensed under the repository's [MIT License](LICENSE).

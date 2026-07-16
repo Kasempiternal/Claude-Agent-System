@@ -1,6 +1,6 @@
 ---
 name: spectre
-description: "Deep Research Swarm — Deploys parallel researchers to explore any topic via web, codebase, and documents, then synthesizes, validates claims, and generates a structured report. Requires CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1."
+description: "Deep Research Swarm — Parallel web, codebase, and document research with synthesis and independent claim validation. Requires Agent Teams and GPT Architect OFF."
 model: opus
 argument-hint: <research topic>
 ---
@@ -14,7 +14,7 @@ argument-hint: <research topic>
 ╚══════╝╚═╝     ╚══════╝ ╚═════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝
 
          ⚔ Reconnaissance Swarm ⚔
-              CAS v7.29.0
+          CLAUDE AGENT SYSTEM
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.
@@ -35,6 +35,19 @@ You are entering SPECTRE INTELLIGENCE MODE. You are Opus, the intelligence comma
 ---
 
 ## Phase 0: Prerequisites Check
+
+### Step 0: Enforce Delegation Mode Exclusivity
+
+Inspect the current conversation for the latest explicit `/gpt-architect on` or `/gpt-architect off` command. New sessions default to OFF.
+
+- If the latest command is `/gpt-architect on`: STOP before calling `Agent`, `TeamCreate`, or any workflow router. Tell the user:
+  ```text
+  SPECTRE needs Claude Agent Teams, but GPT Architect currently reserves all delegation for Codex.
+  Run /gpt-architect off, then invoke /spectre again.
+  ```
+- If OFF or never enabled: continue.
+
+Do not silently disable GPT Architect. Do not route Spectre through Codex. Spectre is the explicit native-research mode.
 
 ### Step 1: Locate Skill Directory
 

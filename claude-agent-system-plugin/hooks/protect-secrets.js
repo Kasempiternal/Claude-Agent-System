@@ -94,13 +94,14 @@ const BASH_PATTERNS = [
   { level: 'high', id: 'rsync-secrets',          regex: /\brsync\b[^;|&]*(\.env|credentials|secrets|id_rsa)[^;|&]+:/i,    reason: 'Syncing secrets via rsync' },
   { level: 'high', id: 'nc-secrets',             regex: /\bnc\b[^;|&]*<[^;|&]*(\.env|credentials|secrets|id_rsa)/i,       reason: 'Exfiltrating secrets via netcat' },
 
-  // HIGH - Copy/move/delete secrets
+  // HIGH - Copy/move/stage secrets. Deletion is handled once by the dedicated
+  // rm approval hook so a sensitive rm command cannot generate two prompts.
   { level: 'high', id: 'cp-env',                 regex: /\bcp\b[^;|&]*\.env\b/i,                                           reason: 'Copying .env file' },
   { level: 'high', id: 'cp-ssh-key',             regex: /\bcp\b[^;|&]*(id_rsa|id_ed25519|\.pem|\.key)\b/i,                 reason: 'Copying private key' },
   { level: 'high', id: 'mv-env',                 regex: /\bmv\b[^;|&]*\.env\b/i,                                           reason: 'Moving .env file' },
-  { level: 'high', id: 'rm-ssh-key',             regex: /\brm\b[^;|&]*(id_rsa|id_ed25519|id_ecdsa|authorized_keys)/i,     reason: 'Deleting SSH key' },
-  { level: 'high', id: 'rm-env',                 regex: /\brm\b.*\.env\b/i,                                                 reason: 'Deleting .env file' },
-  { level: 'high', id: 'rm-aws-creds',           regex: /\brm\b[^;|&]*\.aws\/credentials/i,                                reason: 'Deleting AWS credentials' },
+  { level: 'high', id: 'git-add-env',            regex: /\bgit\b[^;|&]*\badd\b[^;|&]*\.env\b/i,                         reason: 'Staging .env data in Git' },
+  { level: 'high', id: 'git-add-private-key',    regex: /\bgit\b[^;|&]*\badd\b[^;|&]*(id_rsa|id_ed25519|id_ecdsa|\.pem|\.key)\b/i, reason: 'Staging a private key in Git' },
+  { level: 'high', id: 'git-add-secrets',        regex: /\bgit\b[^;|&]*\badd\b[^;|&]*(credentials?|secrets?)\.(json|ya?ml|toml)/i, reason: 'Staging a secrets file in Git' },
   { level: 'high', id: 'truncate-secrets',       regex: /\btruncate\b.*\.(env|pem|key)\b|(?:^|[;&|]\s*)>\s*\.env\b/i,      reason: 'Truncating secrets file' },
 
   // HIGH - Process environ

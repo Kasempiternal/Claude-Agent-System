@@ -14,7 +14,7 @@ argument-hint: <topic to research, e.g. "llm compression techniques">
 ╚══════╝ ╚═════╝  ╚═════╝
 
   Topic Research • Last 30 Days
-        CAS v7.29.0
+     CLAUDE AGENT SYSTEM
 ```
 
 **MANDATORY**: Output the banner above verbatim as your very first message to the user, before any tool calls or other output.

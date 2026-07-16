@@ -1,719 +1,198 @@
 # Claude Agent System
 
-**Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
+**Research deeply. Delegate precisely. Parallelize deliberately. Keep sensitive actions gated.**
 
-> **v7.34.0 — Current release (includes the v7.20.0 state-directory migration)**
->
-> All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
->
-> Report issues at [GitHub Issues](https://github.com/Kasempiternal/Claude-Agent-System/issues).
->
-> The Claude Agent System is distributed exclusively as a **Claude Code plugin**. If you previously installed via the legacy setup script, uninstall the old files first:
-> ```bash
-> rm -rf .claude/commands .claude/workflows .claude/middleware .claude/agents
-> /plugin marketplace add Kasempiternal/Claude-Agent-System
-> /plugin install cas
-> ```
+Claude Agent System (CAS) is a focused Claude Code plugin built around four workflows that are useful in real sessions:
 
-## Quick Start
+| Core capability | Command | Purpose |
+|---|---|---|
+| Deep research | `/spectre` | Parallel research, synthesis, and independent claim validation |
+| Codex delegation | `/gpt-architect` | Claude keeps architectural control while a normal Codex MCP handles focused repository work |
+| Explicit parallel execution | `/hydra` | Deterministic Claude Agent Teams for several coordinated tasks—without Dynamic Workflows |
+| Safety perimeter | `/setup-hooks` | Verifies secret protection and approval gates for removal, commits, and pushes |
 
-```bash
+The rest of the plugin remains available as an optional toolbox, but these four capabilities define the recommended CAS experience.
+
+## Install
+
+Run these commands inside Claude Code:
+
+```text
 /plugin marketplace add Kasempiternal/Claude-Agent-System
 /plugin install cas
 ```
 
-You now have 19 skills: `/cccontrol`, `/cyberconan`, `/faster`, `/gonk-test`, `/gpt-architect`, `/hydra`, `/l30`, `/legion`, `/orchestrate`, `/pcc`, `/pcc-opus`, `/phoenix`, `/review`, `/setup-hooks`, `/setup-swarm`, `/siege`, `/spectre`, `/systemcc`, and `/zk`. The bundled MCP components auto-register on install.
+After an upgrade, start a new Claude Code session so the current skill and hook definitions are loaded.
 
----
+## Three execution modes
 
-## Anti-Vibe Coding Philosophy
+CAS keeps delegation modes explicit. They are tools for different jobs, not layers to stack indiscriminately.
 
-**"Vibe coding"** = typing a prompt, accepting whatever the AI outputs, hoping it works.
+### 1. Direct Claude
 
-**This system is the opposite.** Every skill enforces structure:
+This is the default. Claude reads, edits, runs tools, and talks to you directly. Use it for normal work that does not benefit from delegation.
 
-| What Vibe Coding Does | What This System Does |
-|-----------------------|-----------------------|
-| Blindly accepts AI output | Parallel code review agents |
-| No validation | Build config detection + linting enforcement |
-| No learning | Session memory - learns your patterns and mistakes |
-| No quality gates | Decision engines with complexity/risk/scope analysis |
-| Hope it works | Post-execution validation + auto-fix critical issues |
+### 2. GPT Architect
 
----
-
-# Skills
-
-## `/gpt-architect` - Focused Codex Delegation
-
-Use Claude as the architect and delegate focused implementation, investigation, or review to the separately configured normal Codex MCP. The skill supports one-shot requests and explicit session-only mode; it creates no global or persistent mode, background worker, fleet, watcher, quota segment, or approval window.
+Use `/gpt-architect` when Claude should remain the architect while Codex performs a focused implementation, diagnosis, or review.
 
 ```text
-/gpt-architect investigate the failing synchronization test and implement a verified fix
+/gpt-architect investigate the failing synchronization tests and implement a verified fix
 /gpt-architect on
 /gpt-architect off
 ```
 
-Claude keeps scope, review, and user communication. Codex may run ordinary builds and tests automatically, but must return any `rm`, `git commit`, or `git push` action to Claude for the user's approval hook.
+- One-shot form delegates only the supplied task.
+- `on` makes Codex the exclusive delegation backend for the current conversation.
+- `off` restores native Claude teammates immediately.
+- New sessions always start OFF; no marker files, background workers, or global mode are created.
+- Immediately before delegation, Claude shows `Codex → <model>/<effort>: <task>` so you can see what is running and why.
 
-Claude explicitly selects Sol, Terra, Luna, or the research-preview Codex-Spark fast lane and a supported reasoning effort for every call, then shows `Codex → <model>/<effort>: <task>` before launch. Spark is restricted to near-instant, tightly scoped, low-risk work; its code changes normally receive a separate read-only Terra review. The routing guide favors the lowest sufficient effort, reserves Max for the hardest single problems, and uses Ultra only for explicitly requested parallel delegation.
+GPT Architect uses the separately configured **normal Codex MCP**. CAS does not install a wrapper service, approval window, watcher, fleet, or quota daemon.
 
-New sessions start with GPT Architect off. A custom Claude status line can derive `GPT-A ON` or `GPT-A OFF` from the latest explicit command in the session transcript, without marker files or polling.
+### 3. Native Claude Agent Teams
 
-While `GPT-A ON`, Codex is the exclusive delegation backend. A session-aware `Agent` hook silently prevents native Claude, Explore, Axiom, and workflow teammates from launching; `/gpt-architect off` restores native delegation immediately. Direct Claude tools and ordinary Codex work are unaffected.
+Use `/spectre` or `/hydra` when the task genuinely benefits from coordinated native Claude teammates.
 
----
+Agent Teams and GPT Architect are intentionally exclusive. If `GPT-A ON` is visible in your session, run:
 
-## `/gonk-test` - E2E Frontend Testing with Gonk MCP `NEW`
-
-**Headless browser E2E testing, powered by direct Chrome DevTools Protocol.** Describe what you want to test in plain English — Gonk launches a headless browser, navigates, interacts, asserts, and reports results. No visible browser needed.
-
-```bash
-/gonk-test https://localhost:3000
-/gonk-test "test the login flow — fill email and password, click submit, verify dashboard loads"
-/gonk-test "check that the checkout page has no JS errors and all API calls return 200"
-/gonk-test "verify the landing page renders correctly on iPhone 15"
+```text
+/gpt-architect off
 ```
 
-### Why Gonk?
+Then invoke `/spectre` or `/hydra`. Both skills stop before launching teammates if GPT Architect is still ON, which prevents confusing hook failures and accidental mixed orchestration.
 
-The Chrome extension MCP is slow and requires a visible browser. Maestro proved that headless, accessibility-tree-based testing is dramatically faster — but only works for mobile. **Gonk brings this to the web.**
+## GPT Architect routing
 
-| | Chrome Extension MCP | Playwright MCP | **Gonk** |
-|---|---|---|---|
-| **Speed** | Slow (extension relay) | Medium (Playwright layer) | **~5x faster** (direct CDP) |
-| **Browser** | Must be visible | Headless available | **Headless, zero UI** |
-| **Output** | Screenshots | Accessibility snapshots | **Hybrid AX+DOM with smart diffing** |
-| **Framework awareness** | None | None | **React/Vue/Svelte/Angular** component trees |
-| **Network** | Basic logging | Basic logging | **Full interception + mocking** |
-| **Assertions** | None | None | **AI-native with self-correction suggestions** |
-| **Flows** | None | None | **Maestro-style YAML record/replay** |
-| **Token efficiency** | Full snapshots | Full snapshots | **Diff mode: ~50 tokens vs ~2000** |
+Claude selects both a model and an effort level for every Codex call. The goal is the lowest-cost route that still matches the task’s risk and ambiguity.
 
-### 52 Tools Across 11 Categories
+| Model | Default lane |
+|---|---|
+| `gpt-5.3-codex-spark` | Tiny, near-instant, low-risk edits on an already known surface |
+| `gpt-5.6-luna` | Mechanical transformations, extraction, classification, and exact structured work |
+| `gpt-5.6-terra` | Everyday implementation, debugging, tests, and focused code review |
+| `gpt-5.6-sol` | Architecture, security, concurrency, performance, or ambiguous cross-system work |
 
-| Category | Tools | What They Do |
-|----------|-------|-------------|
-| **Browser** (5) | launch, close, status, viewport, emulate | Lifecycle management, device emulation |
-| **Navigation** (5) | navigate, back, forward, reload, wait | Page navigation with smart waits |
-| **Inspection** (7) | snapshot, element, query, text, html, style, metrics | LLM-friendly page analysis |
-| **Interaction** (10) | click, type, key, select, check, hover, scroll, drag, upload, dialog | Full user interaction simulation |
-| **Tabs** (4) | new, close, switch, list | Multi-tab parallel testing |
-| **Network** (6) | list, detail, intercept, mock, clear, wait | Request interception and mocking |
-| **Console** (3) | logs, errors, evaluate | Console monitoring + JS execution |
-| **Visual** (3) | screenshot, compare, bounding boxes | Visual regression testing |
-| **Framework** (4) | detect, component tree, state, trigger update | React/Vue/Svelte/Angular introspection |
-| **Assertions** (3) | visible, text, page state | AI-native assertions with `{passed, actual, expected, suggestion}` |
-| **Flows** (2) | record, run | Maestro-style YAML flow recording and replay |
+| Effort | Meaning |
+|---|---|
+| `low` | Obvious and primarily mechanical |
+| `medium` | Bounded work requiring ordinary planning and validation |
+| `high` | Behavioral work with meaningful edge cases or tradeoffs |
+| `xhigh` | Difficult work with interacting invariants or substantial uncertainty |
+| `max` | The hardest single coherent problem |
+| `ultra` | Explicitly authorized parallel delegation for genuinely independent branches |
 
-### Key Innovations
+Typical defaults are Spark `low` or `medium`, Luna `low` or `medium`, Terra `medium` or `high`, and Sol `high` or `xhigh`. `max` is exceptional. `ultra` is a parallelism mode, not a generic quality switch.
 
-- **Smart DOM Diffing** — After interactions, `diffOnly: true` returns only what changed (~50 tokens vs ~2000 for full snapshot)
-- **Unified Selector Engine** — Every tool accepts CSS selectors, XPath, accessibility names, text content, or coordinates
-- **Framework-Aware Component Trees** — Inspect React fiber tree, Vue component hierarchy, props, state, hooks
-- **Event Bus Architecture** — Console logs and network requests collected in-memory, queries are instant (no Chrome round-trip)
-- **AI-Native Assertions** — Each assertion returns `{passed, actual, expected, suggestion, candidates}` so Claude can self-correct on failure
+### Spark’s fast lane
 
-### Architecture
+Spark is deliberately narrow. It is appropriate only when the file or tiny surface is already known, the expected behavior is unambiguous, the change is low risk, and a focused check can validate it.
 
-```
-/gonk-test "your test description"
-       |
-  Skill orchestrates the test plan
-       |
-  52 Gonk MCP tools
-       |
-  Direct CDP WebSocket (chrome-remote-interface)
-       |
-  Headless Chrome (auto-launched, --headless=new)
-```
+Do not use Spark for repository discovery, broad diagnosis, synchronization, networking reliability, authentication, permissions, security, privacy, persistence, migrations, dependencies, concurrency, or release behavior. Those go directly to Terra or Sol.
 
-The Spectra MCP build is bundled with the plugin and auto-registers on install. Gonk requires Node.js 20+, Chrome or Chromium, and its bundled `spectra-mcp-server` dependencies installed with `npm ci --omit=dev` before first use.
+After Spark writes executable code, Claude inspects the diff and validation, then normally requests a separate read-only Terra `medium` review. A substantive review finding is corrected by Terra or Sol—not by repeatedly pushing Spark beyond its lane.
 
-> Inspired by [Maestro](https://github.com/mobile-dev-inc/maestro) — the best mobile E2E testing tool out there. Gonk brings the same philosophy (headless, fast, accessibility-tree-based) to the web.
+## Safety contract
 
----
+CAS protects a narrow set of high-consequence actions without interrupting ordinary development.
 
-## `/zk` - Intelligent Router `BETA`
+| Action | Behavior |
+|---|---|
+| Read or alter `.env`, credentials, private keys, or secret-bearing data | Ask through the secret-protection hook |
+| Any `rm` command | Ask |
+| `git commit` or `git commit-tree` | Ask |
+| `git push` | Ask |
+| Builds, tests, formatters, package managers, ordinary edits, and read-only Git | Continue automatically |
 
-*AKA "Zero Knowledge"* — born because a friend of mine kept typing `/systemcc` for literally everything, even a commit and push. So I made a skill for people who don't want to use their brain: just type `/zk` and let Claude figure out the rest.
+The hook parser recognizes common wrappers, nested shell commands, assignments, and global Git options. It does not rely on a fragile substring check.
 
-The smart entry point. Analyzes your request and **auto-routes** to the best execution mode — no manual skill selection needed.
+When GPT Architect delegates work, Codex must never execute `rm`, `git commit`, or `git push`. Codex stops and returns the proposed command to Claude; only Claude may invoke it, and the CAS hook becomes the single approval point. This keeps sensitive repository state changes visible without creating approval noise for every test command.
 
-```bash
-/zk "what you want to do"
+Run `/setup-hooks` to verify the installed contract and remove obsolete duplicate hooks from older CAS installations.
+
+## `/spectre`: research with evidence
+
+Spectre decomposes a research question into independent facets, sends parallel researchers across the web, codebase, and supplied documents, synthesizes their findings, and validates important claims before compiling a report.
+
+```text
+/spectre compare the current agentic coding models for large Swift repositories
+/spectre investigate the sync architecture in this repo and current GitLab API guidance
 ```
 
-### How It Works
+Spectre classifies scope from a quick scan through a comprehensive investigation, shows the proposed facets, and asks for confirmation before spending the larger research budget.
 
-ZK walks a deterministic decision tree:
+Requirements:
 
-| Step | Condition | Routes To |
-|------|-----------|-----------|
-| -1 | Security scan or vulnerability assessment? | `/cyberconan` |
-| Pre | Research or exploration request? | `/spectre` |
-| 0a | Holistic project, XL scope or reliability-critical? | `/siege` |
-| 0b | Holistic project, standard scope? | `/legion` |
-| 1 | Multiple independent deliverables? | `/hydra` |
-| 2 | Scale word + broad noun ("entire codebase")? | `/hydra` |
-| 3 | High-stakes keyword + qualifying signal? | `/pcc-opus` |
-| 4 | Everything else (default) | `/pcc` |
+- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- GPT Architect OFF for the current session
+- Internet access when the research needs current external evidence
 
-### Examples
+## `/hydra`: deliberate native parallelism
 
-```bash
-/zk scan this repo for vulnerabilities              # -> CyberConan (security scan)
-/zk evaluate AI code generation tools               # -> Spectre (research/analysis)
-/zk build a production-ready e-commerce platform    # -> Siege (XL scope, reliability-critical)
-/zk build a complete todo app from scratch          # -> Legion (holistic project, standard scope)
-/zk add a button to the settings page               # -> PCC (simple, clear scope)
-/zk refactor the payment processing system          # -> PCC-Opus (keyword + risk domain)
-/zk fix auth; add dashboard; update API             # -> Hydra (3 independent tasks)
-```
+Hydra is the explicit alternative to opaque workflow routing. Give it several tasks; it explores them together, detects cross-task file conflicts, builds a dependency graph, and executes only safe branches in parallel waves.
 
-**Escape hatch**: You can always bypass ZK and invoke any skill directly.
-
----
-
-## `/spectre` - Deep Research Swarm
-
-Deploy a **parallel research swarm** to investigate any topic. Just give Spectre a topic — it auto-evaluates complexity, proposes a scope tier and facets, and asks for your confirmation. You can accept, **go harder**, or **go lighter**.
-
-```bash
-/spectre "evaluate AI code generation tools for enterprise teams"
-/spectre "current state of WebAssembly"
-/spectre "compare Kubernetes vs Nomad"
-/spectre "analyze our auth module architecture"
-```
-
-### Best For
-
-- Evaluating technologies, tools, or approaches before making decisions
-- Market/landscape analysis across a domain
-- Deep dives into topics requiring multiple research angles
-- Codebase architecture research and exploration
-- Any question where the answer is *information*, not *code changes*
-
-### How Spectre Works
-
-1. **Parse & Classify** - Analyzes topic, auto-classifies scope tier (XS/S/M/L/XL), auto-detects codebase context, decomposes into research facets
-2. **User Confirmation** - You review the proposed scope and facets, then proceed, go harder, or go lighter
-3. **Wave 1: Research** - Parallel Opus researchers each explore one facet via WebSearch/WebFetch (or Grep/Glob/Read for codebase)
-4. **Wave 2: Analysis** - Intelligence analyst synthesizes all findings, resolves contradictions, ranks by evidence
-5. **Wave 3: Validation** - Cross-reference validators independently verify top claims via fresh web searches (two-skeptic model)
-6. **Wave 4: Report** - Compiler assembles structured markdown report with validation status per finding
-7. **Final Summary** - Key findings, validation verdict, source stats, optional HTML dashboard
-
-### Scope Tiers (Auto-Classified)
-
-| Tier | Type | Researchers | Total Agents | Example |
-|------|------|-------------|-------------|---------|
-| XS | Quick Scan | 2 | ~5 | "What's the state of WebGPU in Safari?" |
-| S | Focused | 3 | ~6 | "Compare Bun vs Deno performance" |
-| M | Standard | 4-5 | ~9 | "Best approaches to LLM function calling" |
-| L | Broad | 6-8 | ~13 | "AI code generation tools landscape" |
-| XL | Comprehensive | 8-12 | ~17 | "EU AI Act: regulatory, technical, and market analysis" |
-
-### Features
-
-- **Auto-evaluation with user control** — classifies scope automatically, you confirm or adjust (harder/lighter)
-- **Facet decomposition** — breaks complex topics into distinct, parallel-researchable angles
-- **Inter-researcher collaboration** — mailbox broadcasting for cross-facet discovery sharing
-- **Two-skeptic validation** — independent validators verify claims via fresh web searches
-- **Validation status per finding** — every claim marked CONFIRMED / UNVERIFIED / DISPUTED
-- **Full source bibliography** — every finding traced to specific URLs with reliability ratings
-- **Optional HTML dashboard** — offered after report completion
-- **Web + codebase hybrid** — auto-detects whether research involves the current codebase
-- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
-
----
-
-## `/cyberconan` - Security Audit Swarm
-
-Full-repo security scanner. Just run `/cyberconan` — it auto-detects your repo's languages, frameworks, and size, picks the right mode, and runs all 4 scanners. You confirm the recon summary before scanning, with options for a **quick scan** or **deep scan**.
-
-```bash
-/cyberconan
-```
-
-### How CyberConan Works
-
-0. **Recon** - Auto-detects languages, frameworks, project types, file count → picks mode (LITE or FULL)
-1. **Confirm** - You review the recon summary, then proceed (standard), go quick (CRITICAL/HIGH only), or go deep (all levels)
-2. **Plan** - Loads vulnerability criteria per project type, applies depth filter
-3. **Scan** - 4 parallel scanner agents: SAST, SCA, Secrets, Config (all read-only)
-4. **Verify** - CRITICAL: two-skeptic adversarial (FULL mode) / single verifier (LITE). HIGH: single verifier. MEDIUM/LOW: batch verification
-5. **Report** - Security score [0-100], findings by severity, remediation recommendations
-6. **Remediation** (optional) - Offer to fix confirmed CRITICAL/HIGH vulnerabilities
-
-### Two Modes (Auto-Selected)
-
-| Mode | When | Agents |
-|------|------|--------|
-| **LITE** | < 50 source files, single project | ~6 |
-| **FULL** | 50+ files or multi-project | ~10-20 |
-
-### Scanner Coverage
-
-| Scanner | What It Checks |
-|---------|---------------|
-| **SAST** | SQL injection, command injection, XSS, SSRF, path traversal, deserialization, race conditions, auth issues |
-| **SCA** | Known CVEs in dependencies (with exploitability context), outdated packages |
-| **Secrets** | AWS keys, API tokens, private keys, connection strings, .env files in git |
-| **Config** | Debug mode, weak TLS, permissive CORS, missing security headers, default creds, exposed endpoints |
-
-### Security Score
-
-```
-Score = 100 - (CRITICAL × 25) - (HIGH × 10) - (MEDIUM × 3) - (LOW × 1)
-```
-
-| Range | Rating |
-|-------|--------|
-| 90-100 | Excellent |
-| 70-89 | Good |
-| 50-69 | Needs Improvement |
-| 30-49 | Poor |
-| 0-29 | Critical |
-
-> **Note**: SCA scanner uses Claude's training knowledge for CVE detection, which has a knowledge cutoff. Complement with dedicated tools (npm audit, pip-audit, cargo-audit) for the latest CVE data.
-
-> Inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills). CyberConan adapts the concept with adaptive LITE/FULL orchestration modes, criteria-driven scanning, two-skeptic adversarial verification, and CAS integration.
-
----
-
-## `/l30` - Last 30 Days Topic Research
-
-Research any topic across **5 free sources** from the last 30 days. Deploys a parallel agent swarm to scrape, score, deduplicate, and generate a self-contained HTML dashboard. Zero API keys required.
-
-> **Requires**: the l30 project/environment installed separately and Agent Teams (`/setup-swarm`). Configure `L30_PYTHON` or `L30_HOME` as described in the `/l30` skill.
-
-```bash
-/l30 "llm compression techniques"
-/l30 "rust vs zig 2026"
-/l30 "claude code plugins"
-```
-
-### Best For
-
-- Catching up on what happened in the last month for a topic
-- Finding recent discussions, repos, and articles
-- Getting a visual dashboard of community activity and trends
-
-### How L30 Works
-
-1. **Wave 1: Scraping** - 5 parallel Sonnet agents each scrape one source (Reddit, Hacker News, DuckDuckGo, Lobsters, GitHub) using Scrapling with Chrome impersonation
-2. **Wave 2: Intelligence** - Single analyst scores, ranks, and deduplicates results across all sources
-3. **Wave 3: Dashboard** - Compiler injects ranked data into an HTML template and opens the dashboard
-
-### Sources
-
-| Source | Method | What It Finds |
-|--------|--------|--------------|
-| Reddit | JSON API via Scrapling | Posts, discussions, top comments |
-| Hacker News | Algolia API | Stories, discussion threads |
-| DuckDuckGo | HTML scraping | Web articles, blog posts |
-| Lobsters | HTML + CSS selectors | Niche tech discussions |
-| GitHub | REST API + HTML fallback | Repos, stars, languages, topics |
-
-### Output
-
-Self-contained HTML dashboard at `~/Documents/l30/dashboards/` — works offline, no server needed. Partial results are still valuable if some sources fail.
-
----
-
-## `/siege` - External Orchestrator with Worker-Judge Separation `BETA — needs testing`
-
-Spawns **fresh `claude -p` sessions** per iteration — workers can't refuse re-spawning. Independent **two-skeptic adversarial verifiers** evaluate work they didn't produce. Exit decisions are **arithmetic, not judgment**: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`.
-
-> **Requires**: Agent Teams (run `/setup-swarm`), Python 3, and a `claude` CLI executable on `PATH`.
-
-> **Very High Token Usage Warning**: Each iteration spawns 2-3 external Claude sessions, each with their own Agent Teams. Recommended only for **MAX plan** subscribers.
-
-> **Beta status**: The v7.16.0 monitor rewrite fixes the core hang issue (wrong NDJSON event format), but Siege still needs real-world testing with full Agent Teams workloads. Please report issues.
-
-```bash
-/siege build a production-ready e-commerce platform with auth, billing, and dashboard
-/siege create an entire SaaS API from scratch --max-iterations 8
-/siege implement the full platform end to end --checkpoint
-```
-
-### Best For
-
-- Mission-critical, reliability-sensitive projects
-- Large projects needing maximum rigor (XL scope, 10+ modules)
-- When you need independent verification (worker-judge separation)
-- Projects where premature exit is unacceptable
-
-### How Siege Works
-
-0. **Prerequisites** - Verify Agent Teams enabled, locate monitor script + templates, detect test/build commands
-1. **Parse + Confirm** - Parse project description + flags (`--max-iterations`, `--checkpoint`), write config, user confirms
-2. **First Worker (FULL)** - Spawn `claude -p` session with full exploration + Agent Teams (scouts, architect, wave-based impl with collaboration protocols)
-3. **Orchestrator Loop** - For each iteration:
-   - Spawn DELTA worker via `claude -p` (delta scouts, architect updates, targeted impl)
-   - Orchestrator runs test/build as independent gate check
-   - Spawn TWO-SKEPTIC verifier via `claude -p` (two skeptics debate independently)
-   - Arithmetic decision: `COMPLETE = p1==100% AND tests_pass AND build_pass AND both_skeptics_agree AND iter>=3`
-4. **Hardening** - Always runs: spawn hardening worker (scouts find issues, fix agents resolve)
-5. **Simplification** - Always runs: module-grouped cleanup worker
-6. **Final Report** - Per-iteration progress, skeptic debate highlights, hardening results, collaboration metrics
-
-### Features
-
-- **Real-time progress monitor** — see tool calls, phase transitions, elapsed time, cost, and turn count as workers run
-- **Hang prevention** — `result` event detection + 45-min hard timeout + result file polling
-- **Stdin prompt piping** — prompts passed via `--prompt-file` to avoid shell escaping issues
-- **Uncapped workers** — `--max-turns 200` with no budget cap, workers run until the job is done
-- **Three-tier architecture** — orchestrator (thin loop) + workers (fresh sessions) + verifiers (independent sessions)
-- **Two-skeptic adversarial debate** — two independent verifiers must AGREE before exit
-- **4-layer anti-premature-exit** — objective gates + checkbox arithmetic + skeptic debate + hard rules
-- **Active mid-task coordination** — mandatory interface contracts, broadcast-on-discovery, sync checkpoints
-- **Arithmetic-only exit decisions** — no judgment, pure number comparison
-- **Mandatory hardening round** — always runs, even on stall
-- **Post-loop simplification** — module-grouped cleanup
-- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
-
----
-
-## `/legion` - Iterative Swarm Loop `BETA`
-
-Submit a **holistic project description**. Legion deploys a full agent swarm each iteration — scouts, CTO analyst, wave-based implementers, verifiers — then checks if the project is complete. It keeps iterating autonomously until everything is built, the max iteration limit is hit, or progress stalls.
-
-> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
-
-> **Very High Token Usage Warning**: Legion runs **multiple iterations** of agent swarms. Each iteration spawns 5-30 Opus agents. Recommended only for **MAX plan** subscribers.
-
-```bash
-/legion build a complete todo app with local storage from scratch
-/legion create an e-commerce platform with auth, cart, and checkout --max-iterations 8
-/legion implement the full API layer end to end --checkpoint
-```
-
-### Best For
-
-- Building complete features or applications from scratch
-- Projects that need multiple rounds of build-test-fix
-- When you want autonomous completion without manual re-runs
-
-### How Legion Works
-
-0. **Prerequisites Check** - Verifies `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
-1. **Project Parse** - Parses holistic project description, extracts `--max-iterations` and `--checkpoint` flags
-2. **Team Init** - Creates team + structural phase tasks
-3. **Full Exploration** - Opus scout teammates explore the entire project scope
-4. **CTO Analysis** - CTO analyst creates master task list with verification strategy, decomposes project into modules and waves
-5. **User Confirmation** - You review the CTO's plan, then confirm
-6. **Iteration Loop** - The core autonomous loop:
-   - Iteration 1: full wave-based implementation (Hydra-scale), wave state files written after each wave
-   - Iteration 2+: delta scouts -> CTO updates task list -> scaled implementation (agents sized to remaining P1 work)
-   - Each iteration: verify (with confidence levels) -> assess completion (progress score 0-10) -> loop or exit
-   - Exit: all P1 tasks done + tests pass, OR max iterations, OR 3 consecutive zero-progress iterations
-7. **Hardening Round** - Mandatory defensive review: scouts find bugs/gaps, fix agents resolve them, verifier confirms no regressions (always runs regardless of exit status)
-8. **Simplification** - Module-grouped cleanup (always runs)
-9. **Final Report & Cleanup** - Iteration log with progress scores, hardening results, final task status, shutdown
-
-### Features
-
-- **Autonomous iteration loop** — keeps deploying swarms until the project is done
-- **Master task list** — living checkbox document, updated each iteration by the CTO analyst
-- **Verification strategy** — CTO defines test/build/run commands and verification chain per project type
-- **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
-- **Wave state files** — each wave writes a state file to disk for reliable cross-wave context
-- **Three-tier compression** — context management scales from full fidelity to conservation mode as iterations grow
-- **Fix tracking** — tracks fix attempts per task, defers after 2 failures, escalates to user after 2 deferred iterations
-- **Mandatory hardening round** — post-loop defensive review with scouts, fix agents, and regression verification (always runs)
-- **Recovery procedures** — stuck agent replacement, partial rollback, budget overrun protection
-- **Anti-pattern validation** — catches coordinator-implements-code, redundant agents, file overlap, scope drift
-- **Iteration scaling** — iteration 1 is heavy (15-30 agents), iteration 2+ scales to remaining P1 work (5-12 agents)
-- **Progress scoring** — completion assessment returns a 0-10 score; bug fixes and test additions count as progress
-- **Circuit breaker** — stops after 3 consecutive iterations with zero progress score
-- **Checkpoint mode** (`--checkpoint`) — optional pause between iterations for user approval
-- **Configurable max iterations** (`--max-iterations N`, default 5)
-- **Post-loop simplification** — module-grouped code cleanup (always runs)
-- **Skills Access** — all teammates can invoke any installed plugin skill for domain expertise during their work
-
----
-
-## `/hydra` - Multi-Task Parallel Swarm
-
-Submit **N tasks at once**. Hydra plans them together, detects cross-task file conflicts, then deploys implementation swarms in dependency-ordered **waves** — fully parallel where files don't overlap, sequentially ordered where they do. Agents within each wave **collaborate in real-time** via mailbox messaging, and global verification uses a **two-skeptic adversarial debate**.
-
-> **Requires Agent Teams**: Run `/setup-swarm` to enable this automatically. ⚠️ Close all other Claude Code sessions first — editing `settings.json` while other sessions run can crash them.
-
-> **High Token Usage Warning**: Hydra spawns multiple Opus-level agents in parallel swarms, which can result in **very high token consumption**. Recommended only for **MAX plan** subscribers.
-
-```bash
-/hydra add auth; build dashboard; fix payments
+```text
+/hydra fix authentication; add the dashboard filters; harden the sync retries
 /hydra 1. refactor models 2. add API endpoints 3. update tests
 ```
 
-### Best For
+Hydra owns the workflow after invocation. It does not hand the request to Claude Dynamic Workflows, `/zk`, `/systemcc`, or another router.
 
-- Multiple independent tasks in the same project
-- Batch implementation sprints
-- When tasks might share files (Hydra detects and resolves conflicts)
+Requirements:
 
-### How Hydra Works
+- `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
+- GPT Architect OFF for the current session
 
-1. **Prerequisites Check** - Verifies `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS=1`
-2. **Task Parsing** - Splits input into N discrete tasks
-3. **Team Init** - Creates team + tasks for all N items
-4. **Parallel Exploration** - Shared pool of Opus scout teammates explores for all N tasks
-5. **Delegated Synthesis** - Analyst teammate writes N plans + coordination file, resolves conflicts
-6. **User Review** - You review summary + plan files, then confirm
-7. **Wave Implementation** - Per wave: analyst prepares specs with mailbox paths, orchestrator creates inbox files and spawns impl agents with inline collaboration protocol. Agents exchange interface proposals before coding, broadcast discoveries, and read inboxes at sync checkpoints
-8. **Per-Wave Verification** - Single verifier per wave; after ALL waves: **two-skeptic adversarial global verification** (two independent skeptics evaluate, debate disagreements, review collaboration health)
-9. **Simplification** - Module-grouped cleanup across all task boundaries
-10. **Final Report & Cleanup** - Per-task status, collaboration metrics, two-skeptic verdict, shutdown teammates, clean up
+Use `/setup-swarm` once if Agent Teams is not enabled.
 
-### Features
+## Optional toolbox
 
-- **Agent Teams powered** — structured coordination with TeamCreate, TaskCreate, SendMessage
-- **Cross-task file conflict analysis** — builds a DAG of file ownership at plan time
-- **Wave-based execution** — parallel where safe, sequential where files overlap
-- **Inter-agent collaboration** — mailbox messaging with pre-coding contract exchange, broadcast-on-discovery, and sync checkpoints
-- **Two-skeptic adversarial global verification** — two independent skeptics must AGREE before global pass; disagreements escalate to user
-- **Mailbox persistence across waves** — Wave 2+ agents can read Wave 1 interface decisions
-- **Collaboration health metrics** — message counts, interface proposals, and zero-message warnings in final report
-- **Risk tier classification** — every task gets a tier (T0-T3) with tier-scaled verification depth
-- **Recovery procedures** — stuck agent replacement and partial rollback on verification failure
-- **Anti-pattern validation** — catches redundant agents, file overlap, sequential deps in same wave
-- **Shared scout pool** — Opus scouts explore for all N tasks simultaneously
-- **Per-task plans + coordination file** — editable before implementation
-- **Module-grouped simplification** — ensures cross-task code consistency
-- **Skills Access** — all teammates can invoke any installed plugin skill (e.g., axiom, ui-ux-pro-max) for domain expertise during their work
+CAS still ships specialized and historical workflows for users who need them. They are intentionally secondary to the core stack.
 
----
+### Useful specialists
 
-## `/review` - Code Review Swarm
+| Skill | Use it for |
+|---|---|
+| `/review` | Seven-perspective code review with an optional fix phase |
+| `/cyberconan` | Security-focused repository assessment |
+| `/gonk-test` | Headless browser testing through the bundled Spectra MCP server |
+| `/cccontrol` | Fast native macOS UI control through Accessibility APIs |
+| `/phoenix` | Recovery-oriented workflows |
+| `/l30` | Session and project reporting |
 
-Deploys **7 parallel review agents** to analyze your code, then **automatically fixes** CRITICAL and MAJOR findings with your approval. Uses official Anthropic review plugin agents when available, with bundled fallback agents for standalone use.
+### Compatibility and experimental workflows
 
-```bash
-/review                  # Review all uncommitted changes (default)
-/review staged           # Review only staged changes
-/review src/auth.ts      # Review specific file(s)
-/review "auth module"    # Review files matching a description
+`/faster`, `/legion`, `/orchestrate`, `/pcc`, `/pcc-opus`, `/siege`, `/systemcc`, and `/zk` remain installed for compatibility and experimentation. They preserve earlier CAS orchestration styles, but they are not the recommended default path for new sessions.
+
+Several of these skills use native teammates. If GPT Architect is ON, turn it OFF before invoking them.
+
+## Requirements
+
+- Claude Code with plugin support
+- Node.js for hook scripts and bundled Node-based integrations
+- A normal Codex MCP configured separately for `/gpt-architect`
+- Agent Teams enabled only for the native swarm skills that require it
+- Optional platform dependencies documented by specialist skills such as `/cccontrol` and `/gonk-test`
+
+## Repository map
+
+```text
+.claude-plugin/                     marketplace manifest
+claude-agent-system-plugin/
+  hooks/                            automatic safety and mode guards
+  skills/                           Claude Code skills
+  agents/                           bundled review agents
+  cccontrol-mcp/                    native macOS control bridge
+docs/                               GitHub Pages site
+spectra-mcp-server/                 headless browser MCP server
 ```
-
-### Review Agents
-
-All 7 agents run in parallel (same wall-clock time as running one):
-
-| Agent | What It Checks |
-|-------|---------------|
-| Bug & Logic Reviewer | Security vulnerabilities, crashes, logic errors, resource leaks |
-| Code Reviewer | Code quality, readability, maintainability, best practices |
-| Project Guidelines Reviewer | Style conventions, CLAUDE.md standards, best practices |
-| Silent Failure Hunter | Swallowed exceptions, bad fallbacks, inadequate error handling |
-| Comment Analyzer | Stale docs, misleading comments, missing documentation |
-| Type Design Analyzer | Encapsulation, invariant expression, type safety |
-| Test Coverage Analyzer | Test gaps, missing edge cases, test quality |
-
-### What You Get
-
-The orchestrator synthesizes all 7 agent reports into a consolidated review:
-
-- **Health score** (0-10) with severity-weighted formula
-- **Agent verdicts table** - quick pass/fail per agent
-- **Deduplicated findings** - overlapping issues merged, multi-agent flags boost confidence
-- **Cross-agent correlation** - related findings from different agents grouped together
-- **Severity-prioritized** - CRITICAL > MAJOR > MINOR
-
-### Fix Phase (Opt-In)
-
-If CRITICAL or MAJOR findings are found, the system asks how you want to proceed:
-
-- **Fix CRITICAL and MAJOR** (default) - parallel fix agents resolve high-severity findings
-- **Fix ALL** - also addresses MINOR findings (style, comments, naming)
-- **Report only** - keep the report without modifying code
-
-Fix agents are grouped by file (exclusive ownership, no conflicts) and make minimum changes to resolve each finding. `/review` never modifies code without your explicit consent.
-
-### Optional: Official Anthropic Agents
-
-`/review` works standalone with bundled agents, but installing these official plugins enhances the analysis:
-
-```bash
-/plugin install pr-review-toolkit@claude-plugins-official
-/plugin install code-simplifier@claude-plugins-official
-```
-
----
-
-## `/pcc` and `/pcc-opus` - Parallel Claude Coordinator
-
-An orchestrator that spawns agent swarms for exploration and implementation.
-
-```bash
-/pcc "implement user authentication with JWT tokens"
-/pcc-opus "refactor the entire payment processing system"
-```
-
-### Two Variants
-
-| Variant | Scouts | Implementers | Best For |
-|---------|--------|-------------|----------|
-| `/pcc` | **Sonnet** (fast, cost-efficient) | **Opus** (high quality) | Most tasks |
-| `/pcc-opus` | **Opus** (maximum depth) | **Opus** (high quality) | Critical systems, unfamiliar codebases |
-
-### How PCC Works
-
-1. **Task Understanding** - Clarifies the task with you
-2. **Parallel Exploration** - Spawns 2-6 scout agents to map the codebase
-3. **Synthesis** - Combines findings into unified understanding
-4. **Clarification** - Asks questions if multiple valid approaches exist
-5. **Plan Creation** - Creates editable plan at `.cas/plans/{task}.md`
-6. **User Review** - You edit and approve the plan before any code is written
-7. **Parallel Implementation** - Spawns 2-6 Opus agents working simultaneously
-8. **Verification** - Tests and code review
-9. **Simplification** - 2-6 parallel agents clean up the code
-10. **Final Report** - Summarizes everything
-
----
-
-## `/systemcc` - Auto-Routing Workflow Selector
-
-The catch-all convenience command. Auto-analyzes task complexity, risk, and scope to select and execute the optimal workflow automatically.
-
-```bash
-/systemcc "what you want to do"
-```
-
-### How It Works
-
-1. **Lyra AI Optimization** - Enhances your request with the 4-D methodology
-2. **Build Config Detection** - Scans Makefile, CI/CD, linters and applies rules
-3. **Two-Phase Decision Engine** - Domain detection first, then complexity scoring
-4. **Automatic Execution** - Runs all phases without manual intervention
-5. **Triple Code Review** - 3 parallel reviewers check quality
-6. **Summary** - What changed and why
-
-### Features
-
-- 3-dimensional task analysis (complexity, risk, scope)
-- Two-phase decision engine with confidence scoring
-- Lyra AI prompt optimization (4-D methodology)
-- Build configuration auto-detection and enforcement
-- Automatic workflow selection and execution
-- Triple code review (Senior Engineer, Lead Engineer, Architect)
-
----
-
-## `/setup-swarm` - Agent Teams Setup
-
-Enables the `CLAUDE_CODE_EXPERIMENTAL_AGENT_TEAMS` env var in your `~/.claude/settings.json`. Required before using `/hydra` or `/legion`.
-
-```bash
-/setup-swarm
-```
-
-> ⚠️ **Close all other Claude Code sessions first** — editing `settings.json` while other sessions are running can crash or corrupt those sessions. The skill will warn you about this before making changes.
-
-- **Run once** — the setting persists across all projects and sessions
-- **Non-destructive** — merges into existing settings without overwriting
-- **Restart required** — Claude Code needs a restart after the change
-
----
-
-## `/setup-hooks` - Hooks Status + Legacy Cleanup
-
-Checks automatic CAS safety hooks status and removes legacy hard-coded CAS hook entries from `~/.claude/settings.json`.
-
-```bash
-/setup-hooks
-```
-
-### Available Hooks
-
-| Hook | What It Catches |
-|------|----------------|
-| **push-guard** | Any `git push` or `gh pr create` — commits are allowed freely |
-| **dangerous-commands** | `rm -rf ~/`, `dd` to disk, `git reset --hard`, `curl \| sh`, fork bombs, etc. |
-| **protect-secrets** | `.env` files, SSH keys, AWS creds, secret variables, exfiltration attempts |
-
-All hooks use **`"ask"` mode** — Claude pauses and shows you a yes/no prompt instead of silently blocking. Approve when you asked for the action, deny when Claude acts autonomously.
-
-- **Automatic activation** — plugin hooks load when CAS is enabled
-- **Legacy cleanup only** — removes version-pinned CAS entries without changing other hooks
-- **Audit logging** — all intercepted actions log to `~/.claude/hooks-logs/`
-
-> Based on [karanb192/claude-code-hooks](https://github.com/karanb192/claude-code-hooks), modified to use `"ask"` instead of `"deny"`.
-
----
-
-## `/phoenix` - Reboot Without Losing Your Sessions `BETA — macOS + Ghostty only`
-
-Got a dozen `claude` sessions open and dread rebooting because reopening and resuming them all is a pain? Phoenix makes restarting cost-free.
-
-```bash
-/phoenix restart      # snapshot all sessions → arm one-shot login agent → reboot
-/phoenix snapshot     # just capture the current sessions (non-destructive)
-/phoenix status       # armed? what's captured? recent restore log
-/phoenix disarm       # cancel a pending auto-restore
-```
-
-### How Phoenix Works
-
-1. **Snapshot** — finds every running Claude Code CLI session from the OS (`ps` + `lsof`), recovering each one's working directory and the exact session id from the transcript it holds open. Correctly separates multiple sessions sharing one directory; ignores the desktop app and daemon spares.
-2. **Arm** — installs a one-shot `launchd` login agent and saves the snapshot to `~/.cas/phoenix/`.
-3. **Reboot** — graceful restart via `osascript` (5-second abort countdown).
-4. **Restore** — on next login, each session reopens in its own **Ghostty** window, `cd`'d back to its directory and resumed with `claude --resume <id>`. The agent then deletes itself — fires exactly once.
-
-### Features
-
-- **One command** (`restart`) does the whole cycle; or drive it manually (`snapshot` → `arm` → reboot when ready).
-- **One-shot by design** — reopens once on the next login, never loops. `disarm` cancels anytime.
-- **Survives plugin updates** — the restore agent runs a copy of the script from a stable path.
-- **Honest fallback** — if the auto-reboot needs macOS permission, your sessions are already armed; just reboot manually and they reappear.
-
-> Currently **Ghostty-only** for the reopen step. Requires macOS.
-
----
-
-# When to Use Each Skill
-
-| Situation | Use This |
-|-----------|----------|
-| **Don't want to choose** — let the system pick | `/zk` |
-| Focused delegation to the normal Codex MCP | `/gpt-architect` |
-| Deep research, topic exploration, tool evaluation | `/spectre` |
-| **E2E frontend testing**, verify UI, check flows | `/gonk-test` |
-| Security audit of your codebase | `/cyberconan` |
-| What happened in the last 30 days for a topic | `/l30` |
-| Mission-critical project, maximum rigor | `/siege` |
-| Build a complete project from scratch | `/legion` |
-| Multiple independent tasks at once | `/hydra` (or `/zk` auto-detects) |
-| Code review before committing | `/review` |
-| Single well-defined task | `/pcc` |
-| Critical systems, unfamiliar codebases | `/pcc-opus` |
-| Want auto-routing with Lyra AI optimization | `/systemcc` |
-| Enable Agent Teams for swarm skills | `/setup-swarm` (run once) |
-| Prevent Claude from pushing without permission | CAS hooks activate automatically; `/setup-hooks` cleans up legacy entries |
-| Reboot your Mac without losing open `claude` sessions | `/phoenix` (macOS + Ghostty) |
-
----
 
 ## Contributing
 
-Contributions are welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+CAS favors a small number of clear execution modes over overlapping routers. Before proposing a new skill, check whether the behavior belongs in Spectre, GPT Architect, Hydra, a safety hook, or an existing specialist.
 
----
-
-## Community
-
-The `/systemcc` skill was partially inspired by ideas shared in the community:
-
-- [Anti-YOLO Method](https://www.reddit.com/r/ClaudeAI/comments/1n1941k/the_antiyolo_method_why_i_make_claude_draw_ascii/) - ASCII wireframing for web projects
-- [Phase-based development](https://www.reddit.com/r/ClaudeAI/comments/1lw5oie/how_phasebased_development_made_claude_code_10x/) - Large codebase handling
-- [Multi-agent workflows](https://www.reddit.com/r/ClaudeAI/comments/1lqn9ie/my_current_claude_code_sub_agents_workflow/) - Team-based development
-- [Agent OS](https://buildermethods.com/agent-os) - Project initialization framework
-
-All other skills (`/zk`, `/spectre`, `/siege`, `/legion`, `/pcc`, `/pcc-opus`, `/hydra`, `/review`, `/l30`) are original. `/cyberconan` is inspired by [ghostsecurity/skills](https://github.com/ghostsecurity/skills).
-
----
+See [CONTRIBUTING.md](CONTRIBUTING.md) for validation and pull-request expectations.
 
 ## License
 
-MIT License - see [LICENSE](LICENSE) for details.
+[MIT](LICENSE) © Kasempiternal

@@ -14,7 +14,7 @@ model: opus
 ╚═╝     ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚═╝╚═╝  ╚═╝
 
         ◎ Reboot without losing a single session ◎
-                       CAS v7.29.0
+                   CLAUDE AGENT SYSTEM
               ⚠ BETA — macOS + Ghostty only ⚠
 ```
 

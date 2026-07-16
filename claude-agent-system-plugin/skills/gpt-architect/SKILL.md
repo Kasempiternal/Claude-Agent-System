@@ -83,7 +83,7 @@ Use `sandbox: read-only` for investigations and reviews, or `sandbox: workspace-
 
 Codex must never execute `rm`, `git commit`, `git commit-tree`, `git push`, or a wrapper intended to bypass those restrictions. If one is needed, Codex must stop short of it and return the exact proposed command and reason to Claude. User-level Codex execpolicy enforces this independently of the prompt.
 
-Only Claude may execute those commands. Claude's user-level PreToolUse policy must ask the user for each matching Bash call; the skill never treats prior task authority as approval for removal, commit, or push.
+Only Claude may execute those commands. CAS's PreToolUse policy must ask the user for each matching Bash call; the skill never treats prior task authority as approval for removal, commit, or push.
 
 For every other in-scope command, use the normal automatic tool path. Do not create an approval conversation, poll a worker, or ask the user merely because Codex ran a build, test, formatter, or read-only Git command. When Codex returns a required sensitive action, Claude reviews it and, if appropriate, invokes it once through Bash; the PreToolUse hook is the sole user approval point.
 
