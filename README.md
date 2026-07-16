@@ -2,7 +2,7 @@
 
 **Turn Claude into your personal development team.** Plugin skills that handle everything — from deep planning through implementation to code review, with parallel agent swarms and automatic quality gates.
 
-> **v7.29.0 — Current release (includes the v7.20.0 state-directory migration)**
+> **v7.30.0 — Current release (includes the v7.20.0 state-directory migration)**
 >
 > All CAS state (plans, mailboxes, wave files) moved from `.claude/plans/` to **`.cas/plans/`**. Claude Code treats `.claude/` as a sensitive config directory, causing every plan/mailbox write to trigger a permission prompt — even in `dontAsk` mode. This blocked all swarm skills (Hydra, Legion, Siege, Spectre) in practice. 112 path references updated across 27 files. Also includes v7.19.0: all swarm teammates can now invoke any installed plugin skill via the Skill tool (24 templates updated).
 >
@@ -44,70 +44,15 @@ You now have 19 skills: `/cccontrol`, `/cyberconan`, `/faster`, `/gonk-test`, `/
 
 # Skills
 
-## `/gpt-architect` - Claude Plans, GPT Executes `NEW`
+## `/gpt-architect` - Focused Codex Delegation
 
-**A GPT-5.6 execution layer for Claude Code.** Claude stays the architect: it plans, decomposes, routes, integrates, and signs off. All delegable coding and investigation work goes to Sol, Terra, or Luna workers through Codex, authenticated with the user's ChatGPT subscription—**no OpenAI API key, third-party proxy, or change to Claude's own subscription/OAuth.**
-
-```bash
-/gpt-architect on
-/gpt-architect on session
-/gpt-architect on here /absolute/path/to/repo
-/gpt-architect status
-/gpt-architect off
-```
-
-### Why GPT Architect?
-
-Codex MCP calls serialize inside Claude Code, so independent workers sent through MCP run one after another. GPT Architect keeps the high-level judgment in Claude while using `gpt-run` to launch independent Codex CLI workers as background tasks and `gpt-fleet` to execute dependency-aware DAGs. It is quota-aware, supports global/session/path activation scopes, and blocks Claude's native `Agent` tool while the mode is active.
-
-```bash
-# Independent worker; launch several as background Bash tasks when their writes do not overlap
-${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/bin/gpt-run -m terra -e high -s ws -C "$PWD" -n api <<'EOF'
-OBJECTIVE: Implement the API change.
-VERIFY: Run the focused tests.
-FINAL MESSAGE FORMAT: <=15 lines — did/files/verified/risks.
-EOF
-```
-
-### Tools
-
-| Tool | Role |
-|------|------|
-| `mcp__codex__codex` / `codex-reply` | One blocking worker or a follow-up on a live thread; serial by design |
-| `gpt-run` | One Codex CLI worker—the genuine parallel fan-out unit |
-| `gpt-fleet` | Multi-stage DAG runner; independent nodes run in waves and `after` injects predecessor reports |
-| `gpt-quota` | Reads current 5-hour and weekly ChatGPT quota from local Codex rollouts |
-| `gpt-watch` | Color-coded live worker telemetry |
-
-### Architecture
+Use Claude as the architect and delegate one focused implementation, investigation, or review to the separately configured normal Codex MCP. The skill is opt-in per request: it creates no global mode, background worker, fleet, watcher, quota segment, or approval window.
 
 ```text
-User request
-    │
-Claude Code — architect: plan, route, integrate, verify
-    ├── Codex MCP — one blocking call or a reply thread (serial)
-    ├── gpt-run — independent background Bash workers (parallel)
-    └── gpt-fleet — known dependency DAGs (parallel waves)
-                         │
-              Codex CLI + ChatGPT subscription auth
-                         │
-                 GPT-5.6 Sol / Terra / Luna
+/gpt-architect investigate the failing synchronization test and implement a verified fix
 ```
 
-### Routing and safe parallelism
-
-Routing is an ordered first-match-wins tree: security/concurrency/performance and tricky refactors go to Sol/high; exceptionally hard coherent work to Sol/xhigh; known pipelines to `gpt-fleet`; reasoning-heavy bugs and reviews to Terra/high; mechanical work to Luna/low; investigation or clear low-risk changes to Luna/medium; everything else to Terra/high.
-
-Use MCP for one worker, `gpt-run` for two or more independent workers, and `gpt-fleet` for a multi-stage DAG. The hard cap is four simultaneous workers. Same-repository writers default to one; use two only with explicit non-overlapping paths, and use separate worktrees for more. At 70% ChatGPT 5-hour quota, avoid Sol/long workers; at 90%, stop dispatching.
-
-### Requirements
-
-- The plugin ships a Codex MCP entry; install the Codex CLI and authenticate it with a ChatGPT account using `codex login`.
-- Current Claude Code.
-- `bash`, `python3`, and `node`; macOS only for optional desktop notifications.
-- `CODEX_BIN` can override the executable. Otherwise `gpt-run` uses `codex` on `PATH`, then the Homebrew default.
-
-The MCP entry is bundled with the plugin, but the Codex CLI and its ChatGPT authentication are required external prerequisites.
+Claude keeps scope, review, and user communication. Codex may run ordinary builds and tests automatically, but must return any `rm`, `git commit`, or `git push` action to Claude for the user's approval hook.
 
 ---
 
@@ -724,7 +669,7 @@ Got a dozen `claude` sessions open and dread rebooting because reopening and res
 | Situation | Use This |
 |-----------|----------|
 | **Don't want to choose** — let the system pick | `/zk` |
-| Keep Claude as architect while GPT workers implement and investigate | `/gpt-architect` |
+| Focused delegation to the normal Codex MCP | `/gpt-architect` |
 | Deep research, topic exploration, tool evaluation | `/spectre` |
 | **E2E frontend testing**, verify UI, check flows | `/gonk-test` |
 | Security audit of your codebase | `/cyberconan` |

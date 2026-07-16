@@ -1,5 +1,5 @@
 {
-  "description": "CAS safety hooks — intercept dangerous commands, secret access, and git pushes; surface open /orchestrate handoff threads at session start",
+  "description": "Surface open /orchestrate handoffs at session start; command approval is handled by the user-level rm/commit/push harness",
   "hooks": {
     "SessionStart": [
       {
@@ -7,78 +7,6 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/orchestrate-resume.js"
-          },
-          {
-            "type": "command",
-            "command": "/bin/sh ${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/hooks/gpt-architect-session-start.sh"
-          }
-        ]
-      }
-    ],
-    "UserPromptSubmit": [
-      {
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/hooks/gpt-direct-route.js"
-          }
-        ]
-      }
-    ],
-    "PreToolUse": [
-      {
-        "matcher": "mcp__codex__.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/hooks/gpt-worker-announce.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Agent",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/hooks/enforce-gpt-subagents.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/push-guard.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/dangerous-commands.js"
-          }
-        ]
-      },
-      {
-        "matcher": "Read|Edit|Write|Bash",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/protect-secrets.js"
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "mcp__codex__.*",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/hooks/gpt-worker-announce.js"
           }
         ]
       }
