@@ -20,6 +20,16 @@ Use the connected normal `codex` MCP directly. Claude owns scope, architecture, 
 - If a referenced skill is missing or cannot run without native teammates, report that briefly and continue with Claude's direct tools plus Codex. Do not fall back to `Agent`.
 - A user who wants native Claude teammates must run `/gpt-architect off` first. Do not infer an exception. For a one-shot `/gpt-architect <task>`, the same invariant applies until that request is complete.
 
+## Enforcement
+
+Session mode is enforced by plugin hooks, not instructions alone. All three mechanisms derive state from the session transcript (the latest explicit `/gpt-architect on|off` command wins) — never a flag file.
+
+- `Agent`, `Task`, and `Workflow` calls are denied while the mode is on; delegation must go through the codex MCP.
+- Inline product-file writes (`Edit`/`Write`/`MultiEdit`/`NotebookEdit`) are capped at 3 per turn without an intervening codex MCP call (override with `GPT_ARCHITECT_INLINE_WRITE_LIMIT`). Small review fix-ups stay inline; delegation-scale implementation is denied mid-streak and must be delegated. The cap resets on every user prompt and every codex call. Writes outside the product tree — `~/.claude/`, session scratchpads, temp dirs, repo-local `.claude/` and `.cas/` — are never counted or blocked.
+- The standing orders are re-injected as context on every user prompt while the mode is on, so long sessions and context compaction cannot erode the invariant.
+
+A denial is guidance, not a dead end: delegate the blocked work to Codex, or — when the user has explicitly chosen inline work — ask them to run `/gpt-architect off`.
+
 ## Delegate
 
 1. Keep trivial work in Claude. Delegate only when repository inspection, implementation, testing, or a focused review benefits from Codex.

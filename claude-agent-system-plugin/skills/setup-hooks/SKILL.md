@@ -36,9 +36,10 @@ Locate the active CAS plugin root, read `hooks/hooks.json`, and verify these com
 
 - `protect-secrets.js`
 - `sensitive-command-approval.cjs`
-- `gpt-architect-native-agent-guard.cjs`
+- `gpt-architect-mode-guard.cjs`
+- `gpt-architect-standing-orders.cjs`
 
-Also verify `orchestrate-resume.js` remains the sole CAS `SessionStart` hook.
+Also verify `orchestrate-resume.js` remains the sole CAS `SessionStart` hook and `gpt-architect-standing-orders.cjs` the sole CAS `UserPromptSubmit` hook.
 
 Do not add a second user-level copy of an automatic plugin hook.
 
@@ -53,6 +54,8 @@ Inspect only `hooks.PreToolUse` entries in `~/.claude/settings.json`. Mark an en
 - `claude-sensitive-command-approval.cjs`
 - `sensitive-command-approval.cjs`
 - `gpt-architect-native-agent-guard.cjs`
+- `gpt-architect-mode-guard.cjs`
+- `gpt-architect-standing-orders.cjs`
 
 These entries duplicate the current plugin-owned hooks or point at a cache version that will disappear on update.
 

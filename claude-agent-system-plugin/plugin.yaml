@@ -1,5 +1,5 @@
 name: cas
-version: "7.35.0"
+version: "7.36.0"
 description: "Evidence-driven research, guarded Codex delegation, explicit native parallelism, secret protection, and approval gates for rm, commit, and push."
 author: "Kasempiternal"
 repository: "https://github.com/Kasempiternal/Claude-Agent-System"

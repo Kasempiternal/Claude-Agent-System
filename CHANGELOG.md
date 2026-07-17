@@ -5,6 +5,20 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.36.0] - 2026-07-17
+
+### GPT Architect: the mode now holds under pressure
+
+Field evidence from a live session with GPT-A ON: Claude implemented an entire feature — investigation, 29 inline product-file writes in a single turn, build, smoke tests, commit, deploy — without one Codex call. Root cause was structural, not doctrinal: the only enforcement was an `Agent`-tool denial, so a Claude that never tried to spawn a teammate never hit a hook, and the standing orders loaded at `/gpt-architect on` decay (or are compacted away) as a session grows.
+
+Three additions, all deriving state from the session transcript (latest explicit `/gpt-architect on|off` wins — still no flag files):
+
+- **Inline-write ratchet** — `Edit`/`Write`/`MultiEdit`/`NotebookEdit` on product files are capped at 3 per turn without an intervening codex MCP call (`GPT_ARCHITECT_INLINE_WRITE_LIMIT` to override); the cap resets on every user prompt and every Codex call. This keeps the doctrine's sanctioned inline lane (small review fix-ups, integration) while making delegation-scale inline implementation impossible. Writes to `~/.claude/`, scratchpads, temp dirs, and repo-local `.claude/`/`.cas/` are never counted or blocked. Replayed against the offending session's real transcript, the ratchet fires at write #4.
+- **Per-prompt standing orders** — a `UserPromptSubmit` hook re-injects a compact restatement of the delegation invariant, MCP call contract, and Spark/Luna/Terra/Sol routing on every user prompt while the mode is ON, so long sessions and context compaction cannot erode it.
+- **`Workflow` and `Task` are now denied** alongside `Agent` — the invariant already named dynamic workflows as forbidden, but nothing enforced it.
+
+`gpt-architect-native-agent-guard.cjs` is superseded by `gpt-architect-mode-guard.cjs` + `gpt-architect-standing-orders.cjs` (shared scanner in `gpt-architect-session.cjs`); `/setup-hooks` verifies the new pair and treats the old name as a legacy duplicate. Both hooks fail open on malformed input and are covered by a 30-case harness (mode detection, ratchet resets, exempt paths, sidechain/meta skipping, garbage input).
+
 ## [7.35.0] - 2026-07-16
 
 ### Core-first product reset

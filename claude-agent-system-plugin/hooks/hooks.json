@@ -1,5 +1,5 @@
 {
-  "description": "Resume open CAS handoffs, enforce GPT Architect's session-local backend, protect secrets, and require approval for rm, git commit, and git push",
+  "description": "Resume open CAS handoffs, enforce GPT Architect's session-local backend (native-teammate denial, inline-write cap, per-prompt standing orders), protect secrets, and require approval for rm, git commit, and git push",
   "hooks": {
     "SessionStart": [
       {
@@ -7,6 +7,17 @@
           {
             "type": "command",
             "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/orchestrate-resume.js"
+          }
+        ]
+      }
+    ],
+    "UserPromptSubmit": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gpt-architect-standing-orders.cjs",
+            "timeout": 5
           }
         ]
       }
@@ -33,11 +44,11 @@
         ]
       },
       {
-        "matcher": "Agent",
+        "matcher": "^(Agent|Task|Workflow|Edit|MultiEdit|Write|NotebookEdit)$",
         "hooks": [
           {
             "type": "command",
-            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gpt-architect-native-agent-guard.cjs",
+            "command": "node ${CLAUDE_PLUGIN_ROOT}/hooks/gpt-architect-mode-guard.cjs",
             "timeout": 5
           }
         ]
