@@ -5,6 +5,18 @@ All notable changes to the Claude Agent System will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [7.37.0] - 2026-07-19
+
+### GPT Architect: preflights and sets up the Codex MCP itself
+
+Until now the skill assumed the normal `codex` MCP was already installed, authenticated, and registered. On a machine without it, `/gpt-architect on` and one-shot delegations only failed late — with a terse "check `/mcp`" — and the skill offered no way to fix it. It now verifies the backend up front and can stand it up automatically.
+
+- **Cross-platform preflight script** — `skills/gpt-architect/scripts/codex-preflight.cjs` (Node, so it runs on macOS, Linux, and Windows with no extra dependency). `check` detects each layer independently — Codex CLI on `PATH`, `codex login` status, and `claude mcp get codex` registration — and prints a greppable `VERDICT: READY` / `NEEDS_SETUP` plus a `MISSING:` list.
+- **Automatic setup** — `setup` installs the CLI (Homebrew on macOS/Linux when present, otherwise `npm install -g @openai/codex`, which also covers Windows), registers it at user scope with `claude mcp add codex -s user -- codex mcp-server`, and re-checks ground truth after each step rather than assuming success. It never runs `rm`/`commit`/`push` and starts no background process.
+- **Honest about the two constraints it cannot paper over** — a freshly registered MCP only loads at session start, so setup tells the user to restart Claude Code before delegating; and `codex login` is interactive, so setup drives it only in a real terminal and otherwise hands the user the exact `codex login` command. When it can neither install (no Homebrew, no npm) nor register (no `claude` CLI), it prints the manual commands verbatim.
+
+The "Preflight and setup" section wires this into `/gpt-architect on`, one-shot delegation, and the failure path. Removed the stale `skills/gpt-architect/bin/` directory left over from the deleted `gpt-fleet` CLI.
+
 ## [7.36.0] - 2026-07-17
 
 ### GPT Architect: the mode now holds under pressure

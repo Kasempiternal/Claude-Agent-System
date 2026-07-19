@@ -13,6 +13,28 @@ Use the connected normal `codex` MCP directly. Claude owns scope, architecture, 
 - `/gpt-architect off` disables session routing immediately. A one-shot `/gpt-architect <task>` delegates only that request and does not alter session mode.
 - Session state lives only in the conversation transcript. Never create a global, project, path, or flag-file activation. The Claude status line derives `GPT-A ON` or `GPT-A OFF` from the latest explicit session command.
 
+## Preflight and setup
+
+The normal `codex` MCP is a separate, user-configured backend — the plugin does not bundle it. Before enabling session mode, before a one-shot `/gpt-architect <task>`, and before any delegation on a session that has not yet delegated, confirm it is available. Run the cross-platform preflight (macOS, Linux, and Windows):
+
+```
+node "${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/scripts/codex-preflight.cjs" check
+```
+
+- `VERDICT: READY` — the Codex CLI is installed, authenticated, and registered as an MCP. Proceed.
+- `VERDICT: NEEDS_SETUP` — the `MISSING:` line names what is absent (`CLI`, `AUTH`, and/or `MCP`). Run setup automatically, without a confirmation prompt:
+
+  ```
+  node "${CLAUDE_PLUGIN_ROOT}/skills/gpt-architect/scripts/codex-preflight.cjs" setup
+  ```
+
+  Setup installs the Codex CLI (Homebrew on macOS/Linux when present, otherwise `npm install -g @openai/codex` — the universal path that also covers Windows) and registers it at user scope with `claude mcp add codex -s user -- codex mcp-server`. This configures the *codex MCP backend*; it does not create any `/gpt-architect` activation state, which remains transcript-only.
+
+Two constraints to state honestly, never gloss over:
+
+- **A newly registered MCP loads only at session start.** After setup, the codex tools are not live in the current session. Tell the user to restart Claude Code and re-run the preflight; no delegation can occur until then. You may still record session mode as ON so it is active after the restart.
+- **Authentication (`codex login`) is interactive** (browser or API key). Setup drives it only when run in a real terminal; when invoked from a tool call it cannot, so ask the user to run `! codex login`. If setup cannot install (no Homebrew and no npm) or cannot register (no `claude` CLI on `PATH`), it prints exact manual commands — relay them and do not claim success.
+
 ## Delegation invariant
 
 - While session mode is on, Codex is the exclusive delegation backend. Never call `Agent`, launch Explore or Plan teammates, start an Axiom agent/workflow, or substitute any other native Claude subagent. Claude may still use its direct tools for quick inspection, architecture, review, verification, and integration.
@@ -101,4 +123,4 @@ If Codex requests a consequential action outside the user's clear authority, ask
 
 ## Failure
 
-If the normal `codex` MCP is unavailable, report that directly and suggest checking `/mcp`. Do not enable another delegation framework or silently install infrastructure.
+If the normal `codex` MCP is unavailable, run the preflight `check`, then `setup` when it reports `NEEDS_SETUP` (see "Preflight and setup"). Report what setup did and tell the user to restart Claude Code so the MCP loads. Do not enable a different delegation framework as a substitute, and do not stand up a background watcher, scheduler, or flag file. For diagnosis, `/mcp` and `codex doctor` are the fastest checks. If setup fails, relay its manual commands verbatim and do not claim delegation succeeded.
